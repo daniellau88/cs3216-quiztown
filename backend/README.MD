@@ -3,9 +3,9 @@
 ### Default DB Settings
 
 > Database Name: quiztown
-
+>
 > Database User: quiztown-user
-
+>
 > Database Password: thisisnotapassword
 
 Alternatively, you can use environment variables `DB_NAME`, `DB_USER` and `DB_PASSWORD` to modify database settings
@@ -63,22 +63,22 @@ Alternatively, you can use environment variables `DB_NAME`, `DB_USER` and `DB_PA
 ### VSCode configuration for linting
 
 ```
-   {
-      "python.linting.enabled": true,
-      "python.linting.flake8Enabled": true,
-      "python.formatting.provider": "black",
-      "python.linting.flake8Args": [
-         "--config",
-         "backend/.flake8"
-      ],
-      "python.formatting.blackArgs": [
-         "--config",
-         "backend/pyproject.toml"
-      ],
-      "[python]": {
-         "editor.codeActionsOnSave": {
-               "source.organizeImports": true
-         }
-      },
-   }
+{
+   "python.linting.enabled": true,
+   "python.linting.flake8Enabled": true,
+   "python.formatting.provider": "black",
+   "python.linting.flake8Args": [
+      "--config",
+      "backend/.flake8"
+   ],
+   "python.formatting.blackArgs": [
+      "--config",
+      "backend/pyproject.toml"
+   ],
+   "[python]": {
+      "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+      }
+   },
+}
 ```
