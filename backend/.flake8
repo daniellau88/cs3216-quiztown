@@ -1,0 +1,15 @@
+[flake8]
+# ref: https://gist.github.com/jlmelville/9d4dcc1470fbbdc6477e8ebd6aeb672b
+
+# Turn on everything
+# Default: E,F,W,C90             
+# E***/W***: pep8 errors and warnings
+# F***: PyFlakes codes 
+# C9**: McCabe complexity plugin mccabe
+# N8**: Naming Conventions plugin pep8-naming
+select = E, W, F, C, N
+
+max-line-length = 88
+
+# McCabe Complexity
+max-complexity = 20
