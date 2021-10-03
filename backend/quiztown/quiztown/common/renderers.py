@@ -2,26 +2,27 @@ from __future__ import annotations
 
 from rest_framework.renderers import JSONRenderer
 
+from quiztown.common.errors import get_code_from_context, get_messages_from_context
+from quiztown.common.utils import generate_response
+
 
 class QuiztownJSONRenderer(JSONRenderer):
     def render(
         self,
-        payload: dict[any, any],
+        payload: dict,
         accepted_media_type=None,
-        renderer_context=None,
-        code: int = 0,
-        messages: list[str] = [],
+        context=None,
+        *args,
         **kwargs,
     ) -> bytes:
+        code = get_code_from_context(context)
+        messages = get_messages_from_context(context)
 
-        response_data = {
-            "code": code,
-            "messages": messages,
-            "payload": payload,
-        }
+        response_data = generate_response(
+            code, messages, payload if payload is not None else {})
 
         response = super(QuiztownJSONRenderer, self).render(
-            response_data, accepted_media_type, renderer_context, **kwargs
+            response_data, accepted_media_type, context, **kwargs,
         )
 
         return response

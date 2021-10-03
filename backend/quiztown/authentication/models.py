@@ -1,1 +1,7 @@
-# Create your models here.
+from django.db import models
+
+
+class User(models.Model):
+    user_id = models.IntegerField()
+    username = models.CharField(max_length=100)
+    password = models.CharField(max_length=100)

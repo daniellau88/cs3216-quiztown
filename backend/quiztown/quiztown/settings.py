@@ -84,7 +84,7 @@ DATABASES = {
         "USER": os.environ.get("DB_USER", "quiztown-user"),
         "PASSWORD": os.environ.get("DB_PASSWORD", "thisisnotapassword"),
         "HOST": os.environ.get("DB_HOST", "localhost"),
-    }
+    },
 }
 
 
@@ -93,7 +93,7 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",  # noqa: E501
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
@@ -134,5 +134,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "quiztown.common.renderers.QuiztownJSONRenderer",
-    ]
+    ],
+    'EXCEPTION_HANDLER': 'quiztown.common.errors.exception_handler',
 }

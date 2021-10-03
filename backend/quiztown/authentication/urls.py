@@ -1,9 +1,8 @@
 from django.urls import path
 
-from .views import TestView
+from .views import login_view, test_view
 
-# To be removed once have more than 1 path
-# fmt: off
 urlpatterns = [
-    path("test", TestView.as_view(), name="test"),
+    path("test", test_view, name="test"),
+    path("login", login_view, name="login"),
 ]

@@ -7,9 +7,13 @@
 # F***: PyFlakes codes 
 # C9**: McCabe complexity plugin mccabe
 # N8**: Naming Conventions plugin pep8-naming
-select = E, W, F, C, N
+select = E, W, F, C, N, Q
 
 max-line-length = 88
 
 # McCabe Complexity
 max-complexity = 20
+
+exclude = */migrations/*
+
+inline-quotes = double

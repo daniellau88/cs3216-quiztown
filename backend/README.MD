@@ -60,25 +60,34 @@ Alternatively, you can use environment variables `DB_NAME`, `DB_USER` and `DB_PA
 
  Note: Run all future commands after activating virtual environment to ensure consistencies
 
+### Setup linting
+
+ 1. Exit from the virtual environment and run the following
+    ```
+    $ pip install -r linting-requirements.txt
+    ```
+
 ### VSCode configuration for linting
 
 ```
 {
    "python.linting.enabled": true,
    "python.linting.flake8Enabled": true,
-   "python.formatting.provider": "black",
+   "python.formatting.provider": "autopep8",
    "python.linting.flake8Args": [
       "--config",
       "backend/.flake8"
    ],
-   "python.formatting.blackArgs": [
-      "--config",
+   "python.formatting.autopep8Args": [
+      "--global-config",
       "backend/pyproject.toml"
    ],
    "[python]": {
       "editor.codeActionsOnSave": {
-            "source.organizeImports": true
+         "source.organizeImports": true
       }
    },
+   "python.analysis.typeCheckingMode": "basic",
+   "python.analysis.indexing": true,
 }
 ```
