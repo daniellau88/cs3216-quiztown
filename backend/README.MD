@@ -27,12 +27,12 @@ Alternatively, you can use environment variables `DB_NAME`, `DB_USER` and `DB_PA
 
  2. Create and seed the database
     ```
-    $ python quiztown/manage.py migrate
+    $ python manage.py migrate
     ```
 
  3. Run the webserver
     ```
-    $ python quiztown/manage.py runserver
+    $ python manage.py runserver
     ```
 
 ### Setting up in Virtual Environment
