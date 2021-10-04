@@ -1,6 +1,6 @@
 import { CollectionEntity, CollectionMiniEntity } from '../../types/collections';
 import { AppState, EntityCollection, EntitySelection, SelectionKey } from '../../types/store';
-import { selectMiniEntity, selectEntity } from '../../utilities/store';
+import { selectEntity, selectMiniEntity } from '../../utilities/store';
 
 function getLocalState(state: AppState) {
     return state.collections;

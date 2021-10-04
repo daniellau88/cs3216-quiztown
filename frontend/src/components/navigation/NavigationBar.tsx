@@ -1,12 +1,13 @@
-import * as React from 'react';
 import {
-    makeStyles,
-    Toolbar,
     Box,
     Container,
+    Toolbar,
+    makeStyles,
 } from '@material-ui/core';
-import NavigationBarTitle from './NavigationBarTitle';
+import * as React from 'react';
+
 import NavigationBarElements from './NavigationBarElements';
+import NavigationBarTitle from './NavigationBarTitle';
 
 const useStyles = makeStyles(() => ({
     toolbar: {

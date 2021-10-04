@@ -1,6 +1,6 @@
 import equal from 'fast-deep-equal';
-import { AnyAction } from 'redux';
 import { batch } from 'react-redux';
+import { AnyAction } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import { ApiPromise, CollectionData, CollectionQueryParams } from '../types';
@@ -15,9 +15,9 @@ import {
     EntityCollectionSet,
     EntitySelection,
     EntityStore,
-    SelectionKey,
-    ReportStoreSet,
     ReportStore,
+    ReportStoreSet,
+    SelectionKey,
 } from '../types/store';
 
 const CACHE_DURATION = 120000; // 120 seconds

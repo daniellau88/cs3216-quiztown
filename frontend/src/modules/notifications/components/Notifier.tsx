@@ -1,10 +1,10 @@
 import { useSnackbar } from 'notistack';
 import * as React from 'react';
 import { connect } from 'react-redux';
+
 import { ThunkDispatchProps } from '../../../types';
 import { Notification } from '../../../types/notifications';
 import { AppState } from '../../../types/store';
-
 import { removeNotification } from '../actions';
 import { getNotifications } from '../selectors';
 

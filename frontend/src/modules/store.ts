@@ -1,7 +1,8 @@
-import { AnyAction, applyMiddleware, combineReducers, createStore, Middleware, Reducer, Store } from 'redux';
+import { AnyAction, Middleware, Reducer, Store, applyMiddleware, combineReducers, createStore } from 'redux';
 import thunk from 'redux-thunk';
 
 import { AppState } from '../types/store';
+
 import collectionsReducer from './collections/reducers';
 import notificationsReducer from './notifications/reducers';
 

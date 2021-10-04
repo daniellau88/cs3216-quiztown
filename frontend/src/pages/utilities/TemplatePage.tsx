@@ -1,16 +1,17 @@
-import * as React from 'react';
 import {
-    makeStyles,
     Box,
+    Button,
+    CssBaseline,
     Grid,
     Typography,
-    CssBaseline,
-    Button,
+    makeStyles,
 } from '@material-ui/core';
-import { handleApiRequest } from '../../utilities/ui';
-import { addCollection } from '../../modules/collections/operations';
+import * as React from 'react';
 import { useDispatch } from 'react-redux';
+
+import { addCollection } from '../../modules/collections/operations';
 import { CollectionPostData } from '../../types/collections';
+import { handleApiRequest } from '../../utilities/ui';
 
 const useStyles = makeStyles(() => ({
     root: {

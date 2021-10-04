@@ -1,6 +1,8 @@
-import axios, { AxiosPromise, AxiosResponse, AxiosError } from 'axios';
+import axios, { AxiosError, AxiosPromise, AxiosResponse } from 'axios';
+
+import { ApiPromise, ApiResponse, StatusMessageType } from '../types';
+
 import { csrfToken as initialToken } from './helpers/server-context';
-import { ApiResponse, ApiPromise, StatusMessageType } from '../types';
 
 const DEFAULT_API_RESPONSE: ApiResponse<{}> = Object.freeze({
     code: -1,

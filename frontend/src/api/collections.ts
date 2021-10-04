@@ -1,6 +1,7 @@
-import BaseAPI from './base';
-import { CollectionData, CollectionPostData } from '../types/collections';
 import { ApiPromise } from '../types';
+import { CollectionData, CollectionPostData } from '../types/collections';
+
+import BaseAPI from './base';
 
 export class CollectionsAPI extends BaseAPI {
     protected getCollectionUrl(): string {

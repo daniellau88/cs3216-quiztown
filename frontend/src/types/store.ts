@@ -1,7 +1,8 @@
+import { AnyAction } from 'redux';
+import { ThunkAction } from 'redux-thunk';
+
 import { CollectionsState } from '../modules/collections/types';
 import { NotificationsState } from '../modules/notifications/types';
-import { ThunkAction } from 'redux-thunk';
-import { AnyAction } from 'redux';
 
 /**
  * Describes the overall shape of the application's Redux store state.

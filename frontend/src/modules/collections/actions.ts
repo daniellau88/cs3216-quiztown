@@ -1,4 +1,5 @@
 import { CollectionData } from '../../types/collections';
+
 import * as types from './types';
 
 export function saveCollection(data: CollectionData): types.SaveCollectionAction {
