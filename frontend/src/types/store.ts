@@ -1,4 +1,5 @@
 import { CollectionsState } from '../modules/collections/types';
+import { NotificationsState } from '../modules/notifications/types';
 import { ThunkAction } from 'redux-thunk';
 import { AnyAction } from 'redux';
 
@@ -7,6 +8,7 @@ import { AnyAction } from 'redux';
  */
 export interface AppState {
     collections: CollectionsState;
+    notifications: NotificationsState;
 }
 
 export type Operation<R> = ThunkAction<Promise<R>, AppState, {}, AnyAction>;

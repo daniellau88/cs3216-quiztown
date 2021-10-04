@@ -3,9 +3,11 @@ import thunk from 'redux-thunk';
 
 import { AppState } from '../types/store';
 import collectionsReducer from './collections/reducers';
+import notificationsReducer from './notifications/reducers';
 
 const rootReducer: Reducer<AppState> = combineReducers<AppState>({
     collections: collectionsReducer,
+    notifications: notificationsReducer,
 });
 
 const middlewares: Middleware[] = [thunk];

@@ -5,7 +5,12 @@ import {
     Grid,
     Typography,
     CssBaseline,
+    Button,
 } from '@material-ui/core';
+import { handleApiRequest } from '../../utilities/ui';
+import { addCollection } from '../../modules/collections/operations';
+import { useDispatch } from 'react-redux';
+import { CollectionPostData } from '../../types/collections';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -18,6 +23,24 @@ const useStyles = makeStyles(() => ({
 
 const TemplatePage: React.FC<{}> = () => {
     const classes = useStyles();
+    const dispatch = useDispatch();
+
+    console.log('Template page.');
+
+    const testApi = () => {
+        console.log('You clicked me!');
+        const collectionPostDataStub: CollectionPostData = { id: 1 };
+        return handleApiRequest(dispatch, dispatch(addCollection(collectionPostDataStub)))
+            .then((response) => {
+                console.log(response);
+            })
+            .then(() => {
+                return true;
+            })
+            .catch(() => {
+                return false;
+            });
+    };
 
     return (
         <>
@@ -27,6 +50,9 @@ const TemplatePage: React.FC<{}> = () => {
                     <Typography>
                         uwu
                     </Typography>
+                    <Button onClick={testApi}>
+                        click me!
+                    </Button>
                 </Grid>
             </Box>
         </>
