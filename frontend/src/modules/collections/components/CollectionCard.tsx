@@ -9,9 +9,9 @@ import {
     Grid,
     Typography
 } from '@material-ui/core';
-import QTButton from './QTButton';
+import QTButton from '../../../components/QTButton';
 import { ReorderOutlined, Add } from '@material-ui/icons';
-import colours from '../utilities/colours';
+import colours from '../../../utilities/colours';
 
 const useStyles = makeStyles(() => ({
     root: {

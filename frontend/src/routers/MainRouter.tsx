@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import TemplatePage from '../pages/utilities/TemplatePage';
-import CollectionPage from '../pages/CollectionPage';
+import CollectionPage from '../modules/collections/pages/CollectionPage';
 import routes from '../utilities/routes';
 
 const MainRouter = (): JSX.Element => {
