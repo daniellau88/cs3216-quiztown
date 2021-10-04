@@ -14,6 +14,6 @@ max-line-length = 88
 # McCabe Complexity
 max-complexity = 20
 
-exclude = */migrations/*
+exclude = */migrations/*,*/venv/*
 
 inline-quotes = double

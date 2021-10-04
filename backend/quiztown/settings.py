@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "authentication",
     "collection",
-    'rest_framework',
+    "user",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
@@ -137,5 +138,15 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "quiztown.common.renderers.QuiztownJSONRenderer",
     ],
-    'EXCEPTION_HANDLER': 'quiztown.common.errors.exception_handler',
+    "EXCEPTION_HANDLER": "quiztown.common.errors.exception_handler",
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+    ],
 }
+
+AUTH_USER_MODEL = "user.User"
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "authentication.backends.GoogleAuthenticationBackend",
+]

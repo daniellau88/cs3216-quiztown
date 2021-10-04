@@ -20,6 +20,7 @@ class ErrorCode:
     NOT_FOUND = 5
 
     INTERNAL_SERVER = 200
+    DEPENDENCY_ERROR = 201
 
 
 class ApplicationError(Exception):
@@ -79,7 +80,7 @@ def exception_handler(exc: Exception, context):
     response = rest_exception_handler(exc, context)
 
     print(exc)
-    traceback.format_exc()
+    traceback.print_exc()
 
     code = -1
     messages = []
