@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import TemplatePage from '../pages/utilities/TemplatePage';
+import CollectionPage from '../pages/CollectionPage';
 import routes from '../utilities/routes';
 
 const MainRouter = (): JSX.Element => {
@@ -8,6 +9,7 @@ const MainRouter = (): JSX.Element => {
         <>
             <Switch>
                 <Route exact path={routes.ROOT} component={TemplatePage} />
+                <Route exact path={routes.COLLECTIONS.INDEX} component={CollectionPage} />
             </Switch>
         </>
     );

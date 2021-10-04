@@ -2,7 +2,7 @@ import * as React from 'react';
 import {
     makeStyles,
     AppBar,
-    Box,
+    Container,
 } from '@material-ui/core';
 import clsx from 'clsx';
 import NavigationBar from '../components/navigation/NavigationBar';
@@ -31,14 +31,14 @@ const AppLayout: React.FC<{}> = (props: Props) => {
     const classes = useStyles();
 
     return (
-        <Box className={classes.root}>
+        <Container className={classes.root} maxWidth='xl'>
             <AppBar position="fixed" className={classes.appBar}>
                 <NavigationBar />
             </AppBar>
             <main className={clsx(classes.content, {})}>
                 {props.children}
             </main>
-        </Box>
+        </Container>
     );
 };
 
