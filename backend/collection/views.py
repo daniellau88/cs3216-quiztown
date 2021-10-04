@@ -1,8 +1,10 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Collection
+
 from collection.serializers import CollectionSerializer
+
+from .models import Collection
 
 
 @api_view(["GET", "POST"])

@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from quiztown.common.decorators import validate_request_data
 from quiztown.common.errors import ApplicationError, ErrorCode
 from user.models import User
+from user.serializers import UserSerializer
 
 from . import serializers
 from .models import GoogleAuthentication
@@ -26,7 +27,8 @@ def login_view(request, data, *args, **kwargs):
     user = authenticate(request, username=username, password=password)
     if user is not None:
         login(request, user)
-        return Response({})
+        serializer = UserSerializer(user)
+        return Response({'user': serializer.data})
 
     raise ApplicationError(ErrorCode.UNAUTHENTICATED, [
                            "Incorrect username or password"])
@@ -64,7 +66,8 @@ def google_login_view(request, data):
     user = authenticate(request, google_sub=sub)
     if user is not None:
         login(request, user)
-        return Response({})
+        serializer = UserSerializer(user)
+        return Response({'user': serializer.data})
 
     # User does not exist
     new_user = User(email=email, name=name, profile_picture_link=profile_picture)
@@ -75,7 +78,8 @@ def google_login_view(request, data):
     user = authenticate(request, google_sub=sub)
     if user is not None:
         login(request, user)
-        return Response({})
+        serializer = UserSerializer(user)
+        return Response({'user': serializer.data})
 
     raise ApplicationError(ErrorCode.UNAUTHENTICATED, [
                            "Failed to login"])

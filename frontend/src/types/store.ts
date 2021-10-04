@@ -1,6 +1,7 @@
 import { AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
+import { AuthState } from '../modules/auth/types';
 import { CollectionsState } from '../modules/collections/types';
 import { NotificationsState } from '../modules/notifications/types';
 
@@ -8,6 +9,7 @@ import { NotificationsState } from '../modules/notifications/types';
  * Describes the overall shape of the application's Redux store state.
  */
 export interface AppState {
+    auth: AuthState;
     collections: CollectionsState;
     notifications: NotificationsState;
 }

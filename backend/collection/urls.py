@@ -1,6 +1,7 @@
 from django.urls import path
-from collection import views
 from rest_framework.urlpatterns import format_suffix_patterns
+
+from collection import views
 
 urlpatterns = [
     path("", views.collection_list),
