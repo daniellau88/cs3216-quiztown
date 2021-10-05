@@ -9,6 +9,7 @@ export interface CollectionData {
     private: boolean;
     created_at: number;
     owner_id: number; // TODO: change to owner object
+    image_link: string;
 }
 
 export interface CollectionEntity {
@@ -16,5 +17,6 @@ export interface CollectionEntity {
     name: string;
     private: boolean;
     created_at: number;
-    owner_id: number; // TODO: change to owner object
+    owner_id: number;
+    image_link: string;
 }
