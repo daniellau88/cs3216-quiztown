@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "authentication",
     "collection",
+    "card",
     "user",
     "rest_framework",
 ]
