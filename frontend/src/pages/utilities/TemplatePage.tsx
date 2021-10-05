@@ -34,7 +34,7 @@ const TemplatePage: React.FC<{}> = () => {
 
     const testApi = () => {
         console.log('You clicked me!');
-        const collectionPostDataStub: CollectionPostData = { id: 1 };
+        const collectionPostDataStub: CollectionPostData = { name: 'hi', owner_id: 1 };
         return handleApiRequest(dispatch, dispatch(addCollection(collectionPostDataStub)))
             .then((response) => {
                 console.log(response);

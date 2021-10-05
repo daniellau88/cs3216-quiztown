@@ -1,4 +1,4 @@
-import { CollectionData, CollectionEntity, CollectionMiniEntity } from '../../types/collections';
+import { CollectionData, CollectionEntity } from '../../types/collections';
 import { EntityCollection, EntityStore } from '../../types/store';
 
 // Action Names
@@ -23,5 +23,5 @@ export type CollectionsActionTypes = SaveCollectionAction | AddCollectionAction;
 // State Types
 export interface CollectionsState {
     allCollections: EntityCollection;
-    collections: EntityStore<CollectionMiniEntity, CollectionEntity>;
+    collections: EntityStore<CollectionEntity, CollectionEntity>;
 }

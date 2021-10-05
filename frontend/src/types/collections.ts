@@ -1,19 +1,20 @@
 export interface CollectionPostData {
-    // TODO complete post definition.
-    id: number;
+    name: string;
+    owner_id: number;
 }
 
 export interface CollectionData {
-    // TODO complete post definition.
     id: number;
+    name: string;
+    private: boolean;
+    created_at: number;
+    owner_id: number; // TODO: change to owner object
 }
 
-export interface CollectionMiniEntity {
-    // TODO complete entity definition.
+export interface CollectionEntity {
     id: number;
-}
-
-export interface CollectionEntity extends CollectionMiniEntity {
-    // TODO complete entity definition.
-    replace_this: number;
+    name: string;
+    private: boolean;
+    created_at: number;
+    owner_id: number; // TODO: change to owner object
 }

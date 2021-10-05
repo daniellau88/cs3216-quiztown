@@ -20,15 +20,15 @@ def test_view(request):
 
 @api_view(["POST"])
 @validate_request_data(serializers.LoginRequestSerializer)
-def login_view(request, data, *args, **kwargs):
-    username = data["username"]
-    password = data["password"]
+def login_view(request, serializer, *args, **kwargs):
+    username = serializer.validated_data["username"]
+    password = serializer.validated_data["password"]
 
     user = authenticate(request, username=username, password=password)
     if user is not None:
         login(request, user)
         serializer = UserSerializer(user)
-        return Response({'user': serializer.data})
+        return Response({"user": serializer.data})
 
     raise ApplicationError(ErrorCode.UNAUTHENTICATED, [
                            "Incorrect username or password"])
@@ -36,8 +36,8 @@ def login_view(request, data, *args, **kwargs):
 
 @api_view(["POST"])
 @validate_request_data(serializers.GoogleLoginRequestSerializer)
-def google_login_view(request, data):
-    token_id = data["token_id"]
+def google_login_view(request, serializer):
+    token_id = serializer.validated_data["token_id"]
 
     params = {"id_token": token_id}
 
@@ -67,7 +67,7 @@ def google_login_view(request, data):
     if user is not None:
         login(request, user)
         serializer = UserSerializer(user)
-        return Response({'user': serializer.data})
+        return Response({"user": serializer.data})
 
     # User does not exist
     new_user = User(email=email, name=name, profile_picture_link=profile_picture)
@@ -79,7 +79,7 @@ def google_login_view(request, data):
     if user is not None:
         login(request, user)
         serializer = UserSerializer(user)
-        return Response({'user': serializer.data})
+        return Response({"user": serializer.data})
 
     raise ApplicationError(ErrorCode.UNAUTHENTICATED, [
                            "Failed to login"])
