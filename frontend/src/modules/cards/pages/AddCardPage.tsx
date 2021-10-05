@@ -81,7 +81,7 @@ const AddCardPage: React.FC<{}> = () => {
             <Box className={classes.root}>
                 <Grid container direction='column' className={classes.container}>
                     <Grid container className={classes.header}>
-                        <TextField value={cardTitle} onChange={handleTitleChange}/>
+                        <TextField value={cardTitle} onChange={handleTitleChange} />
                         <Button
                             variant="contained"
                             component="label"
@@ -103,19 +103,17 @@ const AddCardPage: React.FC<{}> = () => {
                             onClick={confirmFile}
                         >
                             Confirm
-                        </Button>
-                    }
+                        </Button>}
 
                     {!selectedFile &&
-                    <Grid container direction='column' className={classes.inputFields}>
-                        <TextField multiline label="Question" variant="outlined" value={question} onChange={handleQuestionChange} />
-                        <TextField multiline label="Answer" variant="outlined" value={answer} onChange={handleAnswerChange} />
-                    </Grid>
-                    }
+                        <Grid container direction='column' className={classes.inputFields}>
+                            <TextField multiline label="Question" variant="outlined" value={question} onChange={handleQuestionChange} />
+                            <TextField multiline label="Answer" variant="outlined" value={answer} onChange={handleAnswerChange} />
+                        </Grid>}
 
-                    <ImageCard/>
-                </Grid>
-            </Box>
+                    <ImageCard />
+                </Grid >
+            </Box >
         </>
     );
 };
