@@ -15,6 +15,7 @@ import { googleLogin } from '../../modules/auth/operations';
 import { addCollection } from '../../modules/collections/operations';
 import { GoogleLoginPostData } from '../../types/auth';
 import { CollectionPostData } from '../../types/collections';
+import { getIntervals, getNextBoxNumber } from '../../utilities/leitner';
 import { handleApiRequest } from '../../utilities/ui';
 
 const useStyles = makeStyles(() => ({
@@ -29,6 +30,7 @@ const useStyles = makeStyles(() => ({
 const TemplatePage: React.FC<{}> = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
+    const [currentBox, setCurrentBox] = React.useState(0);
 
     console.log('Template page.');
 
@@ -45,6 +47,12 @@ const TemplatePage: React.FC<{}> = () => {
             .catch(() => {
                 return false;
             });
+    };
+
+    const testLeitner = (nextBox: number) => {
+        console.log('Leitner button poked!');
+        console.log(currentBox + ' ' + nextBox);
+        setCurrentBox(nextBox);
     };
 
     const onGoogleLoginSuccess = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
@@ -73,8 +81,16 @@ const TemplatePage: React.FC<{}> = () => {
                         uwu
                     </Typography>
                     <Button onClick={testApi}>
-                        click me!
+                        Click me to test API!
                     </Button>
+                    {getIntervals(currentBox).map((interval, index) => {
+                        console.log(index + ' e ' + interval);
+                        const button =
+                            <Button onClick={() => testLeitner(getNextBoxNumber(currentBox, index + 1))}>
+                                Confidence: {index + 1}, Interval: {interval}
+                            </Button>;
+                        return button;
+                    })}
                     <GoogleSignInButton onSuccess={onGoogleLoginSuccess} />
                 </Grid>
             </Box>
