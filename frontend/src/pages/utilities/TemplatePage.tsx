@@ -15,7 +15,7 @@ import { googleLogin } from '../../modules/auth/operations';
 import { addCollection } from '../../modules/collections/operations';
 import { GoogleLoginPostData } from '../../types/auth';
 import { CollectionPostData } from '../../types/collections';
-import { getIntervals, getNextBoxNumber } from '../../utilities/leitner';
+import { getIntervals, getNextBoxNumber, getNextIntervalEndDate } from '../../utilities/leitner';
 import { handleApiRequest } from '../../utilities/ui';
 
 const useStyles = makeStyles(() => ({
@@ -52,6 +52,7 @@ const TemplatePage: React.FC<{}> = () => {
     const testLeitner = (nextBox: number) => {
         console.log('Leitner button poked!');
         console.log(currentBox + ' ' + nextBox);
+        console.log('Date: ' + getNextIntervalEndDate(nextBox));
         setCurrentBox(nextBox);
     };
 

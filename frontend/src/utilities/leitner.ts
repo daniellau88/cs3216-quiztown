@@ -1,3 +1,5 @@
+import { roundDownDay } from './datetime';
+
 // TODO grab baseMultiplier and maxBoxNumber from user settings.
 const baseMultiplier = 1.0;
 const maxBoxNumber = 5;
@@ -20,6 +22,16 @@ export function getNextBoxNumber(currentBox: number, confidence: number): number
             return Math.min(maxBoxNumber, currentBox + 1.0);
     }
     return 1;
+}
+
+export function getNextIntervalEndDate(currentBox: number): Date {
+    const date = new Date();
+    return roundDownDay(new Date(date.setTime(date.getTime() + getIntervalFromBoxNumber(currentBox) * 86400000)));
+
+}
+
+export function getIntervalFromBoxNumber(currentBox: number): number {
+    return Math.round(Math.pow(leitnerMultiplier, currentBox));
 }
 
 // To show user the max interval of their settings.
