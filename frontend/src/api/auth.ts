@@ -10,12 +10,16 @@ export class AuthAPI extends BaseAPI {
 
     public login(data: LoginPostData): ApiPromise<LoginResponseData> {
         console.log('Logging in');
-        return this.post(`${this.getAuthUrl()}/login`, data);
+        const resp: ApiPromise<LoginResponseData> = this.post(`${this.getAuthUrl()}/login`, data);
+        BaseAPI.refreshCsrfToken();
+        return resp;
     }
 
     public googleLogin(data: GoogleLoginPostData): ApiPromise<LoginResponseData> {
         console.log('Logging in with google');
-        return this.post(`${this.getAuthUrl()}/googleLogin`, data);
+        const resp: ApiPromise<LoginResponseData> = this.post(`${this.getAuthUrl()}/googleLogin`, data);
+        BaseAPI.refreshCsrfToken();
+        return resp;
     }
 }
 

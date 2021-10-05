@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosPromise, AxiosResponse } from 'axios';
 
 import { ApiPromise, ApiResponse, StatusMessageType } from '../types';
 
-import { csrfToken as initialToken } from './helpers/server-context';
+import { getCsrfTokenCookie } from './helpers/server-context';
 
 const DEFAULT_API_RESPONSE: ApiResponse<{}> = Object.freeze({
     code: -1,
@@ -22,7 +22,11 @@ const client = axios.create({
 });
 
 class BaseAPI {
-    private static csrfToken = initialToken;
+    private static csrfToken = getCsrfTokenCookie();
+
+    public static refreshCsrfToken(): void {
+        BaseAPI.csrfToken = getCsrfTokenCookie();
+    }
 
     private clientGet<D>(url: string, params?: any): AxiosPromise<ApiResponse<D>> {
         return client.get(url, { params, ...this.getConfig() });
@@ -106,14 +110,14 @@ class BaseAPI {
                     // so binary data can be sent successfully to the backend.
                     'Content-Type': undefined,
                     Accept: 'application/json',
-                    'X-CSRF-Token': BaseAPI.csrfToken,
+                    'X-CSRFToken': BaseAPI.csrfToken,
                 },
             };
         }
         return {
             headers: {
                 Accept: 'application/json',
-                'X-CSRF-Token': BaseAPI.csrfToken,
+                'X-CSRFToken': BaseAPI.csrfToken,
             },
         };
     }
