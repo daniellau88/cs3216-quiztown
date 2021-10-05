@@ -1,10 +1,10 @@
-import { AnyAction } from 'redux';
 import { hideLoading, showLoading } from 'react-redux-loading-bar';
+import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 // import { enqueueNotification } from 'modules/notifications/operations';
-import { ApiResponse, StatusMessage, StatusMessageType } from '../types';
 import { enqueueNotification } from '../modules/notifications/actions';
+import { ApiResponse, StatusMessage, StatusMessageType } from '../types';
 
 /**
  * Displays the loading bar while the API request is being run and displays
@@ -101,13 +101,13 @@ function showStatusMessages(dispatch: ThunkDispatch<any, any, AnyAction>, messag
 
 function getNotificationVariant(type: StatusMessageType) {
     switch (type) {
-    case StatusMessageType.Error:
-        return 'error';
-    case StatusMessageType.Warning:
-        return 'warning';
-    case StatusMessageType.Information:
-        return 'info';
-    case StatusMessageType.Success:
-        return 'success';
+        case StatusMessageType.Error:
+            return 'error';
+        case StatusMessageType.Warning:
+            return 'warning';
+        case StatusMessageType.Information:
+            return 'info';
+        case StatusMessageType.Success:
+            return 'success';
     }
 }

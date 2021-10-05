@@ -6,4 +6,4 @@ combine_as_imports = true
 [tool.autopep8]
 max_line_length = 88
 recursive = true
-exclude = '*/migrations/*'
+exclude = '*/migrations/*,*/venv/*'

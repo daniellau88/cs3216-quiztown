@@ -1,11 +1,14 @@
-import { AnyAction, applyMiddleware, combineReducers, createStore, Middleware, Reducer, Store } from 'redux';
+import { AnyAction, Middleware, Reducer, Store, applyMiddleware, combineReducers, createStore } from 'redux';
 import thunk from 'redux-thunk';
 
 import { AppState } from '../types/store';
+
+import authReducer from './auth/reducers';
 import collectionsReducer from './collections/reducers';
 import notificationsReducer from './notifications/reducers';
 
 const rootReducer: Reducer<AppState> = combineReducers<AppState>({
+    auth: authReducer,
     collections: collectionsReducer,
     notifications: notificationsReducer,
 });

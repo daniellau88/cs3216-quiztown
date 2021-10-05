@@ -1,16 +1,17 @@
-import * as React from 'react';
 import {
-    makeStyles,
     Box,
     Card,
     CardActions,
-    CardMedia,
     CardContent,
+    CardMedia,
     Grid,
-    Typography
+    Typography,
+    makeStyles,
 } from '@material-ui/core';
+import { Add, ReorderOutlined } from '@material-ui/icons';
+import * as React from 'react';
+
 import QTButton from '../../../components/QTButton';
-import { ReorderOutlined, Add } from '@material-ui/icons';
 import colours from '../../../utilities/colours';
 
 const useStyles = makeStyles(() => ({
@@ -31,7 +32,7 @@ const useStyles = makeStyles(() => ({
     },
     progressBar: {
         width: '100%',
-        position: 'absolute', 
+        position: 'absolute',
         top: 0,
         paddingLeft: '20px',
     },
@@ -49,7 +50,7 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-const CollectionCard: React.FC<{isAddCollectionCard?:boolean}> = ({isAddCollectionCard=false}) => {
+const CollectionCard: React.FC<{ isAddCollectionCard?: boolean }> = ({ isAddCollectionCard = false }) => {
     const classes = useStyles();
     // TODO: Replace mock data
     const collectionName = 'CVS Physio 1';
@@ -88,7 +89,7 @@ const CollectionCard: React.FC<{isAddCollectionCard?:boolean}> = ({isAddCollecti
             <Card className={`${classes.root} ${classes.center}`} onClick={addNewCollection}>
                 <CardContent>
                     <Grid container className={classes.center}>
-                        <Add className={classes.addIcon}/>
+                        <Add className={classes.addIcon} />
                     </Grid>
                     <Typography gutterBottom variant="h5" component="div">
                         Add Collection
@@ -106,7 +107,7 @@ const CollectionCard: React.FC<{isAddCollectionCard?:boolean}> = ({isAddCollecti
                 height="140"
                 image={imageSrc}
             />
-            <Box className={classes.progressBar} style={{background: progressBarColor}}>
+            <Box className={classes.progressBar} style={{ background: progressBarColor }}>
                 <Typography className={classes.progressText}>Progress {progressPercentage}%</Typography>
             </Box>
             <Typography className={classes.tags}>{collectionTags.join(', ')}</Typography>
@@ -117,7 +118,7 @@ const CollectionCard: React.FC<{isAddCollectionCard?:boolean}> = ({isAddCollecti
                 </Typography>
                 <Grid container>
                     <ReorderOutlined />
-                    <Typography variant="body1" style={{marginLeft: 6}}>
+                    <Typography variant="body1" style={{ marginLeft: 6 }}>
                         {collectionNumCards} cards
                     </Typography>
                 </Grid>

@@ -1,6 +1,8 @@
 import * as React from 'react';
+
 import routes from '../../utilities/routes';
 import { headerSize } from '../utiltiies/constants';
+
 import NavigationBarElement from './NavigationBarElement';
 
 interface OwnProps {

@@ -1,10 +1,11 @@
-import * as React from 'react';
 import {
-    makeStyles,
-    Typography,
     Box,
+    Typography,
+    makeStyles,
 } from '@material-ui/core';
+import * as React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+
 import { headerSize } from '../utiltiies/constants';
 
 const useStyles = makeStyles((theme) => ({

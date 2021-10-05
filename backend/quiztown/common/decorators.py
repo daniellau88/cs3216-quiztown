@@ -7,7 +7,7 @@ def validate_request_data(serializer_class):
             serializer = serializer_class(data=request.data)
 
             if serializer.is_valid():
-                return view(request, serializer.validated_data, *args, **kwargs)
+                return view(request, serializer, *args, **kwargs)
 
             error_messages = [key + ": " + ", ".join(serializer.errors[key])
                               for key in serializer.errors.keys()]

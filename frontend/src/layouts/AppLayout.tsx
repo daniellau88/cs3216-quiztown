@@ -1,10 +1,11 @@
-import * as React from 'react';
 import {
-    makeStyles,
     AppBar,
     Container,
+    makeStyles,
 } from '@material-ui/core';
 import clsx from 'clsx';
+import * as React from 'react';
+
 import NavigationBar from '../components/navigation/NavigationBar';
 
 const useStyles = makeStyles((theme) => ({

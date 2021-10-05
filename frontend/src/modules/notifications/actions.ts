@@ -1,4 +1,5 @@
 import { NotificationVariant } from '../../types/notifications';
+
 import * as types from './types';
 
 /**

@@ -1,4 +1,21 @@
-const csrfTag = document.querySelector('meta[name="csrf-token"]');
-const csrfToken = csrfTag ? csrfTag.getAttribute('content') : null;
+// ref: https://stackoverflow.com/a/50735730
+const getCookie = (name: string): string => {
+    let cookieValue = '';
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+};
 
-export { csrfToken };
+const getCsrfTokenCookie = (): string => {
+    return getCookie('csrftoken');
+};
+
+export { getCsrfTokenCookie };

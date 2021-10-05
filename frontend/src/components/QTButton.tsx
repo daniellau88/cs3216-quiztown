@@ -1,9 +1,10 @@
-import React from 'react';
 import {
-    makeStyles,
     Button,
     Typography,
+    makeStyles,
 } from '@material-ui/core';
+import React from 'react';
+
 import colours from '../utilities/colours';
 
 const useStyles = makeStyles(() => ({
@@ -33,16 +34,16 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface QTButtonProps {
-    alert?:boolean
-    outlined?:boolean
+    alert?: boolean
+    outlined?: boolean
     onClick?: () => void
 }
 
 const QTButton: React.FC<QTButtonProps> = ({
     children,
     onClick,
-    outlined=false,
-    alert=false,
+    outlined = false,
+    alert = false,
 }) => {
     const classes = useStyles();
 
@@ -56,7 +57,7 @@ const QTButton: React.FC<QTButtonProps> = ({
             size='small'
             onClick={() => onClick && onClick()}
         >
-            <Typography className={alert ? classes.alertText: classes.primaryText}>
+            <Typography className={alert ? classes.alertText : classes.primaryText}>
                 {children}
             </Typography>
         </Button>

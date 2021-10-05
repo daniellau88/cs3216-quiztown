@@ -1,12 +1,13 @@
+import { ThemeProvider, createTheme } from '@material-ui/core';
+import { createBrowserHistory } from 'history';
 import * as React from 'react';
 import { Provider } from 'react-redux';
-import { Router, Route } from 'react-router-dom';
-import MainRouter from './routers/MainRouter';
+import { Route, Router } from 'react-router-dom';
+
 import AppLayout from './layouts/AppLayout';
-import { createBrowserHistory } from 'history';
-import { createTheme, ThemeProvider } from '@material-ui/core';
-import palette from './utilities/palette';
 import configureStore from './modules/store';
+import MainRouter from './routers/MainRouter';
+import palette from './utilities/palette';
 
 const history = createBrowserHistory();
 const store = configureStore();
