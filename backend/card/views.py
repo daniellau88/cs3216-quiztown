@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from collection.models import Collection
 
 from quiztown.common.decorators import convert_keys_to_item, validate_request_data
+from quiztown.common.pagination import CustomPagination
 
 from . import serializers
 from .models import Card
@@ -18,6 +19,13 @@ def list_or_create_card_view(request, *args, **kwargs):
 
 def list_card_view(request, pk):
     cards = Card.objects.filter(collection_id=pk)
+
+    paginator = CustomPagination()
+    page = paginator.paginate_queryset(cards, request)
+    if page is not None:
+        serializer = serializers.CardSerializer(page, many=True)
+        return paginator.get_paginated_response({"cards": serializer.data})
+
     serializer = serializers.CardSerializer(cards, many=True)
     return Response({"cards": serializer.data})
 
