@@ -22,3 +22,27 @@ export function saveCollection(data: CollectionData): NormalizeOperation {
         dispatch(actions.saveCollection(data));
     };
 }
+
+export function updateCollection(id: number, collection: CollectionPostData): Operation<ApiResponse<CollectionEntity>> {
+    return async (dispatch, getState) => {
+        const response = await api.collections.patchCollection(id, collection);
+        const data = response.payload.collection;
+        batched(dispatch, saveCollection(data), actions.editCollection());
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return { ...response, payload: getCollectionEntity(getState(), data.id)! };
+    };
+}
+
+export function deleteCollection(id: number): Operation<ApiResponse<{}>> {
+    return async (dispatch) => {
+        const response = await api.collections.deleteCollection(id);
+        batched(dispatch, discardCollection(id));
+        return response;
+    };
+}
+
+export function discardCollection(id: number): NormalizeOperation {
+    return (dispatch) => {
+        dispatch(actions.deleteCollection(id));
+    };
+}
