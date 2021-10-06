@@ -6,6 +6,8 @@ import {
 import { fabric } from 'fabric';
 import React, { useEffect, useState } from 'react';
 
+import { initAnswerBoxes, initAnswerOptions, validateAnswer } from '../utils';
+
 const useStyles = makeStyles(() => ({
     root: {
         display: 'flex',
@@ -28,14 +30,15 @@ const ImageCard: React.FC<ImageCardProps> = ({
     const classes = useStyles();
     const CANVAS_ID = 'quiztown-canvas';
 
-    const [canvas, setCanvas] = useState(new fabric.Canvas('dummy'));
-
     const initCanvas = () => {
         const canvas = new fabric.Canvas(CANVAS_ID,{
             hoverCursor: 'pointer',
             selection: false,
             targetFindTolerance: 2,
         });
+
+        const optionsCoordsMap = initAnswerOptions(canvas, isEditing);
+        initAnswerBoxes(canvas, isEditing);
 
         // canvas.setBackgroundImage('https://picsum.photos/200', canvas.renderAll.bind(canvas), {
         //     scaleX: 1,
@@ -48,39 +51,34 @@ const ImageCard: React.FC<ImageCardProps> = ({
             }
         });
         canvas.on('object:modified', (e) => {
+            if (e.target?.type != 'text') {
+                return;
+            }
+
             if (e.target) {
-                e.target.opacity = 1;
+                const text = e.target as fabric.Text;
+                const isAnswerCorrect = validateAnswer(e.target);
+                if (isAnswerCorrect) {
+                    // Reveal the answer
+                } else {
+                    // Reset to original location
+                    const textContent = text.get('text');
+                    if (!textContent) return;
+
+                    const originalCoord = optionsCoordsMap.get(textContent);
+                    if (!originalCoord) return;
+
+                    text.setPositionByOrigin(originalCoord, 'left', 'top');
+                    text.setCoords();
+                    e.target.opacity = 1;
+                }
             }
         });
         return canvas;
     };
 
-    const initAnswerOptions = (canvas:fabric.Canvas) => {
-        const MOCK_OPTIONS = ['Hypothalamus', 'Kangaroo', 'LongNameMedicalPartOfBodyBones', 'Short', 'SomeBones', 'OtherBones'];
-        if (isEditing) {
-            MOCK_OPTIONS.forEach(option => {
-                // Use textbox to allow edit
-                const textbox = new fabric.Textbox(option);
-
-                textbox.perPixelTargetFind = true;
-                canvas.add(textbox);
-            });
-            return;
-        }
-
-        MOCK_OPTIONS.forEach(option => {
-            const text = new fabric.Text(option);
-
-            text.perPixelTargetFind = true;
-            text.hasControls = text.hasBorders = false;
-            canvas.add(text);
-        });
-    };
-
     useEffect(() => {
-        const canvas = initCanvas();
-        setCanvas(canvas);
-        initAnswerOptions(canvas);
+        initCanvas();
     }, []);
 
 
@@ -91,6 +89,7 @@ const ImageCard: React.FC<ImageCardProps> = ({
                 <Box display="flex" justifyContent='center' width='100%'>
                     <canvas
                         id={CANVAS_ID}
+                        // TODO: Make sizing dynamic
                         width={'500'}
                         height={'500'}
                         className={classes.canvas}
