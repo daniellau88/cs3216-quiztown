@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-^811mr%qvo)c2^(%tf0!x-8#axv%ixom$k%d(4ot5(d^e_ocgs"
 
-# SECURITY WARNING: don"t run with debug turned on in production!
+# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -143,7 +143,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",
     ],
-    "DEFAULT_PAGINATION_CLASS": "my_project.apps.core.pagination.CustomPagination",
+    "DEFAULT_PAGINATION_CLASS": "quiztown.apps.core.pagination.CustomPagination",
 }
 
 AUTH_USER_MODEL = "user.User"
