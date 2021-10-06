@@ -35,7 +35,7 @@ const TemplatePage: React.FC<{}> = () => {
     console.log('Template page.');
 
     const testCreateApi = () => {
-        console.log('You clicked me! I\'m create!');
+        console.log('You clicked me! I\'m created! hehehe');
         const collectionPostDataStub: CollectionPostData = { name: 'hi', owner_id: 1 };
         return handleApiRequest(dispatch, dispatch(addCollection(collectionPostDataStub)))
             .then((response) => {
@@ -50,7 +50,7 @@ const TemplatePage: React.FC<{}> = () => {
     };
 
     const testUpdateApi = () => {
-        console.log('You clicked me! I\'m update!');
+        console.log('You clicked me! I\'m updated! uwu');
         const collectionPostDataStub: CollectionPostData = { name: 'hi', owner_id: 1 };
         return handleApiRequest(dispatch, dispatch(updateCollection(1, collectionPostDataStub)))
             .then((response) => {
@@ -65,7 +65,7 @@ const TemplatePage: React.FC<{}> = () => {
     };
 
     const testDeleteApi = () => {
-        console.log('You clicked me! I\'m delete!');
+        console.log('You clicked me! I\'m deleted :(');
         return handleApiRequest(dispatch, dispatch(deleteCollection(1)))
             .then((response) => {
                 console.log(response);
