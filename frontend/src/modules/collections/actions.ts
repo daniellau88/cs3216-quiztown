@@ -15,3 +15,16 @@ export function addCollection(id: number): types.AddCollectionAction {
         id,
     };
 }
+
+export function editCollection(): types.EditCollectionAction {
+    return {
+        type: types.EDIT_COLLECTION,
+    };
+}
+
+export function deleteCollection(id: number): types.DeleteCollectionAction {
+    return {
+        type: types.DELETE_COLLECTION,
+        id: id,
+    };
+}

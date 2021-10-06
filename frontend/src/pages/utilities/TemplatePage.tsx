@@ -12,7 +12,7 @@ import { useDispatch } from 'react-redux';
 
 import GoogleSignInButton from '../../modules/auth/components/GoogleSignInButton';
 import { googleLogin } from '../../modules/auth/operations';
-import { addCollection } from '../../modules/collections/operations';
+import { addCollection, deleteCollection, updateCollection } from '../../modules/collections/operations';
 import { GoogleLoginPostData } from '../../types/auth';
 import { CollectionPostData } from '../../types/collections';
 import { getIntervals, getNextBoxNumber, getNextIntervalEndDate } from '../../utilities/leitner';
@@ -34,10 +34,39 @@ const TemplatePage: React.FC<{}> = () => {
 
     console.log('Template page.');
 
-    const testApi = () => {
-        console.log('You clicked me!');
+    const testCreateApi = () => {
+        console.log('You clicked me! I\'m create!');
         const collectionPostDataStub: CollectionPostData = { name: 'hi', owner_id: 1 };
         return handleApiRequest(dispatch, dispatch(addCollection(collectionPostDataStub)))
+            .then((response) => {
+                console.log(response);
+            })
+            .then(() => {
+                return true;
+            })
+            .catch(() => {
+                return false;
+            });
+    };
+
+    const testUpdateApi = () => {
+        console.log('You clicked me! I\'m update!');
+        const collectionPostDataStub: CollectionPostData = { name: 'hi', owner_id: 1 };
+        return handleApiRequest(dispatch, dispatch(updateCollection(1, collectionPostDataStub)))
+            .then((response) => {
+                console.log(response);
+            })
+            .then(() => {
+                return true;
+            })
+            .catch(() => {
+                return false;
+            });
+    };
+
+    const testDeleteApi = () => {
+        console.log('You clicked me! I\'m delete!');
+        return handleApiRequest(dispatch, dispatch(deleteCollection(1)))
             .then((response) => {
                 console.log(response);
             })
@@ -81,9 +110,17 @@ const TemplatePage: React.FC<{}> = () => {
                     <Typography>
                         uwu
                     </Typography>
-                    <Button onClick={testApi}>
-                        Click me to test API!
+                    <Button onClick={testCreateApi}>
+                        Click me to test Create API!
                     </Button>
+                    <Button onClick={testUpdateApi}>
+                        Click me to test Update API!
+                    </Button>
+                    <Button onClick={testDeleteApi}>
+                        Click me to test Delete API!
+                    </Button>
+                </Grid>
+                <Grid>
                     {getIntervals(currentBox).map((interval, index) => {
                         console.log(index + ' e ' + interval);
                         const button =
