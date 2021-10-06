@@ -1,8 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from quiztown.common.decorators import validate_request_data
-from quiztown.common.errors import ApplicationError, ErrorCode
+from quiztown.common.decorators import convert_keys_to_item, validate_request_data
 
 from . import serializers
 from .models import Collection
@@ -29,33 +28,30 @@ def create_collection_view(request, serializer):
 
 
 @api_view(["GET", "PUT", "DELETE"])
-def get_or_update_or_delete_collection_view(request, pk, *args, **kwargs):
-    try:
-        collection = Collection.objects.get(pk=pk)
-    except Collection.DoesNotExist:
-        raise ApplicationError(ErrorCode.NOT_FOUND, ["Collection not found"])
-
+@convert_keys_to_item({"pk": Collection})
+def get_or_update_or_delete_collection_view(request, *args, **kwargs):
     if request.method == "GET":
-        return get_collection_view(request, collection, *args, **kwargs)
-
+        return get_collection_view(request, *args, **kwargs)
     elif request.method == "PUT":
-        return update_collection_view(request, collection, *args, **kwargs)
-
+        return update_collection_view(request, *args, **kwargs)
     elif request.method == "DELETE":
-        return delete_collection_view(request, collection, *args, **kwargs)
+        return delete_collection_view(request, *args, **kwargs)
 
 
-def get_collection_view(request, collection):
-    serializer = serializers.CollectionSerializer(collection)
+def get_collection_view(request, pk_item):
+    serializer = serializers.CollectionSerializer(pk_item)
     return Response({"collection": serializer.data})
 
 
-@validate_request_data(serializers.CollectionSerializer)
-def update_collection_view(request, serializer, collection):
+@validate_request_data(
+    serializers.CollectionSerializer,
+    is_update=True,
+)
+def update_collection_view(request, pk_item, serializer):
     serializer.save()
     return Response({"collection": serializer.data})
 
 
-def delete_collection_view(request, collection):
-    collection.delete()
+def delete_collection_view(request, pk_item):
+    pk_item.delete()
     return Response({})
