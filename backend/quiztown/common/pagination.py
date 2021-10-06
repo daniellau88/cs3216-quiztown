@@ -1,9 +1,6 @@
 from rest_framework.pagination import LimitOffsetPagination
-# from rest_framework.response import Response
-
 
 DEFAULT_LIMIT = 20
-DEFAULT_PAGE_SIZE = 5
 
 
 class CustomPagination(LimitOffsetPagination):
