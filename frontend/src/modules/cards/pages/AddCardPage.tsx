@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
 import {
-    makeStyles,
     Box,
     Button,
+    CssBaseline,
     Grid,
     TextField,
     Typography,
-    CssBaseline,
+    makeStyles,
 } from '@material-ui/core';
+import React, { useState } from 'react';
+
+import ImageCard from '../components/ImageCard';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -51,7 +53,11 @@ const AddCardPage: React.FC<{}> = () => {
         setAnswer(event.target.value);
     };
 
-    const fileData = () => {
+    const confirmFile = () => {
+        console.log('POST req');
+    };
+
+    const showFileData = () => {
         if (selectedFile) {
             return (
                 <Box>
@@ -89,7 +95,16 @@ const AddCardPage: React.FC<{}> = () => {
                         </Button>
                     </Grid>
 
-                    {selectedFile && fileData()}
+                    {selectedFile && showFileData()}
+                    {selectedFile &&
+                        <Button
+                            variant="contained"
+                            component="label"
+                            onClick={confirmFile}
+                        >
+                            Confirm
+                        </Button>
+                    }
 
                     {!selectedFile &&
                     <Grid container direction='column' className={classes.inputFields}>
@@ -97,6 +112,8 @@ const AddCardPage: React.FC<{}> = () => {
                         <TextField multiline label="Answer" variant="outlined" value={answer} onChange={handleAnswerChange} />
                     </Grid>
                     }
+
+                    <ImageCard/>
                 </Grid>
             </Box>
         </>
