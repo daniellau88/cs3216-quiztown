@@ -6,7 +6,6 @@ from card import views
 urlpatterns = [
     path("", views.list_or_create_card_view),
     path("<int:pkCard>/", views.get_or_update_or_delete_card_view),
-    path("flagged/", views.list_or_create_card_view),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -2,73 +2,62 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from collection.models import Collection
 
-from quiztown.common.decorators import validate_request_data
-from quiztown.common.errors import ApplicationError, ErrorCode
+from quiztown.common.decorators import convert_keys_to_item, validate_request_data
 
 from . import serializers
 from .models import Card
 
 
 @api_view(["GET", "POST"])
-def list_or_create_card_view(request, pk, *args, **kwargs):
+def list_or_create_card_view(request, *args, **kwargs):
     if request.method == "GET":
-        return list_card_view(request, pk, *args, **kwargs)
+        return list_card_view(request, *args, **kwargs)
     elif request.method == "POST":
-        return create_card_view(request, pk, *args, **kwargs)
+        return create_card_view(request, *args, **kwargs)
 
 
 def list_card_view(request, pk):
-    cards = Card.objects.get(collection_id=pk)
+    cards = Card.objects.filter(collection_id=pk)
     serializer = serializers.CardSerializer(cards, many=True)
     return Response({"cards": serializer.data})
 
 
-@validate_request_data(serializers.CardSerializer)
-def create_card_view(request, pk, serializer):
-    try:
-        Collection.objects.get(id=pk)
-    except Collection.DoesNotExist:
-        raise ApplicationError(ErrorCode.NOT_FOUND, ["Collection not found"])
-
-    serializer.save(collection_id=pk)
+@validate_request_data(serializers.CardCreateSerializer)
+@convert_keys_to_item({"pk": Collection})
+def create_card_view(request, pk_item, serializer):
+    serializer.save(collection_id=pk_item.id)
     return Response({"card": serializer.data})
 
 
 @api_view(["GET", "PUT", "DELETE"])
-def get_or_update_or_delete_card_view(request, pkCard, *args, **kwargs):
-    try:
-        card = Card.objects.get(pk=pkCard)
-    except Card.DoesNotExist:
-        raise ApplicationError(ErrorCode.NOT_FOUND, ["Card not found"])
+@convert_keys_to_item({"pkCard": Card})
+def get_or_update_or_delete_card_view(request, *args, **kwargs):
 
     if request.method == "GET":
-        return get_card_view(request, card, *args, **kwargs)
+        return get_card_view(request, *args, **kwargs)
 
     elif request.method == "PUT":
-        return update_card_view(request, card, *args, **kwargs)
+        return update_card_view(request, *args, **kwargs)
 
     elif request.method == "DELETE":
-        return delete_card_view(request, card, *args, **kwargs)
+        return delete_card_view(request, *args, **kwargs)
 
 
-def get_card_view(request, card):
-    serializer = serializers.CardSerializer(card)
+def get_card_view(request, pkCard_item, *args, **kwargs):
+    serializer = serializers.CardSerializer(pkCard_item)
     return Response({"card": serializer.data})
 
 
-@validate_request_data(serializers.CardSerializer)
-def update_card_view(request, serializer, card):
+@validate_request_data(
+    serializers.CardSerializer,
+    item_key="pkCard_item",
+    is_update=True,
+)
+def update_card_view(request, pkCard_item, serializer, *args, **kwargs):
     serializer.save()
     return Response({"card": serializer.data})
 
 
-def delete_card_view(request, card):
-    card.delete()
+def delete_card_view(request, pkCard_item, *args, **kwargs):
+    pkCard_item.delete()
     return Response({})
-
-
-@api_view(["GET"])
-def list_flagged_card_view(request, *args, **kwargs):
-    cards = Card.objects.all()
-    serializer = serializers.CardSerializer(cards, many=True)
-    return Response({"cards": serializer.data})
