@@ -6,5 +6,5 @@ class UploadFileSerializer(serializers.Serializer):
 
 
 class UploadFileResponseSerializer(serializers.Serializer):
-    file_name = serializers.CharField()
-    file_key = serializers.CharField()
+    file_key = serializers.CharField(max_length=50)
+    file_name = serializers.CharField(max_length=100)

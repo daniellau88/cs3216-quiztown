@@ -1,8 +1,18 @@
 from datetime import date
 
+import numpy
+
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 
 from quiztown.common.models import TimestampedModel
+
+
+class JSONEncoder(DjangoJSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, numpy.float32):
+            return float(obj)
+        return super().default(obj)
 
 
 class Card(TimestampedModel):
@@ -17,8 +27,9 @@ class Card(TimestampedModel):
     collection_id = models.IntegerField()
     flagged = models.PositiveSmallIntegerField(
         choices=FLAG_STATUS, default=NOTFLAGED, blank=True)
-    image_link = models.CharField(max_length=1024, default="", blank=True)
+    image_file_key = models.CharField(max_length=1024, default="", blank=True)
     next_date = models.DateField(default=date.today, blank=True)
+    answer_details = models.JSONField(default=dict, encoder=JSONEncoder)
 
     def create(self, validated_data):
         return Card.objects.create(validated_data)
@@ -29,5 +40,7 @@ class Card(TimestampedModel):
             "collection_id", instance.collection_id)
         instance.flagged = validated_data.get("flagged", instance.flagged)
         instance.next_date = validated_data.get("next_date", instance.next_date)
+        instance.answer_details = validated_data.get(
+            "answer_details", instance.answer_details)
         instance.save()
         return instance
