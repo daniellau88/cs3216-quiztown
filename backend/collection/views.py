@@ -1,11 +1,13 @@
+import threading
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from quiztown.common.decorators import convert_keys_to_item, validate_request_data
 from quiztown.common.pagination import CustomPagination
 
-from . import serializers
-from .models import Collection
+from . import jobs, serializers
+from .models import Collection, CollectionImport
 
 
 @api_view(["GET", "POST"])
@@ -63,3 +65,19 @@ def update_collection_view(request, pk_item, serializer):
 def delete_collection_view(request, pk_item):
     pk_item.delete()
     return Response({})
+
+
+@api_view(["POST"])
+@convert_keys_to_item({"pk": Collection})
+@validate_request_data(serializers.CollectionImportCreateSerializer)
+def import_collection_view(request, pk_item, serializer):
+    serializer.save(collection_id=pk_item.id, status=CollectionImport.IN_QUEUE)
+
+    # TODO: start task
+    collection_import = serializer.instance
+    t = threading.Thread(target=jobs.import_cards_from_file,
+                         args=(), kwargs={"collection_import": collection_import})
+    t.setDaemon(True)
+    t.start()
+
+    return Response(serializer.data)

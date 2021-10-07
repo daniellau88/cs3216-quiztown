@@ -6,8 +6,8 @@ from quiztown.common.models import TimestampedModel
 class Collection(TimestampedModel):
     name = models.CharField(max_length=30)
     owner_id = models.IntegerField()
-    private = models.IntegerField(default=1, blank=True)
-    image_link = models.CharField(max_length=1024, default="", blank=True)
+    private = models.IntegerField(default=1)
+    image_link = models.CharField(max_length=1024, default="")
 
     def create(self, validated_data):
         return Collection.objects.create(validated_data)
@@ -16,6 +16,33 @@ class Collection(TimestampedModel):
         instance.name = validated_data.get("name", instance.name)
         instance.owner_id = validated_data.get("owner_id", instance.owner_id)
         instance.private = validated_data.get("private", instance.private)
-        instance.image_link = validated_data.get("image_link", instance.image_link)
+        instance.save()
+        return instance
+
+
+class CollectionImport(TimestampedModel):
+    UNKNOWN = 0
+    IN_QUEUE = 1
+    IN_PROGRESS = 2
+    COMPLETED = 3
+    ERROR = 4
+    IMPORT_STATUS = (
+        (UNKNOWN, "Unknown"),
+        (IN_QUEUE, "In Queue"),
+        (IN_PROGRESS, "In Progress"),
+        (COMPLETED, "Completed"),
+        (ERROR, "Error"),
+    )
+
+    collection_id = models.IntegerField()
+    status = models.PositiveIntegerField(choices=IMPORT_STATUS)
+    file_key = models.CharField(max_length=50)
+    file_name = models.CharField(max_length=100)
+
+    def create(self, validated_data):
+        return CollectionImport.objects.create(validated_data)
+
+    def update(self, instance, validated_data):
+        instance.status = validated_data.get("status", instance.status)
         instance.save()
         return instance

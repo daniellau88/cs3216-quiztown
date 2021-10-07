@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "collection",
     "card",
     "user",
+    "upload",
     "rest_framework",
 ]
 
