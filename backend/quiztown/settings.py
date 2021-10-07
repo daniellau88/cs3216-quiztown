@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "authentication",
     "collection",
+    "card",
     "user",
     "rest_framework",
 ]
@@ -142,6 +143,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",
     ],
+    "DEFAULT_PAGINATION_CLASS": "quiztown.common.pagination.CustomPagination",
 }
 
 AUTH_USER_MODEL = "user.User"
