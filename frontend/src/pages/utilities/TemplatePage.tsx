@@ -3,6 +3,7 @@ import {
     Button,
     CssBaseline,
     Grid,
+    Input,
     Typography,
     makeStyles,
 } from '@material-ui/core';
@@ -10,6 +11,7 @@ import * as React from 'react';
 import { GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
 import { useDispatch } from 'react-redux';
 
+import api from '../../api';
 import GoogleSignInButton from '../../modules/auth/components/GoogleSignInButton';
 import { googleLogin } from '../../modules/auth/operations';
 import { addCollection, deleteCollection, updateCollection } from '../../modules/collections/operations';
@@ -78,6 +80,14 @@ const TemplatePage: React.FC<{}> = () => {
             });
     };
 
+    const test = async (e: React.ChangeEvent<any>) => {
+        const promises = [...e.target.files].map(async (file: File) => {
+            await api.uploads.createUpload(file);
+        });
+
+        await Promise.all(promises);
+    };
+
     const testLeitner = (nextBox: number) => {
         console.log('Leitner button poked!');
         console.log(currentBox + ' ' + nextBox);
@@ -119,6 +129,12 @@ const TemplatePage: React.FC<{}> = () => {
                     <Button onClick={testDeleteApi}>
                         Click me to test Delete API!
                     </Button>
+                    <Input
+                        type="file"
+                        onChange={test}
+                        inputProps={{ multiple: true }}
+                    />
+
                 </Grid>
                 <Grid>
                     {getIntervals(currentBox).map((interval, index) => {
