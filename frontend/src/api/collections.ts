@@ -1,5 +1,6 @@
-import { ApiPromise } from '../types';
-import { CollectionData, CollectionPostData } from '../types/collections';
+import { ApiPromise, CollectionData as CollectionDataType, CollectionQueryParams } from '../types';
+import { CollectionData, CollectionListData, CollectionPostData } from '../types/collections';
+import { toQueryString } from '../utilities/url';
 
 import BaseAPI from './base';
 import { URL_SUFFIX } from './helpers/url-suffix';
@@ -7,6 +8,10 @@ import { URL_SUFFIX } from './helpers/url-suffix';
 export class CollectionsAPI extends BaseAPI {
     protected getCollectionUrl(): string {
         return 'collections';
+    }
+
+    public getCollectionList(params: CollectionQueryParams): ApiPromise<CollectionDataType<CollectionListData>> {
+        return this.get(`${this.getCollectionUrl()}?${toQueryString(params)}` + URL_SUFFIX);
     }
 
     public addCollection(data: CollectionPostData): ApiPromise<{ collection: CollectionData }> {

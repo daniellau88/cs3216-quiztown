@@ -3,6 +3,15 @@ export interface CollectionPostData {
     owner_id: number;
 }
 
+export interface CollectionListData {
+    id: number;
+    name: string;
+    private: boolean;
+    created_at: number;
+    owner_id: number; // TODO: change to owner object
+    image_link: string;
+}
+
 export interface CollectionData {
     id: number;
     name: string;
