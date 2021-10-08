@@ -49,18 +49,19 @@ class PaddleOCRResult():
 
 
 def import_card_from_image(image_key: str, collection_id: int, name: str = ""):
-    if not os.path.isfile(STATIC_CARD_DIRECTORY + image_key):
-        if not os.path.isfile(UPLOAD_DIRECTORY + image_key):
-            raise ApplicationError(ErrorCode.NOT_FOUND, ["File not found"])
-        copyfile(UPLOAD_DIRECTORY + image_key, STATIC_CARD_DIRECTORY + image_key)
+    if not os.path.isfile(UPLOAD_DIRECTORY + image_key):
+        raise ApplicationError(ErrorCode.NOT_FOUND, ["File not found"])
 
     paddle_ocr_results = get_paddle_ocr_text_bounding_boxes_from_image(
-        STATIC_CARD_DIRECTORY + image_key)
+        UPLOAD_DIRECTORY + image_key)
 
     filtered_results = list(filter(lambda x: x.confidence >
                                    MIN_CONFIDENCE, paddle_ocr_results))
     if len(filtered_results) < MIN_NUM_RESULTS_IN_IMAGE:
         return
+
+    if not os.path.isfile(STATIC_CARD_DIRECTORY + image_key):
+        copyfile(UPLOAD_DIRECTORY + image_key, STATIC_CARD_DIRECTORY + image_key)
 
     image_metadata = get_image_metadata(STATIC_CARD_DIRECTORY + image_key)
 

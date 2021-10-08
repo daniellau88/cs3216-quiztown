@@ -75,9 +75,16 @@ def import_collection_view(request, pk_item, serializer):
 
     # TODO: start task
     collection_import = serializer.instance
-    t = threading.Thread(target=jobs.import_cards_from_file,
+    t = threading.Thread(target=jobs.import_cards_from_pdf,
                          args=(), kwargs={"collection_import": collection_import})
     t.setDaemon(True)
     t.start()
 
-    return Response(serializer.data)
+    return Response({"import": serializer.data})
+
+
+@api_view(["GET"])
+def get_collection_import_view(request, pk):
+    imports = CollectionImport.objects.filter(collection_id=pk).order_by('-created_at')
+    serializer = serializers.CollectionImportSerializer(imports, many=True)
+    return Response({"imports": serializer.data})
