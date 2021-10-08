@@ -94,9 +94,11 @@ export function withStatusMessages<R, S, E>(
 }
 
 function showStatusMessages(dispatch: ThunkDispatch<any, any, AnyAction>, messages: StatusMessage[]) {
-    messages.forEach((message) => {
-        dispatch(enqueueNotification(message.content, getNotificationVariant(message.type)));
-    });
+    if (messages) {
+        messages.forEach((message) => {
+            dispatch(enqueueNotification(message.content, getNotificationVariant(message.type)));
+        });
+    }
 }
 
 function getNotificationVariant(type: StatusMessageType) {

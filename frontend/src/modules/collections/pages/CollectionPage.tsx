@@ -8,6 +8,7 @@ import {
 import * as React from 'react';
 
 import CollectionCard from '../components/CollectionCard';
+import CollectionTable from '../components/CollectionTable';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -23,8 +24,6 @@ const useStyles = makeStyles(() => ({
 
 const CollectionPage: React.FC<{}> = () => {
     const classes = useStyles();
-    // TODO: Replace mock data
-    const mockData = [0, 1, 2];
 
     return (
         <>
@@ -42,15 +41,7 @@ const CollectionPage: React.FC<{}> = () => {
 
                     <Grid item xs={12}>
                         <Grid container justifyContent="space-between" spacing={6}>
-                            <Grid item>
-                                <CollectionCard isAddCollectionCard />
-                            </Grid>
-
-                            {mockData.map((value) => (
-                                <Grid key={value} item>
-                                    <CollectionCard />
-                                </Grid>
-                            ))}
+                            <CollectionTable />
                         </Grid>
                     </Grid>
                 </Grid>

@@ -1,11 +1,26 @@
-import { CollectionData } from '../../types/collections';
+import { CollectionData, CollectionListData } from '../../types/collections';
+import { CollectionDelta } from '../../types/store';
 
 import * as types from './types';
+
+export function saveCollectionList(list: CollectionListData[]): types.SaveCollectionListAction {
+    return {
+        type: types.SAVE_COLLECTION_LIST,
+        list,
+    };
+}
 
 export function saveCollection(data: CollectionData): types.SaveCollectionAction {
     return {
         type: types.SAVE_COLLECTION,
         data,
+    };
+}
+
+export function updateCollectionList(delta: CollectionDelta): types.UpdateCollectionListAction {
+    return {
+        type: types.UPDATE_COLLECTION_LIST,
+        delta,
     };
 }
 

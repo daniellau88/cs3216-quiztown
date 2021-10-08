@@ -12,6 +12,7 @@ import { Add, ReorderOutlined } from '@material-ui/icons';
 import * as React from 'react';
 
 import QTButton from '../../../components/QTButton';
+import { CollectionEntity } from '../../../types/collections';
 import colours from '../../../utilities/colours';
 
 const useStyles = makeStyles(() => ({
@@ -50,10 +51,17 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-const CollectionCard: React.FC<{ isAddCollectionCard?: boolean }> = ({ isAddCollectionCard = false }) => {
+interface OwnProps {
+    data: CollectionEntity;
+    isAddCollectionCard?: boolean;
+}
+
+type Props = OwnProps;
+
+const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) => {
     const classes = useStyles();
     // TODO: Replace mock data
-    const collectionName = 'CVS Physio 1';
+    const collectionName = data.name;
     const collectionNumCards = '12';
     const collectionTags = ['Tag1', 'Tag2'];
     const progressPercentage = '10';
