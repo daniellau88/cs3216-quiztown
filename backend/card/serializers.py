@@ -6,7 +6,7 @@ from .models import Card
 class CardCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Card
-        exclude = ["collection_id"]
+        exclude = ["collection_id", "image_metadata"]
 
 
 class CardSerializer(serializers.ModelSerializer):

@@ -6,6 +6,7 @@ from dataclasses import asdict, dataclass
 from shutil import copyfile
 
 from paddleocr import PaddleOCR
+from PIL import Image
 
 from quiztown.common.errors import ApplicationError, ErrorCode
 
@@ -61,10 +62,14 @@ def import_card_from_image(image_key: str, collection_id: int, name: str = ""):
     if len(filtered_results) < MIN_NUM_RESULTS_IN_IMAGE:
         return
 
+    image_metadata = get_image_metadata(STATIC_CARD_DIRECTORY + image_key)
+
     json_results = [asdict(result) for result in filtered_results]
 
     card = Card(name=name, collection_id=collection_id,
-                image_file_key=image_key, answer_details={"results": json_results})
+                image_file_key=image_key,
+                answer_details={"results": json_results},
+                image_metadata=image_metadata)
     card.save()
 
     return card
@@ -90,3 +95,13 @@ def get_paddle_ocr_text_bounding_boxes_from_image(image_file_path: str) -> list:
         return []
 
     return [convert_result_row_to_object(result_row) for result_row in result]
+
+
+def get_image_metadata(image_path: str):
+    im = Image.open(image_path)
+    width, height = im.size
+
+    return {
+        "width": width,
+        "height": height,
+    }
