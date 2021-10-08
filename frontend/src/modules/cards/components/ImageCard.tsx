@@ -7,7 +7,9 @@ import { fabric } from 'fabric';
 import React, { useEffect, useState } from 'react';
 
 import { useWindowDimensions } from '../../../utilities/customHooks';
-import { initAnswerBoxes, initAnswerOptions, validateAnswer } from '../utils';
+import MOCK_PAYLOAD from '../test/sampledata.json';
+import sampleImage from '../test/sampleimage.png';
+import { initAnswerBoxes, initAnswerOptions, resetToOriginalPosition, revealAnswer, validateAnswer } from '../utils';
 
 const MAX_CANVAS_WIDTH = 1440;
 const HEADER_HEIGHT = 80;
@@ -47,14 +49,16 @@ const ImageCard: React.FC<ImageCardProps> = ({
             targetFindTolerance: 2,
         });
 
-        const optionsCoordsMap = initAnswerOptions(canvas, isEditing);
-        const answersCoordsMap = initAnswerBoxes(canvas, isEditing);
-
-        canvas.setBackgroundImage('https://picsum.photos/200', canvas.renderAll.bind(canvas), {
-            // TODO: Change 200 to actual image's width and height
-            scaleX: canvasMaxWidth / 200,
-            scaleY: canvasMaxHeight / 200,
+        canvas.setBackgroundImage(sampleImage, canvas.renderAll.bind(canvas), {
+            scaleX: 1,
+            scaleY: 1,
+            // TODO: Center at middle once can get image width, so that can translate answer boxes too
+            // left: canvas.getCenter().left,
+            // originX: 'center',
         });
+
+        const optionsCoordsMap = initAnswerOptions(canvas, isEditing, MOCK_PAYLOAD.results);
+        const answersCoordsMap = initAnswerBoxes(canvas, isEditing, MOCK_PAYLOAD.results);
 
         canvas.on('object:moving', (e) => {
             if (e.target) {
@@ -70,19 +74,11 @@ const ImageCard: React.FC<ImageCardProps> = ({
                 const text = e.target as fabric.Text;
                 const isAnswerCorrect = validateAnswer(text, answersCoordsMap);
                 if (isAnswerCorrect) {
-                    // Reveal the answer
                     canvas.remove(e.target);
+                    revealAnswer(answersCoordsMap, text, canvas);
                 } else {
-                    // Reset to original location
-                    const textContent = text.get('text');
-                    if (!textContent) return;
-
-                    const originalCoord = optionsCoordsMap.get(textContent);
-                    if (!originalCoord) return;
-
-                    text.setPositionByOrigin(originalCoord, 'left', 'top');
-                    text.setCoords();
                     e.target.opacity = 1;
+                    resetToOriginalPosition(optionsCoordsMap, text);
                 }
             }
         });

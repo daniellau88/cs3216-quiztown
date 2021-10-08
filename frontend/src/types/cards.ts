@@ -1,6 +1,7 @@
 export interface CardPostData {
     name: string;
     collection_id: number;
+    image_link: string;
 }
 
 export interface CardData {

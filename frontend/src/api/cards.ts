@@ -1,5 +1,5 @@
 import { ApiPromise } from '../types';
-import { CardData, CardPostData} from '../types/cards';
+import { CardData, CardPostData } from '../types/cards';
 
 import BaseAPI from './base';
 import { URL_SUFFIX } from './helpers/url-suffix';

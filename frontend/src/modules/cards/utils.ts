@@ -8,30 +8,31 @@ const CANVAS_PADDING = 40;
 const FONT_SIZE = 20;
 const CORRECTNESS_MARGIN = 20;
 
+type AnswerData = {
+    text: string;
+    confidence: number;
+    bounding_box: number[][];
+}
+
 // Image card generation utils
-export const initAnswerOptions = (canvas: fabric.Canvas, isEditing: boolean): Map<string, fabric.Point> => {
-    // TODO: Change to options from BE
-    const MOCK_OPTIONS = ['Hypothalamus', 'Kangaroo', 'LongNameMedicalPartOfBodyBones', 'Short', 'SomeBones', 'OtherBones', 'organ', 'brain', 'text'];
+
+export const initAnswerOptions = (
+    canvas: fabric.Canvas,
+    isEditing: boolean,
+    data: Array<AnswerData>,
+): Map<string, fabric.Point> => {
     const optionsCoordsMap = new Map();
     const canvasWidth = canvas.getWidth();
     const canvasHeight = canvas.getHeight();
 
-    // TODO: Options for card that's editing, maybe don't even show options, as they can just edit the answerBoxes immediately
     if (isEditing) {
-        MOCK_OPTIONS.forEach(option => {
-            // Use textbox to allow edit
-            const textbox = new fabric.Textbox(option);
-
-            textbox.perPixelTargetFind = true;
-            canvas.add(textbox);
-        });
         return optionsCoordsMap;
     }
 
     const origin = new fabric.Point(CANVAS_PADDING, canvasHeight - CANVAS_PADDING);
 
-    MOCK_OPTIONS.forEach(option => {
-        const text = new fabric.Text(option, {
+    data.forEach(option => {
+        const text = new fabric.Text(option.text, {
             fontSize: FONT_SIZE,
             perPixelTargetFind: true,
             hasControls: false,
@@ -46,77 +47,82 @@ export const initAnswerOptions = (canvas: fabric.Canvas, isEditing: boolean): Ma
             origin.setX(CANVAS_PADDING);
             origin.setY(origin.y - TEXT_MARGIN);
 
-            optionsCoordsMap.set(option, new fabric.Point(origin.x, origin.y));
+            optionsCoordsMap.set(option.text, new fabric.Point(origin.x, origin.y));
             text.setPositionByOrigin(origin, 'left', 'top');
             origin.setX(origin.x + textWidth + TEXT_MARGIN);
 
         } else {
-            optionsCoordsMap.set(option, new fabric.Point(origin.x, origin.y));
+            optionsCoordsMap.set(option.text, new fabric.Point(origin.x, origin.y));
             origin.setX(origin.x + textWidth + TEXT_MARGIN);
         }
-
         canvas.add(text);
     });
     return optionsCoordsMap;
 };
 
-const MOCK_BOXES = [
-    { top: 0, left: 0, width: 100, height: 100, label: 'text' },
-    { top: 100, left: 50, width: 100, height: 100, label: 'brain' },
-    { top: 200, left: 100, width: 100, height: 100, label: 'organ' },
-];
+const createAnswerTextBox = (box:AnswerData) => {
+    const top = box.bounding_box[0][1];
+    const left = box.bounding_box[0][0];
+    return new fabric.Textbox(box.text, {
+        top: top,
+        left: left,
+        width: box.bounding_box[1][0] - box.bounding_box[0][0],
+        height: box.bounding_box[1][1] - box.bounding_box[0][1],
+        hasControls: false,
+        lockMovementX: true,
+        lockMovementY: true,
+        borderColor: colours.BLACK,
+        backgroundColor: colours.WHITE,
+        stroke: colours.BLACK,
+        fontSize: FONT_SIZE,
+    });
+};
 
-export const initAnswerBoxes = (canvas: fabric.Canvas, isEditing: boolean):Map<string,fabric.Point> => {
+const createAnswerRectangle = (box:AnswerData) => {
+    const top = box.bounding_box[0][1];
+    const left = box.bounding_box[0][0];
+    return new fabric.Rect({
+        top: top,
+        left: left,
+        width: box.bounding_box[1][0] - box.bounding_box[0][0],
+        height: box.bounding_box[1][1] - box.bounding_box[0][1],
+        hasControls: false,
+        lockMovementX: true,
+        lockMovementY: true,
+        borderColor: colours.BLACK,
+        backgroundColor: colours.WHITE,
+        stroke: colours.BLACK,
+    });
+};
+
+export const initAnswerBoxes = (
+    canvas: fabric.Canvas,
+    isEditing: boolean,
+    data: Array<AnswerData>,
+): Map<string, fabric.Rect> => {
     const answersCoordsMap = new Map();
 
-    if (isEditing) {
-        MOCK_BOXES.forEach(box => {
-            // Use textbox to allow edit
-            const rect = new fabric.Rect({
-                top: box.top,
-                left: box.left,
-                width: box.width,
-                height: box.height,
-                hasControls: false,
-                lockMovementX: true,
-                lockMovementY: true,
-                borderColor: colours.BLACK,
-                backgroundColor: colours.WHITE,
-                stroke: colours.BLACK,
-            });
+    data.forEach(box => {
+        const rect = createAnswerRectangle(box);
+        const textbox = createAnswerTextBox(box);
 
-            rect.drawBorders(canvas.getContext());
-            answersCoordsMap.set(box.label, new fabric.Point(box.top, box.left));
+        answersCoordsMap.set(box.text, rect);
 
+        if (!isEditing) {
             canvas.add(rect);
-        });
-
-    } else {
-        MOCK_BOXES.forEach(box => {
-            // Use textbox to allow edit
-            const textbox = new fabric.Textbox(box.label, {
-                top: box.top,
-                left: box.left,
-                width: box.width,
-                height: box.height,
-                hasControls: false,
-                lockMovementX: true,
-                lockMovementY: true,
-                borderColor: colours.BLACK,
-                backgroundColor: colours.WHITE,
-                stroke: colours.BLACK,
-            });
-
-            textbox.drawBorders(canvas.getContext());
-            answersCoordsMap.set(box.label, new fabric.Point(box.top, box.left));
-
+        } else {
             canvas.add(textbox);
-        });
-    }
+        }
+    });
     return answersCoordsMap;
 };
 
-export const validateAnswer = (answerOption:fabric.Text, answersCoordsMap:Map<string,fabric.Point>):boolean => {
+// Image card functionality utils
+
+export const validateAnswer = (
+    answerOption: fabric.Text,
+    answersCoordsMap: Map<string, fabric.Rect>,
+): boolean => {
     const optionTop = answerOption.top;
     const optionLeft = answerOption.left;
     if (!optionTop || !optionLeft) return false;
@@ -124,9 +130,61 @@ export const validateAnswer = (answerOption:fabric.Text, answersCoordsMap:Map<st
     const textContent = answerOption.get('text');
     if (!textContent) return false;
 
-    const answerTopLeftPoint = answersCoordsMap.get(textContent);
-    if (!answerTopLeftPoint) return false;
+    const answerData = answersCoordsMap.get(textContent);
+    if (!answerData) return false;
 
-    return Math.abs(optionTop - answerTopLeftPoint.x) < CORRECTNESS_MARGIN
-        && Math.abs(optionLeft - answerTopLeftPoint.y) < CORRECTNESS_MARGIN;
+    const answerTop = answerData.top;
+    const answerLeft = answerData.left;
+    if (!answerTop || !answerLeft) return false;
+
+    return Math.abs(optionTop - answerTop) < CORRECTNESS_MARGIN
+        && Math.abs(optionLeft - answerLeft) < CORRECTNESS_MARGIN;
+};
+
+
+export const revealAnswer = (
+    answersCoordsMap: Map<string, fabric.Rect>,
+    text: fabric.Text,
+    canvas: fabric.Canvas,
+):void => {
+    const textContent = text.get('text');
+    if (!textContent) return;
+
+    const answerData = answersCoordsMap.get(textContent);
+    if (!answerData) return;
+
+    const answerTop = answerData.top;
+    const answerLeft = answerData.left;
+    if (!answerTop || !answerLeft) return;
+
+    canvas.remove(answerData);
+
+    const answerText = new fabric.Text(textContent, {
+        top: answerTop,
+        left: answerLeft,
+        width: answerData.width,
+        height: answerData.height,
+        hasControls: false,
+        lockMovementX: true,
+        lockMovementY: true,
+        borderColor: colours.BLACK,
+        backgroundColor: colours.WHITE,
+        stroke: colours.GREEN,
+        fontSize: FONT_SIZE,
+    });
+    canvas.add(answerText);
+};
+
+export const resetToOriginalPosition = (
+    optionsCoordsMap: Map<string, fabric.Point>,
+    text: fabric.Text,
+): void => {
+    const textContent = text.get('text');
+    if (!textContent) return;
+
+    const originalCoord = optionsCoordsMap.get(textContent);
+    if (!originalCoord) return;
+
+    text.setPositionByOrigin(originalCoord, 'left', 'top');
+    text.setCoords();
 };
