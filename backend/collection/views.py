@@ -25,10 +25,10 @@ def list_collections_view(request):
     page = paginator.paginate_queryset(collections, request)
     if page is not None:
         serializer = serializers.CollectionSerializer(page, many=True)
-        return paginator.get_paginated_response({"collections": serializer.data})
+        return paginator.get_paginated_response({"items": serializer.data})
 
     serializer = serializers.CollectionSerializer(collections, many=True)
-    return Response({"collections": serializer.data})
+    return Response({"items": serializer.data})
 
 
 @validate_request_data(serializers.CollectionSerializer)

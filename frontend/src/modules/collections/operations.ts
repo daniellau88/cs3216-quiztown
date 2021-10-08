@@ -14,7 +14,6 @@ export function loadAllCollections(options: CollectionOptions): Operation<ApiRes
             options,
             async (params) => {
                 const response = await api.collections.getCollectionList(params);
-                console.log(response);
                 const data: CollectionListData[] = response.payload.items;
                 batched(dispatch, saveCollectionList(data));
                 return response;
