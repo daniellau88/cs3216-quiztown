@@ -38,4 +38,4 @@ def upload_view(request, serializer):
 
     response_serializer = serializers.UploadFileResponseSerializer(response)
 
-    return Response({"file": response_serializer.data})
+    return Response({"item": response_serializer.data})

@@ -34,7 +34,7 @@ def list_card_view(request, pk):
 @convert_keys_to_item({"pk": Collection})
 def create_card_view(request, pk_item, serializer):
     serializer.save(collection_id=pk_item.id)
-    return Response({"card": serializer.data})
+    return Response({"item": serializer.data})
 
 
 @api_view(["GET", "PUT", "DELETE"])
@@ -52,7 +52,7 @@ def get_or_update_or_delete_card_view(request, *args, **kwargs):
 
 def get_card_view(request, pkCard_item, *args, **kwargs):
     serializer = serializers.CardSerializer(pkCard_item)
-    return Response({"card": serializer.data})
+    return Response({"item": serializer.data})
 
 
 @validate_request_data(
@@ -62,7 +62,7 @@ def get_card_view(request, pkCard_item, *args, **kwargs):
 )
 def update_card_view(request, pkCard_item, serializer, *args, **kwargs):
     serializer.save()
-    return Response({"card": serializer.data})
+    return Response({"item": serializer.data})
 
 
 def delete_card_view(request, pkCard_item, *args, **kwargs):
@@ -79,4 +79,4 @@ def import_card_view(request, serializer, pk, *args, **kwargs):
     card = jobs.import_card_from_image(file_key, pk, name=file_name)
 
     response_serializer = serializers.CardSerializer(card)
-    return Response({"card": response_serializer.data})
+    return Response({"item": response_serializer.data})

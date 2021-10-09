@@ -8,7 +8,7 @@ export class UploadsAPI extends BaseAPI {
         return 'uploads/';
     }
 
-    public createUpload(upload: File): ApiPromise<{ upload: UploadData }> {
+    public createUpload(upload: File): ApiPromise<{ item: UploadData }> {
         const formData = new FormData();
         formData.append('file', upload, upload.name);
         return this.post(`${this.getUploadsUrl()}`, formData);

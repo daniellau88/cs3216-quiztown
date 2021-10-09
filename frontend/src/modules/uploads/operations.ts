@@ -7,6 +7,6 @@ export function addUpload(file: File): Operation<ApiResponse<UploadData>> {
     return async (dispatch, getState) => {
         const response = await api.uploads.createUpload(file);
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        return { ...response, payload: response.payload.upload };
+        return { ...response, payload: response.payload.item };
     };
 }

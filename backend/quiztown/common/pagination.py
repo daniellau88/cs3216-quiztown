@@ -10,6 +10,6 @@ class CustomPagination(LimitOffsetPagination):
     offset_query_param = "start"
 
     def get_paginated_response(self, data):
-        response = {"count": self.count}
+        response = {"total_count": self.count}
         response.update(data)
         return Response(response)

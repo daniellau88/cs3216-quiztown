@@ -28,7 +28,7 @@ def login_view(request, serializer, *args, **kwargs):
     if user is not None:
         login(request, user)
         serializer = UserSerializer(user)
-        return Response({"user": serializer.data})
+        return Response({"item": serializer.data})
 
     raise ApplicationError(ErrorCode.UNAUTHENTICATED, [
                            "Incorrect username or password"])
@@ -67,7 +67,7 @@ def google_login_view(request, serializer):
     if user is not None:
         login(request, user)
         serializer = UserSerializer(user)
-        return Response({"user": serializer.data})
+        return Response({"item": serializer.data})
 
     # User does not exist
     new_user = User(email=email, name=name, profile_picture_link=profile_picture)
@@ -79,7 +79,7 @@ def google_login_view(request, serializer):
     if user is not None:
         login(request, user)
         serializer = UserSerializer(user)
-        return Response({"user": serializer.data})
+        return Response({"item": serializer.data})
 
     raise ApplicationError(ErrorCode.UNAUTHENTICATED, [
                            "Failed to login"])

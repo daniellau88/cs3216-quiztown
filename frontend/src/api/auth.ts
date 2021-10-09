@@ -1,5 +1,5 @@
 import { ApiPromise } from '../types';
-import { GoogleLoginPostData, LoginPostData, LoginResponseData } from '../types/auth';
+import { GoogleLoginPostData, LoginPostData, UserData } from '../types/auth';
 
 import BaseAPI from './base';
 
@@ -8,16 +8,16 @@ export class AuthAPI extends BaseAPI {
         return 'auth/';
     }
 
-    public login(data: LoginPostData): ApiPromise<LoginResponseData> {
+    public login(data: LoginPostData): ApiPromise<{ item: UserData }> {
         console.log('Logging in');
-        const resp: ApiPromise<LoginResponseData> = this.post(`${this.getAuthUrl()}/login`, data);
+        const resp: ApiPromise<{ item: UserData }> = this.post(`${this.getAuthUrl()}/login`, data);
         BaseAPI.refreshCsrfToken();
         return resp;
     }
 
-    public googleLogin(data: GoogleLoginPostData): ApiPromise<LoginResponseData> {
+    public googleLogin(data: GoogleLoginPostData): ApiPromise<{ item: UserData }> {
         console.log('Logging in with google');
-        const resp: ApiPromise<LoginResponseData> = this.post(`${this.getAuthUrl()}/googleLogin`, data);
+        const resp: ApiPromise<{ item: UserData }> = this.post(`${this.getAuthUrl()}/googleLogin`, data);
         BaseAPI.refreshCsrfToken();
         return resp;
     }

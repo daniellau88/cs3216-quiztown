@@ -27,7 +27,7 @@ export function loadCollection(id: number): Operation<ApiResponse<CollectionMini
     return (dispatch, getState) => {
         return withCachedEntity(getState, getCollectionMiniEntity, id, async () => {
             const response = await api.collections.getCollection(id);
-            batched(dispatch, saveCollection(response.payload.collection));
+            batched(dispatch, saveCollection(response.payload.item));
             return response;
         });
     };
@@ -36,7 +36,7 @@ export function loadCollection(id: number): Operation<ApiResponse<CollectionMini
 export function addCollection(collection: CollectionPostData): Operation<ApiResponse<CollectionMiniEntity>> {
     return async (dispatch, getState) => {
         const response = await api.collections.addCollection(collection);
-        const data = response.payload.collection;
+        const data = response.payload.item;
         batched(dispatch, saveCollection(data), actions.addCollection(data.id));
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return { ...response, payload: getCollectionMiniEntity(getState(), data.id)! };
@@ -58,7 +58,7 @@ export function saveCollection(data: CollectionData): NormalizeOperation {
 export function updateCollection(id: number, collection: CollectionPostData): Operation<ApiResponse<CollectionMiniEntity>> {
     return async (dispatch, getState) => {
         const response = await api.collections.patchCollection(id, collection);
-        const data = response.payload.collection;
+        const data = response.payload.item;
         batched(dispatch, saveCollection(data), actions.editCollection());
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return { ...response, payload: getCollectionMiniEntity(getState(), data.id)! };
@@ -83,7 +83,7 @@ export function loadCollectionsCard(collectionId: number, cardId: number): Opera
     return async (dispatch, getState) => {
         return withCachedEntity(getState, getCollectionsCardEntity, cardId, async () => {
             const response = await api.collections.getCollectionsCard(collectionId, cardId);
-            batched(dispatch, saveCollectionsCard(response.payload.card));
+            batched(dispatch, saveCollectionsCard(response.payload.item));
             return response;
         });
     };
@@ -92,7 +92,7 @@ export function loadCollectionsCard(collectionId: number, cardId: number): Opera
 export function addCollectionsCard(collectionId: number, card: CollectionsCardPostData): Operation<ApiResponse<CollectionsCardEntity>> {
     return async (dispatch, getState) => {
         const response = await api.collections.addCollectionsCard(collectionId, card);
-        const data = response.payload.card;
+        const data = response.payload.item;
         batched(dispatch, saveCollectionsCard(data), actions.addCollectionsCard(collectionId, data.id));
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return { ...response, payload: getCollectionsCardEntity(getState(), data.id)! };
@@ -108,7 +108,7 @@ export function saveCollectionsCard(data: CollectionsCardData): NormalizeOperati
 export function updateCollectionsCard(collectionId: number, cardId: number, card: CollectionsCardPostData): Operation<ApiResponse<CollectionsCardEntity>> {
     return async (dispatch, getState) => {
         const response = await api.collections.patchCollectionsCard(collectionId, cardId, card);
-        const data = response.payload.card;
+        const data = response.payload.item;
         batched(dispatch, saveCollectionsCard(data), actions.editCollectionsCard(cardId));
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return { ...response, payload: getCollectionsCardEntity(getState(), data.id)! };
@@ -133,7 +133,7 @@ export function discardCollectionsCard(collectionId: number, cardId: number): No
 export function importCollectionsCard(collectionId: number, cardImport: CollectionsCardImportPostData): Operation<ApiResponse<CollectionsCardEntity>> {
     return async (dispatch, getState) => {
         const response = await api.collections.importCollectionsCard(collectionId, cardImport);
-        const data = response.payload.card;
+        const data = response.payload.item;
         batched(dispatch, saveCollectionsCard(data), actions.addCollectionsCard(collectionId, data.id));
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return { ...response, payload: getCollectionsCardEntity(getState(), data.id)! };
