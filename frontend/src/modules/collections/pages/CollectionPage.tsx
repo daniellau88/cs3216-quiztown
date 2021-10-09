@@ -7,7 +7,6 @@ import {
 } from '@material-ui/core';
 import * as React from 'react';
 
-import CollectionCard from '../components/CollectionCard';
 import CollectionTable from '../components/CollectionTable';
 
 const useStyles = makeStyles(() => ({
@@ -19,6 +18,10 @@ const useStyles = makeStyles(() => ({
     header: {
         paddingTop: 60,
         paddingBottom: 60,
+    },
+    table: {
+        paddingLeft: 20,
+        paddingRight: 20,
     },
 }));
 
@@ -40,7 +43,7 @@ const CollectionPage: React.FC<{}> = () => {
                     </Grid>
 
                     <Grid item xs={12}>
-                        <Grid container justifyContent="space-between" spacing={6}>
+                        <Grid container justifyContent="space-between" spacing={6} className={classes.table} >
                             <CollectionTable />
                         </Grid>
                     </Grid>

@@ -1,9 +1,11 @@
 import {
+    Grid,
     Paper,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 
+import CollectionCard from '../../modules/collections/components/CollectionCard';
 import { ApiPromise } from '../../types';
 import { CollectionOptions, EntityCollection } from '../../types/store';
 import LoadingIndicator from '../content/LoadingIndicator';
@@ -12,16 +14,14 @@ import CollectionMeshHeader from './CollectionMeshHeader';
 import { TableFilter } from './TableFilters';
 
 const useStyles = makeStyles((theme) => ({
-    tableWrapper: {
-        overflowX: 'auto',
-        marginLeft: theme.spacing(0),
-        marginRight: theme.spacing(0),
-    },
     pagination: {
         width: '100%',
         marginTop: theme.spacing(0),
         marginLeft: theme.spacing(0),
         marginRight: theme.spacing(0),
+    },
+    card: {
+        marginTop: theme.spacing(3),
     },
 }));
 
@@ -71,21 +71,37 @@ const CollectionMesh: React.FC<Props> = ({
                 filters={filters}
                 isSearchable={isSearchable}
             />
-            <Paper className={classes.tableWrapper}>
+            <Grid container>
                 {isLoading && (
                     <LoadingIndicator />
                 )}
                 {!isLoading &&
+                    <Grid
+                        item
+                        xs={4}
+                        className={classes.card}
+                    >
+                        <CollectionCard isAddCollectionCard={true} />
+                    </Grid>
+                }
+                {!isLoading &&
                     collection.ids.length !== 0 &&
                     collection.ids.map((id) => (
-                        <GridComponent
+                        <Grid
+                            item
                             key={id}
-                            id={id}
-                            {...rowProps}
-                        />
+                            xs={4}
+                            className={classes.card}
+                        >
+                            <GridComponent
+                                key={id}
+                                id={id}
+                                {...rowProps}
+                            />
+                        </Grid>
                     ))
                 }
-            </Paper>
+            </Grid>
         </>
     );
 };
