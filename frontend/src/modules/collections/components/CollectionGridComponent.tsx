@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 
 import { AppState, SelectionKey } from '../../../types/store';
-import { getCollectionEntity } from '../selectors';
+import { getCollectionMiniEntity } from '../selectors';
 
 import CollectionCard from './CollectionCard';
 
@@ -14,7 +14,7 @@ interface OwnProps {
 type Props = OwnProps;
 
 const CollectionGridComponent: React.FC<Props> = ({ id }: Props) => {
-    const collection = useSelector((state: AppState) => getCollectionEntity(state, id));
+    const collection = useSelector((state: AppState) => getCollectionMiniEntity(state, id));
 
     if (!collection) {
         return null;

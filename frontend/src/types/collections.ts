@@ -21,7 +21,7 @@ export interface CollectionData {
     image_link: string;
 }
 
-export interface CollectionEntity {
+export interface CollectionMiniEntity {
     id: number;
     name: string;
     private: boolean;

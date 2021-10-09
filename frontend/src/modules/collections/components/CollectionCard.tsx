@@ -12,7 +12,7 @@ import { Add, ReorderOutlined } from '@material-ui/icons';
 import * as React from 'react';
 
 import QTButton from '../../../components/QTButton';
-import { CollectionEntity } from '../../../types/collections';
+import { CollectionMiniEntity } from '../../../types/collections';
 import colours from '../../../utilities/colours';
 
 const useStyles = makeStyles(() => ({
@@ -52,7 +52,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface OwnProps {
-    data: CollectionEntity;
+    data: CollectionMiniEntity;
     isAddCollectionCard?: boolean;
 }
 
