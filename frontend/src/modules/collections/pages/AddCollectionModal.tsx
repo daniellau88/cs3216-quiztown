@@ -2,14 +2,13 @@ import {
     Box,
     CssBaseline,
     Grid,
+    Input,
     Typography,
     makeStyles,
 } from '@material-ui/core';
 import * as React from 'react';
 
-import CollectionTable from '../components/CollectionTable';
-
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
         paddingTop: '80px',
@@ -19,13 +18,13 @@ const useStyles = makeStyles(() => ({
         paddingTop: 60,
         paddingBottom: 60,
     },
-    table: {
-        paddingLeft: 20,
-        paddingRight: 20,
+    input: {
+        marginLeft: theme.spacing(0),
+        marginRight: theme.spacing(0),
     },
 }));
 
-const CollectionPage: React.FC<{}> = () => {
+const AddCollectionModal: React.FC<{}> = () => {
     const classes = useStyles();
 
     return (
@@ -34,23 +33,21 @@ const CollectionPage: React.FC<{}> = () => {
             <Box className={classes.root}>
                 <Grid container spacing={2}>
                     <Grid container direction='column' className={classes.header}>
-                        <Typography variant='h3'>
-                            My Collections
-                        </Typography>
-                        <Typography variant='h6'>
-                            Each collection contains your handmate notes, pick one and start revising!
-                        </Typography>
+                        <Input className={classes.input}
+                            // handleChange={updateSearchQuery} 
+                            // value={query} 
+                            placeholder="Untitled Collection" />
                     </Grid>
 
-                    <Grid item xs={12}>
-                        <Grid container justifyContent="space-between" spacing={6} className={classes.table} >
+                    {/* <Grid item xs={12}>
+                        <Grid container justifyContent="space-between" spacing={6}>
                             <CollectionTable />
                         </Grid>
-                    </Grid>
+                    </Grid> */}
                 </Grid>
             </Box>
         </>
     );
 };
 
-export default CollectionPage;
+export default AddCollectionModal;

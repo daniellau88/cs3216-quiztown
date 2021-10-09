@@ -1,11 +1,11 @@
 import api from '../../api';
 import { ApiResponse } from '../../types';
-import { CollectionData, CollectionEntity, CollectionListData, CollectionPostData } from '../../types/collections';
+import { CollectionData, CollectionListData, CollectionMiniEntity, CollectionPostData } from '../../types/collections';
 import { CollectionOptions, EntityCollection, NormalizeOperation, Operation } from '../../types/store';
 import { batched, queryEntityCollection } from '../../utilities/store';
 
 import * as actions from './actions';
-import { getAllCollections, getCollectionEntity } from './selectors';
+import { getAllCollections, getCollectionMiniEntity } from './selectors';
 
 export function loadAllCollections(options: CollectionOptions): Operation<ApiResponse<EntityCollection>> {
     return (dispatch, getState) => {
@@ -14,7 +14,6 @@ export function loadAllCollections(options: CollectionOptions): Operation<ApiRes
             options,
             async (params) => {
                 const response = await api.collections.getCollectionList(params);
-                console.log(response);
                 const data: CollectionListData[] = response.payload.items;
                 batched(dispatch, saveCollectionList(data));
                 return response;
@@ -24,13 +23,13 @@ export function loadAllCollections(options: CollectionOptions): Operation<ApiRes
     };
 }
 
-export function addCollection(collection: CollectionPostData): Operation<ApiResponse<CollectionEntity>> {
+export function addCollection(collection: CollectionPostData): Operation<ApiResponse<CollectionMiniEntity>> {
     return async (dispatch, getState) => {
         const response = await api.collections.addCollection(collection);
         const data = response.payload.collection;
         batched(dispatch, saveCollection(data), actions.addCollection(data.id));
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        return { ...response, payload: getCollectionEntity(getState(), data.id)! };
+        return { ...response, payload: getCollectionMiniEntity(getState(), data.id)! };
     };
 }
 
@@ -46,13 +45,13 @@ export function saveCollection(data: CollectionData): NormalizeOperation {
     };
 }
 
-export function updateCollection(id: number, collection: CollectionPostData): Operation<ApiResponse<CollectionEntity>> {
+export function updateCollection(id: number, collection: CollectionPostData): Operation<ApiResponse<CollectionMiniEntity>> {
     return async (dispatch, getState) => {
         const response = await api.collections.patchCollection(id, collection);
         const data = response.payload.collection;
         batched(dispatch, saveCollection(data), actions.editCollection());
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        return { ...response, payload: getCollectionEntity(getState(), data.id)! };
+        return { ...response, payload: getCollectionMiniEntity(getState(), data.id)! };
     };
 }
 

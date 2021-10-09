@@ -24,10 +24,10 @@ def list_card_view(request, pk):
     page = paginator.paginate_queryset(cards, request)
     if page is not None:
         serializer = serializers.CardSerializer(page, many=True)
-        return paginator.get_paginated_response({"cards": serializer.data})
+        return paginator.get_paginated_response({"items": serializer.data})
 
     serializer = serializers.CardSerializer(cards, many=True)
-    return Response({"cards": serializer.data})
+    return Response({"items": serializer.data})
 
 
 @validate_request_data(serializers.CardCreateSerializer)
