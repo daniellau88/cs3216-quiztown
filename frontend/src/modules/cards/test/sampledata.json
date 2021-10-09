@@ -1,0 +1,79 @@
+{
+    "results": [
+        {
+            "text": "Sott palate",
+            "confidence": 0.922724187374115,
+            "bounding_box": [[47, 40], [118, 56]]
+        },
+        {
+            "text": "Nasopharynx", 
+            "confidence": 0.920019507408142, 
+            "bounding_box": [[478, 110], [564, 123]]
+        },
+        {
+            "text": "Hardpalate",
+            "confidence": 0.997558891773224,
+            "bounding_box": [[47, 123], [123, 140]]
+        },
+        {
+            "text": "Uvula",
+            "confidence": 0.9914840459823608,
+            "bounding_box": [[478, 144], [515, 159]]
+        }, 
+        { 
+            "text": "Oropharyn",
+            "confidence": 0.9931719899177552,
+            "bounding_box": [[477, 172], [554, 189]]
+        },
+        {
+            "text": "Epiglottis",
+            "confidence": 0.9949176907539368,
+            "bounding_box": [[48, 191], [108, 205]]
+        },
+        {
+            "text": "Glottis",
+            "confidence": 0.9227091670036316,
+            "bounding_box": [[183, 212], [223, 227]]
+        },
+        {
+            "text": "Laryngophanyntx",
+            "confidence": 0.8955684304237366,
+            "bounding_box": [[479, 208], [582, 221]]
+        },
+        {
+            "text": "Larynx",
+            "confidence": 0.95827054977417,
+            "bounding_box": [[48, 240], [94, 259]]
+        },
+        { 
+            "text": "Trachea",
+            "confidence": 0.9981356859207152,
+            "bounding_box": [[48, 266], [100, 281]]
+        },
+        {
+            "text": "Esophaqus",
+            "confidence": 0.9603167772293092,
+            "bounding_box": [[50, 465], [122, 476]]
+        },
+        {
+            "text": "Nasal cavity",
+            "confidence": 0.982739269733429,
+            "bounding_box": [[110, 539], [186, 557]]
+        },
+        {
+            "text": "Oral cavity",
+            "confidence": 0.9852569699287416,
+            "bounding_box": [[110, 572], [176, 590]]
+        },
+        {
+            "text": "Pharynx",
+            "confidence": 0.9973830580711364,
+            "bounding_box": [[110, 605], [163, 624]]
+        },
+        {
+            "text": "Larynx",
+            "confidence": 0.9766295552253724,
+            "bounding_box": [[110, 641], [154, 655]]
+        }
+    ]
+}

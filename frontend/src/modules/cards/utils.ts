@@ -7,6 +7,7 @@ const TEXT_PADDING = 10;
 const CANVAS_PADDING = 40;
 const FONT_SIZE = 20;
 const CORRECTNESS_MARGIN = 20;
+const BORDER_RADIUS = 3;
 
 type AnswerData = {
     text: string;
@@ -16,6 +17,7 @@ type AnswerData = {
 
 // Image card generation utils
 
+// TODO: Solve case where there are duplicate answer options
 export const initAnswerOptions = (
     canvas: fabric.Canvas,
     isEditing: boolean,
@@ -41,8 +43,8 @@ export const initAnswerOptions = (
             padding: TEXT_PADDING,
         });
         text.setPositionByOrigin(origin, 'left', 'top');
-
         const textWidth = text.getBoundingRect().width;
+
         if (origin.x + textWidth > canvasWidth) {
             origin.setX(CANVAS_PADDING);
             origin.setY(origin.y - TEXT_MARGIN);
@@ -89,6 +91,8 @@ const createAnswerRectangle = (box:AnswerData) => {
         hasControls: false,
         lockMovementX: true,
         lockMovementY: true,
+        rx: BORDER_RADIUS, 
+        ry: BORDER_RADIUS,
         borderColor: colours.BLACK,
         backgroundColor: colours.WHITE,
         stroke: colours.BLACK,
