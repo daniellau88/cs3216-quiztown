@@ -3,10 +3,14 @@ import {
     CssBaseline,
     Grid,
     Input,
-    Typography,
     makeStyles,
 } from '@material-ui/core';
 import * as React from 'react';
+import { useState } from 'react';
+
+import api from '../../../api';
+import QTButton from '../../../components/QTButton';
+import CollectionUploadView from '../components/CollectionUploadView';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -22,10 +26,41 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: theme.spacing(0),
         marginRight: theme.spacing(0),
     },
+    upload: {
+        marginLeft: theme.spacing(0),
+        marginRight: theme.spacing(0),
+        paddingBottom: 30,
+    },
+    button: {
+        padding: 40,
+        paddingLeft: 500,
+        paddingRight: 500,
+    },
 }));
 
 const AddCollectionModal: React.FC<{}> = () => {
     const classes = useStyles();
+
+    const [files, saveFileInfo] = useState<Array<File>>([]);
+    const [collectionName, setCollectionName] = useState<string>('Untitled collection');
+
+    const upload = async (e: React.ChangeEvent<any>) => {
+        saveFileInfo([...e.target.files]);
+        const promises = [...e.target.files].map(async (file: File) => {
+            await api.uploads.createUpload(file);
+        });
+
+        await Promise.all(promises);
+    };
+
+    const handleCollectionNameChange = (e: React.ChangeEvent<any>) => {
+        const newName = e.target.value;
+        setCollectionName(newName);
+    };
+
+    const reviewCollection = () => {
+        console.log('review collection..');
+    };
 
     return (
         <>
@@ -34,16 +69,29 @@ const AddCollectionModal: React.FC<{}> = () => {
                 <Grid container spacing={2}>
                     <Grid container direction='column' className={classes.header}>
                         <Input className={classes.input}
-                            // handleChange={updateSearchQuery} 
-                            // value={query} 
+                            onChange={handleCollectionNameChange}
+                            value={collectionName}
                             placeholder="Untitled Collection" />
                     </Grid>
 
-                    {/* <Grid item xs={12}>
-                        <Grid container justifyContent="space-between" spacing={6}>
-                            <CollectionTable />
+                    <Grid container direction='column' className={classes.upload}>
+                        <Input
+                            type="file"
+                            onChange={upload}
+                            inputProps={{ multiple: true }}
+                        />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Grid container justifyContent="space-between" spacing={2}>
+                            {files && files.map((file: File) => {
+                                return (<CollectionUploadView file={file} key={file.name} />);
+                            })
+                            }
                         </Grid>
-                    </Grid> */}
+                    </Grid>
+                    <Grid container direction='column' className={classes.button}>
+                        <QTButton outlined onClick={reviewCollection}>Review Collection</QTButton>
+                    </Grid>
                 </Grid>
             </Box>
         </>
