@@ -14,6 +14,7 @@ import { useDispatch } from 'react-redux';
 import api from '../../api';
 import GoogleSignInButton from '../../modules/auth/components/GoogleSignInButton';
 import { googleLogin } from '../../modules/auth/operations';
+import AddCardPage from '../../modules/cards/pages/AddCardPage';
 import { addCollection, deleteCollection, updateCollection } from '../../modules/collections/operations';
 import { GoogleLoginPostData } from '../../types/auth';
 import { CollectionPostData } from '../../types/collections';
@@ -134,7 +135,7 @@ const TemplatePage: React.FC<{}> = () => {
                         onChange={test}
                         inputProps={{ multiple: true }}
                     />
-
+                    <AddCardPage />
                 </Grid>
                 <Grid>
                     {getIntervals(currentBox).map((interval, index) => {
