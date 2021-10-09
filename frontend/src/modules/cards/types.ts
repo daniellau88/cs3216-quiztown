@@ -1,4 +1,4 @@
-import { CardData, CardEntity } from '../../types/cards';
+import { CardData, CardMiniEntity } from '../../types/cards';
 import { EntityCollection, EntityStore } from '../../types/store';
 
 // Action Names
@@ -38,5 +38,5 @@ export type CardsActionTypes =
 // State Types
 export interface CardsState {
     allCards: EntityCollection;
-    cards: EntityStore<CardEntity, CardEntity>;
+    cards: EntityStore<CardMiniEntity, CardMiniEntity>;
 }

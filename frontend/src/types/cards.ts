@@ -14,7 +14,7 @@ export interface CardData {
     created_at: number;
 }
 
-export interface CardEntity {
+export interface CardMiniEntity {
     id: number;
     name: string;
     collection_id: number;
