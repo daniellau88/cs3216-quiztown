@@ -34,7 +34,7 @@ def list_collections_view(request):
 @validate_request_data(serializers.CollectionSerializer)
 def create_collection_view(request, serializer):
     serializer.save()
-    return Response({"collection": serializer.data})
+    return Response({"item": serializer.data})
 
 
 @api_view(["GET", "PUT", "DELETE"])
@@ -50,7 +50,7 @@ def get_or_update_or_delete_collection_view(request, *args, **kwargs):
 
 def get_collection_view(request, pk_item):
     serializer = serializers.CollectionSerializer(pk_item)
-    return Response({"collection": serializer.data})
+    return Response({"item": serializer.data})
 
 
 @validate_request_data(
@@ -59,7 +59,7 @@ def get_collection_view(request, pk_item):
 )
 def update_collection_view(request, pk_item, serializer):
     serializer.save()
-    return Response({"collection": serializer.data})
+    return Response({"item": serializer.data})
 
 
 def delete_collection_view(request, pk_item):
@@ -75,9 +75,16 @@ def import_collection_view(request, pk_item, serializer):
 
     # TODO: start task
     collection_import = serializer.instance
-    t = threading.Thread(target=jobs.import_cards_from_file,
+    t = threading.Thread(target=jobs.import_cards_from_pdf,
                          args=(), kwargs={"collection_import": collection_import})
     t.setDaemon(True)
     t.start()
 
-    return Response(serializer.data)
+    return Response({"item": serializer.data})
+
+
+@api_view(["GET"])
+def get_collection_import_view(request, pk):
+    imports = CollectionImport.objects.filter(collection_id=pk).order_by("-created_at")
+    serializer = serializers.CollectionImportSerializer(imports, many=True)
+    return Response({"items": serializer.data})

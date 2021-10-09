@@ -2,7 +2,6 @@ import { AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
 import { AuthState } from '../modules/auth/types';
-import { CardsState } from '../modules/cards/types';
 import { CollectionsState } from '../modules/collections/types';
 import { NotificationsState } from '../modules/notifications/types';
 
@@ -12,7 +11,6 @@ import { NotificationsState } from '../modules/notifications/types';
 export interface AppState {
     auth: AuthState;
     collections: CollectionsState;
-    cards: CardsState;
     notifications: NotificationsState;
 }
 

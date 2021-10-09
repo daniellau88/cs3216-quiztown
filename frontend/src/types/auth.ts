@@ -12,7 +12,3 @@ export interface LoginPostData {
 export interface GoogleLoginPostData {
     token_id: string;
 }
-
-export interface LoginResponseData {
-    user: UserData;
-}

@@ -14,8 +14,9 @@ import { useDispatch } from 'react-redux';
 import api from '../../api';
 import GoogleSignInButton from '../../modules/auth/components/GoogleSignInButton';
 import { googleLogin } from '../../modules/auth/operations';
-import AddCardPage from '../../modules/cards/pages/AddCardPage';
 import { addCollection, deleteCollection, updateCollection } from '../../modules/collections/operations';
+import CollectionsCardAddPage from '../../modules/collections/pages/CollectionsCardAddPage';
+import CollectionsCardShowPage from '../../modules/collections/pages/CollectionsCardShowPage';
 import { GoogleLoginPostData } from '../../types/auth';
 import { CollectionPostData } from '../../types/collections';
 import { getIntervals, getNextBoxNumber, getNextIntervalEndDate } from '../../utilities/leitner';
@@ -135,7 +136,8 @@ const TemplatePage: React.FC<{}> = () => {
                         onChange={test}
                         inputProps={{ multiple: true }}
                     />
-                    <AddCardPage />
+                    <CollectionsCardAddPage />
+                    <CollectionsCardShowPage collectionId={2} cardId={78} />
                 </Grid>
                 <Grid>
                     {getIntervals(currentBox).map((interval, index) => {

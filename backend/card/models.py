@@ -23,11 +23,12 @@ class Card(TimestampedModel):
         (NOTFLAGED, "notflagged"),
     )
 
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=100)
     collection_id = models.IntegerField()
     flagged = models.PositiveSmallIntegerField(
         choices=FLAG_STATUS, default=NOTFLAGED, blank=True)
     image_file_key = models.CharField(max_length=1024, default="", blank=True)
+    image_metadata = models.JSONField(default=dict, encoder=JSONEncoder)
     next_date = models.DateField(default=date.today, blank=True)
     answer_details = models.JSONField(default=dict, encoder=JSONEncoder)
 

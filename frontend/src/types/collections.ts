@@ -29,3 +29,73 @@ export interface CollectionMiniEntity {
     owner_id: number;
     image_link: string;
 }
+
+export interface CollectionsCardPostData {
+    name: string;
+    collection_id: number;
+    image_link: string;
+}
+
+type Coordinate = [number, number];
+export interface AnswerData {
+    bounding_box: [Coordinate, Coordinate];
+    text: string;
+    confidence: number;
+}
+
+interface ImageMetadata {
+    width: number;
+    height: number;
+}
+
+export interface CollectionsCardListData {
+    id: number;
+    name: string;
+    collection_id: number;
+    is_flagged: string;
+    image_link: string;
+    next_date: Date;
+    created_at: number;
+}
+
+export interface CollectionsCardData {
+    id: number;
+    name: string;
+    collection_id: number;
+    is_flagged: string;
+    image_link: string;
+    next_date: Date;
+    created_at: number;
+    image_metadata: ImageMetadata;
+    answer_details: {
+        results: AnswerData[];
+    }
+}
+
+export interface CollectionsCardMiniEntity {
+    id: number;
+    name: string;
+    collection_id: number;
+    is_flagged: string;
+    image_link: string;
+    next_date: Date;
+    created_at: number;
+}
+export interface CollectionsCardEntity {
+    id: number;
+    name: string;
+    collection_id: number;
+    is_flagged: string;
+    image_link: string;
+    next_date: Date;
+    created_at: number;
+    image_metadata: ImageMetadata;
+    answer_details: {
+        results: AnswerData[];
+    }
+}
+
+export interface CollectionsCardImportPostData {
+    file_name: string;
+    file_key: string;
+}

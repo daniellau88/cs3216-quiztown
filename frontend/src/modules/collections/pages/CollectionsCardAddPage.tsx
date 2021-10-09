@@ -8,8 +8,11 @@ import {
     makeStyles,
 } from '@material-ui/core';
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
-import ImageCard from '../components/ImageCard';
+import { handleApiRequest } from '../../../utilities/ui';
+import { addUpload } from '../../uploads/operations';
+import { importCollectionsCard } from '../operations';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -28,12 +31,15 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-const AddCardPage: React.FC<{}> = () => {
+const CollectionsCardAddPage: React.FC<{}> = () => {
     const classes = useStyles();
     const [selectedFile, setSelectedFile] = useState<File>();
     const [cardTitle, setCardTitle] = useState('CVS Physio 1 - Card 10');
     const [question, setQuestion] = useState('');
     const [answer, setAnswer] = useState('');
+
+    const dispatch = useDispatch();
+    const collectionId = 2;
 
     const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
@@ -55,6 +61,24 @@ const AddCardPage: React.FC<{}> = () => {
 
     const confirmFile = () => {
         console.log('POST req');
+        if (selectedFile == undefined) {
+            return;
+        }
+
+        return handleApiRequest(dispatch, dispatch(addUpload(selectedFile)))
+            .then((response) => {
+                const upload = response.payload;
+                return handleApiRequest(dispatch, dispatch(importCollectionsCard(collectionId, upload))).then((importResponse) => {
+                    const payload = importResponse.payload;
+                    // Redirect to image card
+                });
+            })
+            .then(() => {
+                return true;
+            })
+            .catch(() => {
+                return false;
+            });
     };
 
     const showFileData = () => {
@@ -81,7 +105,7 @@ const AddCardPage: React.FC<{}> = () => {
             <Box className={classes.root}>
                 <Grid container direction='column' className={classes.container}>
                     <Grid container className={classes.header}>
-                        <TextField value={cardTitle} onChange={handleTitleChange}/>
+                        <TextField value={cardTitle} onChange={handleTitleChange} />
                         <Button
                             variant="contained"
                             component="label"
@@ -103,21 +127,17 @@ const AddCardPage: React.FC<{}> = () => {
                             onClick={confirmFile}
                         >
                             Confirm
-                        </Button>
-                    }
+                        </Button>}
 
                     {!selectedFile &&
-                    <Grid container direction='column' className={classes.inputFields}>
-                        <TextField multiline label="Question" variant="outlined" value={question} onChange={handleQuestionChange} />
-                        <TextField multiline label="Answer" variant="outlined" value={answer} onChange={handleAnswerChange} />
-                    </Grid>
-                    }
-
-                    <ImageCard/>
+                        <Grid container direction='column' className={classes.inputFields}>
+                            <TextField multiline label="Question" variant="outlined" value={question} onChange={handleQuestionChange} />
+                            <TextField multiline label="Answer" variant="outlined" value={answer} onChange={handleAnswerChange} />
+                        </Grid>}
                 </Grid>
             </Box>
         </>
     );
 };
 
-export default AddCardPage;
+export default CollectionsCardAddPage;
