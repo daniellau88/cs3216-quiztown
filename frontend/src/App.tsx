@@ -16,7 +16,7 @@ const theme = createTheme({
     palette,
     typography: {
         htmlFontSize: 16,
-        fontFamily: 'Lato',
+        fontFamily: 'Noto+Sans',
     },
 });
 
