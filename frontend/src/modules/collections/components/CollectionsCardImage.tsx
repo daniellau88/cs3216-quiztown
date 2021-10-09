@@ -1,6 +1,8 @@
 import {
     Box,
     CssBaseline,
+    Grid,
+    Typography,
     makeStyles,
 } from '@material-ui/core';
 import { fabric } from 'fabric';
@@ -8,7 +10,7 @@ import React, { useEffect, useState } from 'react';
 
 import { AnswerData } from '../../../types/collections';
 import { useWindowDimensions } from '../../../utilities/customHooks';
-import { initAnswerBoxes, initAnswerOptions, resetToOriginalPosition, revealAnswer, validateAnswer } from '../utils';
+import { initAnswerBoxes, initAnswerOptions, initCorrectAnswersIndicator, resetToOriginalPosition, revealAnswer, updateCorrectAnswersIndicator, validateAnswer } from '../utils';
 
 const MAX_CANVAS_WIDTH = 1440;
 const HEADER_HEIGHT = 80;
@@ -43,19 +45,19 @@ const CollectionsCardImage: React.FC<CollectionsCardImageProps> = ({
     const CANVAS_ID = 'quiztown-canvas-' + id;
 
     const [canvas, setCanvas] = useState<fabric.Canvas>();
+    const [hasAnsweredAll, setHasAnsweredAll] = useState(false);
 
     const { windowHeight, windowWidth } = useWindowDimensions();
 
     const canvasMaxWidth = windowWidth > MAX_CANVAS_WIDTH ? MAX_CANVAS_WIDTH : windowWidth;
     const canvasMaxHeight = windowHeight - HEADER_HEIGHT;
 
-    const initCanvas = () => {
-        const canvas = new fabric.Canvas(CANVAS_ID, {
+    const initCanvasWithBg = () => {
+        const canvas = new fabric.Canvas(CANVAS_ID,{
             hoverCursor: 'pointer',
             selection: false,
             targetFindTolerance: 2,
         });
-
         canvas.setBackgroundImage(imageUrl, canvas.renderAll.bind(canvas), {
             scaleX: 1,
             scaleY: 1,
@@ -63,10 +65,28 @@ const CollectionsCardImage: React.FC<CollectionsCardImageProps> = ({
             // left: canvas.getCenter().left,
             // originX: 'center',
         });
+        return canvas;
+    };
 
-        const optionsCoordsMap = initAnswerOptions(canvas, isEditing, result);
+    const initEditingCanvas = () => {
+        const canvas = initCanvasWithBg();
+        initAnswerBoxes(canvas, isEditing, result);
+        canvas.on('object:modified', (e) => {
+            if (e.target?.type != 'textbox') {
+                return;
+            }
+            if (e.target) {
+                // TODO: Implement answer options edit
+            }
+        });
+        return canvas;
+    };
+
+    const initQuizingCanvas = () => {
+        const canvas = initCanvasWithBg();
         const answersCoordsMap = initAnswerBoxes(canvas, isEditing, result);
-
+        const optionsCoordsMap = initAnswerOptions(canvas, result);
+        const answersIndicator = initCorrectAnswersIndicator(canvas, result);
         canvas.on('object:moving', (e) => {
             if (e.target) {
                 e.target.opacity = 0.5;
@@ -77,23 +97,23 @@ const CollectionsCardImage: React.FC<CollectionsCardImageProps> = ({
                 return;
             }
 
-            if (e.target) {
-                const text = e.target as fabric.Text;
-                const isAnswerCorrect = validateAnswer(text, answersCoordsMap);
-                if (isAnswerCorrect) {
-                    canvas.remove(e.target);
-                    revealAnswer(answersCoordsMap, text, canvas);
-                } else {
-                    e.target.opacity = 1;
-                    resetToOriginalPosition(optionsCoordsMap, text);
-                }
+            const text = e.target as fabric.Text;
+            const isAnswerCorrect = validateAnswer(text, answersCoordsMap);
+            if (isAnswerCorrect) {
+                canvas.remove(e.target);
+                revealAnswer(answersCoordsMap, text, canvas);
+                setHasAnsweredAll(updateCorrectAnswersIndicator(answersIndicator));
+            } else {
+                e.target.opacity = 1;
+                resetToOriginalPosition(optionsCoordsMap, text);
             }
         });
         return canvas;
     };
 
     useEffect(() => {
-        setCanvas(initCanvas());
+        const canvas = isEditing ? initEditingCanvas() : initQuizingCanvas();
+        setCanvas(canvas);
     }, []);
 
     useEffect(() => {
@@ -103,6 +123,19 @@ const CollectionsCardImage: React.FC<CollectionsCardImageProps> = ({
             canvas.setViewportTransform([canvas.getZoom() * scale, 0, 0, canvas.getZoom() * scale, 0, 0]);
         }
     }, [windowHeight, windowWidth]);
+
+    if (hasAnsweredAll) {
+        return (
+            <Grid>
+                <Typography variant='h2'>
+                    You correctly filled in all the blanks!
+                </Typography>
+                <Typography variant='h2'>
+                    How confident are you?
+                </Typography>
+            </Grid>
+        );
+    }
 
     return (
         <>
