@@ -5,6 +5,8 @@ import os
 from dataclasses import asdict, dataclass
 from shutil import copyfile
 
+import pytesseract
+
 from paddleocr import PaddleOCR
 from PIL import Image
 
@@ -25,6 +27,7 @@ MIN_NUM_RESULTS_IN_IMAGE = 2
 MIN_CONFIDENCE = 0.5
 STATIC_CARD_DIRECTORY = "static/cards/"
 UPLOAD_DIRECTORY = "uploads/"
+PADDING_PERCENTAGE = 0.1
 
 if not os.path.exists("paddle_ocr/ch_ppocr_server_v2.0_det_infer") or \
         not os.path.exists("paddle_ocr/ch_ppocr_mobile_v2.0_cls_infer") or \
@@ -48,6 +51,16 @@ class PaddleOCRResult():
         )
 
 
+def trim_ocr_text(text: str):
+    # TODO: fix trimming
+    text = text.strip()
+    if text[0] == "-":
+        text = text[1:]
+    if text[-1] == "-":
+        text = text[:-1]
+    return text.strip()
+
+
 def import_card_from_image(image_key: str, collection_id: int, name: str = ""):
     if not os.path.isfile(UPLOAD_DIRECTORY + image_key):
         raise ApplicationError(ErrorCode.NOT_FOUND, ["File not found"])
@@ -63,7 +76,28 @@ def import_card_from_image(image_key: str, collection_id: int, name: str = ""):
     if not os.path.isfile(STATIC_CARD_DIRECTORY + image_key):
         copyfile(UPLOAD_DIRECTORY + image_key, STATIC_CARD_DIRECTORY + image_key)
 
-    image_metadata = get_image_metadata(STATIC_CARD_DIRECTORY + image_key)
+    image_path = STATIC_CARD_DIRECTORY + image_key
+    image = Image.open(image_path)
+
+    for result in filtered_results:
+        top_left, bottom_right = result.bounding_box
+        width = bottom_right[0] - top_left[0]
+        height = bottom_right[1] - top_left[1]
+        width_padding = int(PADDING_PERCENTAGE * width)
+        height_padding = int(PADDING_PERCENTAGE * height)
+        cropped = image.crop((top_left[0] - width_padding, top_left[1] - height_padding,
+                              bottom_right[0] + width_padding, bottom_right[1] + height_padding))
+
+        # Apply OCR on the cropped image
+        text = pytesseract.image_to_string(cropped, config="--psm 7")
+
+        result.text = trim_ocr_text(str(text))
+
+    width, height = image.size
+    image_metadata = {
+        "width": width,
+        "height": height,
+    }
 
     json_results = [asdict(result) for result in filtered_results]
 
@@ -76,7 +110,7 @@ def import_card_from_image(image_key: str, collection_id: int, name: str = ""):
     return card
 
 
-def get_paddle_ocr_text_bounding_boxes_from_image(image_file_path: str) -> list:
+def get_paddle_ocr_text_bounding_boxes_from_image(image_file_path: str) -> list[PaddleOCRResult]:
     result = ocr.ocr(image_file_path)
 
     def convert_box_coordinate_to_top_left_bottom_right(
