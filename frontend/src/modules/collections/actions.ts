@@ -1,4 +1,4 @@
-import { CollectionData, CollectionListData } from '../../types/collections';
+import { CollectionData, CollectionListData, CollectionsCardData } from '../../types/collections';
 import { CollectionDelta } from '../../types/store';
 
 import * as types from './types';
@@ -41,5 +41,35 @@ export function deleteCollection(id: number): types.DeleteCollectionAction {
     return {
         type: types.DELETE_COLLECTION,
         id: id,
+    };
+}
+
+export function saveCollectionsCard(data: CollectionsCardData): types.SaveCollectionsCardAction {
+    return {
+        type: types.SAVE_COLLECTIONS_CARD,
+        data,
+    };
+}
+
+export function addCollectionsCard(collectionId: number, cardId: number): types.AddCollectionsCardAction {
+    return {
+        type: types.ADD_COLLECTIONS_CARD,
+        collectionId,
+        cardId,
+    };
+}
+
+export function editCollectionsCard(cardId: number): types.EditCollectionsCardAction {
+    return {
+        type: types.EDIT_COLLECTIONS_CARD,
+        cardId,
+    };
+}
+
+export function deleteCollectionsCard(collectionId: number, cardId: number): types.DeleteCollectionsCardAction {
+    return {
+        type: types.DELETE_COLLECTIONS_CARD,
+        collectionId: collectionId,
+        cardId: cardId,
     };
 }

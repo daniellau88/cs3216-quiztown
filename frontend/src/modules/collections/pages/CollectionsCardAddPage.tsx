@@ -12,7 +12,7 @@ import { useDispatch } from 'react-redux';
 
 import { handleApiRequest } from '../../../utilities/ui';
 import { addUpload } from '../../uploads/operations';
-import { importCard } from '../operations';
+import { importCollectionsCard } from '../operations';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -31,7 +31,7 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-const AddCardPage: React.FC<{}> = () => {
+const CollectionsCardAddPage: React.FC<{}> = () => {
     const classes = useStyles();
     const [selectedFile, setSelectedFile] = useState<File>();
     const [cardTitle, setCardTitle] = useState('CVS Physio 1 - Card 10');
@@ -39,6 +39,7 @@ const AddCardPage: React.FC<{}> = () => {
     const [answer, setAnswer] = useState('');
 
     const dispatch = useDispatch();
+    const collectionId = 2;
 
     const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
@@ -67,7 +68,7 @@ const AddCardPage: React.FC<{}> = () => {
         return handleApiRequest(dispatch, dispatch(addUpload(selectedFile)))
             .then((response) => {
                 const upload = response.payload;
-                return handleApiRequest(dispatch, dispatch(importCard(upload))).then((importResponse) => {
+                return handleApiRequest(dispatch, dispatch(importCollectionsCard(collectionId, upload))).then((importResponse) => {
                     const payload = importResponse.payload;
                     // Redirect to image card
                 });
@@ -139,4 +140,4 @@ const AddCardPage: React.FC<{}> = () => {
     );
 };
 
-export default AddCardPage;
+export default CollectionsCardAddPage;

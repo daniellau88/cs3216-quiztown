@@ -1,5 +1,6 @@
 import { fabric } from 'fabric';
 
+import { AnswerData } from '../../types/collections';
 import colours from '../../utilities/colours';
 
 const TEXT_MARGIN = 40;
@@ -8,12 +9,6 @@ const CANVAS_PADDING = 40;
 const FONT_SIZE = 20;
 const CORRECTNESS_MARGIN = 20;
 const BORDER_RADIUS = 3;
-
-type AnswerData = {
-    text: string;
-    confidence: number;
-    bounding_box: number[][];
-}
 
 // Image card generation utils
 
@@ -62,7 +57,7 @@ export const initAnswerOptions = (
     return optionsCoordsMap;
 };
 
-const createAnswerTextBox = (box:AnswerData) => {
+const createAnswerTextBox = (box: AnswerData) => {
     const top = box.bounding_box[0][1];
     const left = box.bounding_box[0][0];
     return new fabric.Textbox(box.text, {
@@ -80,7 +75,7 @@ const createAnswerTextBox = (box:AnswerData) => {
     });
 };
 
-const createAnswerRectangle = (box:AnswerData) => {
+const createAnswerRectangle = (box: AnswerData) => {
     const top = box.bounding_box[0][1];
     const left = box.bounding_box[0][0];
     return new fabric.Rect({
@@ -150,7 +145,7 @@ export const revealAnswer = (
     answersCoordsMap: Map<string, fabric.Rect>,
     text: fabric.Text,
     canvas: fabric.Canvas,
-):void => {
+): void => {
     const textContent = text.get('text');
     if (!textContent) return;
 

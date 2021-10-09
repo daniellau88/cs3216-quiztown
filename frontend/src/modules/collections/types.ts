@@ -1,5 +1,5 @@
-import { CollectionData, CollectionListData, CollectionMiniEntity } from '../../types/collections';
-import { CollectionDelta, EntityCollection, EntityStore } from '../../types/store';
+import { CollectionData, CollectionListData, CollectionMiniEntity, CollectionsCardData, CollectionsCardEntity, CollectionsCardMiniEntity } from '../../types/collections';
+import { CollectionDelta, EntityCollection, EntityCollectionSet, EntityStore } from '../../types/store';
 
 // Action Names
 
@@ -9,6 +9,11 @@ export const UPDATE_COLLECTION_LIST = 'collections/UPDATE_COLLECTION_LIST';
 export const ADD_COLLECTION = 'collections/ADD_COLLECTION';
 export const EDIT_COLLECTION = 'collections/EDIT_COLLECTION';
 export const DELETE_COLLECTION = 'collections/DELETE_COLLECTION';
+
+export const SAVE_COLLECTIONS_CARD = 'collections/SAVE_COLLECTIONS_CARD';
+export const ADD_COLLECTIONS_CARD = 'collections/ADD_COLLECTIONS_CARD';
+export const EDIT_COLLECTIONS_CARD = 'collections/EDIT_COLLECTIONS_CARD';
+export const DELETE_COLLECTIONS_CARD = 'collections/DELETE_COLLECTIONS_CARD';
 
 // Action Types
 
@@ -41,16 +46,45 @@ export interface DeleteCollectionAction {
     id: number;
 }
 
+export interface SaveCollectionsCardAction {
+    type: typeof SAVE_COLLECTIONS_CARD;
+    data: CollectionsCardData;
+}
+
+export interface AddCollectionsCardAction {
+    type: typeof ADD_COLLECTIONS_CARD;
+    collectionId: number;
+    cardId: number;
+}
+
+export interface EditCollectionsCardAction {
+    type: typeof EDIT_COLLECTIONS_CARD;
+    cardId: number;
+}
+
+export interface DeleteCollectionsCardAction {
+    type: typeof DELETE_COLLECTIONS_CARD;
+    collectionId: number;
+    cardId: number;
+}
+
 export type CollectionsActionTypes =
     SaveCollectionListAction |
     SaveCollectionAction |
     UpdateCollectionListAction |
     AddCollectionAction |
     EditCollectionAction |
-    DeleteCollectionAction;
+    DeleteCollectionAction |
+    SaveCollectionsCardAction |
+    AddCollectionsCardAction |
+    EditCollectionsCardAction |
+    DeleteCollectionsCardAction;
 
 // State Types
 export interface CollectionsState {
     allCollections: EntityCollection;
     collections: EntityStore<CollectionMiniEntity, CollectionMiniEntity>;
+
+    collectionCollectionsCards: EntityCollectionSet;
+    collectionsCards: EntityStore<CollectionsCardMiniEntity, CollectionsCardEntity>;
 }

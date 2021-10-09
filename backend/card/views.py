@@ -40,7 +40,6 @@ def create_card_view(request, pk_item, serializer):
 @api_view(["GET", "PUT", "DELETE"])
 @convert_keys_to_item({"pkCard": Card})
 def get_or_update_or_delete_card_view(request, *args, **kwargs):
-
     if request.method == "GET":
         return get_card_view(request, *args, **kwargs)
 

@@ -6,7 +6,7 @@ import {
 import { fabric } from 'fabric';
 import React, { useEffect, useState } from 'react';
 
-import { AnswerDetail } from '../../../types/cards';
+import { AnswerData } from '../../../types/collections';
 import { useWindowDimensions } from '../../../utilities/customHooks';
 import { initAnswerBoxes, initAnswerOptions, resetToOriginalPosition, revealAnswer, validateAnswer } from '../utils';
 
@@ -26,14 +26,14 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-interface ImageCardProps {
+interface CollectionsCardImageProps {
     isEditing?: boolean
     id: number,
     imageUrl: string,
-    result: AnswerDetail[],
+    result: AnswerData[],
 }
 
-const ImageCard: React.FC<ImageCardProps> = ({
+const CollectionsCardImage: React.FC<CollectionsCardImageProps> = ({
     isEditing = false,
     id,
     imageUrl,
@@ -121,4 +121,4 @@ const ImageCard: React.FC<ImageCardProps> = ({
     );
 };
 
-export default ImageCard;
+export default CollectionsCardImage;

@@ -1,11 +1,11 @@
 import api from '../../api';
 import { ApiResponse } from '../../types';
-import { CollectionData, CollectionListData, CollectionMiniEntity, CollectionPostData } from '../../types/collections';
+import { CollectionData, CollectionListData, CollectionMiniEntity, CollectionPostData, CollectionsCardData, CollectionsCardEntity, CollectionsCardImportPostData, CollectionsCardPostData } from '../../types/collections';
 import { CollectionOptions, EntityCollection, NormalizeOperation, Operation } from '../../types/store';
 import { batched, queryEntityCollection, withCachedEntity } from '../../utilities/store';
 
 import * as actions from './actions';
-import { getAllCollections, getCollectionMiniEntity } from './selectors';
+import { getAllCollections, getCollectionMiniEntity, getCollectionsCardEntity } from './selectors';
 
 export function loadAllCollections(options: CollectionOptions): Operation<ApiResponse<EntityCollection>> {
     return (dispatch, getState) => {
@@ -33,7 +33,7 @@ export function loadCollection(id: number): Operation<ApiResponse<CollectionMini
     };
 }
 
-export function addCollection(collection: CollectionPostData): Operation<ApiResponse<CollectionEntity>> {
+export function addCollection(collection: CollectionPostData): Operation<ApiResponse<CollectionMiniEntity>> {
     return async (dispatch, getState) => {
         const response = await api.collections.addCollection(collection);
         const data = response.payload.collection;
@@ -79,3 +79,63 @@ export function discardCollection(id: number): NormalizeOperation {
     };
 }
 
+export function loadCollectionsCard(collectionId: number, cardId: number): Operation<ApiResponse<CollectionsCardEntity>> {
+    return async (dispatch, getState) => {
+        return withCachedEntity(getState, getCollectionsCardEntity, cardId, async () => {
+            const response = await api.collections.getCollectionsCard(collectionId, cardId);
+            batched(dispatch, saveCollectionsCard(response.payload.card));
+            return response;
+        });
+    };
+}
+
+export function addCollectionsCard(collectionId: number, card: CollectionsCardPostData): Operation<ApiResponse<CollectionsCardEntity>> {
+    return async (dispatch, getState) => {
+        const response = await api.collections.addCollectionsCard(collectionId, card);
+        const data = response.payload.card;
+        batched(dispatch, saveCollectionsCard(data), actions.addCollectionsCard(collectionId, data.id));
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return { ...response, payload: getCollectionsCardEntity(getState(), data.id)! };
+    };
+}
+
+export function saveCollectionsCard(data: CollectionsCardData): NormalizeOperation {
+    return (dispatch) => {
+        dispatch(actions.saveCollectionsCard(data));
+    };
+}
+
+export function updateCollectionsCard(collectionId: number, cardId: number, card: CollectionsCardPostData): Operation<ApiResponse<CollectionsCardEntity>> {
+    return async (dispatch, getState) => {
+        const response = await api.collections.patchCollectionsCard(collectionId, cardId, card);
+        const data = response.payload.card;
+        batched(dispatch, saveCollectionsCard(data), actions.editCollectionsCard(cardId));
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return { ...response, payload: getCollectionsCardEntity(getState(), data.id)! };
+    };
+}
+
+export function deleteCollectionsCard(collectionId: number, cardId: number): Operation<ApiResponse<{}>> {
+    return async (dispatch) => {
+        const response = await api.collections.deleteCollectionsCard(collectionId, cardId);
+        // TODO: delete from collection list
+        batched(dispatch, discardCollectionsCard(collectionId, cardId));
+        return response;
+    };
+}
+
+export function discardCollectionsCard(collectionId: number, cardId: number): NormalizeOperation {
+    return (dispatch) => {
+        dispatch(actions.deleteCollectionsCard(collectionId, cardId));
+    };
+}
+
+export function importCollectionsCard(collectionId: number, cardImport: CollectionsCardImportPostData): Operation<ApiResponse<CollectionsCardEntity>> {
+    return async (dispatch, getState) => {
+        const response = await api.collections.importCollectionsCard(collectionId, cardImport);
+        const data = response.payload.card;
+        batched(dispatch, saveCollectionsCard(data), actions.addCollectionsCard(collectionId, data.id));
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return { ...response, payload: getCollectionsCardEntity(getState(), data.id)! };
+    };
+}

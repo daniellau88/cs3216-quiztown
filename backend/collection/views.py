@@ -85,6 +85,6 @@ def import_collection_view(request, pk_item, serializer):
 
 @api_view(["GET"])
 def get_collection_import_view(request, pk):
-    imports = CollectionImport.objects.filter(collection_id=pk).order_by('-created_at')
+    imports = CollectionImport.objects.filter(collection_id=pk).order_by("-created_at")
     serializer = serializers.CollectionImportSerializer(imports, many=True)
     return Response({"imports": serializer.data})
