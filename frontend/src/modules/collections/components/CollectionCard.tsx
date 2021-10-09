@@ -10,6 +10,7 @@ import {
 } from '@material-ui/core';
 import { Add, ReorderOutlined } from '@material-ui/icons';
 import * as React from 'react';
+import { useHistory } from 'react-router-dom';
 
 import QTButton from '../../../components/QTButton';
 import { CollectionMiniEntity } from '../../../types/collections';
@@ -60,6 +61,7 @@ type Props = OwnProps;
 
 const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) => {
     const classes = useStyles();
+    const history = useHistory();
     // TODO: Replace mock data
     const collectionName = data?.name;
     const collectionNumCards = '12';
@@ -90,6 +92,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
 
     const addNewCollection = () => {
         console.log('Add new');
+        history.push('/collections/new');
     };
 
     if (isAddCollectionCard) {

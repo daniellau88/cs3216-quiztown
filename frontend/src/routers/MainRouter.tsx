@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
-import AddCollectionModal from '../modules/collections/pages/AddCollectionModal';
+import AddCollectionModal from '../modules/collections/pages/CollectionAddPage';
 import CollectionPage from '../modules/collections/pages/CollectionPage';
 import TemplatePage from '../pages/utilities/TemplatePage';
 import routes from '../utilities/routes';

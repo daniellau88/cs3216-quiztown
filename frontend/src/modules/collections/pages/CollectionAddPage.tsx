@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
         paddingBottom: '80px',
     },
     header: {
-        paddingTop: 60,
+        paddingTop: 30,
         paddingBottom: 60,
     },
     input: {
