@@ -38,5 +38,5 @@ export type CardsActionTypes =
 // State Types
 export interface CardsState {
     allCards: EntityCollection;
-    cards: EntityStore<CardMiniEntity, CardMiniEntity>;
+    cards: EntityStore<CardMiniEntity, CardEntity>;
 }

@@ -8,8 +8,11 @@ import {
     makeStyles,
 } from '@material-ui/core';
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
-import ImageCard from '../components/ImageCard';
+import { handleApiRequest } from '../../../utilities/ui';
+import { addUpload } from '../../uploads/operations';
+import { importCard } from '../operations';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -35,6 +38,8 @@ const AddCardPage: React.FC<{}> = () => {
     const [question, setQuestion] = useState('');
     const [answer, setAnswer] = useState('');
 
+    const dispatch = useDispatch();
+
     const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
             setSelectedFile(event.target.files[0]);
@@ -55,6 +60,24 @@ const AddCardPage: React.FC<{}> = () => {
 
     const confirmFile = () => {
         console.log('POST req');
+        if (selectedFile == undefined) {
+            return;
+        }
+
+        return handleApiRequest(dispatch, dispatch(addUpload(selectedFile)))
+            .then((response) => {
+                const upload = response.payload;
+                return handleApiRequest(dispatch, dispatch(importCard(upload))).then((importResponse) => {
+                    const payload = importResponse.payload;
+                    // Redirect to image card
+                });
+            })
+            .then(() => {
+                return true;
+            })
+            .catch(() => {
+                return false;
+            });
     };
 
     const showFileData = () => {
@@ -110,10 +133,8 @@ const AddCardPage: React.FC<{}> = () => {
                             <TextField multiline label="Question" variant="outlined" value={question} onChange={handleQuestionChange} />
                             <TextField multiline label="Answer" variant="outlined" value={answer} onChange={handleAnswerChange} />
                         </Grid>}
-
-                    <ImageCard />
-                </Grid >
-            </Box >
+                </Grid>
+            </Box>
         </>
     );
 };

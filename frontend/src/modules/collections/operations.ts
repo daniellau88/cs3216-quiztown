@@ -2,7 +2,7 @@ import api from '../../api';
 import { ApiResponse } from '../../types';
 import { CollectionData, CollectionListData, CollectionMiniEntity, CollectionPostData } from '../../types/collections';
 import { CollectionOptions, EntityCollection, NormalizeOperation, Operation } from '../../types/store';
-import { batched, queryEntityCollection } from '../../utilities/store';
+import { batched, queryEntityCollection, withCachedEntity } from '../../utilities/store';
 
 import * as actions from './actions';
 import { getAllCollections, getCollectionMiniEntity } from './selectors';
@@ -23,7 +23,17 @@ export function loadAllCollections(options: CollectionOptions): Operation<ApiRes
     };
 }
 
-export function addCollection(collection: CollectionPostData): Operation<ApiResponse<CollectionMiniEntity>> {
+export function loadCollection(id: number): Operation<ApiResponse<CollectionMiniEntity>> {
+    return (dispatch, getState) => {
+        return withCachedEntity(getState, getCollectionMiniEntity, id, async () => {
+            const response = await api.collections.getCollection(id);
+            batched(dispatch, saveCollection(response.payload.collection));
+            return response;
+        });
+    };
+}
+
+export function addCollection(collection: CollectionPostData): Operation<ApiResponse<CollectionEntity>> {
     return async (dispatch, getState) => {
         const response = await api.collections.addCollection(collection);
         const data = response.payload.collection;
@@ -68,3 +78,4 @@ export function discardCollection(id: number): NormalizeOperation {
         dispatch(actions.deleteCollection(id));
     };
 }
+

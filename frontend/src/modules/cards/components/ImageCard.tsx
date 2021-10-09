@@ -6,9 +6,8 @@ import {
 import { fabric } from 'fabric';
 import React, { useEffect, useState } from 'react';
 
+import { AnswerDetail } from '../../../types/cards';
 import { useWindowDimensions } from '../../../utilities/customHooks';
-import MOCK_PAYLOAD from '../test/sampledata.json';
-import sampleImage from '../test/sampleimage.png';
 import { initAnswerBoxes, initAnswerOptions, resetToOriginalPosition, revealAnswer, validateAnswer } from '../utils';
 
 const MAX_CANVAS_WIDTH = 1440;
@@ -28,14 +27,20 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface ImageCardProps {
-    isEditing?:boolean
+    isEditing?: boolean
+    id: number,
+    imageUrl: string,
+    result: AnswerDetail[],
 }
 
 const ImageCard: React.FC<ImageCardProps> = ({
-    isEditing=false,
+    isEditing = false,
+    id,
+    imageUrl,
+    result,
 }) => {
     const classes = useStyles();
-    const CANVAS_ID = 'quiztown-canvas';
+    const CANVAS_ID = 'quiztown-canvas-' + id;
 
     const [canvas, setCanvas] = useState<fabric.Canvas>();
 
@@ -45,13 +50,13 @@ const ImageCard: React.FC<ImageCardProps> = ({
     const canvasMaxHeight = windowHeight - HEADER_HEIGHT;
 
     const initCanvas = () => {
-        const canvas = new fabric.Canvas(CANVAS_ID,{
+        const canvas = new fabric.Canvas(CANVAS_ID, {
             hoverCursor: 'pointer',
             selection: false,
             targetFindTolerance: 2,
         });
 
-        canvas.setBackgroundImage(sampleImage, canvas.renderAll.bind(canvas), {
+        canvas.setBackgroundImage(imageUrl, canvas.renderAll.bind(canvas), {
             scaleX: 1,
             scaleY: 1,
             // TODO: Center at middle once can get image width, so that can translate answer boxes too
@@ -59,8 +64,8 @@ const ImageCard: React.FC<ImageCardProps> = ({
             // originX: 'center',
         });
 
-        const optionsCoordsMap = initAnswerOptions(canvas, isEditing, MOCK_PAYLOAD.results);
-        const answersCoordsMap = initAnswerBoxes(canvas, isEditing, MOCK_PAYLOAD.results);
+        const optionsCoordsMap = initAnswerOptions(canvas, isEditing, result);
+        const answersCoordsMap = initAnswerBoxes(canvas, isEditing, result);
 
         canvas.on('object:moving', (e) => {
             if (e.target) {
@@ -94,7 +99,7 @@ const ImageCard: React.FC<ImageCardProps> = ({
     useEffect(() => {
         if (canvas) {
             const scale = canvasMaxWidth / canvas.getWidth();
-            canvas.setDimensions({ width: canvasMaxWidth, height: canvasMaxHeight});
+            canvas.setDimensions({ width: canvasMaxWidth, height: canvasMaxHeight });
             canvas.setViewportTransform([canvas.getZoom() * scale, 0, 0, canvas.getZoom() * scale, 0, 0]);
         }
     }, [windowHeight, windowWidth]);
