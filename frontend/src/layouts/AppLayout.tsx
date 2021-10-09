@@ -8,6 +8,8 @@ import * as React from 'react';
 
 import NavigationBar from '../components/navigation/NavigationBar';
 
+export const navBarHeight = '8vh';
+
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
@@ -15,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
     },
     appBar: {
         zIndex: theme.zIndex.drawer + 1,
+        height: navBarHeight,
         hidden: true,
     },
     content: {

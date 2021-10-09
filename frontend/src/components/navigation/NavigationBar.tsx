@@ -1,7 +1,6 @@
 import {
     Box,
     CardMedia,
-    Container,
     Toolbar,
     makeStyles,
 } from '@material-ui/core';
@@ -15,6 +14,11 @@ import NavigationBarTitle from './NavigationBarTitle';
 const useStyles = makeStyles(() => ({
     toolbar: {
         width: 'inherit',
+        height: 'inherit',
+    },
+    toolbarBox: {
+        width: 'inherit',
+        height: 'inherit',
     },
     grow: {
         flexGrow: 1,
@@ -32,14 +36,12 @@ const NavigationBar: React.FC<{}> = () => {
     return (
         <>
             <Toolbar className={classes.toolbar}>
-                <Container maxWidth='xl'>
-                    <Box display='flex' justifyContent='center' alignItems='center'>
-                        <CardMedia component='img' image={logo} className={classes.logo} />
-                        <NavigationBarTitle text='QuizTown' size='h5' />
-                        <Box className={classes.grow} />
-                        <NavigationBarElements size='h5' flexGrow={0.05} />
-                    </Box>
-                </Container>
+                <Box display='flex' justifyContent='center' alignItems='center' className={classes.toolbarBox}>
+                    <CardMedia component='img' image={logo} className={classes.logo} />
+                    <NavigationBarTitle text='QuizTown' size='h5' />
+                    <Box className={classes.grow} />
+                    <NavigationBarElements size='h6' flexGrow={0.02} />
+                </Box>
             </Toolbar>
         </>
     );

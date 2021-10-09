@@ -6,9 +6,14 @@ import {
 import * as React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
+import { navBarHeight } from '../../layouts/AppLayout';
+import colours from '../../utilities/colours';
 import { headerSize } from '../utiltiies/constants';
 
 const useStyles = makeStyles((theme) => ({
+    root: {
+        height: navBarHeight,
+    },
     titleText: {
         color: theme.palette.text.primary,
         backgroundColor: 'inherit',
@@ -26,6 +31,10 @@ const useStyles = makeStyles((theme) => ({
     },
     titleLink: {
         textDecoration: 'none',
+    },
+    fill: {
+        backgroundColor: colours.BLUE,
+        height: '2px',
     },
 }));
 
@@ -53,18 +62,25 @@ const NavigationBarElement: React.FC<Props> = (props: Props) => {
     }, [pathname, props.route]);
 
     return (
-        <Box flexGrow={props.flexGrow}>
-            <Link
-                to={props.route}
-                className={classes.titleLink}
-                onMouseEnter={() => onMouseEnter(props.route)}
-                onMouseLeave={() => onMouseLeave()}>
-                <Typography
-                    variant={props.size ? props.size : 'h4'}
-                    className={isSelected ? classes.titleTextSelected : classes.titleText}>
-                    {props.text}
-                </Typography>
-            </Link>
+        <Box flexGrow={props.flexGrow} className={classes.root} alignItems='center'>
+            <Box display='flex' flexDirection='column' height='inherit' >
+                <Box display='flex' flexGrow={1} />
+                <Link
+                    to={props.route}
+                    className={classes.titleLink}
+                    onMouseEnter={() => onMouseEnter(props.route)}
+                    onMouseLeave={() => onMouseLeave()}>
+                    <Typography
+                        variant={props.size ? props.size : 'h4'}
+                        className={isSelected ? classes.titleTextSelected : classes.titleText}>
+                        {props.text}
+                    </Typography>
+                </Link>
+                <Box display='flex' flexGrow={1} />
+                {isSelected &&
+                    <Box className={classes.fill} />
+                }
+            </Box>
         </Box>
     );
 };

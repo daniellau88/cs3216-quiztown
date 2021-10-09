@@ -16,6 +16,7 @@ const ROUTES = {
             NEW: '/collections/:collectionId/cards/new',
         },
     },
+    TEST: '/test',
 };
 
 const appendBaseUrl = <P>(obj: P) => {

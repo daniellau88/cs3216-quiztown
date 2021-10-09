@@ -18,8 +18,16 @@ const NavigationBarElements: React.FC<Props> = (props: Props) => {
     return (
         <>
             <NavigationBarElement
-                text='template'
-                route={routes.ROOT}
+                text='Collections'
+                route={routes.COLLECTIONS.INDEX}
+                size={props.size}
+                flexGrow={props.flexGrow}
+                onMouseEnter={props.onMouseEnter}
+                onMouseLeave={props.onMouseLeave}
+            />
+            <NavigationBarElement
+                text='Test[Dev]'
+                route={routes.TEST}
                 size={props.size}
                 flexGrow={props.flexGrow}
                 onMouseEnter={props.onMouseEnter}
