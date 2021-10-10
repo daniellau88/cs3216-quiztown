@@ -1,4 +1,4 @@
-## Setting up Frontend
+## Setting up Frontend-Landing
 
 > cd frontend
 >
