@@ -7,6 +7,7 @@ import {
 import * as React from 'react';
 
 import logo from '../../assets/images/logo512.png';
+import { navBarHeight } from '../../layouts/AppLayout';
 
 import NavigationBarElements from './NavigationBarElements';
 import NavigationBarTitle from './NavigationBarTitle';
@@ -14,7 +15,8 @@ import NavigationBarTitle from './NavigationBarTitle';
 const useStyles = makeStyles(() => ({
     toolbar: {
         width: 'inherit',
-        height: 'inherit',
+        minHeight: navBarHeight,
+        maxHeight: navBarHeight,
     },
     toolbarBox: {
         width: 'inherit',
