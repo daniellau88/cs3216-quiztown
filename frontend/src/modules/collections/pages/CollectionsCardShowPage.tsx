@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { RouteComponentProps } from 'react-router-dom';
 import { Dispatch } from 'redux';
 
 import LoadingIndicator from '../../../components/content/LoadingIndicator';
@@ -9,14 +10,12 @@ import CollectionsCardImage from '../components/CollectionsCardImage';
 import { loadCollectionsCard } from '../operations';
 import { getCollectionsCardEntity } from '../selectors';
 
-interface OwnProps {
-    collectionId: number;
-    cardId: number;
-}
-type Props = OwnProps;
+type Props = RouteComponentProps;
 
-const CollectionsCardShowPage: React.FC<Props> = ({ collectionId, cardId }: Props) => {
+const CollectionsCardShowPage: React.FC<Props> = ({ match: { params } }: RouteComponentProps) => {
     const dispatch = useDispatch();
+    const cardId:number = +(params as { cardId: string }).cardId.substring(1);
+    const collectionId:number = +(params as { collectionId: string }).collectionId.substring(1);
     const card = useSelector((state: AppState) => getCollectionsCardEntity(state, cardId));
 
     const [isLoading, setIsLoading] = React.useState(true);

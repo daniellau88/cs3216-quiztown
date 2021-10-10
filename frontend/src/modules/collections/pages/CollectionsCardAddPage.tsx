@@ -9,6 +9,7 @@ import {
 } from '@material-ui/core';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 import { handleApiRequest } from '../../../utilities/ui';
 import { addUpload } from '../../uploads/operations';
@@ -39,7 +40,9 @@ const CollectionsCardAddPage: React.FC<{}> = () => {
     const [answer, setAnswer] = useState('');
 
     const dispatch = useDispatch();
-    const collectionId = 2;
+    // TODO: Dont use this hardcoded value once Collections and CollectionCards are linked up
+    const collectionId = 3;
+    const history = useHistory();
 
     const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
@@ -60,7 +63,6 @@ const CollectionsCardAddPage: React.FC<{}> = () => {
     };
 
     const confirmFile = () => {
-        console.log('POST req');
         if (selectedFile == undefined) {
             return;
         }
@@ -71,6 +73,7 @@ const CollectionsCardAddPage: React.FC<{}> = () => {
                 return handleApiRequest(dispatch, dispatch(importCollectionsCard(collectionId, upload))).then((importResponse) => {
                     const payload = importResponse.payload;
                     // Redirect to image card
+                    history.push(`/collections/:${payload.collection_id}/cards/:${payload.id}`);
                 });
             })
             .then(() => {
