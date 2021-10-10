@@ -12,7 +12,7 @@ import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 
 import QTButton from '../../../components/QTButton';
-import { CollectionMiniEntity } from '../../../types/collections';
+import { CollectionsCardMiniEntity } from '../../../types/collections';
 import colours from '../../../utilities/colours';
 
 const useStyles = makeStyles(() => ({
@@ -52,33 +52,27 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface OwnProps {
-    data?: CollectionMiniEntity;
-    isAddCollectionCard?: boolean;
+    data?: CollectionsCardMiniEntity;
+    isAddCard?: boolean;
 }
 
 type Props = OwnProps;
 
-const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) => {
+const CollectionsCard: React.FC<Props> = ({ data, isAddCard=false }: Props) => {
     const classes = useStyles();
     const history = useHistory();
-    // TODO: Replace mock data
     const collectionName = data?.name;
-    const collectionId = data?.id;
-    const collectionNumCards = '12';
-    const collectionTags = ['Tag1', 'Tag2'];
-    const progressPercentage = '10';
-    const imageSrc = 'https://picsum.photos/200/300';
-
-    const progressBarColor = `
-    linear-gradient(to right, 
-        ${colours.GREEN}, 
-        ${colours.GREEN} ${progressPercentage}%, 
-        transparent ${progressPercentage}%, 
-        transparent 100%)`;
+    const cardId = data?.id;
+    const collectionId = data?.collection_id;
 
     // TODO: Implement functions
     const duplicateCard = () => {
         console.log('Duplicate');
+    };
+
+    const openCard = () => {
+        history.push(`/collections/:${collectionId}/cards/:${cardId}`);
+        console.log('Open');
     };
 
     const editCard = () => {
@@ -93,7 +87,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
         history.push(`/collections/:${collectionId}/cards/new`);
     };
 
-    if (isAddCollectionCard) {
+    if (isAddCard) {
         return (
             <Card className={`${classes.root} ${classes.center}`} onClick={addNewCard}>
                 <CardContent>
@@ -110,25 +104,15 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
 
     return (
         <Card className={classes.root}>
-            <Box className={classes.progressBar} style={{ background: progressBarColor }}>
-                <Typography className={classes.progressText}>Progress {progressPercentage}%</Typography>
-            </Box>
-            <Typography className={classes.tags}>{collectionTags.join(', ')}</Typography>
-
             <CardContent className={classes.cardContent}>
                 <Typography gutterBottom variant="h5" component="div" >
                     {collectionName}
                 </Typography>
-                <Grid container>
-                    <ReorderOutlined />
-                    <Typography variant="body1" style={{ marginLeft: 6 }}>
-                        {collectionNumCards} cards
-                    </Typography>
-                </Grid>
             </CardContent>
 
             <CardActions>
-                <QTButton outlined onClick={duplicateCard}>Duplicate to other collection</QTButton>
+                <QTButton outlined onClick={openCard}>Open</QTButton>
+                {/* <QTButton outlined onClick={duplicateCard}>Duplicate to other collection</QTButton> */}
                 <QTButton onClick={editCard}>Edit</QTButton>
                 <QTButton alert onClick={deleteCard}>Delete</QTButton>
             </CardActions>
@@ -136,4 +120,4 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
     );
 };
 
-export default CollectionCard;
+export default CollectionsCard;

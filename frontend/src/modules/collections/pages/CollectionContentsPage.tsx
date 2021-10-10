@@ -31,14 +31,13 @@ const CollectionContentsPage: React.FC<Props> = ({ match: { params } }: RouteCom
     const classes = useStyles();
     const collectionId:number = +(params as { collectionId: string }).collectionId.substring(1);
 
-    console.log('collections contents page');
-
     return (
         <>
             <CssBaseline />
             <Box className={classes.root}>
                 <Grid container spacing={2}>
                     <Grid container direction='column' className={classes.header}>
+                        {/* TODO: Replace hardcoded collection details */}
                         <Typography variant='h3'>
                             CVS Physio 1
                         </Typography>

@@ -9,6 +9,7 @@ import { handleApiRequest } from '../../../utilities/ui';
 import { loadAllCollections } from '../operations';
 import { getAllCollections } from '../selectors';
 
+import CollectionCard from './CollectionCard';
 import CollectionGridComponent from './CollectionGridComponent';
 
 
@@ -38,6 +39,7 @@ const CollectionTable: React.FC<{}> = () => {
             isLoading={isLoading}
             onUpdate={(options: CollectionOptions) => onUpdate(options, dispatch)}
             gridComponent={CollectionGridComponent}
+            leadingComponent={<CollectionCard isAddCollectionCard={true} />}
             filters={filters}
             isSearchable
             showIndex

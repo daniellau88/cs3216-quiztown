@@ -1,4 +1,3 @@
-import { Typography } from '@material-ui/core';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
@@ -10,12 +9,13 @@ import { handleApiRequest } from '../../../utilities/ui';
 import { loadCollectionContents } from '../operations';
 import { getCollectionsCardList } from '../selectors';
 
-import CollectionGridComponent from './CollectionGridComponent';
+import CollectionsCard from './CollectionsCard';
+import CollectionsCardGridComponent from './CollectionsCardGridComponent';
 
 
 const CollectionContentsTable: React.FC<{collectionId:number}> = ({ collectionId }) => {
     const dispatch = useDispatch();
-    const allCollections: EntityCollection|null = useSelector((state: AppState) => getCollectionsCardList(state, collectionId));
+    const allCollections: EntityCollection = useSelector((state: AppState) => getCollectionsCardList(state, collectionId));
 
     const [isLoading, setIsLoading] = React.useState(true);
 
@@ -33,21 +33,13 @@ const CollectionContentsTable: React.FC<{collectionId:number}> = ({ collectionId
         onUpdate({}, dispatch);
     }, [dispatch]);
 
-    if (!allCollections) {
-        return (
-            <Typography>
-                You dont have any cards in this collections yet, start adding cards here!
-            </Typography>
-        );
-    }
-
     return (
         <CollectionMesh
             collection={allCollections}
             isLoading={isLoading}
             onUpdate={(options: CollectionOptions) => onUpdate(options, dispatch)}
-            gridComponent={CollectionGridComponent}
-            leadingComponent={CollectionGridComponent}
+            gridComponent={CollectionsCardGridComponent}
+            leadingComponent={<CollectionsCard isAddCard={true} />}
             filters={filters}
             isSearchable
             showIndex

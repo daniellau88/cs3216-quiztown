@@ -1,11 +1,9 @@
 import {
     Grid,
-    Paper,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 
-import CollectionCard from '../../modules/collections/components/CollectionCard';
 import { ApiPromise } from '../../types';
 import { CollectionOptions, EntityCollection } from '../../types/store';
 import LoadingIndicator from '../content/LoadingIndicator';
@@ -35,7 +33,7 @@ interface OwnProps<P> {
     // Grid component to be rendered
     gridComponent: React.ComponentType<{ id: number; index: number } & P>;
     // Append first element (add) to the mesh.
-    leadingComponent?: React.ComponentType<{} & P>; // TODO use this in the table
+    leadingComponent?: React.ReactElement; // TODO use this in the table
     // The title of the table.
     title?: string;
     // Whether the collection supports searching.
@@ -57,6 +55,7 @@ const CollectionMesh: React.FC<Props> = ({
     isLoading,
     onUpdate,
     gridComponent: GridComponent,
+    leadingComponent,
     isSearchable,
     filters,
     rowProps,
@@ -81,7 +80,7 @@ const CollectionMesh: React.FC<Props> = ({
                         xs={4}
                         className={classes.card}
                     >
-                        <CollectionCard isAddCollectionCard={true} />
+                        {leadingComponent}
                     </Grid>
                 }
                 {!isLoading &&

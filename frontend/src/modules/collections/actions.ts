@@ -51,6 +51,14 @@ export function saveCollectionsCardList(list: CollectionsCardListData[]): types.
     };
 }
 
+export function updateCollectionsCardList(delta: CollectionDelta, collectionId: number): types.UpdateCollectionsCardListAction {
+    return {
+        type: types.UPDATE_COLLECTIONS_CARD_LIST,
+        collectionId,
+        delta,
+    };
+}
+
 export function saveCollectionsCard(data: CollectionsCardData): types.SaveCollectionsCardAction {
     return {
         type: types.SAVE_COLLECTIONS_CARD,
