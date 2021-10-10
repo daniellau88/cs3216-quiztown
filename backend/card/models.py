@@ -30,6 +30,7 @@ class Card(TimestampedModel):
     image_file_key = models.CharField(max_length=1024, default="", blank=True)
     image_metadata = models.JSONField(default=dict, encoder=JSONEncoder)
     next_date = models.DateField(default=date.today, blank=True)
+    box_number = models.IntegerField(default=0)
     answer_details = models.JSONField(default=dict, encoder=JSONEncoder)
 
     def create(self, validated_data):
@@ -41,6 +42,7 @@ class Card(TimestampedModel):
             "collection_id", instance.collection_id)
         instance.flagged = validated_data.get("flagged", instance.flagged)
         instance.next_date = validated_data.get("next_date", instance.next_date)
+        instance.box_number = validated_data.get("box_number", instance.box_number)
         instance.answer_details = validated_data.get(
             "answer_details", instance.answer_details)
         instance.save()

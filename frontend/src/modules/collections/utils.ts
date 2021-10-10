@@ -15,16 +15,11 @@ const BORDER_RADIUS = 3;
 // TODO: Solve case where there are duplicate answer options
 export const initAnswerOptions = (
     canvas: fabric.Canvas,
-    isEditing: boolean,
     data: Array<AnswerData>,
 ): Map<string, fabric.Point> => {
     const optionsCoordsMap = new Map();
     const canvasWidth = canvas.getWidth();
     const canvasHeight = canvas.getHeight();
-
-    if (isEditing) {
-        return optionsCoordsMap;
-    }
 
     const origin = new fabric.Point(CANVAS_PADDING, canvasHeight - CANVAS_PADDING);
 
@@ -116,6 +111,27 @@ export const initAnswerBoxes = (
     return answersCoordsMap;
 };
 
+export const initCorrectAnswersIndicator = (
+    canvas: fabric.Canvas,
+    data: Array<AnswerData>,
+): fabric.Text => {
+    const correctAnswersIndicator = new fabric.Text(`0 / ${data.length.toString()}`, {
+        top: CANVAS_PADDING,
+        left: canvas.getWidth() - 2*CANVAS_PADDING,
+        originX: 'left',
+        originY: 'top',
+        hasControls: false,
+        hasBorders: false,
+        lockMovementX: true,
+        lockMovementY: true,
+        backgroundColor: colours.WHITE,
+        stroke: colours.GREEN,
+        fontSize: FONT_SIZE,
+    });
+    canvas.add(correctAnswersIndicator);
+    return correctAnswersIndicator;
+};
+
 // Image card functionality utils
 
 export const validateAnswer = (
@@ -164,6 +180,7 @@ export const revealAnswer = (
         width: answerData.width,
         height: answerData.height,
         hasControls: false,
+        hasBorders: false,
         lockMovementX: true,
         lockMovementY: true,
         borderColor: colours.BLACK,
@@ -186,4 +203,18 @@ export const resetToOriginalPosition = (
 
     text.setPositionByOrigin(originalCoord, 'left', 'top');
     text.setCoords();
+};
+
+export const updateCorrectAnswersIndicator = (correctAnswersIndicator:fabric.Text):boolean => {
+    const textContent = correctAnswersIndicator.get('text');
+    if (!textContent) return false;
+
+    const answersData = textContent.split('/');
+    const currCorrectAnswers = answersData[0];
+    const maxCorrectAnswers = answersData[1];
+
+    const updatedAnswerCount = parseInt(currCorrectAnswers) + 1;
+    correctAnswersIndicator.set('text', `${updatedAnswerCount.toString()} /${maxCorrectAnswers}`);
+
+    return updatedAnswerCount == parseInt(maxCorrectAnswers);
 };

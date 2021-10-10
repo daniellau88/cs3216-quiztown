@@ -1,4 +1,4 @@
-import { CollectionData, CollectionListData, CollectionMiniEntity, CollectionsCardData, CollectionsCardEntity, CollectionsCardMiniEntity } from '../../types/collections';
+import { CollectionData, CollectionListData, CollectionMiniEntity, CollectionsCardData, CollectionsCardEntity, CollectionsCardListData, CollectionsCardMiniEntity } from '../../types/collections';
 import { CollectionDelta, EntityCollection, EntityCollectionSet, EntityStore } from '../../types/store';
 
 // Action Names
@@ -10,6 +10,8 @@ export const ADD_COLLECTION = 'collections/ADD_COLLECTION';
 export const EDIT_COLLECTION = 'collections/EDIT_COLLECTION';
 export const DELETE_COLLECTION = 'collections/DELETE_COLLECTION';
 
+export const SAVE_COLLECTIONS_CARD_LIST = 'collections/SAVE_COLLECTIONS_CARD_LIST';
+export const UPDATE_COLLECTIONS_CARD_LIST = 'collections/UPDATE_COLLECTIONS_CARD_LIST';
 export const SAVE_COLLECTIONS_CARD = 'collections/SAVE_COLLECTIONS_CARD';
 export const ADD_COLLECTIONS_CARD = 'collections/ADD_COLLECTIONS_CARD';
 export const EDIT_COLLECTIONS_CARD = 'collections/EDIT_COLLECTIONS_CARD';
@@ -46,6 +48,17 @@ export interface DeleteCollectionAction {
     id: number;
 }
 
+export interface SaveCollectionsCardListAction {
+    type: typeof SAVE_COLLECTIONS_CARD_LIST;
+    list: CollectionsCardListData[];
+}
+
+export interface UpdateCollectionsCardListAction {
+    type: typeof UPDATE_COLLECTIONS_CARD_LIST;
+    collectionId: number;
+    delta: CollectionDelta;
+}
+
 export interface SaveCollectionsCardAction {
     type: typeof SAVE_COLLECTIONS_CARD;
     data: CollectionsCardData;
@@ -75,6 +88,8 @@ export type CollectionsActionTypes =
     AddCollectionAction |
     EditCollectionAction |
     DeleteCollectionAction |
+    SaveCollectionsCardListAction |
+    UpdateCollectionsCardListAction |
     SaveCollectionsCardAction |
     AddCollectionsCardAction |
     EditCollectionsCardAction |

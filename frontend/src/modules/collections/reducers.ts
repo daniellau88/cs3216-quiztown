@@ -1,6 +1,6 @@
 import produce from 'immer';
 
-import { createEntityCollection, createEntityCollectionSet, createEntityStore, removeFromStore, resetCollectionCache, resetEntityCache, saveDeltaToCollection, saveEntityToStore, saveListToStore } from '../../utilities/store';
+import { createEntityCollection, createEntityCollectionSet, createEntityStore, removeFromStore, resetCollectionCache, resetEntityCache, saveDeltaToCollection, saveDeltaToCollectionSet, saveEntityToStore, saveListToStore } from '../../utilities/store';
 
 import * as types from './types';
 
@@ -43,6 +43,17 @@ const collectionsReducer = produce((draft: types.CollectionsState, action: types
         case types.DELETE_COLLECTION: {
             removeFromStore(draft.collections, action.id);
             resetCollectionCache(draft.allCollections);
+            return;
+        }
+        case types.SAVE_COLLECTIONS_CARD_LIST: {
+            const list = action.list.map((data) => ({
+                ...data,
+            }));
+            saveListToStore(draft.collectionsCards, list);
+            return;
+        }
+        case types.UPDATE_COLLECTIONS_CARD_LIST: {
+            saveDeltaToCollectionSet(draft.collectionCollectionsCards, action.collectionId, action.delta);
             return;
         }
         case types.SAVE_COLLECTIONS_CARD: {

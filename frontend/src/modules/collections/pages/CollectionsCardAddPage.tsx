@@ -9,6 +9,7 @@ import {
 } from '@material-ui/core';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 
 import { handleApiRequest } from '../../../utilities/ui';
 import { addUpload } from '../../uploads/operations';
@@ -31,15 +32,20 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-const CollectionsCardAddPage: React.FC<{}> = () => {
+type Props = RouteComponentProps;
+
+const CollectionsCardAddPage: React.FC<Props> = ({ match: { params } }: RouteComponentProps) => {
+    const dispatch = useDispatch();
     const classes = useStyles();
-    const [selectedFile, setSelectedFile] = useState<File>();
+    const history = useHistory();
+
+    const collectionId:number = +(params as { collectionId: string }).collectionId.substring(1);
+
+    // TODO: Replace hardcoded cardTitle
     const [cardTitle, setCardTitle] = useState('CVS Physio 1 - Card 10');
+    const [selectedFile, setSelectedFile] = useState<File>();
     const [question, setQuestion] = useState('');
     const [answer, setAnswer] = useState('');
-
-    const dispatch = useDispatch();
-    const collectionId = 2;
 
     const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
@@ -60,7 +66,6 @@ const CollectionsCardAddPage: React.FC<{}> = () => {
     };
 
     const confirmFile = () => {
-        console.log('POST req');
         if (selectedFile == undefined) {
             return;
         }
@@ -70,7 +75,7 @@ const CollectionsCardAddPage: React.FC<{}> = () => {
                 const upload = response.payload;
                 return handleApiRequest(dispatch, dispatch(importCollectionsCard(collectionId, upload))).then((importResponse) => {
                     const payload = importResponse.payload;
-                    // Redirect to image card
+                    history.push(`/collections/:${payload.collection_id}/cards/:${payload.id}`);
                 });
             })
             .then(() => {

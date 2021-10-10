@@ -64,6 +64,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
     const history = useHistory();
     // TODO: Replace mock data
     const collectionName = data?.name;
+    const collectionId = data?.id;
     const collectionNumCards = '12';
     const collectionTags = ['Tag1', 'Tag2'];
     const progressPercentage = '10';
@@ -78,11 +79,11 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
 
     // TODO: Implement functions
     const openCollection = () => {
-        console.log('Open');
+        history.push(`/collections/:${collectionId}`);
     };
 
-    const editCollection = () => {
-        console.log('Edit');
+    const startCollection = () => {
+        console.log('Start');
 
     };
 
@@ -136,8 +137,8 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
             </CardContent>
 
             <CardActions>
-                <QTButton outlined onClick={openCollection}>Start</QTButton>
-                <QTButton onClick={editCollection}>Edit</QTButton>
+                <QTButton outlined onClick={startCollection}>Start</QTButton>
+                <QTButton onClick={openCollection}>Open</QTButton>
                 <QTButton alert onClick={deleteCollection}>Delete</QTButton>
             </CardActions>
         </Card>

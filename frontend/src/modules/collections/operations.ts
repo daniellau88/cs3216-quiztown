@@ -1,8 +1,8 @@
 import api from '../../api';
-import { ApiResponse } from '../../types';
-import { CollectionData, CollectionListData, CollectionMiniEntity, CollectionPostData, CollectionsCardData, CollectionsCardEntity, CollectionsCardImportPostData, CollectionsCardPostData } from '../../types/collections';
+import { ApiResponse, CollectionQueryParams } from '../../types';
+import { CollectionData, CollectionListData, CollectionMiniEntity, CollectionPostData, CollectionsCardData, CollectionsCardEntity, CollectionsCardImportPostData, CollectionsCardListData, CollectionsCardPostData } from '../../types/collections';
 import { CollectionOptions, EntityCollection, NormalizeOperation, Operation } from '../../types/store';
-import { batched, queryEntityCollection, withCachedEntity } from '../../utilities/store';
+import { batched, queryEntityCollection, queryEntityCollectionSet, withCachedEntity } from '../../utilities/store';
 
 import * as actions from './actions';
 import { getAllCollections, getCollectionMiniEntity, getCollectionsCardEntity } from './selectors';
@@ -79,6 +79,30 @@ export function discardCollection(id: number): NormalizeOperation {
     };
 }
 
+export function loadCollectionContents(collectionId: number, options: CollectionOptions): Operation<ApiResponse<EntityCollection>> {
+    return (dispatch, getState) => {
+        return queryEntityCollectionSet(
+            () => getState().collections.collectionCollectionsCards,
+            collectionId,
+            options,
+            async (params) => {
+                const response = await api.collections.getCollectionContentsList(collectionId, params);
+                const data = response.payload.items;
+                batched(dispatch, saveCollectionsCardList(data));
+                return response;
+            },
+            (delta) => dispatch(actions.updateCollectionsCardList(delta, collectionId)),
+        );
+    };
+}
+
+export function saveCollectionsCardList(list: CollectionsCardListData[]): NormalizeOperation {
+    return (dispatch) => {
+        dispatch(actions.saveCollectionsCardList(list));
+    };
+}
+
+
 export function loadCollectionsCard(collectionId: number, cardId: number): Operation<ApiResponse<CollectionsCardEntity>> {
     return async (dispatch, getState) => {
         return withCachedEntity(getState, getCollectionsCardEntity, cardId, async () => {
@@ -105,7 +129,7 @@ export function saveCollectionsCard(data: CollectionsCardData): NormalizeOperati
     };
 }
 
-export function updateCollectionsCard(collectionId: number, cardId: number, card: CollectionsCardPostData): Operation<ApiResponse<CollectionsCardEntity>> {
+export function updateCollectionsCard(collectionId: number, cardId: number, card: Partial<CollectionsCardPostData>): Operation<ApiResponse<CollectionsCardEntity>> {
     return async (dispatch, getState) => {
         const response = await api.collections.patchCollectionsCard(collectionId, cardId, card);
         const data = response.payload.item;

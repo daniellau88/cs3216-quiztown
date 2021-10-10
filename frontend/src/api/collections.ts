@@ -1,5 +1,5 @@
 import { ApiPromise, CollectionData as CollectionDataType, CollectionQueryParams } from '../types';
-import { CollectionData, CollectionListData, CollectionPostData, CollectionsCardData, CollectionsCardImportPostData, CollectionsCardPostData } from '../types/collections';
+import { CollectionData, CollectionListData, CollectionPostData, CollectionsCardData, CollectionsCardImportPostData, CollectionsCardListData, CollectionsCardPostData } from '../types/collections';
 import { toQueryString } from '../utilities/url';
 
 import BaseAPI from './base';
@@ -35,6 +35,10 @@ export class CollectionsAPI extends BaseAPI {
         return `${this.getCollectionUrl()}/${collectionId}/cards`;
     }
 
+    public getCollectionContentsList(collectionId: number, params: CollectionQueryParams): ApiPromise<CollectionDataType<CollectionsCardListData>> {
+        return this.get(`${this.getCollectionsCardUrl(collectionId)}?${toQueryString(params)}` + URL_SUFFIX);
+    }
+
     public getCollectionsCard(collectionId: number, cardId: number): ApiPromise<{ item: CollectionsCardData }> {
         console.log('Get cards ' + cardId);
         return this.get(`${this.getCollectionsCardUrl(collectionId)}/${cardId}` + URL_SUFFIX);
@@ -45,7 +49,7 @@ export class CollectionsAPI extends BaseAPI {
         return this.post(`${this.getCollectionsCardUrl(collectionId)}` + URL_SUFFIX, data);
     }
 
-    public patchCollectionsCard(collectionId: number, cardId: number, data: CollectionsCardPostData): ApiPromise<{ item: CollectionsCardData }> {
+    public patchCollectionsCard(collectionId: number, cardId: number, data: Partial<CollectionsCardPostData>): ApiPromise<{ item: CollectionsCardData }> {
         return this.put(`${this.getCollectionsCardUrl(collectionId)}/${cardId}` + URL_SUFFIX, data);
     }
 

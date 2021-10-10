@@ -4,18 +4,18 @@ import { Dispatch } from 'redux';
 
 import CollectionMesh from '../../../components/tables/CollectionMesh';
 import { TableFilter } from '../../../components/tables/TableFilters';
-import { CollectionOptions, EntityCollection } from '../../../types/store';
+import { AppState, CollectionOptions, EntityCollection } from '../../../types/store';
 import { handleApiRequest } from '../../../utilities/ui';
-import { loadAllCollections } from '../operations';
-import { getAllCollections } from '../selectors';
+import { loadCollectionContents } from '../operations';
+import { getCollectionsCardList } from '../selectors';
 
-import CollectionCard from './CollectionCard';
-import CollectionGridComponent from './CollectionGridComponent';
+import CollectionsCard from './CollectionsCard';
+import CollectionsCardGridComponent from './CollectionsCardGridComponent';
 
 
-const CollectionTable: React.FC<{}> = () => {
+const CollectionContentsTable: React.FC<{collectionId:number}> = ({ collectionId }) => {
     const dispatch = useDispatch();
-    const allCollections: EntityCollection = useSelector(getAllCollections);
+    const allCollections: EntityCollection = useSelector((state: AppState) => getCollectionsCardList(state, collectionId));
 
     const [isLoading, setIsLoading] = React.useState(true);
 
@@ -24,7 +24,7 @@ const CollectionTable: React.FC<{}> = () => {
 
     const onUpdate = (options: CollectionOptions, dispatch: Dispatch<any>) => {
         setIsLoading(true);
-        return handleApiRequest(dispatch, dispatch(loadAllCollections(options))).finally(() => {
+        return handleApiRequest(dispatch, dispatch(loadCollectionContents(collectionId, options))).finally(() => {
             setIsLoading(false);
         });
     };
@@ -38,8 +38,8 @@ const CollectionTable: React.FC<{}> = () => {
             collection={allCollections}
             isLoading={isLoading}
             onUpdate={(options: CollectionOptions) => onUpdate(options, dispatch)}
-            gridComponent={CollectionGridComponent}
-            leadingComponent={<CollectionCard isAddCollectionCard={true} />}
+            gridComponent={CollectionsCardGridComponent}
+            leadingComponent={<CollectionsCard isAddCard={true} id={collectionId}/>}
             filters={filters}
             isSearchable
             showIndex
@@ -47,4 +47,4 @@ const CollectionTable: React.FC<{}> = () => {
     );
 };
 
-export default CollectionTable;
+export default CollectionContentsTable;
