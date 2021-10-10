@@ -43,7 +43,7 @@ const useStyles = makeStyles(() => ({
         width: '80vw',
     },
     headbox: {
-        width: '65vw',
+        width: '70vw',
     },
     titleLink: {
         textDecoration: 'none',
