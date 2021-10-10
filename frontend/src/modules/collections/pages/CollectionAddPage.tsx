@@ -14,6 +14,7 @@ import api from '../../../api';
 import QTButton from '../../../components/QTButton';
 import { CollectionPostData, CollectionsImportPostData } from '../../../types/collections';
 import { AppState } from '../../../types/store';
+import { UploadData } from '../../../types/uploads';
 import { handleApiRequest } from '../../../utilities/ui';
 import { getCurrentUser } from '../../auth/selectors';
 import { addUpload } from '../../uploads/operations';
@@ -57,7 +58,8 @@ const AddCollectionModal: React.FC<{}> = () => {
     const [collectionName, setCollectionName] = useState<string>('Untitled collection');
     // TODO: add a selector for get file keys
     // will do this very soon, gonna run for sth
-    const uploadFiles = useSelector((state: AppState) => getFileKeys(state));
+    // const uploadFiles = useSelector((state: AppState) => getFileKeys(state));
+    const [uploadFiles, setUploadedResponse] = useState<Array<UploadData>>([]);
 
     const upload = async (e: React.ChangeEvent<any>) => {
         const fileInfo = [...fileCardInfo];
@@ -66,11 +68,13 @@ const AddCollectionModal: React.FC<{}> = () => {
         console.log(fileInfo);
         saveFileCardInfo(fileInfo);
         [...e.target.files].map(async (file: File) => {
-
             return handleApiRequest(dispatch, dispatch(addUpload(file)))
                 .then((response) => {
                     const upload = response.payload;
                     console.log(upload);
+                    const copy = [...uploadFiles];
+                    copy.push(upload);
+                    setUploadedResponse(copy);
                 })
                 .then(() => {
                     return true;
@@ -90,8 +94,9 @@ const AddCollectionModal: React.FC<{}> = () => {
         return handleApiRequest(dispatch, dispatch(addCollection(collectionPostDataCurrent)))
             .then((response) => {
                 console.log(response);
-                return handleApiRequest(dispatch, dispatch(importCollections(response.payload.id, uploadFiles))).then((importResponse) => {
+                return handleApiRequest(dispatch, dispatch(importCollections(response.payload.id, { imports: uploadFiles }))).then((importResponse) => {
                     const payload = importResponse.payload;
+                    console.log(payload);
                     // Redirect to home page
                     history.push('/collections');
                 });
