@@ -6,13 +6,13 @@ import {
 import * as React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-import { navBarHeight } from '../../layouts/AppLayout';
+import { NAV_BAR_HEIGHT } from '../../layouts/AppLayout';
 import colours from '../../utilities/colours';
 import { headerSize } from '../utiltiies/constants';
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        height: navBarHeight,
+        height: NAV_BAR_HEIGHT,
     },
     titleText: {
         color: theme.palette.text.primary,

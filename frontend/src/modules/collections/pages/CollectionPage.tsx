@@ -12,11 +12,9 @@ import CollectionTable from '../components/CollectionTable';
 const useStyles = makeStyles(() => ({
     root: {
         display: 'flex',
-        paddingTop: '80px',
-        paddingBottom: '80px',
+        paddingBottom: '8vh',
     },
     header: {
-        paddingTop: 60,
         paddingBottom: 60,
     },
     table: {
