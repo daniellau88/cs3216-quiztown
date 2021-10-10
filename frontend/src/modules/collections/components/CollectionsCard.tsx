@@ -1,5 +1,4 @@
 import {
-    Box,
     Card,
     CardActions,
     CardContent,
@@ -7,9 +6,9 @@ import {
     Typography,
     makeStyles,
 } from '@material-ui/core';
-import { Add, ReorderOutlined } from '@material-ui/icons';
+import { Add } from '@material-ui/icons';
 import * as React from 'react';
-import { useHistory } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 
 import QTButton from '../../../components/QTButton';
 import { CollectionsCardMiniEntity } from '../../../types/collections';
@@ -54,16 +53,17 @@ const useStyles = makeStyles(() => ({
 interface OwnProps {
     data?: CollectionsCardMiniEntity;
     isAddCard?: boolean;
+    id?: number;
 }
 
 type Props = OwnProps;
 
-const CollectionsCard: React.FC<Props> = ({ data, isAddCard=false }: Props) => {
+const CollectionsCard: React.FC<Props> = ({ data, isAddCard=false, id }: Props) => {
     const classes = useStyles();
     const history = useHistory();
     const collectionName = data?.name;
     const cardId = data?.id;
-    const collectionId = data?.collection_id;
+    const collectionId = data?.collection_id || id;
 
     // TODO: Implement functions
     const duplicateCard = () => {
@@ -72,7 +72,6 @@ const CollectionsCard: React.FC<Props> = ({ data, isAddCard=false }: Props) => {
 
     const openCard = () => {
         history.push(`/collections/:${collectionId}/cards/:${cardId}`);
-        console.log('Open');
     };
 
     const editCard = () => {

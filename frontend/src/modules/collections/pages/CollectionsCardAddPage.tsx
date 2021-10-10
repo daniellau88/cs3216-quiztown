@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 
 import { handleApiRequest } from '../../../utilities/ui';
 import { addUpload } from '../../uploads/operations';
@@ -32,17 +32,20 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-const CollectionsCardAddPage: React.FC<{}> = () => {
+type Props = RouteComponentProps;
+
+const CollectionsCardAddPage: React.FC<Props> = ({ match: { params } }: RouteComponentProps) => {
+    const dispatch = useDispatch();
     const classes = useStyles();
-    const [selectedFile, setSelectedFile] = useState<File>();
+    const history = useHistory();
+
+    const collectionId:number = +(params as { collectionId: string }).collectionId.substring(1);
+
+    // TODO: Replace hardcoded cardTitle
     const [cardTitle, setCardTitle] = useState('CVS Physio 1 - Card 10');
+    const [selectedFile, setSelectedFile] = useState<File>();
     const [question, setQuestion] = useState('');
     const [answer, setAnswer] = useState('');
-
-    const dispatch = useDispatch();
-    // TODO: Dont use this hardcoded value once Collections and CollectionCards are linked up
-    const collectionId = 3;
-    const history = useHistory();
 
     const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {

@@ -14,7 +14,6 @@ type Props = OwnProps;
 
 const CollectionsCardGridComponent: React.FC<Props> = ({ id }: Props) => {
     const collection = useSelector((state: AppState) => getCollectionsCardMiniEntity(state, id));
-    console.log('Collection card grid component: ', collection);
 
     if (!collection) {
         return null;

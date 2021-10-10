@@ -39,7 +39,7 @@ const CollectionContentsTable: React.FC<{collectionId:number}> = ({ collectionId
             isLoading={isLoading}
             onUpdate={(options: CollectionOptions) => onUpdate(options, dispatch)}
             gridComponent={CollectionsCardGridComponent}
-            leadingComponent={<CollectionsCard isAddCard={true} />}
+            leadingComponent={<CollectionsCard isAddCard={true} id={collectionId}/>}
             filters={filters}
             isSearchable
             showIndex
