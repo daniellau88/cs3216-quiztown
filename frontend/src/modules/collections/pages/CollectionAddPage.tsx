@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const AddCollectionModal: React.FC<{}> = () => {
+const AddCollectionPage: React.FC<{}> = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
     const history = useHistory();
@@ -155,4 +155,4 @@ const AddCollectionModal: React.FC<{}> = () => {
     );
 };
 
-export default AddCollectionModal;
+export default AddCollectionPage;
