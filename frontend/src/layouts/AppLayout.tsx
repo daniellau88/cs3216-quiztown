@@ -6,9 +6,11 @@ import {
 import clsx from 'clsx';
 import * as React from 'react';
 
+import ProgressDisplay from '../components/content/ProgressDisplay';
 import NavigationBar from '../components/navigation/NavigationBar';
 
-export const navBarHeight = '8vh';
+export const NAV_BAR_HEIGHT = '8vh';
+export const NAV_BAR_HEIGHT_WITH_MARGIN = '12vh';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -17,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     },
     appBar: {
         zIndex: theme.zIndex.drawer + 1,
-        height: navBarHeight,
+        height: NAV_BAR_HEIGHT,
         hidden: true,
     },
     content: {
@@ -40,6 +42,7 @@ const AppLayout: React.FC<{}> = (props: Props) => {
                 <NavigationBar />
             </AppBar>
             <main className={clsx(classes.content, {})}>
+                <ProgressDisplay />
                 {props.children}
             </main>
         </Container>

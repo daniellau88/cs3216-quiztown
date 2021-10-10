@@ -45,7 +45,7 @@ def extract_images_from_file(file_key: str) -> list[str]:
             xref = img[0]
             pix = fitz.Pixmap(doc, xref)
             image_key = "%s_%05d.png" % (file_name, count)
-            image_path = STATIC_CARD_DIRECTORY + image_key
+            image_path = UPLOAD_DIRECTORY + image_key
             if pix.n < 5:       # this is GRAY or RGB
                 pix.writePNG(image_path)
             else:               # CMYK: convert to RGB first
