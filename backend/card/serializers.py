@@ -16,7 +16,7 @@ class CardListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Card
         fields = ["id", "name", "collection_id", "flagged", "image_file_key",
-                  "next_date", "created_at"]
+                  "next_date", "box_number", "created_at"]
 
     def to_representation(self, data):
         rep = super(CardListSerializer, self).to_representation(data)
@@ -28,7 +28,7 @@ class CardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Card
         fields = ["id", "name", "collection_id", "flagged", "image_file_key",
-                  "next_date", "image_metadata", "answer_details", "created_at"]
+                  "next_date", "box_number", "image_metadata", "answer_details", "created_at"]
 
     def to_representation(self, data):
         rep = super(CardSerializer, self).to_representation(data)

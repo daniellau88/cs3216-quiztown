@@ -45,7 +45,7 @@ export class CollectionsAPI extends BaseAPI {
         return this.post(`${this.getCollectionsCardUrl(collectionId)}` + URL_SUFFIX, data);
     }
 
-    public patchCollectionsCard(collectionId: number, cardId: number, data: CollectionsCardPostData): ApiPromise<{ item: CollectionsCardData }> {
+    public patchCollectionsCard(collectionId: number, cardId: number, data: Partial<CollectionsCardPostData>): ApiPromise<{ item: CollectionsCardData }> {
         return this.put(`${this.getCollectionsCardUrl(collectionId)}/${cardId}` + URL_SUFFIX, data);
     }
 

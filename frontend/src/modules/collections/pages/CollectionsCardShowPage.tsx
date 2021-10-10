@@ -1,18 +1,21 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps , useHistory } from 'react-router-dom';
 import { Dispatch } from 'redux';
 
 import LoadingIndicator from '../../../components/content/LoadingIndicator';
 import { AppState } from '../../../types/store';
+import { dateToISOFormat } from '../../../utilities/datetime';
 import { handleApiRequest } from '../../../utilities/ui';
 import CollectionsCardImage from '../components/CollectionsCardImage';
-import { loadCollectionsCard } from '../operations';
+import { loadCollectionsCard, updateCollectionsCard } from '../operations';
 import { getCollectionsCardEntity } from '../selectors';
+
 
 type Props = RouteComponentProps;
 
 const CollectionsCardShowPage: React.FC<Props> = ({ match: { params } }: RouteComponentProps) => {
+    const history = useHistory();
     const dispatch = useDispatch();
     const cardId:number = +(params as { cardId: string }).cardId.substring(1);
     const collectionId:number = +(params as { collectionId: string }).collectionId.substring(1);
@@ -27,6 +30,16 @@ const CollectionsCardShowPage: React.FC<Props> = ({ match: { params } }: RouteCo
         });
     };
 
+    const onCardCompleted = (nextBoxNumber: number, nextDate: Date) => {
+        handleApiRequest(dispatch, dispatch(updateCollectionsCard(collectionId, cardId, {
+            box_number: nextBoxNumber,
+            next_date: dateToISOFormat(nextDate),
+        }))).finally(() => {
+            setIsLoading(false);
+        });
+        history.push(`/collections/:${collectionId}`);
+    };
+
     React.useEffect(() => {
         onUpdate(collectionId, cardId, dispatch);
     }, [dispatch, collectionId, cardId]);
@@ -37,7 +50,12 @@ const CollectionsCardShowPage: React.FC<Props> = ({ match: { params } }: RouteCo
                 <LoadingIndicator />
             )}
             {!isLoading && card && (
-                <CollectionsCardImage id={card.id} imageUrl={card.image_link} result={card.answer_details.results} />
+                <CollectionsCardImage
+                    id={card.id}
+                    imageUrl={card.image_link}
+                    result={card.answer_details.results}
+                    onCardCompleted={onCardCompleted}
+                />
             )}
         </>
     );

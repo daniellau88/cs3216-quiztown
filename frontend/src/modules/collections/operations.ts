@@ -105,7 +105,7 @@ export function saveCollectionsCard(data: CollectionsCardData): NormalizeOperati
     };
 }
 
-export function updateCollectionsCard(collectionId: number, cardId: number, card: CollectionsCardPostData): Operation<ApiResponse<CollectionsCardEntity>> {
+export function updateCollectionsCard(collectionId: number, cardId: number, card: Partial<CollectionsCardPostData>): Operation<ApiResponse<CollectionsCardEntity>> {
     return async (dispatch, getState) => {
         const response = await api.collections.patchCollectionsCard(collectionId, cardId, card);
         const data = response.payload.item;

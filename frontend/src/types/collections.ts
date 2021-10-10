@@ -34,6 +34,8 @@ export interface CollectionsCardPostData {
     name: string;
     collection_id: number;
     image_link: string;
+    box_number: number;
+    next_date: string;
 }
 
 type Coordinate = [number, number];
@@ -54,6 +56,7 @@ export interface CollectionsCardListData {
     collection_id: number;
     is_flagged: string;
     image_link: string;
+    box_number: number;
     next_date: Date;
     created_at: number;
 }
@@ -64,6 +67,7 @@ export interface CollectionsCardData {
     collection_id: number;
     is_flagged: string;
     image_link: string;
+    box_number: number;
     next_date: Date;
     created_at: number;
     image_metadata: ImageMetadata;
@@ -78,6 +82,7 @@ export interface CollectionsCardMiniEntity {
     collection_id: number;
     is_flagged: string;
     image_link: string;
+    box_number: number;
     next_date: Date;
     created_at: number;
 }
@@ -87,6 +92,7 @@ export interface CollectionsCardEntity {
     collection_id: number;
     is_flagged: string;
     image_link: string;
+    box_number: number;
     next_date: Date;
     created_at: number;
     image_metadata: ImageMetadata;

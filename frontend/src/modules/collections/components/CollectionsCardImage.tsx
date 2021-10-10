@@ -1,6 +1,11 @@
 import {
     Box,
+    Button,
     CssBaseline,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     Grid,
     Typography,
     makeStyles,
@@ -8,11 +13,23 @@ import {
 import { fabric } from 'fabric';
 import React, { useEffect, useState } from 'react';
 
+import QTButton from '../../../components/QTButton';
 import { AnswerData } from '../../../types/collections';
 import { useWindowDimensions } from '../../../utilities/customHooks';
-import { initAnswerBoxes, initAnswerOptions, initCorrectAnswersIndicator, resetToOriginalPosition, revealAnswer, updateCorrectAnswersIndicator, validateAnswer } from '../utils';
+import { getIntervals, getNextBoxNumber, getNextIntervalEndDate } from '../../../utilities/leitner';
+import {
+    initAnswerBoxes,
+    initAnswerOptions,
+    initCorrectAnswersIndicator,
+    resetToOriginalPosition,
+    revealAnswer,
+    updateCorrectAnswersIndicator,
+    validateAnswer,
+} from '../utils';
 
-const MAX_CANVAS_WIDTH = 1440;
+
+const MAX_CANVAS_WIDTH = 1280;
+const SCREEN_PADDING = 40;
 const HEADER_HEIGHT = 80;
 
 const useStyles = makeStyles(() => ({
@@ -33,6 +50,7 @@ interface CollectionsCardImageProps {
     id: number,
     imageUrl: string,
     result: AnswerData[],
+    onCardCompleted: (nextBoxNumber:number, nextDate:Date) => void
 }
 
 const CollectionsCardImage: React.FC<CollectionsCardImageProps> = ({
@@ -40,17 +58,19 @@ const CollectionsCardImage: React.FC<CollectionsCardImageProps> = ({
     id,
     imageUrl,
     result,
+    onCardCompleted,
 }) => {
     const classes = useStyles();
     const CANVAS_ID = 'quiztown-canvas-' + id;
 
     const [canvas, setCanvas] = useState<fabric.Canvas>();
     const [hasAnsweredAll, setHasAnsweredAll] = useState(false);
+    const [currentBox, setCurrentBox] = useState(0);
 
     const { windowHeight, windowWidth } = useWindowDimensions();
 
-    const canvasMaxWidth = windowWidth > MAX_CANVAS_WIDTH ? MAX_CANVAS_WIDTH : windowWidth;
-    const canvasMaxHeight = windowHeight - HEADER_HEIGHT;
+    const canvasMaxWidth = windowWidth - SCREEN_PADDING > MAX_CANVAS_WIDTH ? MAX_CANVAS_WIDTH : windowWidth;
+    const canvasMaxHeight = windowHeight - HEADER_HEIGHT - SCREEN_PADDING;
 
     const initCanvasWithBg = () => {
         const canvas = new fabric.Canvas(CANVAS_ID,{
@@ -124,31 +144,54 @@ const CollectionsCardImage: React.FC<CollectionsCardImageProps> = ({
         }
     }, [windowHeight, windowWidth]);
 
-    if (hasAnsweredAll) {
-        return (
-            <Grid>
-                <Typography variant='h2'>
-                    You correctly filled in all the blanks!
-                </Typography>
-                <Typography variant='h2'>
-                    How confident are you?
-                </Typography>
-            </Grid>
-        );
-    }
+    const onClose = () => {
+        console.log('Close dialog');
+    };
+
+    const selectConfidence = (index: number) => {
+        const nextBoxNumber = getNextBoxNumber(currentBox, index + 1);
+        const nextDate = getNextIntervalEndDate(nextBoxNumber);
+        onCardCompleted(nextBoxNumber, nextDate);
+    };
 
     return (
         <>
             <CssBaseline />
             <Box className={classes.root}>
-                <Box display="flex" justifyContent='center' width='100%'>
-                    <canvas
-                        id={CANVAS_ID}
-                        width={canvasMaxWidth}
-                        height={canvasMaxHeight}
-                        className={classes.canvas}
-                    />
-                </Box>
+                <Grid container>
+                    <Box display="flex" justifyContent='center' width='100%'>
+                        <canvas
+                            id={CANVAS_ID}
+                            width={canvasMaxWidth}
+                            height={canvasMaxHeight}
+                            className={classes.canvas}
+                        />
+                    </Box>
+
+                    <Dialog
+                        open={hasAnsweredAll}
+                        onClose={onClose}
+                    >
+                        <DialogTitle>
+                            Card completed!
+                        </DialogTitle>
+                        <DialogContent>
+                            <Typography>
+                                You have answered all the questions in the cards, how confident did you feel?
+                            </Typography>
+                        </DialogContent>
+                        <DialogActions>
+                            {getIntervals(currentBox).map((interval, index) => (
+                                <QTButton 
+                                    key={index}
+                                    onClick={() => selectConfidence(index)} 
+                                >
+                                    Confidence: {index + 1}, Interval: {interval}
+                                </QTButton>
+                            ))}
+                        </DialogActions>
+                    </Dialog>
+                </Grid>
             </Box>
         </>
     );
