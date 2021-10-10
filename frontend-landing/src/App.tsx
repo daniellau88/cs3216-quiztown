@@ -6,6 +6,7 @@ import { Route, Router } from 'react-router-dom';
 import AppLayout from './layouts/AppLayout';
 import MainRouter from './routers/MainRouter';
 import palette from './utilities/palette';
+import './assets/css/scroll.css';
 import './assets/css/fonts.css';
 import 'animate.css';
 

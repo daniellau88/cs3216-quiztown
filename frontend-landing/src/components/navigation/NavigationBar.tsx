@@ -5,6 +5,7 @@ import {
     makeStyles,
 } from '@material-ui/core';
 import * as React from 'react';
+import { isBrowser } from 'react-device-detect';
 
 import logo from '../../assets/images/logo512.png';
 import { navBarHeight } from '../../layouts/AppLayout';
@@ -42,7 +43,9 @@ const NavigationBar: React.FC<{}> = () => {
                     <CardMedia component='img' image={logo} className={classes.logo} />
                     <NavigationBarTitle text='QuizTown' size='h5' />
                     <Box className={classes.grow} />
-                    <NavigationBarElements size='h6' flexGrow={0.02} />
+                    {isBrowser &&
+                        <NavigationBarElements size='h6' flexGrow={0.02} />
+                    }
                 </Box>
             </Toolbar>
         </>
