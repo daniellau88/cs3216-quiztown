@@ -36,8 +36,9 @@ class CollectionImport(TimestampedModel):
 
     collection_id = models.IntegerField()
     status = models.PositiveIntegerField(choices=IMPORT_STATUS)
-    file_key = models.CharField(max_length=50)
-    file_name = models.CharField(max_length=100)
+    file_key = models.CharField(max_length=50, null=False)
+    file_name = models.CharField(max_length=100, null=False)
+    is_reviewed = models.BooleanField(null=False, default=False)
 
     def create(self, validated_data):
         return CollectionImport.objects.create(validated_data)

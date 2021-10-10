@@ -15,7 +15,12 @@ class CollectionImportCreateSerializer(serializers.ModelSerializer):
         fields = ["file_name", "file_key"]
 
 
+class CollectionImportRequestSerializer(serializers.Serializer):
+    imports = CollectionImportCreateSerializer(many=True)
+
+
 class CollectionImportSerializer(serializers.ModelSerializer):
     class Meta:
         model = CollectionImport
-        fields = ["id", "collection_id", "file_name", "status", "created_at"]
+        fields = ["id", "collection_id", "file_name",
+                  "status", "created_at", "is_reviewed"]

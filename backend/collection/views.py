@@ -69,18 +69,32 @@ def delete_collection_view(request, pk_item):
 
 @api_view(["POST"])
 @convert_keys_to_item({"pk": Collection})
-@validate_request_data(serializers.CollectionImportCreateSerializer)
+@validate_request_data(serializers.CollectionImportRequestSerializer)
 def import_collection_view(request, pk_item, serializer):
-    serializer.save(collection_id=pk_item.id, status=CollectionImport.IN_QUEUE)
+    collection_import_instances = []
 
-    # TODO: start task
-    collection_import = serializer.instance
-    t = threading.Thread(target=jobs.import_cards_from_pdf,
-                         args=(), kwargs={"collection_import": collection_import})
-    t.setDaemon(True)
-    t.start()
+    for collection_import_data in serializer.data["imports"]:
+        collection_import_serializer = serializers.CollectionImportCreateSerializer(
+            data=collection_import_data)
 
-    return Response({"item": serializer.data})
+        collection_import_serializer.is_valid()
+        collection_import_serializer.save(
+            collection_id=pk_item.id, status=CollectionImport.IN_QUEUE)
+
+        collection_import = collection_import_serializer.instance
+
+        collection_import_instances.append(collection_import)
+
+        # TODO: handle images too
+        t = threading.Thread(target=jobs.import_cards_from_pdf,
+                             args=(), kwargs={"collection_import": collection_import})
+        t.setDaemon(True)
+        t.start()
+
+    response_serializer = serializers.CollectionImportSerializer(
+        collection_import_instances, many=True)
+
+    return Response({"items": response_serializer.data})
 
 
 @api_view(["GET"])
