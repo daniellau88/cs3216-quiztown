@@ -79,7 +79,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
 
     // TODO: Implement functions
     const openCollection = () => {
-        history.push(`/collections/:${collectionId}`);
+        history.push(`/collections/${collectionId}`);
     };
 
     const startCollection = () => {

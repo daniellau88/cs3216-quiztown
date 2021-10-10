@@ -71,7 +71,7 @@ const CollectionsCard: React.FC<Props> = ({ data, isAddCard=false, id }: Props) 
     };
 
     const openCard = () => {
-        history.push(`/collections/:${collectionId}/cards/:${cardId}`);
+        history.push(`/collections/${collectionId}/cards/${cardId}`);
     };
 
     const editCard = () => {
@@ -83,7 +83,7 @@ const CollectionsCard: React.FC<Props> = ({ data, isAddCard=false, id }: Props) 
     };
 
     const addNewCard = () => {
-        history.push(`/collections/:${collectionId}/cards/new`);
+        history.push(`/collections/${collectionId}/cards/new`);
     };
 
     if (isAddCard) {

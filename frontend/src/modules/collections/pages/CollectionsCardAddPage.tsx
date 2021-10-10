@@ -39,7 +39,7 @@ const CollectionsCardAddPage: React.FC<Props> = ({ match: { params } }: RouteCom
     const classes = useStyles();
     const history = useHistory();
 
-    const collectionId:number = +(params as { collectionId: string }).collectionId.substring(1);
+    const collectionId: number = +(params as { collectionId: string }).collectionId;
 
     // TODO: Replace hardcoded cardTitle
     const [cardTitle, setCardTitle] = useState('CVS Physio 1 - Card 10');
@@ -75,7 +75,7 @@ const CollectionsCardAddPage: React.FC<Props> = ({ match: { params } }: RouteCom
                 const upload = response.payload;
                 return handleApiRequest(dispatch, dispatch(importCollectionsCard(collectionId, upload))).then((importResponse) => {
                     const payload = importResponse.payload;
-                    history.push(`/collections/:${payload.collection_id}/cards/:${payload.id}`);
+                    history.push(`/collections/${payload.collection_id}/cards/${payload.id}`);
                 });
             })
             .then(() => {

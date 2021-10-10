@@ -29,7 +29,7 @@ type Props = RouteComponentProps;
 
 const CollectionContentsPage: React.FC<Props> = ({ match: { params } }: RouteComponentProps) => {
     const classes = useStyles();
-    const collectionId:number = +(params as { collectionId: string }).collectionId.substring(1);
+    const collectionId: number = +(params as { collectionId: string }).collectionId;
 
     return (
         <>

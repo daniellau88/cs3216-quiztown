@@ -17,8 +17,8 @@ type Props = RouteComponentProps;
 const CollectionsCardShowPage: React.FC<Props> = ({ match: { params } }: RouteComponentProps) => {
     const history = useHistory();
     const dispatch = useDispatch();
-    const cardId:number = +(params as { cardId: string }).cardId.substring(1);
-    const collectionId:number = +(params as { collectionId: string }).collectionId.substring(1);
+    const cardId: number = +(params as { cardId: string }).cardId;
+    const collectionId: number = +(params as { collectionId: string }).collectionId;
     const card = useSelector((state: AppState) => getCollectionsCardEntity(state, cardId));
 
     const [isLoading, setIsLoading] = React.useState(true);
@@ -37,7 +37,7 @@ const CollectionsCardShowPage: React.FC<Props> = ({ match: { params } }: RouteCo
         }))).finally(() => {
             setIsLoading(false);
         });
-        history.push(`/collections/:${collectionId}`);
+        history.push(`/collections/${collectionId}`);
     };
 
     React.useEffect(() => {
