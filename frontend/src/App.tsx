@@ -8,6 +8,7 @@ import AppLayout from './layouts/AppLayout';
 import configureStore from './modules/store';
 import MainRouter from './routers/MainRouter';
 import palette from './utilities/palette';
+import './assets/css/fonts.css';
 
 const history = createBrowserHistory();
 const store = configureStore();
