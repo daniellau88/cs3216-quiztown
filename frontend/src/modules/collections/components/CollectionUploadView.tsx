@@ -16,7 +16,7 @@ const useStyles = makeStyles(() => ({
     root: {
         // TODO: Make mobile responsive
         width: '280px',
-        height: '175px',
+        height: '200px',
         position: 'relative',
     },
     center: {

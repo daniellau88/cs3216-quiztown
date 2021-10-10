@@ -61,6 +61,11 @@ export class CollectionsAPI extends BaseAPI {
         console.log('Import card. Data name: ' + data.file_key);
         return this.post(`${this.getCollectionsCardUrl(collectionId)}/import` + URL_SUFFIX, data);
     }
+
+    public importCollections(collectionId: number, data: CollectionsCardImportPostData): ApiPromise<{ item: CollectionData }> {
+        console.log('Import collection. Data name: ' + data.file_key);
+        return this.post(`${this.getCollectionUrl()}/${collectionId}/import` + URL_SUFFIX, data);
+    }
 }
 
 export default CollectionsAPI;

@@ -105,3 +105,8 @@ export interface CollectionsCardImportPostData {
     file_name: string;
     file_key: string;
 }
+
+export interface CollectionsImportPostData {
+    file_name: string;
+    file_key: string;
+}
