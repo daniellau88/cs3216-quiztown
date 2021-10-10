@@ -32,7 +32,7 @@ export class CollectionsAPI extends BaseAPI {
     }
 
     protected getCollectionsCardUrl(collectionId: number): string {
-        return `${this.getCollectionUrl()}/${collectionId}/cards/`;
+        return `${this.getCollectionUrl()}/${collectionId}/cards`;
     }
 
     public getCollectionsCard(collectionId: number, cardId: number): ApiPromise<{ item: CollectionsCardData }> {
