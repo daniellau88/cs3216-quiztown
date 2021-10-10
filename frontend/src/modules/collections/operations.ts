@@ -1,6 +1,6 @@
 import api from '../../api';
 import { ApiResponse } from '../../types';
-import { CollectionData, CollectionListData, CollectionMiniEntity, CollectionPostData, CollectionsCardData, CollectionsCardEntity, CollectionsCardImportPostData, CollectionsCardPostData } from '../../types/collections';
+import { CollectionData, CollectionListData, CollectionMiniEntity, CollectionPostData, CollectionsCardData, CollectionsCardEntity, CollectionsCardImportPostData, CollectionsCardListData, CollectionsCardPostData } from '../../types/collections';
 import { CollectionOptions, EntityCollection, NormalizeOperation, Operation } from '../../types/store';
 import { batched, queryEntityCollection, withCachedEntity } from '../../utilities/store';
 
@@ -78,6 +78,29 @@ export function discardCollection(id: number): NormalizeOperation {
         dispatch(actions.deleteCollection(id));
     };
 }
+
+export function loadCollectionContents(collectionId: number, options: CollectionOptions): Operation<ApiResponse<EntityCollection>> {
+    return (dispatch, getState) => {
+        return queryEntityCollection(
+            () => getAllCollections(getState()),
+            options,
+            async (params) => {
+                const response = await api.collections.getCollectionContentsList(collectionId, params);
+                const data: CollectionsCardListData[] = response.payload.items;
+                batched(dispatch, saveCollectionsCardList(data));
+                return response;
+            },
+            (delta) => dispatch(actions.updateCollectionList(delta)),
+        );
+    };
+}
+
+export function saveCollectionsCardList(list: CollectionsCardListData[]): NormalizeOperation {
+    return (dispatch) => {
+        dispatch(actions.saveCollectionsCardList(list));
+    };
+}
+
 
 export function loadCollectionsCard(collectionId: number, cardId: number): Operation<ApiResponse<CollectionsCardEntity>> {
     return async (dispatch, getState) => {

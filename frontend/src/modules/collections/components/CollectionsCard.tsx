@@ -3,7 +3,6 @@ import {
     Card,
     CardActions,
     CardContent,
-    CardMedia,
     Grid,
     Typography,
     makeStyles,
@@ -78,33 +77,31 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
         transparent 100%)`;
 
     // TODO: Implement functions
-    const openCollection = () => {
-        history.push(`/collections/:${collectionId}`);
+    const duplicateCard = () => {
+        console.log('Duplicate');
     };
 
-    const startCollection = () => {
-        console.log('Start');
-
+    const editCard = () => {
+        console.log('Edit');
     };
 
-    const deleteCollection = () => {
+    const deleteCard = () => {
         console.log('Delete');
     };
 
-    const addNewCollection = () => {
-        console.log('Add new');
-        history.push('/collections/new');
+    const addNewCard = () => {
+        history.push(`/collections/:${collectionId}/cards/new`);
     };
 
     if (isAddCollectionCard) {
         return (
-            <Card className={`${classes.root} ${classes.center}`} onClick={addNewCollection}>
+            <Card className={`${classes.root} ${classes.center}`} onClick={addNewCard}>
                 <CardContent>
                     <Grid container className={classes.center}>
                         <Add className={classes.addIcon} />
                     </Grid>
                     <Typography gutterBottom variant="h5" component="div">
-                        Add Collection
+                        Add Card
                     </Typography>
                 </CardContent>
             </Card>
@@ -113,12 +110,6 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
 
     return (
         <Card className={classes.root}>
-            <CardMedia
-                component="img"
-                alt="green iguana"
-                height="140"
-                image={imageSrc}
-            />
             <Box className={classes.progressBar} style={{ background: progressBarColor }}>
                 <Typography className={classes.progressText}>Progress {progressPercentage}%</Typography>
             </Box>
@@ -137,9 +128,9 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
             </CardContent>
 
             <CardActions>
-                <QTButton outlined onClick={startCollection}>Start</QTButton>
-                <QTButton onClick={openCollection}>Open</QTButton>
-                <QTButton alert onClick={deleteCollection}>Delete</QTButton>
+                <QTButton outlined onClick={duplicateCard}>Duplicate to other collection</QTButton>
+                <QTButton onClick={editCard}>Edit</QTButton>
+                <QTButton alert onClick={deleteCard}>Delete</QTButton>
             </CardActions>
         </Card>
     );

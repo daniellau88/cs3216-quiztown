@@ -1,4 +1,4 @@
-import { CollectionData, CollectionListData, CollectionsCardData } from '../../types/collections';
+import { CollectionData, CollectionListData, CollectionsCardData, CollectionsCardListData } from '../../types/collections';
 import { CollectionDelta } from '../../types/store';
 
 import * as types from './types';
@@ -41,6 +41,13 @@ export function deleteCollection(id: number): types.DeleteCollectionAction {
     return {
         type: types.DELETE_COLLECTION,
         id: id,
+    };
+}
+
+export function saveCollectionsCardList(list: CollectionsCardListData[]): types.SaveCollectionsCardListAction{
+    return {
+        type: types.SAVE_COLLECTIONS_CARD_LIST,
+        list,
     };
 }
 

@@ -1,5 +1,5 @@
 import { ApiPromise, CollectionData as CollectionDataType, CollectionQueryParams } from '../types';
-import { CollectionData, CollectionListData, CollectionPostData, CollectionsCardData, CollectionsCardImportPostData, CollectionsCardPostData } from '../types/collections';
+import { CollectionData, CollectionListData, CollectionPostData, CollectionsCardData, CollectionsCardImportPostData, CollectionsCardListData, CollectionsCardPostData } from '../types/collections';
 import { toQueryString } from '../utilities/url';
 
 import BaseAPI from './base';
@@ -33,6 +33,10 @@ export class CollectionsAPI extends BaseAPI {
 
     protected getCollectionsCardUrl(collectionId: number): string {
         return `${this.getCollectionUrl()}/${collectionId}/cards`;
+    }
+
+    public getCollectionContentsList(collectionId: number, params: CollectionQueryParams): ApiPromise<CollectionDataType<CollectionsCardListData>> {
+        return this.get(`${this.getCollectionsCardUrl(collectionId)}?${toQueryString(params)}` + URL_SUFFIX);
     }
 
     public getCollectionsCard(collectionId: number, cardId: number): ApiPromise<{ item: CollectionsCardData }> {

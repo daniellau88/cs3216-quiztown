@@ -72,7 +72,6 @@ const CollectionsCardAddPage: React.FC<{}> = () => {
                 const upload = response.payload;
                 return handleApiRequest(dispatch, dispatch(importCollectionsCard(collectionId, upload))).then((importResponse) => {
                     const payload = importResponse.payload;
-                    // Redirect to image card
                     history.push(`/collections/:${payload.collection_id}/cards/:${payload.id}`);
                 });
             })
