@@ -1,6 +1,7 @@
 import { fabric } from 'fabric';
 
-import { AnswerData } from '../../types/cards';
+import QTText from '../../components/fabric/QTText';
+import { AnswerData } from '../../types/collections';
 import colours from '../../utilities/colours';
 
 const TEXT_MARGIN = 40;
@@ -8,7 +9,7 @@ const TEXT_PADDING = 10;
 const CANVAS_PADDING = 40;
 const FONT_SIZE = 20;
 const CORRECTNESS_MARGIN = 20;
-const BORDER_RADIUS = 3;
+const BORDER_RADIUS = 5;
 
 // Image card generation utils
 
@@ -24,9 +25,11 @@ export const initAnswerOptions = (
     const origin = new fabric.Point(CANVAS_PADDING, canvasHeight - CANVAS_PADDING);
 
     data.forEach(option => {
-        const text = new fabric.Text(option.text, {
-            fontSize: FONT_SIZE,
+        const text = new QTText(option.text, {
             perPixelTargetFind: true,
+            fontSize: FONT_SIZE,
+            rx: BORDER_RADIUS,
+            ry: BORDER_RADIUS,
             hasControls: false,
             hasBorders: false,
             backgroundColor: colours.WHITE,
@@ -84,7 +87,7 @@ const createAnswerRectangle = (box: AnswerData) => {
         rx: BORDER_RADIUS,
         ry: BORDER_RADIUS,
         borderColor: colours.BLACK,
-        backgroundColor: colours.WHITE,
+        fill: colours.WHITE,
         stroke: colours.BLACK,
     });
 };

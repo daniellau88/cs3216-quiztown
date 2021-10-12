@@ -1,6 +1,5 @@
 import {
     Box,
-    Button,
     CssBaseline,
     Dialog,
     DialogActions,
@@ -113,7 +112,7 @@ const CardImage: React.FC<CardImageProps> = ({
             }
         });
         canvas.on('object:modified', (e) => {
-            if (e.target?.type != 'text') {
+            if (e.target?.type != 'QTText') {
                 return;
             }
 
