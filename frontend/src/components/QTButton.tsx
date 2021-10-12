@@ -51,9 +51,7 @@ const QTButton: React.FC<QTButtonProps> = ({
 }) => {
     const classes = useStyles();
 
-    const wh = window.innerHeight;
     const ww = window.innerWidth;
-    console.log(wh + ' ' + ww);
 
     if (ww > 850) {
         width = '90px';

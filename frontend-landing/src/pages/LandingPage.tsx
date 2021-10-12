@@ -121,7 +121,7 @@ const TemplatePage: React.FC<{}> = () => {
                             </Typography>
                         </Box>
                         <Box className={classes.headbox} style={{ marginTop: '7vh' }} justifyContent='right' alignItems='right'>
-                            <Grid container justify={isBrowser ? 'flex-end' : 'flex-start'}>
+                            <Grid container justifyContent={isBrowser ? 'flex-end' : 'flex-start'}>
                                 <Link smooth to={routes.SIGNUP} className={classes.titleLink}>
                                     <Button className={classes.button}>
                                         <Typography align='right' style={{ fontSize: bodyTextFontSize, marginTop: '0vh', color: colours.WHITE }}>

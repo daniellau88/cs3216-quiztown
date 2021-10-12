@@ -42,6 +42,10 @@ const collectionsReducer = produce((draft: types.CollectionsState, action: types
         }
         case types.DELETE_COLLECTION: {
             removeFromStore(draft.collections, action.id);
+            const collections = draft.allCollections;
+            if (collections) {
+                collections.ids = collections.ids.filter((id) => id !== action.id);
+            }
             resetCollectionCache(draft.allCollections);
             return;
         }

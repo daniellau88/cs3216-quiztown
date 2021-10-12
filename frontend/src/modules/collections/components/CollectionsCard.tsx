@@ -15,11 +15,14 @@ import LabelIcon from '@material-ui/icons/Label';
 import Star from '@material-ui/icons/Star';
 import StarOutline from '@material-ui/icons/StarOutline';
 import * as React from 'react';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 import QTButton from '../../../components/QTButton';
 import { CollectionsCardMiniEntity } from '../../../types/collections';
 import colours from '../../../utilities/colours';
+import { handleApiRequest } from '../../../utilities/ui';
+import { deleteCollectionsCard } from '../operations';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -80,6 +83,8 @@ type Props = OwnProps;
 const CollectionsCard: React.FC<Props> = ({ data, isAddCard=false, id }: Props) => {
     const classes = useStyles();
     const history = useHistory();
+    const dispatch = useDispatch();
+
     const cardName = data?.name;
     const cardId = data?.id;
     const cardStarred = true;
@@ -104,8 +109,14 @@ const CollectionsCard: React.FC<Props> = ({ data, isAddCard=false, id }: Props) 
         console.log(cardStarred ? 'Unstar' : 'Star');
     };
 
-    const deleteCard = () => {
-        console.log('Delete');
+    const handleDeleteCard = () => {
+        if (!collectionId || !cardId) {
+            return false;
+        }
+        return handleApiRequest(dispatch, dispatch(deleteCollectionsCard(collectionId, cardId)))
+            .then(() => {
+                return true;
+            });
     };
 
     const addNewCard = () => {
@@ -165,24 +176,18 @@ const CollectionsCard: React.FC<Props> = ({ data, isAddCard=false, id }: Props) 
                 <Grid container alignItems='center' style={{ paddingLeft: '0.5vw' }}>
                     <Box display='flex' height='100%' width='100%'>
                         <QTButton outlined onClick={openCard}>
-                            <Typography className={classes.cardText}>
-                                Test Me!
-                            </Typography>
+                            Test Me!
                         </QTButton>
                         {/* <QTButton outlined onClick={duplicateCard}>Duplicate to other collection</QTButton> */}
                         <QTButton onClick={editCard}>
-                            <Typography className={classes.cardText}>
-                                Edit
-                            </Typography>
+                            Edit
                         </QTButton>
                         <QTButton onClick={duplicateCard}>
-                            <Typography className={classes.cardText}>
-                                Duplicate
-                            </Typography>
+                            Duplicate
                         </QTButton>
                         <Box flexGrow={1} />
                         <Box display='flex' minHeight='100%' style={{ paddingRight: '0.5vw' }} justifyContent='center' alignItems='center'>
-                            <Button onClick={deleteCard} >
+                            <Button onClick={handleDeleteCard} >
                                 <DeleteIcon style={{ color: colours.DEEPRED }} />
                             </Button>
                         </Box>

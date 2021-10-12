@@ -13,11 +13,14 @@ import { Add, ReorderOutlined } from '@material-ui/icons';
 import DeleteIcon from '@material-ui/icons/Delete';
 import LabelIcon from '@material-ui/icons/Label';
 import * as React from 'react';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 import QTButton from '../../../components/QTButton';
 import { CollectionMiniEntity } from '../../../types/collections';
 import colours from '../../../utilities/colours';
+import { handleApiRequest } from '../../../utilities/ui';
+import { deleteCollection } from '../operations';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -63,20 +66,13 @@ type Props = OwnProps;
 const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) => {
     const classes = useStyles();
     const history = useHistory();
+    const dispatch = useDispatch();
     // TODO: Replace mock data
     const collectionName = data?.name;
     const collectionId = data?.id;
     const collectionNumCards = '12';
     const collectionTags = ['Tag1', 'Tag2'];
-    const progressPercentage = '10';
     const imageSrc = 'https://picsum.photos/200/300';
-
-    const progressBarColor = `
-    linear-gradient(to right, 
-        ${colours.GREEN}, 
-        ${colours.GREEN} ${progressPercentage}%, 
-        transparent ${progressPercentage}%, 
-        transparent 100%)`;
 
     // TODO: Implement functions
     const openCollection = () => {
@@ -88,8 +84,14 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
 
     };
 
-    const deleteCollection = () => {
-        console.log('Delete');
+    const handleDeleteCollection = () => {
+        if (!collectionId) {
+            return false;
+        }
+        return handleApiRequest(dispatch, dispatch(deleteCollection(collectionId)))
+            .then(() => {
+                return true;
+            });
     };
 
     const addNewCollection = () => {
@@ -143,18 +145,14 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                 <Grid container alignItems='center' style={{ paddingLeft: '0.5vw' }}>
                     <Box display='flex' height='100%' width='100%'>
                         <QTButton outlined onClick={startCollection}>
-                            <Typography className={classes.collectionText}>
-                                Test Me!
-                            </Typography>
+                            Test Me!
                         </QTButton>
                         <QTButton onClick={openCollection}>
-                            <Typography className={classes.collectionText}>
-                                View
-                            </Typography>
+                            View
                         </QTButton>
                         <Box flexGrow={1} />
                         <Box display='flex' minHeight='100%' style={{ paddingRight: '0.5vw' }} justifyContent='center' alignItems='center'>
-                            <Button onClick={deleteCollection} >
+                            <Button onClick={handleDeleteCollection} >
                                 <DeleteIcon style={{ color: colours.DEEPRED }} />
                             </Button>
                         </Box>
