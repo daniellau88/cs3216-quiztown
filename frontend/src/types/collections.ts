@@ -1,4 +1,4 @@
-import { UploadData } from "./uploads";
+import { UploadData } from './uploads';
 
 export interface CollectionPostData {
     name: string;

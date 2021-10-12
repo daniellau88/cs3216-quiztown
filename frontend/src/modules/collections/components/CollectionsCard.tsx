@@ -102,7 +102,7 @@ const CollectionsCard: React.FC<Props> = ({ data, isAddCard=false, id }: Props) 
     };
 
     const editCard = () => {
-        console.log('Edit');
+        history.push(`/collections/${collectionId}/cards/${cardId}/edit`);
     };
 
     const toggleStarred = () => {
