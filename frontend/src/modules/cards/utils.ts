@@ -55,12 +55,12 @@ export const initAnswerOptions = (
     return optionsCoordsMap;
 };
 
-const createAnswerTextBox = (box: AnswerData) => {
+const createAnswerTextBox = (box: AnswerData, xTranslation:number) => {
     const top = box.bounding_box[0][1];
     const left = box.bounding_box[0][0];
     return new fabric.Textbox(box.text, {
         top: top,
-        left: left,
+        left: left + xTranslation,
         width: box.bounding_box[1][0] - box.bounding_box[0][0],
         height: box.bounding_box[1][1] - box.bounding_box[0][1],
         hasControls: false,
@@ -73,12 +73,12 @@ const createAnswerTextBox = (box: AnswerData) => {
     });
 };
 
-const createAnswerRectangle = (box: AnswerData) => {
+const createAnswerRectangle = (box: AnswerData, xTranslation:number) => {
     const top = box.bounding_box[0][1];
     const left = box.bounding_box[0][0];
     return new fabric.Rect({
         top: top,
-        left: left,
+        left: left + xTranslation,
         width: box.bounding_box[1][0] - box.bounding_box[0][0],
         height: box.bounding_box[1][1] - box.bounding_box[0][1],
         hasControls: false,
@@ -96,12 +96,13 @@ export const initAnswerBoxes = (
     canvas: fabric.Canvas,
     isEditing: boolean,
     data: Array<AnswerData>,
+    xTranslation: number,
 ): Map<string, fabric.Rect> => {
     const answersCoordsMap = new Map();
 
     data.forEach(box => {
-        const rect = createAnswerRectangle(box);
-        const textbox = createAnswerTextBox(box);
+        const rect = createAnswerRectangle(box, xTranslation);
+        const textbox = createAnswerTextBox(box, xTranslation);
 
         answersCoordsMap.set(box.text, rect);
 

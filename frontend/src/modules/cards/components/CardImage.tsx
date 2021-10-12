@@ -49,7 +49,8 @@ interface CardImageProps {
     id: number,
     imageUrl: string,
     result: AnswerData[],
-    onCardCompleted: (nextBoxNumber: number, nextDate: Date) => void
+    imageMetadata: { width:number, height:number }
+    onCardCompleted: (nextBoxNumber:number, nextDate:Date) => void
 }
 
 const CardImage: React.FC<CardImageProps> = ({
@@ -57,6 +58,7 @@ const CardImage: React.FC<CardImageProps> = ({
     id,
     imageUrl,
     result,
+    imageMetadata,
     onCardCompleted,
 }) => {
     const classes = useStyles();
@@ -70,6 +72,7 @@ const CardImage: React.FC<CardImageProps> = ({
 
     const canvasMaxWidth = windowWidth - SCREEN_PADDING > MAX_CANVAS_WIDTH ? MAX_CANVAS_WIDTH : windowWidth;
     const canvasMaxHeight = windowHeight - HEADER_HEIGHT - SCREEN_PADDING;
+    const imageXTranslation = Math.max(canvasMaxWidth - imageMetadata.width, 0) / 2;
 
     const initCanvasWithBg = () => {
         const canvas = new fabric.Canvas(CANVAS_ID, {
@@ -80,16 +83,15 @@ const CardImage: React.FC<CardImageProps> = ({
         canvas.setBackgroundImage(imageUrl, canvas.renderAll.bind(canvas), {
             scaleX: 1,
             scaleY: 1,
-            // TODO: Center at middle once can get image width, so that can translate answer boxes too
-            // left: canvas.getCenter().left,
-            // originX: 'center',
+            left: canvas.getCenter().left,
+            originX: 'center',
         });
         return canvas;
     };
 
     const initEditingCanvas = () => {
         const canvas = initCanvasWithBg();
-        initAnswerBoxes(canvas, isEditing, result);
+        initAnswerBoxes(canvas, isEditing, result, imageXTranslation);
         canvas.on('object:modified', (e) => {
             if (e.target?.type != 'textbox') {
                 return;
@@ -103,7 +105,7 @@ const CardImage: React.FC<CardImageProps> = ({
 
     const initQuizingCanvas = () => {
         const canvas = initCanvasWithBg();
-        const answersCoordsMap = initAnswerBoxes(canvas, isEditing, result);
+        const answersCoordsMap = initAnswerBoxes(canvas, isEditing, result, imageXTranslation);
         const optionsCoordsMap = initAnswerOptions(canvas, result);
         const answersIndicator = initCorrectAnswersIndicator(canvas, result);
         canvas.on('object:moving', (e) => {
