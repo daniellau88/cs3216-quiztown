@@ -1,5 +1,5 @@
 import { ApiPromise, CollectionData as CollectionDataType, CollectionQueryParams } from '../types';
-import { CollectionData, CollectionListData, CollectionPostData, CollectionsCardData, CollectionsCardImportPostData, CollectionsCardListData, CollectionsCardPostData } from '../types/collections';
+import { CollectionData, CollectionListData, CollectionPostData, CollectionsCardData, CollectionsCardImportPostData, CollectionsCardListData, CollectionsCardPostData, CollectionsImportPostData } from '../types/collections';
 import { toQueryString } from '../utilities/url';
 
 import BaseAPI from './base';
@@ -60,6 +60,11 @@ export class CollectionsAPI extends BaseAPI {
     public importCollectionsCard(collectionId: number, data: CollectionsCardImportPostData): ApiPromise<{ item: CollectionsCardData }> {
         console.log('Import card. Data name: ' + data.file_key);
         return this.post(`${this.getCollectionsCardUrl(collectionId)}/import` + URL_SUFFIX, data);
+    }
+
+    public importCollections(collectionId: number, data: CollectionsImportPostData): ApiPromise<{ item: CollectionData }> {
+        // console.log('Import collection. Data name: ' + data[0].file_key);
+        return this.post(`${this.getCollectionUrl()}/${collectionId}/import` + URL_SUFFIX, data);
     }
 }
 

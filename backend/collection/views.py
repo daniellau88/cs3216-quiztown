@@ -98,7 +98,19 @@ def import_collection_view(request, pk_item, serializer):
 
 
 @api_view(["GET"])
-def get_collection_import_view(request, pk):
-    imports = CollectionImport.objects.filter(collection_id=pk).order_by("-created_at")
+def get_collection_import_view(request, pk, pkImport):
+    collection_import = CollectionImport.objects.get(id=pkImport)
+    serializer = serializers.CollectionImportSerializer(collection_import)
+    return Response({"item": serializer.data})
+
+
+@api_view(["GET"])
+def list_collection_import_view(request, pk):
+    imports = CollectionImport.objects.filter(collection_id=pk)
+    # TODO: change filter format
+    if "filter[is_reviewed]" in request.GET:
+        filter = request.GET.get("filter[is_reviewed]")
+        imports = imports.filter(is_reviewed=bool(filter))
+    imports = imports.order_by("-created_at")
     serializer = serializers.CollectionImportSerializer(imports, many=True)
     return Response({"items": serializer.data})

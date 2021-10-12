@@ -1,3 +1,5 @@
+import { UploadData } from "./uploads";
+
 export interface CollectionPostData {
     name: string;
     owner_id: number;
@@ -104,4 +106,8 @@ export interface CollectionsCardEntity {
 export interface CollectionsCardImportPostData {
     file_name: string;
     file_key: string;
+}
+
+export interface CollectionsImportPostData {
+    imports: UploadData[];
 }

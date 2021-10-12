@@ -1,6 +1,6 @@
 import api from '../../api';
-import { ApiResponse, CollectionQueryParams } from '../../types';
-import { CollectionData, CollectionListData, CollectionMiniEntity, CollectionPostData, CollectionsCardData, CollectionsCardEntity, CollectionsCardImportPostData, CollectionsCardListData, CollectionsCardPostData } from '../../types/collections';
+import { ApiResponse } from '../../types';
+import { CollectionData, CollectionListData, CollectionMiniEntity, CollectionPostData, CollectionsCardData, CollectionsCardEntity, CollectionsCardImportPostData, CollectionsCardListData, CollectionsCardPostData, CollectionsImportPostData } from '../../types/collections';
 import { CollectionOptions, EntityCollection, NormalizeOperation, Operation } from '../../types/store';
 import { batched, queryEntityCollection, queryEntityCollectionSet, withCachedEntity } from '../../utilities/store';
 
@@ -161,5 +161,16 @@ export function importCollectionsCard(collectionId: number, cardImport: Collecti
         batched(dispatch, saveCollectionsCard(data), actions.addCollectionsCard(collectionId, data.id));
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return { ...response, payload: getCollectionsCardEntity(getState(), data.id)! };
+    };
+}
+
+export function importCollections(collectionId: number, collectionsImport: CollectionsImportPostData): Operation<ApiResponse<CollectionMiniEntity>> {
+    return async (dispatch, getState) => {
+        console.log('in import collection');
+        const response = await api.collections.importCollections(collectionId, collectionsImport);
+        const data = response.payload.item;
+        batched(dispatch, saveCollection(data));
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return { ...response, payload: getCollectionMiniEntity(getState(), data.id)! };
     };
 }
