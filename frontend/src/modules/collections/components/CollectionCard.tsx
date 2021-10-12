@@ -1,5 +1,6 @@
 import {
     Box,
+    Button,
     Card,
     CardActions,
     CardContent,
@@ -9,6 +10,8 @@ import {
     makeStyles,
 } from '@material-ui/core';
 import { Add, ReorderOutlined } from '@material-ui/icons';
+import DeleteIcon from '@material-ui/icons/Delete';
+import LabelIcon from '@material-ui/icons/Label';
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 
@@ -19,8 +22,8 @@ import colours from '../../../utilities/colours';
 const useStyles = makeStyles(() => ({
     root: {
         // TODO: Make mobile responsive
-        width: '560px',
-        height: '350px',
+        width: '95%',
+        height: '95%',
         position: 'relative',
     },
     center: {
@@ -29,26 +32,24 @@ const useStyles = makeStyles(() => ({
         alignItems: 'center',
     },
     addIcon: {
-        fontSize: '84px',
+        fontSize: '10vh',
         color: colours.BLUE,
     },
-    progressBar: {
-        width: '100%',
-        position: 'absolute',
-        top: 0,
-        paddingLeft: '20px',
-    },
-    progressText: {
-        color: colours.WHITE,
-    },
-    tags: {
-        marginTop: '-28px',
-        marginLeft: '20px',
-        color: colours.WHITE,
-    },
     cardContent: {
-        paddingTop: 32,
-        marginBottom: 20,
+        paddingTop: '1.5vh',
+        paddingBottom: '0.75vh',
+    },
+    addCollectionText: {
+        fontSize: '3vh',
+    },
+    collectionNameText: {
+        fontSize: '2.5vh',
+    },
+    collectionIcon: {
+        fontSize: '2.5vh',
+    },
+    collectionText: {
+        fontSize: '1.5vh',
     },
 }));
 
@@ -103,7 +104,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                     <Grid container className={classes.center}>
                         <Add className={classes.addIcon} />
                     </Grid>
-                    <Typography gutterBottom variant="h5" component="div">
+                    <Typography className={classes.addCollectionText} component="div">
                         Add Collection
                     </Typography>
                 </CardContent>
@@ -116,30 +117,49 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
             <CardMedia
                 component="img"
                 alt="green iguana"
-                height="140"
+                height="40%"
+                width="auto"
                 image={imageSrc}
             />
-            <Box className={classes.progressBar} style={{ background: progressBarColor }}>
-                <Typography className={classes.progressText}>Progress {progressPercentage}%</Typography>
-            </Box>
-            <Typography className={classes.tags}>{collectionTags.join(', ')}</Typography>
 
             <CardContent className={classes.cardContent}>
-                <Typography gutterBottom variant="h5" component="div" >
+                <Typography className={classes.collectionNameText} component="div" >
                     {collectionName}
                 </Typography>
-                <Grid container>
-                    <ReorderOutlined />
-                    <Typography variant="body1" style={{ marginLeft: 6 }}>
+                <Grid container alignItems='center'>
+                    <ReorderOutlined className={classes.collectionIcon} />
+                    <Typography className={classes.collectionText} style={{ marginLeft: 6 }}>
                         {collectionNumCards} cards
+                    </Typography>
+                    <Grid item style={{ width: '2vw' }} />
+                    <LabelIcon className={classes.collectionIcon} />
+                    <Typography className={classes.collectionText} style={{ marginLeft: 6 }}>
+                        {collectionTags.join(', ')}
                     </Typography>
                 </Grid>
             </CardContent>
 
             <CardActions>
-                <QTButton outlined onClick={startCollection}>Start</QTButton>
-                <QTButton onClick={openCollection}>Open</QTButton>
-                <QTButton alert onClick={deleteCollection}>Delete</QTButton>
+                <Grid container alignItems='center' style={{ paddingLeft: '0.5vw' }}>
+                    <Box display='flex' height='100%' width='100%'>
+                        <QTButton outlined onClick={startCollection}>
+                            <Typography className={classes.collectionText}>
+                                Test Me!
+                            </Typography>
+                        </QTButton>
+                        <QTButton onClick={openCollection}>
+                            <Typography className={classes.collectionText}>
+                                View
+                            </Typography>
+                        </QTButton>
+                        <Box flexGrow={1} />
+                        <Box display='flex' minHeight='100%' style={{ paddingRight: '0.5vw' }} justifyContent='center' alignItems='center'>
+                            <Button onClick={deleteCollection} >
+                                <DeleteIcon style={{ color: colours.DEEPRED }} />
+                            </Button>
+                        </Box>
+                    </Box>
+                </Grid>
             </CardActions>
         </Card>
     );

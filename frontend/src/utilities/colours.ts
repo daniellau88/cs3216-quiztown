@@ -5,6 +5,7 @@ const colours = {
     BLACK: '#000000',
     GREEN: '#27AE60',
     RED: '#EF5DA8',
+    DEEPRED: '#EE0000',
 };
 
 export default colours;
