@@ -32,7 +32,6 @@ export const initAnswerOptions = (
             ry: BORDER_RADIUS,
             hasControls: false,
             hasBorders: false,
-            backgroundColor: colours.WHITE,
             padding: TEXT_PADDING,
         });
         text.setPositionByOrigin(origin, 'left', 'top');
