@@ -38,9 +38,6 @@ const useStyles = makeStyles(() => ({
         paddingBottom: '80px',
     },
     canvas: {
-        border: '1px solid black',
-        borderRadius: 10,
-        boxShadow: '0 3px 10px rgb(0 0 0 / 0.2)',
     },
 }));
 
