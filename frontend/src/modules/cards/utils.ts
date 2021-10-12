@@ -171,27 +171,7 @@ export const revealAnswer = (
     const answerData = answersCoordsMap.get(textContent);
     if (!answerData) return;
 
-    const answerTop = answerData.top;
-    const answerLeft = answerData.left;
-    if (!answerTop || !answerLeft) return;
-
     canvas.remove(answerData);
-
-    const answerText = new fabric.Text(textContent, {
-        top: answerTop,
-        left: answerLeft,
-        width: answerData.width,
-        height: answerData.height,
-        hasControls: false,
-        hasBorders: false,
-        lockMovementX: true,
-        lockMovementY: true,
-        borderColor: colours.BLACK,
-        backgroundColor: colours.WHITE,
-        stroke: colours.GREEN,
-        fontSize: FONT_SIZE,
-    });
-    canvas.add(answerText);
 };
 
 export const resetToOriginalPosition = (
