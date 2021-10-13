@@ -77,7 +77,7 @@ const CollectionMeshHeader: React.FC<OwnProps> = ({ collection, onUpdate, filter
 
     return (
         <>
-            <Grid className={classes.firstRow} container justify="space-between" spacing={0}>
+            <Grid className={classes.firstRow} container justifyContent="space-between" spacing={0}>
                 {searchElement}
             </Grid>
             {filters && filters.length > 0 && (

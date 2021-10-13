@@ -2,9 +2,10 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 
 import { AppState, SelectionKey } from '../../../types/store';
-import { getCollectionsCardMiniEntity } from '../selectors';
+import { getCardMiniEntity } from '../../cards/selectors';
 
-import CollectionsCard from './CollectionsCard';
+import CollectionsCardCard from './CollectionsCardCard';
+
 
 interface OwnProps {
     id: SelectionKey;
@@ -13,13 +14,13 @@ interface OwnProps {
 type Props = OwnProps;
 
 const CollectionsCardGridComponent: React.FC<Props> = ({ id }: Props) => {
-    const collection = useSelector((state: AppState) => getCollectionsCardMiniEntity(state, id));
+    const collection = useSelector((state: AppState) => getCardMiniEntity(state, id));
 
     if (!collection) {
         return null;
     }
 
-    return <CollectionsCard data={collection} />;
+    return <CollectionsCardCard data={collection} />;
 };
 
 export default CollectionsCardGridComponent;

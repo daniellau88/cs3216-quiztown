@@ -13,7 +13,6 @@ import { RouteComponentProps, useHistory } from 'react-router-dom';
 
 import { handleApiRequest } from '../../../utilities/ui';
 import { addUpload } from '../../uploads/operations';
-import { importCollectionsCard } from '../operations';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -73,10 +72,11 @@ const CollectionsCardAddPage: React.FC<Props> = ({ match: { params } }: RouteCom
         return handleApiRequest(dispatch, dispatch(addUpload(selectedFile)))
             .then((response) => {
                 const upload = response.payload;
-                return handleApiRequest(dispatch, dispatch(importCollectionsCard(collectionId, upload))).then((importResponse) => {
-                    const payload = importResponse.payload;
-                    history.push(`/collections/${payload.collection_id}/cards/${payload.id}`);
-                });
+                // TODO: Fix import
+                // return handleApiRequest(dispatch, dispatch(importCollectionsCard(collectionId, upload))).then((importResponse) => {
+                //     const payload = importResponse.payload;
+                //     history.push(`/collections/${payload.collection_id}/cards/${payload.id}`);
+                // });
             })
             .then(() => {
                 return true;

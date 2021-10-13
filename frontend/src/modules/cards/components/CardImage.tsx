@@ -14,7 +14,7 @@ import { fabric } from 'fabric';
 import React, { useEffect, useState } from 'react';
 
 import QTButton from '../../../components/QTButton';
-import { AnswerData } from '../../../types/collections';
+import { AnswerData } from '../../../types/cards';
 import { useWindowDimensions } from '../../../utilities/customHooks';
 import { getIntervals, getNextBoxNumber, getNextIntervalEndDate } from '../../../utilities/leitner';
 import {
@@ -45,15 +45,15 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-interface CollectionsCardImageProps {
+interface CardImageProps {
     isEditing?: boolean
     id: number,
     imageUrl: string,
     result: AnswerData[],
-    onCardCompleted: (nextBoxNumber:number, nextDate:Date) => void
+    onCardCompleted: (nextBoxNumber: number, nextDate: Date) => void
 }
 
-const CollectionsCardImage: React.FC<CollectionsCardImageProps> = ({
+const CardImage: React.FC<CardImageProps> = ({
     isEditing = false,
     id,
     imageUrl,
@@ -73,7 +73,7 @@ const CollectionsCardImage: React.FC<CollectionsCardImageProps> = ({
     const canvasMaxHeight = windowHeight - HEADER_HEIGHT - SCREEN_PADDING;
 
     const initCanvasWithBg = () => {
-        const canvas = new fabric.Canvas(CANVAS_ID,{
+        const canvas = new fabric.Canvas(CANVAS_ID, {
             hoverCursor: 'pointer',
             selection: false,
             targetFindTolerance: 2,
@@ -182,9 +182,9 @@ const CollectionsCardImage: React.FC<CollectionsCardImageProps> = ({
                         </DialogContent>
                         <DialogActions>
                             {getIntervals(currentBox).map((interval, index) => (
-                                <QTButton 
+                                <QTButton
                                     key={index}
-                                    onClick={() => selectConfidence(index)} 
+                                    onClick={() => selectConfidence(index)}
                                 >
                                     Confidence: {index + 1}, Interval: {interval}
                                 </QTButton>
@@ -197,4 +197,4 @@ const CollectionsCardImage: React.FC<CollectionsCardImageProps> = ({
     );
 };
 
-export default CollectionsCardImage;
+export default CardImage;

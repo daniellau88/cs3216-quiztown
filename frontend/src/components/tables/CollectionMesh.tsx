@@ -20,6 +20,10 @@ const useStyles = makeStyles((theme) => ({
     },
     card: {
         marginTop: theme.spacing(3),
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '30vh',
+        width: '30vh',
     },
 }));
 
@@ -70,14 +74,13 @@ const CollectionMesh: React.FC<Props> = ({
                 filters={filters}
                 isSearchable={isSearchable}
             />
-            <Grid container>
+            <Grid container alignItems='center'>
                 {isLoading && (
                     <LoadingIndicator />
                 )}
                 {!isLoading &&
-                    <Grid
-                        item
-                        xs={4}
+                    <Grid container item
+                        xs={12} sm={6} md={4} lg={3}
                         className={classes.card}
                     >
                         {leadingComponent}
@@ -86,10 +89,11 @@ const CollectionMesh: React.FC<Props> = ({
                 {!isLoading &&
                     collection.ids.length !== 0 &&
                     collection.ids.map((id) => (
-                        <Grid
-                            item
+                        <Grid container item
                             key={id}
-                            xs={4}
+                            xs={12} sm={6} md={4} lg={3}
+                            justifyContent='center'
+                            alignItems='center'
                             className={classes.card}
                         >
                             <GridComponent

@@ -6,8 +6,8 @@ import {
 import clsx from 'clsx';
 import * as React from 'react';
 
-import ProgressDisplay from '../components/content/ProgressDisplay';
 import NavigationBar from '../components/navigation/NavigationBar';
+import NavBarGap from '../components/utiltiies/NavBarGap';
 
 export const NAV_BAR_HEIGHT = '8vh';
 export const NAV_BAR_HEIGHT_WITH_MARGIN = '12vh';
@@ -42,7 +42,7 @@ const AppLayout: React.FC<{}> = (props: Props) => {
                 <NavigationBar />
             </AppBar>
             <main className={clsx(classes.content, {})}>
-                <ProgressDisplay />
+                <NavBarGap />
                 {props.children}
             </main>
         </Container>
