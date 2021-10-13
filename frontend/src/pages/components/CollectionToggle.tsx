@@ -27,7 +27,7 @@ const useStyles = makeStyles(() => ({
 interface OwnProps {
     collectionName: string,
     undoneCardsMap: UndoneCardsMap;
-    onChange: (didActivate: boolean) => void,
+    onChange: (didActivate: boolean) => void;
 }
 
 type Props = OwnProps;
@@ -38,11 +38,12 @@ const CollectionToggle: React.FC<Props> = (props: Props) => {
 
     const toggleActive = () => {
         setActive(!active);
-    };
-
-    React.useEffect(() => {
         props.undoneCardsMap.inactive = !props.undoneCardsMap.inactive;
         props.onChange(!props.undoneCardsMap.inactive);
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    React.useEffect(() => {
     }, [active]);
 
     return (

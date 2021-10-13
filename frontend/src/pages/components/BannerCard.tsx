@@ -38,15 +38,16 @@ const useStyles = makeStyles(() => ({
 interface OwnProps {
     undoneCardsMaps: UndoneCardsMap[];
     collections: CollectionMiniEntity[];
+    onChange: () => void;
 }
 
 type Props = OwnProps;
 
 const BannerCard: React.FC<Props> = (props: Props) => {
-    const classes = useStyles();
-    const [collectionCount, setCollectionCount] = React.useState(props.collections.length);
-
     const undoneCardsMaps = props.undoneCardsMaps;
+
+    const classes = useStyles();
+    const [collectionCount, setCollectionCount] = React.useState<number>(0);
 
     const totalUndone: number = undoneCardsMaps.filter(map => !map.inactive).reduce((prev, curr) => prev + curr.cards.length, 0);
 
@@ -54,9 +55,13 @@ const BannerCard: React.FC<Props> = (props: Props) => {
         setCollectionCount(collectionCount + (didActivate ? 1 : -1));
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     React.useEffect(() => {
+        props.onChange();
     }, [collectionCount]);
+
+    React.useEffect(() => {
+        setCollectionCount([...undoneCardsMaps].filter(map => !map.inactive).filter(map => map.cards.length > 0).length);
+    }, [undoneCardsMaps]);
 
     return (
         <>

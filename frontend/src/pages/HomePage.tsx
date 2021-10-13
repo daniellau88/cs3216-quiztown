@@ -1,21 +1,21 @@
 import {
     Box,
-    Card,
-    CardContent,
     CssBaseline,
-    Grid,
     Typography,
     makeStyles,
 } from '@material-ui/core';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link, generatePath } from 'react-router-dom';
 
 import LoadingIndicator from '../components/content/LoadingIndicator';
 import { loadAllCollections, loadCollectionContents, loadCollectionsCard } from '../modules/collections/operations';
 import { getAllCollections, getCollectionMiniEntity, getCollectionsCardList, getCollectionsCardMiniEntity } from '../modules/collections/selectors';
 import { CollectionMiniEntity, CollectionsCardMiniEntity } from '../types/collections';
 import { AppState, EntityCollection } from '../types/store';
+import colours from '../utilities/colours';
 import { multiselect } from '../utilities/multiselect';
+import routes from '../utilities/routes';
 import { handleApiRequest, handleApiRequests } from '../utilities/ui';
 
 import BannerCard from './components/BannerCard';
@@ -36,6 +36,13 @@ const useStyles = makeStyles(() => ({
     },
     headerText: {
         fontSize: '4vh',
+    },
+    link: {
+        color: colours.BLUE,
+        textDecoration: 'none',
+        '&:hover': {
+            textDecoration: 'underline',
+        },
     },
 }));
 
@@ -131,11 +138,10 @@ const HomePage: React.FC<{}> = () => {
             .finally(() => setIsLoading(false));
     }, [cardIdMaps.length]);
 
-    console.log(collections);
-    console.log(cardIdMaps);
-    console.log(cardIds);
-    console.log(cards);
-    console.log(undoneCardsMaps);
+    // TODO remove debug tool once workflow (to start quiz) is complete
+    const onUpdate = () => {
+        console.log(undoneCardsMaps);
+    };
 
     if (isLoading) {
         return <LoadingIndicator></LoadingIndicator>;
@@ -147,7 +153,10 @@ const HomePage: React.FC<{}> = () => {
                 <CssBaseline />
                 <Box className={classes.root}>
                     <Typography className={classes.headerText}>
-                        You have no collections at the moment!
+                        You have no collections at the moment! Click&nbsp;
+                        <Link to={generatePath(routes.COLLECTIONS.NEW)} className={classes.link}>
+                            here
+                        </Link> to add one.
                     </Typography>
                 </Box>
             </>
@@ -158,7 +167,7 @@ const HomePage: React.FC<{}> = () => {
         <>
             <CssBaseline />
             <Box className={classes.root}>
-                <BannerCard undoneCardsMaps={undoneCardsMaps} collections={collections} />
+                <BannerCard undoneCardsMaps={undoneCardsMaps} collections={collections} onChange={onUpdate} />
             </Box>
         </>
     );
