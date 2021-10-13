@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, generatePath } from 'react-router-dom';
 
 import LoadingIndicator from '../components/content/LoadingIndicator';
+import { loadAllCards } from '../modules/cards/operations';
 import { getAllCards, getCardMiniEntity } from '../modules/cards/selectors';
 import { loadAllCollections } from '../modules/collections/operations';
 import { getAllCollections, getCollectionMiniEntity } from '../modules/collections/selectors';
@@ -64,10 +65,10 @@ const HomePage: React.FC<{}> = () => {
     const dispatch = useDispatch();
 
     const allCollections: EntityCollection = useSelector(getAllCollections);
-    const ids = allCollections.ids;
+    const collectionIds = allCollections.ids;
 
     const collectionsHash: any = useSelector((state: AppState) =>
-        multiselect(getCollectionMiniEntity, state, ids),
+        multiselect(getCollectionMiniEntity, state, collectionIds),
     );
 
     const collections: CollectionMiniEntity[] = [];
@@ -75,26 +76,8 @@ const HomePage: React.FC<{}> = () => {
         collections.push(collectionsHash[c]);
     }
 
-    const collectionsCardsHash: any = useSelector((state: AppState) =>
-        multiselect(getAllCards, state, ids),
-    );
-
-    const collectionsCards: EntityCollection[] = [];
-    for (const c in collectionsCardsHash) {
-        collectionsCards.push(collectionsCardsHash[c]);
-    }
-
-    const cardIdSet: Set<number> = new Set();
-    const cardIdMaps: CardIdMap[] = [];
-    for (const c in collectionsCards) {
-        const idMap: number[] = [];
-        for (const cid of collectionsCards[c].ids) {
-            idMap.push(Number(cid));
-            cardIdSet.add(Number(cid));
-        }
-        cardIdMaps.push({ collectionId: ids[c], cards: idMap });
-    }
-    const cardIds = Array.from(cardIdSet);
+    const allCards: EntityCollection = useSelector(getAllCards);
+    const cardIds = allCards.ids;
 
     const cardsHash: any = useSelector((state: AppState) =>
         multiselect(getCardMiniEntity, state, cardIds),
@@ -104,43 +87,27 @@ const HomePage: React.FC<{}> = () => {
     for (const c in cardsHash) {
         cards.push(cardsHash[c]);
     }
+    console.log('help', cardIds);
+    console.log('help', cards);
 
     const undoneCardsMaps: UndoneCardsMap[] = [];
-    for (const c of ids) {
+    for (const c of collectionIds) {
         undoneCardsMaps.push({ collectionId: c, cards: cards.filter(card => card.collection_id == c) }); // TODO add date filter
     }
+
+    console.log('help', undoneCardsMaps);
 
     const [isLoading, setIsLoading] = React.useState(true);
 
     React.useEffect(() => {
         setIsLoading(true);
-        handleApiRequest(dispatch, dispatch(loadAllCollections({ filters: { flagged: 1 } })))
-            .finally(() => setIsLoading(false));
+        // Cards TODO: only query for undone cards
+        handleApiRequests(
+            dispatch,
+            dispatch(loadAllCollections({})),
+            dispatch(loadAllCards({ filters: {} })),
+        ).finally(() => setIsLoading(false));
     }, [dispatch]);
-
-    React.useEffect(() => {
-        setIsLoading(true);
-        // TODO: fix this
-        // const requests = [];
-        // for (const c of collections) {
-        //     requests.push(dispatch(loadCollectionContents(c.id, {})));
-        // }
-        // handleApiRequests(dispatch, ...requests)
-        //     .finally(() => setIsLoading(false));
-    }, [collections.length]);
-
-    React.useEffect(() => {
-        setIsLoading(true);
-        // TODO: Fix this
-        // const requests = [];
-        // for (const cardIdMap of cardIdMaps) {
-        //     for (const cardId of cardIdMap.cards) {
-        //         requests.push(dispatch(loadCollectionsCard(cardIdMap.collectionId, cardId)));
-        //     }
-        // }
-        // handleApiRequests(dispatch, ...requests)
-        //     .finally(() => setIsLoading(false));
-    }, [cardIdMaps.length]);
 
     // TODO remove debug tool once workflow (to start quiz) is complete
     const onUpdate = () => {

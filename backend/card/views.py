@@ -19,8 +19,11 @@ def list_or_create_card_view(request, *args, **kwargs):
 
 def list_card_view(request):
     # TODO: Custom conversion of GET request to object
-    pk = int(request.GET.get('filters[collection_id]'))
-    cards = Card.objects.filter(collection_id=pk)
+    pk = int(request.GET.get("filters[collection_id]", 0))
+    cards = Card.objects.all()
+
+    if pk != 0:
+        cards = cards.filter(collection_id=pk)
 
     paginator = CustomPagination()
     page = paginator.paginate_queryset(cards, request)

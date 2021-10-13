@@ -5,6 +5,7 @@ import CollectionsCardAddPage from '../modules/cards/pages/CollectionsCardAddPag
 import CollectionsCardPage from '../modules/cards/pages/CollectionsCardPage';
 import CollectionsCardShowPage from '../modules/cards/pages/CollectionsCardShowPage';
 import CollectionPage from '../modules/collections/pages/CollectionPage';
+import HomePage from '../pages/HomePage';
 import TemplatePage from '../pages/utilities/TemplatePage';
 import routes from '../utilities/routes';
 
@@ -12,7 +13,7 @@ const MainRouter = (): JSX.Element => {
     return (
         <>
             <Switch>
-                <Redirect exact from={'/'} to={routes.COLLECTIONS.INDEX} />
+                <Route exact path={'/'} component={HomePage} />
                 <Route exact path={routes.COLLECTIONS.INDEX} component={CollectionPage} />
                 <Route exact path={routes.COLLECTIONS.SHOW} component={CollectionsCardPage} />
                 <Route exact path={routes.COLLECTIONS.CARD.NEW} component={CollectionsCardAddPage} />
