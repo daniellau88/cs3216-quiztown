@@ -1,7 +1,7 @@
 import { fabric } from 'fabric';
 
 import QTText from '../../components/fabric/QTText';
-import { AnswerData } from '../../types/collections';
+import { AnswerData } from '../../types/cards';
 import colours from '../../utilities/colours';
 
 const TEXT_MARGIN = 40;
