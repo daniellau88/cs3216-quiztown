@@ -19,10 +19,10 @@ import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 import QTButton from '../../../components/QTButton';
-import { CollectionsCardMiniEntity } from '../../../types/collections';
+import { CardMiniEntity } from '../../../types/cards';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
-import { deleteCollectionsCard } from '../operations';
+import { deleteCard } from '../operations';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -73,14 +73,15 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface OwnProps {
-    data?: CollectionsCardMiniEntity;
+    data?: CardMiniEntity;
     isAddCard?: boolean;
     id?: number;
+    beforeRedirect?: () => Promise<number>;
 }
 
 type Props = OwnProps;
 
-const CollectionsCard: React.FC<Props> = ({ data, isAddCard=false, id }: Props) => {
+const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, beforeRedirect }: Props) => {
     const classes = useStyles();
     const history = useHistory();
     const dispatch = useDispatch();
@@ -113,14 +114,23 @@ const CollectionsCard: React.FC<Props> = ({ data, isAddCard=false, id }: Props) 
         if (!collectionId || !cardId) {
             return false;
         }
-        return handleApiRequest(dispatch, dispatch(deleteCollectionsCard(collectionId, cardId)))
+        return handleApiRequest(dispatch, dispatch(deleteCard(cardId)))
             .then(() => {
                 return true;
             });
     };
 
     const addNewCard = () => {
-        history.push(`/collections/${collectionId}/cards/new`);
+        console.log(beforeRedirect);
+        if (beforeRedirect) {
+            return beforeRedirect().then((newId) => {
+                if (newId) {
+                    history.push(`/collections/${newId}/cards/new`);
+                }
+            });
+        } else {
+            history.push(`/collections/${collectionId}/cards/new`);
+        }
     };
 
     if (isAddCard) {
@@ -198,4 +208,4 @@ const CollectionsCard: React.FC<Props> = ({ data, isAddCard=false, id }: Props) 
     );
 };
 
-export default CollectionsCard;
+export default CollectionsCardCard;

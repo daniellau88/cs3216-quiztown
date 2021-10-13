@@ -9,9 +9,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, generatePath } from 'react-router-dom';
 
 import LoadingIndicator from '../components/content/LoadingIndicator';
-import { loadAllCollections, loadCollectionContents, loadCollectionsCard } from '../modules/collections/operations';
-import { getAllCollections, getCollectionMiniEntity, getCollectionsCardList, getCollectionsCardMiniEntity } from '../modules/collections/selectors';
-import { CollectionMiniEntity, CollectionsCardMiniEntity } from '../types/collections';
+import { getAllCards, getCardMiniEntity } from '../modules/cards/selectors';
+import { loadAllCollections } from '../modules/collections/operations';
+import { getAllCollections, getCollectionMiniEntity } from '../modules/collections/selectors';
+import { CardMiniEntity } from '../types/cards';
+import { CollectionMiniEntity } from '../types/collections';
 import { AppState, EntityCollection } from '../types/store';
 import colours from '../utilities/colours';
 import { multiselect } from '../utilities/multiselect';
@@ -53,7 +55,7 @@ interface CardIdMap {
 
 export interface UndoneCardsMap {
     collectionId: number,
-    cards: CollectionsCardMiniEntity[],
+    cards: CardMiniEntity[],
     inactive?: boolean,
 }
 
@@ -74,7 +76,7 @@ const HomePage: React.FC<{}> = () => {
     }
 
     const collectionsCardsHash: any = useSelector((state: AppState) =>
-        multiselect(getCollectionsCardList, state, ids),
+        multiselect(getAllCards, state, ids),
     );
 
     const collectionsCards: EntityCollection[] = [];
@@ -95,10 +97,10 @@ const HomePage: React.FC<{}> = () => {
     const cardIds = Array.from(cardIdSet);
 
     const cardsHash: any = useSelector((state: AppState) =>
-        multiselect(getCollectionsCardMiniEntity, state, cardIds),
+        multiselect(getCardMiniEntity, state, cardIds),
     );
 
-    const cards: CollectionsCardMiniEntity[] = [];
+    const cards: CardMiniEntity[] = [];
     for (const c in cardsHash) {
         cards.push(cardsHash[c]);
     }
@@ -112,30 +114,32 @@ const HomePage: React.FC<{}> = () => {
 
     React.useEffect(() => {
         setIsLoading(true);
-        handleApiRequest(dispatch, dispatch(loadAllCollections({})))
+        handleApiRequest(dispatch, dispatch(loadAllCollections({ filters: { flagged: 1 } })))
             .finally(() => setIsLoading(false));
     }, [dispatch]);
 
     React.useEffect(() => {
         setIsLoading(true);
-        const requests = [];
-        for (const c of collections) {
-            requests.push(dispatch(loadCollectionContents(c.id, {})));
-        }
-        handleApiRequests(dispatch, ...requests)
-            .finally(() => setIsLoading(false));
+        // TODO: fix this
+        // const requests = [];
+        // for (const c of collections) {
+        //     requests.push(dispatch(loadCollectionContents(c.id, {})));
+        // }
+        // handleApiRequests(dispatch, ...requests)
+        //     .finally(() => setIsLoading(false));
     }, [collections.length]);
 
     React.useEffect(() => {
         setIsLoading(true);
-        const requests = [];
-        for (const cardIdMap of cardIdMaps) {
-            for (const cardId of cardIdMap.cards) {
-                requests.push(dispatch(loadCollectionsCard(cardIdMap.collectionId, cardId)));
-            }
-        }
-        handleApiRequests(dispatch, ...requests)
-            .finally(() => setIsLoading(false));
+        // TODO: Fix this
+        // const requests = [];
+        // for (const cardIdMap of cardIdMaps) {
+        //     for (const cardId of cardIdMap.cards) {
+        //         requests.push(dispatch(loadCollectionsCard(cardIdMap.collectionId, cardId)));
+        //     }
+        // }
+        // handleApiRequests(dispatch, ...requests)
+        //     .finally(() => setIsLoading(false));
     }, [cardIdMaps.length]);
 
     // TODO remove debug tool once workflow (to start quiz) is complete

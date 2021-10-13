@@ -1,5 +1,6 @@
 import { ApiPromise, CollectionData as CollectionDataType, CollectionQueryParams } from '../types';
-import { CollectionData, CollectionListData, CollectionPostData, CollectionsCardData, CollectionsCardImportPostData, CollectionsCardListData, CollectionsCardPostData, CollectionsImportPostData } from '../types/collections';
+import { CardListData } from '../types/cards';
+import { CollectionData, CollectionListData, CollectionPostData, CollectionsImportPostData } from '../types/collections';
 import { toQueryString } from '../utilities/url';
 
 import BaseAPI from './base';
@@ -31,40 +32,13 @@ export class CollectionsAPI extends BaseAPI {
         return this.delete(`${this.getCollectionUrl()}/${id}` + URL_SUFFIX);
     }
 
-    protected getCollectionsCardUrl(collectionId: number): string {
-        return `${this.getCollectionUrl()}/${collectionId}/cards`;
-    }
-
-    public getCollectionContentsList(collectionId: number, params: CollectionQueryParams): ApiPromise<CollectionDataType<CollectionsCardListData>> {
-        return this.get(`${this.getCollectionsCardUrl(collectionId)}?${toQueryString(params)}` + URL_SUFFIX);
-    }
-
-    public getCollectionsCard(collectionId: number, cardId: number): ApiPromise<{ item: CollectionsCardData }> {
-        console.log('Get cards ' + cardId);
-        return this.get(`${this.getCollectionsCardUrl(collectionId)}/${cardId}` + URL_SUFFIX);
-    }
-
-    public addCollectionsCard(collectionId: number, data: CollectionsCardPostData): ApiPromise<{ item: CollectionsCardData }> {
-        console.log('Adding card. Data name: ' + data.name);
-        return this.post(`${this.getCollectionsCardUrl(collectionId)}` + URL_SUFFIX, data);
-    }
-
-    public patchCollectionsCard(collectionId: number, cardId: number, data: Partial<CollectionsCardPostData>): ApiPromise<{ item: CollectionsCardData }> {
-        return this.put(`${this.getCollectionsCardUrl(collectionId)}/${cardId}` + URL_SUFFIX, data);
-    }
-
-    public deleteCollectionsCard(collectionId: number, cardId: number): ApiPromise<{}> {
-        return this.delete(`${this.getCollectionsCardUrl(collectionId)}/${cardId}` + URL_SUFFIX);
-    }
-
-    public importCollectionsCard(collectionId: number, data: CollectionsCardImportPostData): ApiPromise<{ item: CollectionsCardData }> {
-        console.log('Import card. Data name: ' + data.file_key);
-        return this.post(`${this.getCollectionsCardUrl(collectionId)}/import` + URL_SUFFIX, data);
-    }
-
     public importCollections(collectionId: number, data: CollectionsImportPostData): ApiPromise<{ item: CollectionData }> {
         // console.log('Import collection. Data name: ' + data[0].file_key);
         return this.post(`${this.getCollectionUrl()}/${collectionId}/import` + URL_SUFFIX, data);
+    }
+
+    public getCollectionCards(id: number): ApiPromise<CollectionDataType<CardListData>> {
+        return this.get(`${this.getCollectionUrl()}/${id}/cards` + URL_SUFFIX);
     }
 }
 

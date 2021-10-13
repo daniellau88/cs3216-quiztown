@@ -17,7 +17,9 @@ def list_or_create_card_view(request, *args, **kwargs):
         return create_card_view(request, *args, **kwargs)
 
 
-def list_card_view(request, pk):
+def list_card_view(request):
+    # TODO: Custom conversion of GET request to object
+    pk = int(request.GET.get('filters[collection_id]'))
     cards = Card.objects.filter(collection_id=pk)
 
     paginator = CustomPagination()
@@ -38,7 +40,7 @@ def create_card_view(request, pk_item, serializer):
 
 
 @api_view(["GET", "PUT", "DELETE"])
-@convert_keys_to_item({"pkCard": Card})
+@convert_keys_to_item({"pk": Card})
 def get_or_update_or_delete_card_view(request, *args, **kwargs):
     if request.method == "GET":
         return get_card_view(request, *args, **kwargs)
@@ -50,23 +52,22 @@ def get_or_update_or_delete_card_view(request, *args, **kwargs):
         return delete_card_view(request, *args, **kwargs)
 
 
-def get_card_view(request, pkCard_item, *args, **kwargs):
-    serializer = serializers.CardSerializer(pkCard_item)
+def get_card_view(request, pk_item, *args, **kwargs):
+    serializer = serializers.CardSerializer(pk_item)
     return Response({"item": serializer.data})
 
 
 @validate_request_data(
     serializers.CardSerializer,
-    item_key="pkCard_item",
     is_update=True,
 )
-def update_card_view(request, pkCard_item, serializer, *args, **kwargs):
+def update_card_view(request, pk_item, serializer, *args, **kwargs):
     serializer.save()
     return Response({"item": serializer.data})
 
 
-def delete_card_view(request, pkCard_item, *args, **kwargs):
-    pkCard_item.delete()
+def delete_card_view(request, pk_item, *args, **kwargs):
+    pk_item.delete()
     return Response({})
 
 

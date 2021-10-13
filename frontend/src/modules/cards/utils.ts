@@ -1,6 +1,6 @@
 import { fabric } from 'fabric';
 
-import { AnswerData } from '../../types/collections';
+import { AnswerData } from '../../types/cards';
 import colours from '../../utilities/colours';
 
 const TEXT_MARGIN = 40;
@@ -81,7 +81,7 @@ const createAnswerRectangle = (box: AnswerData) => {
         hasControls: false,
         lockMovementX: true,
         lockMovementY: true,
-        rx: BORDER_RADIUS, 
+        rx: BORDER_RADIUS,
         ry: BORDER_RADIUS,
         borderColor: colours.BLACK,
         backgroundColor: colours.WHITE,
@@ -117,7 +117,7 @@ export const initCorrectAnswersIndicator = (
 ): fabric.Text => {
     const correctAnswersIndicator = new fabric.Text(`0 / ${data.length.toString()}`, {
         top: CANVAS_PADDING,
-        left: canvas.getWidth() - 2*CANVAS_PADDING,
+        left: canvas.getWidth() - 2 * CANVAS_PADDING,
         originX: 'left',
         originY: 'top',
         hasControls: false,
@@ -205,7 +205,7 @@ export const resetToOriginalPosition = (
     text.setCoords();
 };
 
-export const updateCorrectAnswersIndicator = (correctAnswersIndicator:fabric.Text):boolean => {
+export const updateCorrectAnswersIndicator = (correctAnswersIndicator: fabric.Text): boolean => {
     const textContent = correctAnswersIndicator.get('text');
     if (!textContent) return false;
 
