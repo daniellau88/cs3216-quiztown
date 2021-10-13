@@ -1,13 +1,14 @@
 import { fabric } from 'fabric';
 
 import QTText from '../../components/fabric/QTText';
+import QTTextbox from '../../components/fabric/QTTextbox';
 import { AnswerData } from '../../types/cards';
 import colours from '../../utilities/colours';
 
+export const FONT_SIZE = 20;
 const TEXT_MARGIN = 40;
 const TEXT_PADDING = 10;
 const CANVAS_PADDING = 40;
-const FONT_SIZE = 20;
 const CORRECTNESS_MARGIN = 20;
 const BORDER_RADIUS = 5;
 
@@ -57,14 +58,12 @@ export const initAnswerOptions = (
 const createAnswerTextBox = (box: AnswerData, xTranslation:number) => {
     const top = box.bounding_box[0][1];
     const left = box.bounding_box[0][0];
-    return new fabric.Textbox(box.text, {
+    return new QTTextbox(box.text, {
         top: top,
         left: left + xTranslation,
         width: box.bounding_box[1][0] - box.bounding_box[0][0],
         height: box.bounding_box[1][1] - box.bounding_box[0][1],
-        hasControls: false,
-        lockMovementX: true,
-        lockMovementY: true,
+        hasBorders: false,
         borderColor: colours.BLACK,
         backgroundColor: colours.WHITE,
         stroke: colours.BLACK,

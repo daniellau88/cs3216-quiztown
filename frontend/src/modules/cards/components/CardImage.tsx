@@ -12,10 +12,13 @@ import {
 import { fabric } from 'fabric';
 import React, { useEffect, useState } from 'react';
 
+import QTTextbox from '../../../components/fabric/QTTextbox';
 import QTButton from '../../../components/QTButton';
-import { AnswerData } from '../../../types/cards';
+import { AnswerData } from '../../../types/collections';
+import colours from '../../../utilities/colours';
 import { useWindowDimensions } from '../../../utilities/customHooks';
 import {
+    FONT_SIZE,
     initAnswerBoxes,
     initAnswerOptions,
     initCorrectAnswersIndicator,
@@ -24,6 +27,8 @@ import {
     updateCorrectAnswersIndicator,
     validateAnswer,
 } from '../utils';
+
+import CollectionsImageCardEditControls from './CollectionsImageCardEditControls';
 
 
 const MAX_CANVAS_WIDTH = 1280;
@@ -41,16 +46,16 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface CardImageProps {
-    isEditing?: boolean
+    isEditing: boolean
     id: number,
     imageUrl: string,
     result: AnswerData[],
     imageMetadata: { width:number, height:number }
-    onCardCompleted: (nextBoxNumber:number, nextDate:Date) => void
+    onCardCompleted?: (nextBoxNumber:number, nextDate:Date) => void
 }
 
 const CardImage: React.FC<CardImageProps> = ({
-    isEditing = false,
+    isEditing,
     id,
     imageUrl,
     result,
@@ -73,7 +78,6 @@ const CardImage: React.FC<CardImageProps> = ({
     const initCanvasWithBg = () => {
         const canvas = new fabric.Canvas(CANVAS_ID, {
             hoverCursor: 'pointer',
-            selection: false,
             targetFindTolerance: 2,
         });
         canvas.setBackgroundImage(imageUrl, canvas.renderAll.bind(canvas), {
@@ -88,10 +92,10 @@ const CardImage: React.FC<CardImageProps> = ({
     const initEditingCanvas = () => {
         const canvas = initCanvasWithBg();
         initAnswerBoxes(canvas, isEditing, result, imageXTranslation);
+
         canvas.on('object:modified', (e) => {
-            if (e.target?.type != 'textbox') {
-                return;
-            }
+            if (e.target?.type != 'textbox') return;
+
             if (e.target) {
                 // TODO: Implement answer options edit
             }
@@ -151,11 +155,43 @@ const CardImage: React.FC<CardImageProps> = ({
         // onCardCompleted(nextBoxNumber, nextDate);
     };
 
+    const undo = () => {
+        console.log('undo');
+    };
+
+    const redo = () => {
+        console.log('redo');
+    };
+
+    const addAnswerOption = () => {
+        if (!canvas) return;
+        canvas.add(new QTTextbox('Answer Option', {
+            hasBorders: false,
+            borderColor: colours.BLACK,
+            backgroundColor: colours.WHITE,
+            stroke: colours.BLACK,
+            fontSize: FONT_SIZE,
+        }));
+    };
+
+    const deleteAnswerOption = () => {
+        if (!canvas) return;
+        const activeObjects = canvas.getActiveObjects();
+        activeObjects.forEach(object => canvas.remove(object));
+        canvas.discardActiveObject();
+    };
+
     return (
         <>
             <CssBaseline />
             <Box className={classes.root}>
-                <Grid container>
+                <Grid container direction='column'>
+                    <CollectionsImageCardEditControls
+                        undo={undo}
+                        redo={redo}
+                        addOption={addAnswerOption}
+                        deleteOption={deleteAnswerOption}
+                    />
                     <Box display="flex" justifyContent='center' width='100%'>
                         <canvas
                             id={CANVAS_ID}
@@ -164,21 +200,22 @@ const CardImage: React.FC<CardImageProps> = ({
                             className={classes.canvas}
                         />
                     </Box>
+                </Grid>
 
-                    <Dialog
-                        open={hasAnsweredAll}
-                        onClose={onClose}
-                    >
-                        <DialogTitle>
-                            Card completed!
-                        </DialogTitle>
-                        <DialogContent>
-                            <Typography>
-                                You have answered all the questions in the cards, how confident did you feel?
-                            </Typography>
-                        </DialogContent>
-                        <DialogActions>
-                            {/* {getIntervals(currentBox).map((interval, index) => (
+                <Dialog
+                    open={hasAnsweredAll}
+                    onClose={onClose}
+                >
+                    <DialogTitle>
+                        Card completed!
+                    </DialogTitle>
+                    <DialogContent>
+                        <Typography>
+                            You have answered all the questions in the cards, how confident did you feel?
+                        </Typography>
+                    </DialogContent>
+                    <DialogActions>
+                        {/* {getIntervals(currentBox).map((interval, index) => (
                                 <QTButton
                                     key={index}
                                     onClick={() => selectConfidence(index)}
@@ -186,9 +223,8 @@ const CardImage: React.FC<CardImageProps> = ({
                                     Confidence: {index + 1}, Interval: {interval}
                                 </QTButton>
                             ))} */}
-                        </DialogActions>
-                    </Dialog>
-                </Grid>
+                    </DialogActions>
+                </Dialog>
             </Box>
         </>
     );
