@@ -19,9 +19,10 @@ import { AppState, EntityCollection } from '../types/store';
 import colours from '../utilities/colours';
 import { multiselect } from '../utilities/multiselect';
 import routes from '../utilities/routes';
-import { handleApiRequest, handleApiRequests } from '../utilities/ui';
+import { handleApiRequests } from '../utilities/ui';
 
 import BannerCard from './components/BannerCard';
+import WeekOutlook from './components/WeekOutlook';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -87,15 +88,11 @@ const HomePage: React.FC<{}> = () => {
     for (const c in cardsHash) {
         cards.push(cardsHash[c]);
     }
-    console.log('help', cardIds);
-    console.log('help', cards);
 
     const undoneCardsMaps: UndoneCardsMap[] = [];
     for (const c of collectionIds) {
         undoneCardsMaps.push({ collectionId: c, cards: cards.filter(card => card.collection_id == c) }); // TODO add date filter
     }
-
-    console.log('help', undoneCardsMaps);
 
     const [isLoading, setIsLoading] = React.useState(true);
 
@@ -137,8 +134,9 @@ const HomePage: React.FC<{}> = () => {
     return (
         <>
             <CssBaseline />
-            <Box className={classes.root}>
+            <Box display='flex' flexDirection='column' className={classes.root}>
                 <BannerCard undoneCardsMaps={undoneCardsMaps} collections={collections} onChange={onUpdate} />
+                <WeekOutlook collections={collections} cards={cards} onChange={onUpdate} />
             </Box>
         </>
     );
