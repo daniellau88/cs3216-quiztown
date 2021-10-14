@@ -15,6 +15,7 @@ const ROUTES = {
             SHOW: '/collections/:collectionId/cards/:cardId',
             EDIT: '/collections/:collectionId/cards/:cardId/edit',
             NEW: '/collections/:collectionId/cards/new',
+            NEWTEXT: '/collections/:collectionId/cards/newText',
         },
     },
     CARDS: {

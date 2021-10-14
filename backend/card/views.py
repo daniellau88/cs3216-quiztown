@@ -27,9 +27,8 @@ def list_card_view(request):
 
 
 @validate_request_data(serializers.CardCreateSerializer)
-@convert_keys_to_item({"pk": Collection})
-def create_card_view(request, pk_item, serializer):
-    serializer.save(collection_id=pk_item.id)
+def create_card_view(request, serializer):
+    serializer.save()
     return Response({"item": serializer.data})
 
 
@@ -66,7 +65,15 @@ def delete_card_view(request, pk_item, *args, **kwargs):
 
 
 @api_view(["POST"])
-@validate_request_data(serializers.CardImportSerializer)
+def import_image_or_text_card_view(request, *args, **kwargs):
+    type = request.POST.get("filters[card_type]", "image")
+    if type == "image":
+        return import_card_view(request, *args, **kwargs)
+    elif type == "text":
+        return import_text_view(request, *args, **kwargs)
+
+
+@validate_request_data(serializers.CardImportImageSerializer)
 def import_card_view(request, serializer, pk, *args, **kwargs):
     file_key = serializer.data["file_key"]
     file_name = serializer.data["file_name"]
@@ -75,3 +82,9 @@ def import_card_view(request, serializer, pk, *args, **kwargs):
 
     response_serializer = serializers.CardSerializer(card)
     return Response({"item": response_serializer.data})
+
+
+@validate_request_data(serializers.CardImportTextSerializer)
+def import_text_view(request, serializer):
+    serializer.save()
+    return Response({"item": serializer.data})
