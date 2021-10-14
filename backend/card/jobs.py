@@ -11,6 +11,7 @@ import pytesseract
 from paddleocr import PaddleOCR
 from PIL import Image
 
+from public_activity import utils as public_activity_utils
 from quiztown.common.errors import ApplicationError, ErrorCode
 
 from .models import Card
