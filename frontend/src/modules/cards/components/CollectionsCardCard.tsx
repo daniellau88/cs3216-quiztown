@@ -19,10 +19,10 @@ import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 import QTButton from '../../../components/QTButton';
-import { CardMiniEntity } from '../../../types/cards';
+import { CardMiniEntity, CardPostData } from '../../../types/cards';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
-import { deleteCard } from '../operations';
+import { deleteCard, updateCard } from '../operations';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -88,7 +88,7 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
 
     const cardName = data?.name;
     const cardId = data?.id;
-    const cardStarred = true;
+    const cardStarred = data?.flagged;
     const cardTags = ['Tag1', 'Tag2'];
     const collectionId = data?.collection_id || id;
     const imageSrc = 'https://picsum.photos/200/300';
@@ -107,11 +107,20 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
     };
 
     const toggleStarred = () => {
-        console.log(cardStarred ? 'Unstar' : 'Star');
+        if (!data || !cardId) {
+            return false;
+        }
+        const cardPostData: CardPostData = { ...data, flagged: data.flagged ^ 1 };
+        console.log(cardPostData);
+        console.log(data);
+        return handleApiRequest(dispatch, dispatch(updateCard(cardId, cardPostData)))
+            .then(() => {
+                return true;
+            });
     };
 
     const handleDeleteCard = () => {
-        if (!collectionId || !cardId) {
+        if (!cardId) {
             return false;
         }
         return handleApiRequest(dispatch, dispatch(deleteCard(cardId)))

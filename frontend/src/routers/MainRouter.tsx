@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 
 import CollectionsCardAddPage from '../modules/cards/pages/CollectionsCardAddPage';
 import CollectionsCardPage from '../modules/cards/pages/CollectionsCardPage';
