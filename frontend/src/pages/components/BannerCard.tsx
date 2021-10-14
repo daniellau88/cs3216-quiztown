@@ -8,6 +8,7 @@ import {
     makeStyles,
 } from '@material-ui/core';
 import * as React from 'react';
+import { isBrowser } from 'react-device-detect';
 
 import { CollectionMiniEntity } from '../../types/collections';
 import colours from '../../utilities/colours';
@@ -38,13 +39,15 @@ const useStyles = makeStyles(() => ({
         },
     },
     headerText: {
-        fontSize: '4vh',
-        paddingTop: '1vh',
-        paddingBottom: '3vh',
+        fontSize: isBrowser ? '4vh' : '3vh',
+        paddingTop: '2vh',
+        paddingBottom: isBrowser ? '3vh' : '2vh',
+        paddingRight: '2vw',
     },
     subheaderText: {
         fontSize: '2vh',
         paddingBottom: '2vh',
+        paddingRight: '2vw',
     },
     collectionCards: {
         height: '6vh',
@@ -61,7 +64,7 @@ const useStyles = makeStyles(() => ({
         },
     },
     sideButtonText: {
-        fontSize: '3vh',
+        fontSize: isBrowser ? '3vh' : '2vh',
         color: colours.WHITE,
     },
 }));

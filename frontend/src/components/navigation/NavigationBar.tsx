@@ -9,10 +9,11 @@ import * as React from 'react';
 import logo from '../../assets/images/logo512.png';
 import { NAV_BAR_HEIGHT } from '../../layouts/AppLayout';
 
+import NavigationBarDropdown from './NavigationBarDropdown';
 import NavigationBarElements from './NavigationBarElements';
 import NavigationBarTitle from './NavigationBarTitle';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
     toolbar: {
         width: 'inherit',
         minHeight: NAV_BAR_HEIGHT,
@@ -30,6 +31,18 @@ const useStyles = makeStyles(() => ({
         width: 'auto',
         marginRight: '12px',
     },
+    sectionSmall: {
+        display: 'inherit',
+        [theme.breakpoints.up('md')]: {
+            display: 'none',
+        },
+    },
+    sectionLarge: {
+        display: 'none',
+        [theme.breakpoints.up('md')]: {
+            display: 'inherit',
+        },
+    },
 }));
 
 const NavigationBar: React.FC<{}> = () => {
@@ -42,7 +55,12 @@ const NavigationBar: React.FC<{}> = () => {
                     <CardMedia component='img' image={logo} className={classes.logo} />
                     <NavigationBarTitle text='QuizTown' size='h5' />
                     <Box className={classes.grow} />
-                    <NavigationBarElements size='h6' flexGrow={0.02} />
+                    <Box display='flex' justifyContent='flex-end' width='inherit' className={classes.sectionLarge}>
+                        <NavigationBarElements size='h6' flexGrow={0.02} />
+                    </Box>
+                    <Box display='flex' justifyContent='flex-end' width='inherit' className={classes.sectionSmall}>
+                        <NavigationBarDropdown />
+                    </Box>
                 </Box>
             </Toolbar>
         </>

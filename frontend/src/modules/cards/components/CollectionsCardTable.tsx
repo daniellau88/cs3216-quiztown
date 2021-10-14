@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { isBrowser } from 'react-device-detect';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
 
@@ -50,7 +51,7 @@ const CollectionsCardTable: React.FC<OwnProps> = ({ collectionId, beforeCreateCa
             isLoading={isLoading}
             onUpdate={(options: CollectionOptions) => onUpdate(options, dispatch)}
             gridComponent={CollectionsCardGridComponent}
-            leadingComponent={<CollectionsCardCard isAddCard={true} id={collectionId} beforeRedirect={beforeCreateCard} />}
+            leadingComponent={isBrowser ? <CollectionsCardCard isAddCard={true} id={collectionId} beforeRedirect={beforeCreateCard} /> : undefined}
             filters={filters}
             isSearchable
         />

@@ -10,12 +10,14 @@ import { UndoneCardsMap } from '../HomePage';
 
 const useStyles = makeStyles(() => ({
     collectionCard: {
+        fontSize: '1.5vh',
         height: '100%',
         width: '10vw',
         borderRadius: '10px',
         border: '1px solid black',
     },
     inactiveCollectionCard: {
+        fontSize: '1.5vh',
         height: '100%',
         width: '10vw',
         borderRadius: '10px',

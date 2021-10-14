@@ -27,6 +27,12 @@ const useStyles = makeStyles(() => ({
         paddingLeft: 20,
         paddingRight: 20,
     },
+    headerText: {
+        fontSize: '5vh',
+    },
+    subheaderText: {
+        fontSize: '2vh',
+    },
 }));
 
 type Props = RouteComponentProps;
@@ -73,10 +79,10 @@ const CollectionsCardPage: React.FC<Props> = ({ match: { params } }: RouteCompon
                 <Grid container spacing={2}>
                     <Grid container direction='column' className={classes.header}>
                         {/* TODO: Replace hardcoded collection details */}
-                        <Typography variant='h3'>
+                        <Typography align='center' className={classes.headerText}>
                             CVS Physio 1
                         </Typography>
-                        <Typography variant='h6'>
+                        <Typography align='center' className={classes.subheaderText}>
                             Here are the cards in your collection, pick one to view or edit!
                         </Typography>
                     </Grid>

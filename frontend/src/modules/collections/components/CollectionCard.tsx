@@ -144,12 +144,16 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
             <CardActions>
                 <Grid container alignItems='center' style={{ paddingLeft: '0.5vw' }}>
                     <Box display='flex' height='100%' width='100%'>
-                        <QTButton outlined onClick={startCollection}>
+                        <Grid container item xs={3} alignItems='center'>
+                            <QTButton outlined height='95%' width='95%' onClick={startCollection}>
                             Test Me!
-                        </QTButton>
-                        <QTButton onClick={openCollection}>
+                            </QTButton>
+                        </Grid>
+                        <Grid container item xs={3} alignItems='center'>
+                            <QTButton height='95%' width='95%' onClick={openCollection}>
                             View
-                        </QTButton>
+                            </QTButton>
+                        </Grid>
                         <Box flexGrow={1} />
                         <Box display='flex' minHeight='100%' style={{ paddingRight: '0.5vw' }} justifyContent='center' alignItems='center'>
                             <Button onClick={handleDeleteCollection} >
