@@ -18,6 +18,8 @@ def broadcast_public_activity(public_activity: PublicActivity):
             get_user_key(public_activity.user_id),
             {
                 "type": "publish_payload",
-                "payload": serializer.data,
+                "payload": {
+                    "item": serializer.data,
+                },
             },
         )

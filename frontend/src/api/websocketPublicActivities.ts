@@ -9,7 +9,7 @@ import { URL_SUFFIX } from './helpers/url-suffix';
 const BaseWebsocketURL = 'ws://localhost:8000/ws';
 
 export class WebsocketPublicActivitiesAPI {
-    public subscribePublicActivity(onMessage: (onMessage: ApiResponse<PublicActivityListData>) => void): void {
+    public subscribePublicActivity(onMessage: (message: ApiResponse<{ item: PublicActivityListData }>) => void): void {
         this.sendConnection(`${BaseWebsocketURL}/subscribePublicActivity` + URL_SUFFIX, onMessage);
     }
 

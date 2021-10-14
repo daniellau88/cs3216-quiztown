@@ -7,8 +7,6 @@ import { batched } from '../../utilities/store';
 import * as actions from './actions';
 import { getRecentPublicActivities } from './selectors';
 
-export const enqueueRecentPublicActivity = actions.enqueueRecentPublicActivity;
-
 export function loadRecentPublicActivities(): Operation<ApiResponse<number[]>> {
     return async (dispatch, getState) => {
         const filter: CollectionQueryParams = {
@@ -31,5 +29,18 @@ export function loadRecentPublicActivities(): Operation<ApiResponse<number[]>> {
 export function savePublicActivityList(list: PublicActivityListData[]): NormalizeOperation {
     return (dispatch) => {
         dispatch(actions.savePublicActivityList(list));
+    };
+}
+
+// Returns void
+export function subscribePublicActivity(onMessage: (message: PublicActivityListData) => void): NormalizeOperation {
+    return async (dispatch, getState) => {
+        const handleMessage = (message: ApiResponse<{ item: PublicActivityListData }>) => {
+            const data = message.payload.item;
+            batched(dispatch, actions.enqueueRecentPublicActivity(data));
+            onMessage(data);
+        };
+        api.websocketPublicActivities.subscribePublicActivity(handleMessage);
+        return;
     };
 }
