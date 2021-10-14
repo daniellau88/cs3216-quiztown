@@ -46,9 +46,6 @@ interface OwnProps<P> {
     filters?: TableFilter[];
     // Additional actions displayed on the table header.
     headerActions?: React.ReactElement | null;
-    // Whether to display an auto-incremented S/N column in the first column.
-    showIndex?: boolean;
-
     rowProps?: Record<string, P>;
 }
 
@@ -78,7 +75,7 @@ const CollectionMesh: React.FC<Props> = ({
                 {isLoading && (
                     <LoadingIndicator />
                 )}
-                {!isLoading &&
+                {!isLoading && leadingComponent &&
                     <Grid container item
                         xs={12} sm={6} md={4} lg={3}
                         className={classes.card}

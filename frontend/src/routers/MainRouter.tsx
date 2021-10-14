@@ -4,6 +4,7 @@ import { Route, Switch } from 'react-router-dom';
 import CollectionsCardAddPage from '../modules/cards/pages/CollectionsCardAddPage';
 import CollectionsCardPage from '../modules/cards/pages/CollectionsCardPage';
 import CollectionsCardShowPage from '../modules/cards/pages/CollectionsCardShowPage';
+import CollectionsCardStarredPage from '../modules/cards/pages/CollectionsCardStarredPage';
 import CollectionPage from '../modules/collections/pages/CollectionPage';
 import HomePage from '../pages/HomePage';
 import TemplatePage from '../pages/utilities/TemplatePage';
@@ -18,6 +19,7 @@ const MainRouter = (): JSX.Element => {
                 <Route exact path={routes.COLLECTIONS.SHOW} component={CollectionsCardPage} />
                 <Route exact path={routes.COLLECTIONS.CARD.NEW} component={CollectionsCardAddPage} />
                 <Route exact path={routes.COLLECTIONS.CARD.SHOW} component={CollectionsCardShowPage} />
+                <Route exact path={routes.CARDS.SHOW_STARRED} component={CollectionsCardStarredPage} />
                 <Route exact path={routes.TEST} component={TemplatePage} />
             </Switch>
         </>

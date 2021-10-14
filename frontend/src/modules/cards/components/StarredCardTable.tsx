@@ -2,26 +2,19 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
 
+import LoadingIndicator from '../../../components/content/LoadingIndicator';
 import CollectionMesh from '../../../components/tables/CollectionMesh';
 import { TableFilter } from '../../../components/tables/TableFilters';
 import { AppState, CollectionOptions, EntityCollection } from '../../../types/store';
 import { handleApiRequest } from '../../../utilities/ui';
-import { loadCollectionCards } from '../operations';
-import { getCollectionCardList } from '../selectors';
+import { loadAllCards } from '../operations';
+import { getAllCards } from '../selectors';
 
-import CollectionsCardCard from './CollectionsCardCard';
 import CollectionsCardGridComponent from './CollectionsCardGridComponent';
 
-
-interface OwnProps {
-    collectionId: number;
-    beforeCreateCard?: () => Promise<number>;
-}
-
-
-const CollectionsCardTable: React.FC<OwnProps> = ({ collectionId, beforeCreateCard }) => {
+const StarredCardTable: React.FC = () => {
     const dispatch = useDispatch();
-    const collectionCards: EntityCollection = useSelector((state: AppState) => getCollectionCardList(state, collectionId));
+    const starredCards: EntityCollection = useSelector((state: AppState) => getAllCards(state));
 
     const [isLoading, setIsLoading] = React.useState(true);
 
@@ -30,31 +23,36 @@ const CollectionsCardTable: React.FC<OwnProps> = ({ collectionId, beforeCreateCa
 
     const onUpdate = (options: CollectionOptions, dispatch: Dispatch<any>) => {
         setIsLoading(true);
-        return handleApiRequest(dispatch, dispatch(loadCollectionCards(collectionId, options))).finally(() => {
+        const queryOptions: CollectionOptions = {
+            ...options,
+            filters: {
+                ...options.filters,
+                flagged: 1,
+            },
+        };
+        return handleApiRequest(dispatch, dispatch(loadAllCards(queryOptions))).finally(() => {
             setIsLoading(false);
         });
     };
 
     React.useEffect(() => {
-        if (collectionId != 0) {
-            onUpdate({}, dispatch);
-        } else {
-            // Show all items
-            setIsLoading(false);
-        }
-    }, [collectionId, dispatch]);
+        onUpdate({}, dispatch);
+    }, [dispatch]);
+
+    if (isLoading) {
+        return <LoadingIndicator></LoadingIndicator>;
+    }
 
     return (
         <CollectionMesh
-            collection={collectionCards}
+            collection={starredCards}
             isLoading={isLoading}
             onUpdate={(options: CollectionOptions) => onUpdate(options, dispatch)}
             gridComponent={CollectionsCardGridComponent}
-            leadingComponent={<CollectionsCardCard isAddCard={true} id={collectionId} beforeRedirect={beforeCreateCard} />}
             filters={filters}
             isSearchable
         />
     );
 };
 
-export default CollectionsCardTable;
+export default StarredCardTable;

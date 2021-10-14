@@ -42,7 +42,6 @@ const CollectionTable: React.FC<{}> = () => {
             leadingComponent={<CollectionCard isAddCollectionCard={true} />}
             filters={filters}
             isSearchable
-            showIndex
         />
     );
 };
