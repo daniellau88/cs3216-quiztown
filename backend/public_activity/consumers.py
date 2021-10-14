@@ -12,6 +12,7 @@ class PublicActivityConsumer(WebsocketConsumer):
         user = self.scope["user"]
         if user.is_anonymous or not user.is_authenticated:
             self.close()
+            return
 
         self.user_key = utils.get_user_key(user.user_id)
 
@@ -25,6 +26,9 @@ class PublicActivityConsumer(WebsocketConsumer):
             self.accept()
 
     def disconnect(self, close_code):
+        if not hasattr(self, "user_key"):
+            return
+
         if isinstance(self.channel_layer, RedisChannelLayer):
             # Leave room group
             async_to_sync(self.channel_layer.group_discard)(

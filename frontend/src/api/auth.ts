@@ -2,6 +2,7 @@ import { ApiPromise } from '../types';
 import { GoogleLoginPostData, LoginPostData, UserData } from '../types/auth';
 
 import BaseAPI from './base';
+import { Token } from './helpers/server-context';
 import { URL_SUFFIX } from './helpers/url-suffix';
 
 export class AuthAPI extends BaseAPI {
@@ -13,7 +14,7 @@ export class AuthAPI extends BaseAPI {
         console.log('Logging in');
         const resp: ApiPromise<{ item: UserData }> = this.post(`${this.getAuthUrl()}/login` + URL_SUFFIX, data);
         const apiResponse = resp.then((response) => {
-            BaseAPI.refreshCsrfToken();
+            Token.refreshCsrfToken();
             return response;
         });
         return apiResponse;
@@ -23,7 +24,7 @@ export class AuthAPI extends BaseAPI {
         console.log('Logging in with google');
         const resp: ApiPromise<{ item: UserData }> = this.post(`${this.getAuthUrl()}/googleLogin` + URL_SUFFIX, data);
         const apiResponse = resp.then((response) => {
-            BaseAPI.refreshCsrfToken();
+            Token.refreshCsrfToken();
             return response;
         });
         return apiResponse;
@@ -33,7 +34,7 @@ export class AuthAPI extends BaseAPI {
         console.log('Logging out');
         const resp: ApiPromise<{ item: UserData }> = this.post(`${this.getAuthUrl()}/logout` + URL_SUFFIX);
         const apiResponse = resp.then((response) => {
-            BaseAPI.refreshCsrfToken();
+            Token.refreshCsrfToken();
             return response;
         });
         return apiResponse;
