@@ -76,8 +76,7 @@ const CollectionMesh: React.FC<Props> = ({
                     <LoadingIndicator />
                 )}
                 {!isLoading && leadingComponent &&
-                    <Grid container item
-                        xs={12} sm={6} md={4} lg={3}
+                    <Grid container item xs={12} md={6} lg={4} xl={3}
                         className={classes.card}
                     >
                         {leadingComponent}
@@ -88,7 +87,7 @@ const CollectionMesh: React.FC<Props> = ({
                     collection.ids.map((id) => (
                         <Grid container item
                             key={id}
-                            xs={12} sm={6} md={4} lg={3}
+                            xs={12} md={6} lg={4} xl={3}
                             justifyContent='center'
                             alignItems='center'
                             className={classes.card}

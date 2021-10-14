@@ -1,6 +1,7 @@
 import {
     Button,
     Typography,
+    TypographyVariant,
     makeStyles,
 } from '@material-ui/core';
 import React from 'react';
@@ -39,6 +40,7 @@ interface QTButtonProps {
     onClick?: () => void
     height?: string
     width?: string
+    variant?: TypographyVariant
 }
 
 const QTButton: React.FC<QTButtonProps> = ({
@@ -48,6 +50,7 @@ const QTButton: React.FC<QTButtonProps> = ({
     alert = false,
     height = '5vh',
     width = '8vw',
+    variant = 'caption',
 }) => {
     const classes = useStyles();
 
@@ -67,7 +70,7 @@ const QTButton: React.FC<QTButtonProps> = ({
             style={{ minWidth: width, minHeight: height, maxWidth: width, maxHeight: height }}
             onClick={() => onClick && onClick()}
         >
-            <Typography className={alert ? classes.alertText : classes.primaryText}>
+            <Typography variant={variant} className={alert ? classes.alertText : classes.primaryText}>
                 {children}
             </Typography>
         </Button>

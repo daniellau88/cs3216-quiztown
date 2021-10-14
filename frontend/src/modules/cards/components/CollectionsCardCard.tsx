@@ -56,7 +56,7 @@ const useStyles = makeStyles(() => ({
     },
     cardContent: {
         paddingTop: '1.5vh',
-        paddingBottom: '0.75vh',
+        paddingBottom: '0vh',
     },
     cardIcon: {
         fontSize: '2.5vh',
@@ -182,9 +182,9 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
                         <Box flexGrow={1} />
                         <Button onClick={toggleStarred}>
                             {cardStarred ?
-                                <Star />
+                                <Star className={classes.cardIcon} />
                                 :
-                                <StarOutline />
+                                <StarOutline className={classes.cardIcon} />
                             }
                         </Button>
                     </Box>
@@ -194,16 +194,21 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
             <CardActions>
                 <Grid container alignItems='center' style={{ paddingLeft: '0.5vw' }}>
                     <Box display='flex' height='100%' width='100%'>
-                        <QTButton outlined onClick={openCard}>
+                        <Grid container item xs={3} alignItems='center'>
+                            <QTButton outlined height='95%' width='95%' onClick={openCard}>
                             Test Me!
-                        </QTButton>
-                        {/* <QTButton outlined onClick={duplicateCard}>Duplicate to other collection</QTButton> */}
-                        <QTButton onClick={editCard}>
+                            </QTButton>
+                        </Grid>
+                        <Grid container item xs={3} alignItems='center'>
+                            <QTButton height='95%' width='95%' onClick={editCard}>
                             Edit
-                        </QTButton>
-                        <QTButton onClick={duplicateCard}>
+                            </QTButton>
+                        </Grid>
+                        <Grid container item xs={3} alignItems='center'>
+                            <QTButton height='95%' width='95%' onClick={duplicateCard}>
                             Duplicate
-                        </QTButton>
+                            </QTButton>
+                        </Grid>
                         <Box flexGrow={1} />
                         <Box display='flex' minHeight='100%' style={{ paddingRight: '0.5vw' }} justifyContent='center' alignItems='center'>
                             <Button onClick={handleDeleteCard} >

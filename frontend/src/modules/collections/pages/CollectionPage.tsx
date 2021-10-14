@@ -21,6 +21,12 @@ const useStyles = makeStyles(() => ({
         paddingLeft: 20,
         paddingRight: 20,
     },
+    headerText: {
+        fontSize: '5vh',
+    },
+    subheaderText: {
+        fontSize: '2vh',
+    },
 }));
 
 const CollectionPage: React.FC<{}> = () => {
@@ -32,10 +38,10 @@ const CollectionPage: React.FC<{}> = () => {
             <Box className={classes.root}>
                 <Grid container spacing={2}>
                     <Grid container direction='column' className={classes.header}>
-                        <Typography variant='h3'>
+                        <Typography align='center' className={classes.headerText}>
                             My Collections
                         </Typography>
-                        <Typography variant='h6'>
+                        <Typography align='center' className={classes.subheaderText}>
                             Each collection contains your handmate notes, pick one and start revising!
                         </Typography>
                     </Grid>

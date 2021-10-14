@@ -31,6 +31,8 @@ const useStyles = makeStyles((theme) => ({
     },
     titleLink: {
         textDecoration: 'none',
+        height: '100%',
+        width: '100%',
     },
     fill: {
         backgroundColor: colours.BLUE,
@@ -42,9 +44,10 @@ interface OwnProps {
     route: string,
     text: string,
     size?: headerSize,
-    flexGrow: number,
+    flexGrow?: number,
     onMouseEnter?: (route: string) => void,
     onMouseLeave?: () => void,
+    isDropdown?: boolean,
 }
 
 type Props = OwnProps;
@@ -64,20 +67,23 @@ const NavigationBarElement: React.FC<Props> = (props: Props) => {
     return (
         <Box flexGrow={props.flexGrow} className={classes.root} alignItems='center'>
             <Box display='flex' flexDirection='column' height='inherit' >
-                <Box display='flex' flexGrow={1} />
                 <Link
                     to={props.route}
                     className={classes.titleLink}
                     onMouseEnter={() => onMouseEnter(props.route)}
                     onMouseLeave={() => onMouseLeave()}>
-                    <Typography
-                        variant={props.size ? props.size : 'h4'}
-                        className={isSelected ? classes.titleTextSelected : classes.titleText}>
-                        {props.text}
-                    </Typography>
+                    <Box display='flex' flexDirection='column' height='inherit' justifyContent='center'>
+                        {!props.isDropdown && <Box display='flex' flexGrow={1} />}
+                        <Typography
+                            variant={props.size ? props.size : 'h4'}
+                            align='center'
+                            className={isSelected ? classes.titleTextSelected : classes.titleText}>
+                            {props.text}
+                        </Typography>
+                        {!props.isDropdown && <Box display='flex' flexGrow={1} />}
+                    </Box>
                 </Link>
-                <Box display='flex' flexGrow={1} />
-                {isSelected &&
+                {!props.isDropdown && isSelected &&
                     <Box className={classes.fill} />
                 }
             </Box>
