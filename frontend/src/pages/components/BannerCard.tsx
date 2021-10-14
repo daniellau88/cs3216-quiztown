@@ -1,4 +1,6 @@
 import {
+    Box,
+    Button,
     Card,
     CardContent,
     Grid,
@@ -8,6 +10,7 @@ import {
 import * as React from 'react';
 
 import { CollectionMiniEntity } from '../../types/collections';
+import colours from '../../utilities/colours';
 import { UndoneCardsMap } from '../HomePage';
 
 import CollectionToggle from './CollectionToggle';
@@ -18,11 +21,25 @@ const useStyles = makeStyles(() => ({
         borderRadius: '20px',
         width: '100%',
     },
+    mainGrid: {
+        height: '100%',
+        width: '80%',
+    },
+    sideGrid: {
+        height: '100%',
+        width: '20%',
+    },
     cardContent: {
-        paddingLeft: '2vw',
+        marginLeft: '2vw',
+        width: '100%',
+        padding: 0,
+        '&:last-child': {
+            paddingBottom: 0,
+        },
     },
     headerText: {
         fontSize: '4vh',
+        paddingTop: '1vh',
         paddingBottom: '3vh',
     },
     subheaderText: {
@@ -32,6 +49,20 @@ const useStyles = makeStyles(() => ({
     collectionCards: {
         height: '6vh',
         width: '100%',
+        marginBottom: '2vh',
+    },
+    sideGridButton: {
+        height: '100%',
+        width: '100%',
+        backgroundColor: colours.BLUE,
+        textTransform: 'none',
+        '&:hover': {
+            backgroundColor: colours.LIGHTBLUE,
+        },
+    },
+    sideButtonText: {
+        fontSize: '3vh',
+        color: colours.WHITE,
     },
 }));
 
@@ -39,6 +70,7 @@ interface OwnProps {
     undoneCardsMaps: UndoneCardsMap[];
     collections: CollectionMiniEntity[];
     onChange: () => void;
+    isMiniBanner?: boolean;
 }
 
 type Props = OwnProps;
@@ -67,24 +99,43 @@ const BannerCard: React.FC<Props> = (props: Props) => {
         <>
             <Card className={classes.mainCard}>
                 <CardContent className={classes.cardContent}>
-                    <Grid>
-                        <Typography className={classes.headerText}>
-                            You have {totalUndone} card{totalUndone == 1 ? '' : 's'} from {collectionCount} collection{collectionCount == 1 ? '' : 's'} to revisit today!
-                        </Typography>
-                        <Typography className={classes.subheaderText}>
-                            Click to activate or deactivate collections to customise your learning!
-                        </Typography>
-                        <Grid container className={classes.collectionCards}>
-                            {props.undoneCardsMaps.map((undoneCardsMap) => {
-                                return <CollectionToggle
-                                    key={undoneCardsMap.collectionId}
-                                    collectionName={props.collections.filter(collection => collection.id == undoneCardsMap.collectionId)[0].name}
-                                    undoneCardsMap={undoneCardsMap}
-                                    onChange={(didActivate) => onUpdate(didActivate)}
-                                />;
-                            })}
+                    <Box display='flex' height='100%' width='100%' flexDirection='row'>
+                        <Grid className={classes.mainGrid}>
+                            {!props.isMiniBanner ? (
+                                <>
+                                    <Typography className={classes.headerText}>
+                                        You have {totalUndone} card{totalUndone == 1 ? '' : 's'} from {collectionCount} collection{collectionCount == 1 ? '' : 's'} to revisit today!
+                                    </Typography>
+                                    <Typography className={classes.subheaderText}>
+                                        Click to activate or deactivate collections to customise your learning!
+                                    </Typography>
+                                </>
+                            ) : (
+                                <Box display='flex' width='100%' justifyContent='center' alignItems='center' paddingTop='1vh'>
+                                    <Typography className={classes.subheaderText} align='center'>
+                                        You have {totalUndone} card{totalUndone == 1 ? '' : 's'} from {collectionCount} collection{collectionCount == 1 ? '' : 's'} to revisit for this day!
+                                    </Typography>
+                                </Box>
+                            )}
+                            <Grid container className={classes.collectionCards}>
+                                {props.undoneCardsMaps.map((undoneCardsMap) => {
+                                    return <CollectionToggle
+                                        key={undoneCardsMap.collectionId}
+                                        collectionName={props.collections.filter(collection => collection.id == undoneCardsMap.collectionId)[0].name}
+                                        undoneCardsMap={undoneCardsMap}
+                                        onChange={(didActivate) => onUpdate(didActivate)}
+                                    />;
+                                })}
+                            </Grid>
                         </Grid>
-                    </Grid>
+                        <Grid className={classes.sideGrid}>
+                            <Button className={classes.sideGridButton}>
+                                <Typography className={classes.sideButtonText}>
+                                    Start Learning
+                                </Typography>
+                            </Button>
+                        </Grid>
+                    </Box>
                 </CardContent>
             </Card>
         </>

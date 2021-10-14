@@ -1,4 +1,5 @@
 const colours = {
+    LIGHTBLUE: '#1d86a2',
     BLUE: '#1D70A2',
     WHITE: '#FFFFFF',
     LIGHTGREY: '#E0E0E0',
