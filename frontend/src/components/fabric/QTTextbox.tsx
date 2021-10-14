@@ -3,8 +3,9 @@ import { fabric } from 'fabric';
 // Bezier approximations of arcs (http://itc.ktu.lt/itc354/Riskus354.pdf)
 const BEIZER_APPROXIMATION = 1 - 0.5522847498;
 
-const QTTextbox = fabric.util.createClass(fabric.Textbox, {
-    type: 'QTTextbox',
+const Quizbox = fabric.util.createClass(fabric.Textbox, {
+    // This type naming capitalization matters
+    type: 'Quizbox',
 
     initialize: function (text:string, options:any) {
         this.text = text;
@@ -16,10 +17,11 @@ const QTTextbox = fabric.util.createClass(fabric.Textbox, {
 
     toObject: function () {
         return fabric.util.object.extend(this.callSuper('toObject'), {
+            text: this.get('text'),
         });
     },
 
-    _render: function (ctx:any) {
+    _render: function (ctx: any) {
         this.callSuper('_render', ctx);
         const rx = this.rx ? Math.min(this.rx, this.width / 2) : 0,
             ry = this.ry ? Math.min(this.ry, this.height / 2) : 0,
@@ -93,4 +95,10 @@ const QTTextbox = fabric.util.createClass(fabric.Textbox, {
     },
 });
 
-export default QTTextbox;
+// Declare it so that fabric knows that Quizbox exists
+(fabric as any).Quizbox = Quizbox;
+(fabric as any).Quizbox.fromObject = function (object:any, callback: () => void) {
+    return fabric.Object._fromObject('Quizbox', object, callback, 'text');
+};
+
+export default Quizbox;

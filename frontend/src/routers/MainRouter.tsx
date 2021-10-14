@@ -5,6 +5,7 @@ import CollectionsCardAddPage from '../modules/cards/pages/CollectionsCardAddPag
 import CollectionsCardPage from '../modules/cards/pages/CollectionsCardPage';
 import CollectionsCardShowPage from '../modules/cards/pages/CollectionsCardShowPage';
 import CollectionsCardStarredPage from '../modules/cards/pages/CollectionsCardStarredPage';
+import CollectionsImageCardEditPage from '../modules/cards/pages/CollectionsImageCardEditPage';
 import CollectionPage from '../modules/collections/pages/CollectionPage';
 import HomePage from '../pages/HomePage';
 import TemplatePage from '../pages/utilities/TemplatePage';
@@ -20,6 +21,8 @@ const MainRouter = (): JSX.Element => {
                 <Route exact path={routes.COLLECTIONS.CARD.NEW} component={CollectionsCardAddPage} />
                 <Route exact path={routes.COLLECTIONS.CARD.SHOW} component={CollectionsCardShowPage} />
                 <Route exact path={routes.CARDS.SHOW_STARRED} component={CollectionsCardStarredPage} />
+                {/* TODO: Distinguish between image card edit and text card edit somewhere */}
+                <Route exact path={routes.COLLECTIONS.CARD.EDIT} component={CollectionsImageCardEditPage} />
                 <Route exact path={routes.TEST} component={TemplatePage} />
             </Switch>
         </>

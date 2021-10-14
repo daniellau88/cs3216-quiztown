@@ -10,11 +10,12 @@ import {
     makeStyles,
 } from '@material-ui/core';
 import { fabric } from 'fabric';
-import React, { useEffect, useState } from 'react';
+import React, { MutableRefObject, useEffect, useState } from 'react';
 
+import StateManager from '../../../components/fabric/CanvasStateManager';
 import QTTextbox from '../../../components/fabric/QTTextbox';
 import QTButton from '../../../components/QTButton';
-import { AnswerData } from '../../../types/collections';
+import { AnswerData } from '../../../types/cards';
 import colours from '../../../utilities/colours';
 import { useWindowDimensions } from '../../../utilities/customHooks';
 import {
@@ -30,7 +31,6 @@ import {
 
 import CollectionsImageCardEditControls from './CollectionsImageCardEditControls';
 
-
 const MAX_CANVAS_WIDTH = 1280;
 const SCREEN_PADDING = 40;
 const HEADER_HEIGHT = 80;
@@ -41,7 +41,10 @@ const useStyles = makeStyles(() => ({
         paddingTop: '80px',
         paddingBottom: '80px',
     },
-    canvas: {
+    imageContainer: {
+        position: 'absolute',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 }));
 
@@ -52,6 +55,8 @@ interface CardImageProps {
     result: AnswerData[],
     imageMetadata: { width:number, height:number }
     onCardCompleted?: (nextBoxNumber:number, nextDate:Date) => void
+    saveAnswerData?: (canvas:fabric.Canvas) => void
+    canvasRef?: MutableRefObject<fabric.Canvas | undefined>
 }
 
 const CardImage: React.FC<CardImageProps> = ({
@@ -61,11 +66,14 @@ const CardImage: React.FC<CardImageProps> = ({
     result,
     imageMetadata,
     onCardCompleted,
+    saveAnswerData,
+    canvasRef,
 }) => {
     const classes = useStyles();
     const CANVAS_ID = 'quiztown-canvas-' + id;
 
     const [canvas, setCanvas] = useState<fabric.Canvas>();
+    const [stateManager, setStateManager] = useState<StateManager>();
     const [hasAnsweredAll, setHasAnsweredAll] = useState(false);
     const [currentBox, setCurrentBox] = useState(0);
 
@@ -79,12 +87,7 @@ const CardImage: React.FC<CardImageProps> = ({
         const canvas = new fabric.Canvas(CANVAS_ID, {
             hoverCursor: 'pointer',
             targetFindTolerance: 2,
-        });
-        canvas.setBackgroundImage(imageUrl, canvas.renderAll.bind(canvas), {
-            scaleX: 1,
-            scaleY: 1,
-            left: canvas.getCenter().left,
-            originX: 'center',
+            backgroundColor: 'transparent',
         });
         return canvas;
     };
@@ -92,14 +95,6 @@ const CardImage: React.FC<CardImageProps> = ({
     const initEditingCanvas = () => {
         const canvas = initCanvasWithBg();
         initAnswerBoxes(canvas, isEditing, result, imageXTranslation);
-
-        canvas.on('object:modified', (e) => {
-            if (e.target?.type != 'textbox') return;
-
-            if (e.target) {
-                // TODO: Implement answer options edit
-            }
-        });
         return canvas;
     };
 
@@ -134,7 +129,16 @@ const CardImage: React.FC<CardImageProps> = ({
 
     useEffect(() => {
         const canvas = isEditing ? initEditingCanvas() : initQuizingCanvas();
+        if (canvasRef) {
+            canvasRef.current = canvas;
+        }
+        const stateManager = new StateManager(canvas);
+        canvas.on('object:modified', () => {
+            stateManager.saveState();
+        });
         setCanvas(canvas);
+        setStateManager(stateManager);
+
     }, []);
 
     useEffect(() => {
@@ -155,14 +159,6 @@ const CardImage: React.FC<CardImageProps> = ({
         // onCardCompleted(nextBoxNumber, nextDate);
     };
 
-    const undo = () => {
-        console.log('undo');
-    };
-
-    const redo = () => {
-        console.log('redo');
-    };
-
     const addAnswerOption = () => {
         if (!canvas) return;
         canvas.add(new QTTextbox('Answer Option', {
@@ -172,6 +168,7 @@ const CardImage: React.FC<CardImageProps> = ({
             stroke: colours.BLACK,
             fontSize: FONT_SIZE,
         }));
+        stateManager?.saveState();
     };
 
     const deleteAnswerOption = () => {
@@ -179,6 +176,7 @@ const CardImage: React.FC<CardImageProps> = ({
         const activeObjects = canvas.getActiveObjects();
         activeObjects.forEach(object => canvas.remove(object));
         canvas.discardActiveObject();
+        stateManager?.saveState();
     };
 
     return (
@@ -187,17 +185,25 @@ const CardImage: React.FC<CardImageProps> = ({
             <Box className={classes.root}>
                 <Grid container direction='column'>
                     <CollectionsImageCardEditControls
-                        undo={undo}
-                        redo={redo}
+                        undo={() => stateManager?.undo()}
+                        redo={() => stateManager?.redo()}
                         addOption={addAnswerOption}
                         deleteOption={deleteAnswerOption}
                     />
                     <Box display="flex" justifyContent='center' width='100%'>
+                        <Box
+                            className={classes.imageContainer}
+                            style={{ height: canvasMaxHeight, width: canvasMaxWidth }}
+                        >
+                            <img
+                                src={imageUrl}
+                                style={{ position: 'absolute', left: (canvasMaxWidth - imageMetadata.width) / 2 }}
+                            />
+                        </Box>
                         <canvas
                             id={CANVAS_ID}
                             width={canvasMaxWidth}
                             height={canvasMaxHeight}
-                            className={classes.canvas}
                         />
                     </Box>
                 </Grid>

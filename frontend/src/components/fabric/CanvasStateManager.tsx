@@ -1,29 +1,26 @@
 export default class StateManager {
     private currentState: string;
-    private stateStack: string[]; // For undo
+    private undoStack: string[]; // For undo
     private redoStack: string[];
     private locked: boolean; // Whether or not state can currently be saved.
     private maxCount = 100;
-    private stateObservers: { (): void }[];
 
     constructor (readonly canvas: fabric.Canvas) {
         this.currentState = canvas.toDatalessJSON();
         this.locked = false;
         this.redoStack = [];
-        this.stateStack = [];
-        this.stateObservers = [];
+        this.undoStack = [];
     }
 
     saveState (): void {
         if (!this.locked) {
-            if (this.stateStack.length === this.maxCount) {
-                this.stateStack.shift();
+            if (this.undoStack.length === this.maxCount) {
+                this.undoStack.shift();
             }
 
-            this.stateStack.push(
+            this.undoStack.push(
                 this.currentState,
             );
-            this.stateObservers.forEach(observer => observer());
 
             this.currentState = this.canvas.toDatalessJSON();
             this.redoStack.length = 0;
@@ -31,8 +28,8 @@ export default class StateManager {
     }
 
     undo (): void {
-        if (this.stateStack.length > 0) {
-            const newState = this.stateStack.pop();
+        if (this.undoStack.length > 0) {
+            const newState = this.undoStack.pop();
             if (newState == undefined) {
                 return;
             } else {
@@ -47,13 +44,13 @@ export default class StateManager {
             if (newState == undefined) {
                 return;
             } else {
-                this.applyState(this.stateStack, newState);
+                this.applyState(this.undoStack, newState);
             }
         }
     }
 
     canUndo (): boolean {
-        return this.stateStack.length > 0;
+        return this.undoStack.length > 0;
     }
 
     canRedo (): boolean {
@@ -63,19 +60,9 @@ export default class StateManager {
     reset (): void {
         this.locked = true;
         this.redoStack = [];
-        this.stateStack = [];
-        this.stateObservers = [];
+        this.undoStack = [];
         this.canvas.clear();
         this.locked = false;
-    }
-
-    getCurrentState (): string {
-        return this.canvas.toDataURL({ format: 'png' });
-    }
-
-    onStateChange (observer: () => void): void {
-        console.log('added observer');
-        this.stateObservers.push(observer);
     }
 
     private applyState (stack: string[], newState: string): void {
@@ -86,6 +73,5 @@ export default class StateManager {
             return;
         });
         this.locked = false;
-        this.stateObservers.forEach(observer => observer());
     }
 }
