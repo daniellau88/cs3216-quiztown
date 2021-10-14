@@ -55,6 +55,7 @@ const CollectionsCardShowPage: React.FC<Props> = ({ match: { params } }: RouteCo
                     imageUrl={card.image_link}
                     result={card.answer_details.results}
                     onCardCompleted={onCardCompleted}
+                    imageMetadata={card.image_metadata}
                 />
             )}
         </>

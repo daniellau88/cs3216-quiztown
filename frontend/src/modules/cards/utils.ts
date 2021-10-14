@@ -1,5 +1,6 @@
 import { fabric } from 'fabric';
 
+import QTText from '../../components/fabric/QTText';
 import { AnswerData } from '../../types/cards';
 import colours from '../../utilities/colours';
 
@@ -8,7 +9,7 @@ const TEXT_PADDING = 10;
 const CANVAS_PADDING = 40;
 const FONT_SIZE = 20;
 const CORRECTNESS_MARGIN = 20;
-const BORDER_RADIUS = 3;
+const BORDER_RADIUS = 5;
 
 // Image card generation utils
 
@@ -24,12 +25,13 @@ export const initAnswerOptions = (
     const origin = new fabric.Point(CANVAS_PADDING, canvasHeight - CANVAS_PADDING);
 
     data.forEach(option => {
-        const text = new fabric.Text(option.text, {
-            fontSize: FONT_SIZE,
+        const text = new QTText(option.text, {
             perPixelTargetFind: true,
+            fontSize: FONT_SIZE,
+            rx: BORDER_RADIUS,
+            ry: BORDER_RADIUS,
             hasControls: false,
             hasBorders: false,
-            backgroundColor: colours.WHITE,
             padding: TEXT_PADDING,
         });
         text.setPositionByOrigin(origin, 'left', 'top');
@@ -52,12 +54,12 @@ export const initAnswerOptions = (
     return optionsCoordsMap;
 };
 
-const createAnswerTextBox = (box: AnswerData) => {
+const createAnswerTextBox = (box: AnswerData, xTranslation:number) => {
     const top = box.bounding_box[0][1];
     const left = box.bounding_box[0][0];
     return new fabric.Textbox(box.text, {
         top: top,
-        left: left,
+        left: left + xTranslation,
         width: box.bounding_box[1][0] - box.bounding_box[0][0],
         height: box.bounding_box[1][1] - box.bounding_box[0][1],
         hasControls: false,
@@ -70,12 +72,12 @@ const createAnswerTextBox = (box: AnswerData) => {
     });
 };
 
-const createAnswerRectangle = (box: AnswerData) => {
+const createAnswerRectangle = (box: AnswerData, xTranslation:number) => {
     const top = box.bounding_box[0][1];
     const left = box.bounding_box[0][0];
     return new fabric.Rect({
         top: top,
-        left: left,
+        left: left + xTranslation,
         width: box.bounding_box[1][0] - box.bounding_box[0][0],
         height: box.bounding_box[1][1] - box.bounding_box[0][1],
         hasControls: false,
@@ -84,7 +86,7 @@ const createAnswerRectangle = (box: AnswerData) => {
         rx: BORDER_RADIUS,
         ry: BORDER_RADIUS,
         borderColor: colours.BLACK,
-        backgroundColor: colours.WHITE,
+        fill: colours.WHITE,
         stroke: colours.BLACK,
     });
 };
@@ -93,12 +95,13 @@ export const initAnswerBoxes = (
     canvas: fabric.Canvas,
     isEditing: boolean,
     data: Array<AnswerData>,
+    xTranslation: number,
 ): Map<string, fabric.Rect> => {
     const answersCoordsMap = new Map();
 
     data.forEach(box => {
-        const rect = createAnswerRectangle(box);
-        const textbox = createAnswerTextBox(box);
+        const rect = createAnswerRectangle(box, xTranslation);
+        const textbox = createAnswerTextBox(box, xTranslation);
 
         answersCoordsMap.set(box.text, rect);
 
@@ -168,27 +171,7 @@ export const revealAnswer = (
     const answerData = answersCoordsMap.get(textContent);
     if (!answerData) return;
 
-    const answerTop = answerData.top;
-    const answerLeft = answerData.left;
-    if (!answerTop || !answerLeft) return;
-
     canvas.remove(answerData);
-
-    const answerText = new fabric.Text(textContent, {
-        top: answerTop,
-        left: answerLeft,
-        width: answerData.width,
-        height: answerData.height,
-        hasControls: false,
-        hasBorders: false,
-        lockMovementX: true,
-        lockMovementY: true,
-        borderColor: colours.BLACK,
-        backgroundColor: colours.WHITE,
-        stroke: colours.GREEN,
-        fontSize: FONT_SIZE,
-    });
-    canvas.add(answerText);
 };
 
 export const resetToOriginalPosition = (
