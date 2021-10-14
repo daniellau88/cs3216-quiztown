@@ -11,6 +11,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 
+import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
 import { addUpload } from '../../uploads/operations';
 
@@ -28,6 +29,16 @@ const useStyles = makeStyles(() => ({
     },
     inputFields: {
         rowGap: 20,
+    },
+    textField: {
+        '& .Mui-focused': {
+            color: colours.BLUE,
+        },
+        '& .MuiOutlinedInput-root': {
+            '&.Mui-focused fieldset': {
+                borderColor: colours.BLUE,
+            },
+        },
     },
 }));
 
@@ -136,9 +147,10 @@ const CollectionsCardAddPage: React.FC<Props> = ({ match: { params } }: RouteCom
 
                     {!selectedFile &&
                         <Grid container direction='column' className={classes.inputFields}>
-                            <TextField multiline label="Question" variant="outlined" value={question} onChange={handleQuestionChange} />
-                            <TextField multiline label="Answer" variant="outlined" value={answer} onChange={handleAnswerChange} />
-                        </Grid>}
+                            <TextField multiline className={classes.textField} label="Question" variant="outlined" value={question} onChange={handleAnswerChange} />
+                            <TextField multiline className={classes.textField} label="Answer" variant="outlined" value={answer} onChange={handleQuestionChange} />
+                        </Grid>
+                    }
                 </Grid>
             </Box>
         </>
