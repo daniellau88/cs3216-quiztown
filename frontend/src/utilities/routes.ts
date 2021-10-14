@@ -17,6 +17,9 @@ const ROUTES = {
             NEW: '/collections/:collectionId/cards/new',
         },
     },
+    CARDS: {
+        SHOW_STARRED: '/cards/starred',
+    },
     TEST: '/test',
 };
 

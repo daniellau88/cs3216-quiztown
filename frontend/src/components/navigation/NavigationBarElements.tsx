@@ -26,6 +26,14 @@ const NavigationBarElements: React.FC<Props> = (props: Props) => {
                 onMouseLeave={props.onMouseLeave}
             />
             <NavigationBarElement
+                text='Starred'
+                route={routes.CARDS.SHOW_STARRED}
+                size={props.size}
+                flexGrow={props.flexGrow}
+                onMouseEnter={props.onMouseEnter}
+                onMouseLeave={props.onMouseLeave}
+            />
+            <NavigationBarElement
                 text='Test[Dev]'
                 route={routes.TEST}
                 size={props.size}

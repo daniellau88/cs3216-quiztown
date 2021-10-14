@@ -14,13 +14,13 @@ interface OwnProps {
 type Props = OwnProps;
 
 const CollectionsCardGridComponent: React.FC<Props> = ({ id }: Props) => {
-    const collection = useSelector((state: AppState) => getCardMiniEntity(state, id));
+    const card = useSelector((state: AppState) => getCardMiniEntity(state, id));
 
-    if (!collection) {
+    if (!card) {
         return null;
     }
 
-    return <CollectionsCardCard data={collection} />;
+    return <CollectionsCardCard data={card} />;
 };
 
 export default CollectionsCardGridComponent;

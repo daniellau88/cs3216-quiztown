@@ -2,6 +2,7 @@
 export interface CardPostData {
     name: string;
     collection_id: number;
+    flagged: number;
     image_link: string;
     box_number: number;
     next_date: string;
@@ -23,10 +24,10 @@ export interface CardListData {
     id: number;
     name: string;
     collection_id: number;
-    is_flagged: string;
+    flagged: number;
     image_link: string;
     box_number: number;
-    next_date: Date;
+    next_date: string;
     created_at: number;
 }
 
@@ -34,10 +35,10 @@ export interface CardData {
     id: number;
     name: string;
     collection_id: number;
-    is_flagged: string;
+    flagged: number;
     image_link: string;
     box_number: number;
-    next_date: Date;
+    next_date: string;
     created_at: number;
     image_metadata: ImageMetadata;
     answer_details: {
@@ -49,20 +50,20 @@ export interface CardMiniEntity {
     id: number;
     name: string;
     collection_id: number;
-    is_flagged: string;
+    flagged: number;
     image_link: string;
     box_number: number;
-    next_date: Date;
+    next_date: string;
     created_at: number;
 }
 export interface CardEntity {
     id: number;
     name: string;
     collection_id: number;
-    is_flagged: string;
+    flagged: number;
     image_link: string;
     box_number: number;
-    next_date: Date;
+    next_date: string;
     created_at: number;
     image_metadata: ImageMetadata;
     answer_details: {

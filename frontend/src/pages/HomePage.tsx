@@ -50,11 +50,6 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-interface CardIdMap {
-    collectionId: number,
-    cards: number[],
-}
-
 export interface UndoneCardsMap {
     collectionId: number,
     cards: CardMiniEntity[],
@@ -98,7 +93,7 @@ const HomePage: React.FC<{}> = () => {
 
     React.useEffect(() => {
         setIsLoading(true);
-        // Cards TODO: only query for undone cards
+        // TODO: only query for undone cards
         handleApiRequests(
             dispatch,
             dispatch(loadAllCollections({})),
