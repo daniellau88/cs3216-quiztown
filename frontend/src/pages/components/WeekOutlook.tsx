@@ -7,6 +7,7 @@ import {
 } from '@material-ui/core';
 import Moment from 'moment';
 import * as React from 'react';
+import { isBrowser } from 'react-device-detect';
 
 import { CardMiniEntity } from '../../types/cards';
 import { CollectionMiniEntity } from '../../types/collections';
@@ -19,11 +20,11 @@ const useStyles = makeStyles(() => ({
     root: {
         display: 'flex',
         justifyContent: 'center',
-        paddingTop: '5vh',
+        paddingTop: isBrowser ? '5vh' : '2vh',
     },
     headerText: {
-        fontSize: '4vh',
-        paddingBottom: '5vh',
+        fontSize: isBrowser ? '4vh' : '3vh',
+        paddingBottom: isBrowser ? '5vh' : '2vh',
     },
     dayGrid: {
         width: '10vw',
@@ -39,6 +40,9 @@ const useStyles = makeStyles(() => ({
         maxWidth: '100%',
         minHeight: '100%',
         maxHeight: '100%',
+    },
+    buttonText: {
+        fontSize: '1.5vh',
     },
 }));
 
@@ -78,26 +82,26 @@ const WeekOutlook: React.FC<Props> = (props: Props) => {
     return (
         <>
             <Grid container className={classes.root}>
-                <Box display='flex' flexDirection='column' alignItems='center'>
+                <Box display='flex' flexDirection='column' alignItems='center' width='100%'>
                     <Typography className={classes.headerText}>
                         Here&apos;s your outlook for next week!
                     </Typography>
-                    <Box display='flex' flexDirection='row' paddingBottom='2vh'>
+                    <Grid container style={{ justifyContent: 'center', alignItems: 'center', paddingBottom: '2vh' }}>
                         {[1, 2, 3, 4, 5, 6, 7].map(addedDays => {
                             const day = roundDownDay(addDays(new Date(), addedDays));
                             const dateString = day.toDateString().split(' ');
                             const undoneCardsMaps = undoneCardsPerDayMaps[addedDays - 1];
                             const numCards = undoneCardsMaps.reduce((prev, curr) => prev + curr.cards.length, 0);
-                            return <Grid container item key={addedDays} className={classes.dayGrid} justifyContent='center' alignItems='center'>
+                            return <Grid container item xs={3} sm={2} lg={1} key={addedDays} className={classes.dayGrid} justifyContent='center' alignItems='center' style={{ marginBottom: '1vh' }}>
                                 <Button className={classes.button} onClick={() => handleClick(addedDays)}>
-                                    <Typography align='center'>
+                                    <Typography align='center' className={classes.buttonText}>
                                         {dateString[0]}, {dateString[1]} {dateString[2]}<br />
                                         {numCards} cards
                                     </Typography>
                                 </Button>
                             </Grid>;
                         })}
-                    </Box>
+                    </Grid>
                     {showingDays > 0 && (
                         <BannerCard
                             undoneCardsMaps={undoneCardsPerDayMaps[showingDays - 1]}
