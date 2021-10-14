@@ -22,6 +22,7 @@ const MainRouter = (): JSX.Element => {
                 <Route exact path={routes.COLLECTIONS.NEW} component={CollectionAddPage} />
                 <Route exact path={routes.COLLECTIONS.SHOW} component={CollectionsCardPage} />
                 <Route exact path={routes.COLLECTIONS.CARD.NEWTEXT} component={CollectionsCardAddTextPage} />
+                <Route exact path={routes.COLLECTIONS.CARD.NEW} component={CollectionsCardAddPage} />
                 <Route exact path={routes.COLLECTIONS.CARD.SHOW} component={CollectionsCardShowPage} />
                 <Route exact path={routes.CARDS.SHOW_STARRED} component={CollectionsCardStarredPage} />
                 {/* TODO: Distinguish between image card edit and text card edit somewhere */}
