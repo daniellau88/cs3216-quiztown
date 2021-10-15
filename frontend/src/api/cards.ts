@@ -33,9 +33,6 @@ export class CardsAPI extends BaseAPI {
         return this.delete(`${this.getCardUrl()}/${cardId}` + URL_SUFFIX);
     }
 
-    public importCollectionCardText(collectionId: number, data: CollectionCardTextImportPostData): ApiPromise<{ item: CardData }> {
-        return this.post(`${this.getCardUrl()}/import` + URL_SUFFIX, data);
-    }
 }
 
 export default CardsAPI;

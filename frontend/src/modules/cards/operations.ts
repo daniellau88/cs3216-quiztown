@@ -107,13 +107,13 @@ export function loadCollectionCards(collectionId: number, options: CollectionOpt
     };
 }
 
-export function importCollectionCardText(collectionId: number, cardTextImport: CollectionCardTextImportPostData): Operation<ApiResponse<CardMiniEntity>> {
+// TODO: figure out what to do with the response
+export function importTextCardToCollections(collectionId: number, cardTextImport: CollectionCardTextImportPostData): Operation<ApiResponse<{}>> {
     return async (dispatch, getState) => {
         console.log('in import collection');
-        const response = await api.cards.importCollectionCardText(collectionId, cardTextImport);
-        const data = response.payload.item;
-        batched(dispatch, saveCard(data));
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        return { ...response, payload: getCardMiniEntity(getState(), data.id)! };
+        const response = await api.collections.importTextCardToCollections(collectionId, cardTextImport);
+        const data = response.payload.items;
+        batched(dispatch, saveCardList(data));
+        return response;
     };
 }

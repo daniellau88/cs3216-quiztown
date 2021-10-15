@@ -140,3 +140,12 @@ def get_image_metadata(image_path: str):
         "width": width,
         "height": height,
     }
+
+
+def import_text(question: str, answer: str, collection_id: int):
+    card = Card(name=question, collection_id=collection_id,
+                question=question,
+                answer=answer)
+    card.save()
+
+    return card

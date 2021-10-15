@@ -10,6 +10,7 @@ from quiztown.common.decorators import convert_keys_to_item, validate_request_da
 from . import jobs, serializers
 from .models import Card
 
+import pdb
 
 @api_view(["GET", "POST"])
 def list_or_create_card_view(request, *args, **kwargs):
@@ -67,13 +68,6 @@ def delete_card_view(request, pk_item, *args, **kwargs):
 
 
 @api_view(["POST"])
-def import_image_or_text_card_view(request, *args, **kwargs):
-    type = request.POST.get("type", "0")
-    if type == "1":
-        return import_text_view(request, *args, **kwargs)
-    return import_card_view(request, *args, **kwargs)
-
-
 @validate_request_data(serializers.CardImportImageSerializer)
 def import_card_view(request, serializer, pk, *args, **kwargs):
     file_key = serializer.data["file_key"]
@@ -83,9 +77,3 @@ def import_card_view(request, serializer, pk, *args, **kwargs):
 
     response_serializer = serializers.CardSerializer(card)
     return Response({"item": response_serializer.data})
-
-
-@validate_request_data(serializers.CardImportTextSerializer)
-def import_text_view(request, serializer):
-    serializer.save()
-    return Response({"item": serializer.data})

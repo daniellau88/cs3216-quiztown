@@ -25,7 +25,7 @@ import { UploadTextData } from '../../../types/uploads';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
 import { addUpload } from '../../uploads/operations';
-import { importCollectionCardText } from '../operations';
+import { importTextCardToCollections } from '../operations';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -108,7 +108,7 @@ const CollectionsCardAddTextPage: React.FC<Props> = ({ match: { params } }: Rout
                 answer: tuple.answer,
                 collection_id: collectionId,
             } as UploadTextData));
-        return handleApiRequest(dispatch, dispatch(importCollectionCardText(collectionId, { imports: dataCopy, type: '1' }))).then((importResponse) => {
+        return handleApiRequest(dispatch, dispatch(importTextCardToCollections(collectionId, { imports: dataCopy, type: '1' }))).then((importResponse) => {
             const payload = importResponse.payload;
             console.log(payload);
             // TODO: redirect to page for that collection
