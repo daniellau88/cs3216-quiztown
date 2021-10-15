@@ -25,6 +25,9 @@ const useStyles = makeStyles((theme) => ({
     paper: {
         padding: theme.spacing(1),
     },
+    popper: {
+        width: '30vh',
+    },
 }));
 
 const PublicActivityPopup: React.FC<{}> = () => {
@@ -37,8 +40,11 @@ const PublicActivityPopup: React.FC<{}> = () => {
         setHasNewMessage(true);
     };
 
-    const onUpdate = (dispatch: Dispatch) => {
+    React.useEffect(() => {
         dispatch(subscribePublicActivity(onMessage));
+    }, []);
+
+    const onUpdate = (dispatch: Dispatch) => {
         return handleApiRequest(dispatch, dispatch(loadRecentPublicActivities()))
             .then(() => {
                 return true;
@@ -80,14 +86,14 @@ const PublicActivityPopup: React.FC<{}> = () => {
             </IconButton>
             {open &&
                 <ClickAwayListener onClickAway={handleClose}>
-                    <Popper id={'notifications-popup'} open={open} anchorEl={anchorEl} placement='bottom-end' disablePortal>
+                    <Popper id={'notifications-popup'} className={classes.popper} open={open} anchorEl={anchorEl} placement='bottom-end' disablePortal>
                         <Paper className={classes.paper}>
                             <List>
-                                {recentPublicActivityIds.map(id => (
-                                    <>
-                                        <PublicActivityPopupItem id={id}>abcd</PublicActivityPopupItem>
-                                        <Divider />
-                                    </>
+                                {recentPublicActivityIds.map((id, index) => (
+                                    <React.Fragment key={id}>
+                                        {index > 0 ? <Divider /> : null}
+                                        <PublicActivityPopupItem id={id} onClick={handleClose} />
+                                    </React.Fragment>
 
                                 ))}
                             </List>

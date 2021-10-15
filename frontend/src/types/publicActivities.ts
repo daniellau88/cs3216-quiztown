@@ -1,19 +1,34 @@
 export enum PublicActivityType {
     CollectionImport = 1,
+    CollectionTemp = 2,
 }
 
-export interface PublicActivityListData {
-    id: number;
-    message: string;
-    type: PublicActivityType;
-    params: { [key: string]: string | number };
-    created_at: number;
+interface CollectionImportType {
+    type: PublicActivityType.CollectionImport;
+    params: {
+        collection_id: number;
+        import_id: number;
+    };
 }
 
-export interface PublicActivityMiniEntity {
+interface PublicActivityBaseListData {
     id: number;
     message: string;
-    type: PublicActivityType;
-    params: { [key: string]: string | number };
     created_at: number;
+    type: PublicActivityType;
+    is_viewed: boolean;
 }
+
+export type PublicActivityListData =
+    PublicActivityBaseListData & (CollectionImportType);
+
+interface PublicActivityBaseMiniEntity {
+    id: number;
+    message: string;
+    created_at: number;
+    type: PublicActivityType;
+    is_viewed: boolean;
+}
+
+export type PublicActivityMiniEntity =
+    PublicActivityBaseMiniEntity & (CollectionImportType);
