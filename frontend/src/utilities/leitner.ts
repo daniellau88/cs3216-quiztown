@@ -10,6 +10,13 @@ export interface Feedback {
     nextBoxNumber: number,
 }
 
+// When user sets custom interval, we adjust box number accordingly.
+export function getFeedbackWithInterval(interval: number): Feedback {
+    const nextBoxNumber = getBoxNumberFromInterval(interval);
+    return { intervalLength: interval, nextBoxNumber: nextBoxNumber };
+}
+
+// When user answers a question, we use their statistics to predict the desired box number.
 export function getFeedback(timeTakenInSeconds: number, numOptions: number, numGuesses: number, currentBox: number): Feedback {
     const delta = getDelta(timeTakenInSeconds, numOptions, numGuesses);
     const nextBox = getNextBoxNumber(currentBox, delta);
@@ -23,6 +30,10 @@ function getNextBoxNumber(currentBox: number, delta: number): number {
 
 function getNextBoxNumberUnfloored(currentBox: number, delta: number): number {
     return Math.max(0, Math.min(maxBoxNumber, Math.floor(Math.pow(Math.max(0, Math.pow(currentBox, 2) + delta), 0.5))));
+}
+
+function getBoxNumberFromInterval(interval: number) {
+    return Math.floor(Math.log(interval) / Math.log(leitnerMultiplier));
 }
 
 function getDelta(timeTakenInSeconds: number, numOptions: number, numGuesses: number) {
