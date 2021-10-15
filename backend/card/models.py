@@ -34,7 +34,7 @@ class Card(TimestampedModel):
     next_date = models.DateField(default=date.today, blank=True)
     box_number = models.IntegerField(default=0)
     answer_details = models.JSONField(default=dict, encoder=JSONEncoder, blank=True)
-    card_type = models.PositiveSmallIntegerField(
+    type = models.PositiveSmallIntegerField(
         default=IMAGE, blank=True)
     question = models.CharField(max_length=1024, default="", blank=True)
     answer = models.CharField(max_length=1024, default="", blank=True)
@@ -51,7 +51,7 @@ class Card(TimestampedModel):
         instance.box_number = validated_data.get("box_number", instance.box_number)
         instance.answer_details = validated_data.get(
             "answer_details", instance.answer_details)
-        instance.card_type = validated_data.get("card_type", instance.card_type)
+        instance.type = validated_data.get("type", instance.type)
         instance.question = validated_data.get("question", instance.question)
         instance.answer = validated_data.get("answer", instance.answer)
         instance.save()

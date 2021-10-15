@@ -1,3 +1,5 @@
+import pdb
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -66,11 +68,10 @@ def delete_card_view(request, pk_item, *args, **kwargs):
 
 @api_view(["POST"])
 def import_image_or_text_card_view(request, *args, **kwargs):
-    type = request.POST.get("filters[card_type]", "image")
-    if type == "image":
-        return import_card_view(request, *args, **kwargs)
-    elif type == "text":
+    type = request.POST.get("type", "0")
+    if type == "1":
         return import_text_view(request, *args, **kwargs)
+    return import_card_view(request, *args, **kwargs)
 
 
 @validate_request_data(serializers.CardImportImageSerializer)
