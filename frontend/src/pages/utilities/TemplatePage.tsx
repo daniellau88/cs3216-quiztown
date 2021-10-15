@@ -10,6 +10,7 @@ import {
 import * as React from 'react';
 import { GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
 import { useDispatch } from 'react-redux';
+import ReactSlider from 'react-slider';
 
 import api from '../../api';
 import GoogleSignInButton from '../../modules/auth/components/GoogleSignInButton';
@@ -17,8 +18,9 @@ import { googleLogin } from '../../modules/auth/operations';
 import { addCollection, deleteCollection, updateCollection } from '../../modules/collections/operations';
 import { GoogleLoginPostData } from '../../types/auth';
 import { CollectionPostData } from '../../types/collections';
-import { getIntervals, getNextBoxNumber, getNextIntervalEndDate } from '../../utilities/leitner';
+import { getFeedback } from '../../utilities/leitner';
 import { handleApiRequest } from '../../utilities/ui';
+import '../../assets/css/slider.css';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -33,6 +35,7 @@ const TemplatePage: React.FC<{}> = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
     const [currentBox, setCurrentBox] = React.useState(0);
+    const [interval, setInterval] = React.useState(0);
 
     console.log('Template page.');
 
@@ -88,11 +91,21 @@ const TemplatePage: React.FC<{}> = () => {
         await Promise.all(promises);
     };
 
-    const testLeitner = (nextBox: number) => {
+    const timeTaken = 5.0;
+    const numOptions = 3;
+    const numGuesses = 4;
+
+    const testLeitner = () => {
         console.log('Leitner button poked!');
-        console.log(currentBox + ' ' + nextBox);
-        console.log('Date: ' + getNextIntervalEndDate(nextBox));
-        setCurrentBox(nextBox);
+        const feedback = getFeedback(timeTaken, numOptions, numGuesses, currentBox);
+        console.log(feedback.nextBoxNumber);
+        console.log(feedback.intervalLength);
+        setCurrentBox(feedback.nextBoxNumber);
+        setInterval(feedback.intervalLength);
+    };
+
+    const onSliderChange = (value: any) => {
+        setInterval(value);
     };
 
     const onGoogleLoginSuccess = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
@@ -117,9 +130,6 @@ const TemplatePage: React.FC<{}> = () => {
             <CssBaseline />
             <Box className={classes.root}>
                 <Grid>
-                    <Typography>
-                        uwu
-                    </Typography>
                     <Button onClick={testCreateApi}>
                         Click me to test Create API!
                     </Button>
@@ -135,17 +145,30 @@ const TemplatePage: React.FC<{}> = () => {
                         inputProps={{ multiple: true }}
                     />
                 </Grid>
+            </Box>
+            <Box className={classes.root}>
+                <ReactSlider
+                    className="horizontal-slider"
+                    thumbClassName="example-thumb"
+                    trackClassName="example-track"
+                    min={0}
+                    max={30}
+                    defaultValue={interval}
+                    value={interval}
+                    renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
+                    onAfterChange={(value) => onSliderChange(value)}
+                />
+            </Box>
+            <Box className={classes.root}>
+                <Typography>Current Box: {currentBox}, Your interval is set to: {interval} </Typography>
                 <Grid>
-                    {getIntervals(currentBox).map((interval, index) => {
-                        console.log(index + ' e ' + interval);
-                        const button =
-                            <Button onClick={() => testLeitner(getNextBoxNumber(currentBox, index + 1))}>
-                                Confidence: {index + 1}, Interval: {interval}
-                            </Button>;
-                        return button;
-                    })}
-                    <GoogleSignInButton onSuccess={onGoogleLoginSuccess} />
+                    <Button onClick={() => testLeitner()}>
+                        Next Question
+                    </Button>;
                 </Grid>
+            </Box>
+            <Box className={classes.root}>
+                <GoogleSignInButton onSuccess={onGoogleLoginSuccess} />
             </Box>
         </>
     );
