@@ -1,11 +1,11 @@
 import api from '../../api';
 import { ApiResponse, CollectionQueryParams } from '../../types';
-import { PublicActivityListData } from '../../types/publicActivities';
+import { PublicActivityListData, PublicActivityMiniEntity } from '../../types/publicActivities';
 import { NormalizeOperation, Operation } from '../../types/store';
 import { batched } from '../../utilities/store';
 
 import * as actions from './actions';
-import { getRecentPublicActivities } from './selectors';
+import { getPublicActivityMiniEntity, getRecentPublicActivities } from './selectors';
 
 export function loadRecentPublicActivities(): Operation<ApiResponse<number[]>> {
     return async (dispatch, getState) => {
@@ -33,12 +33,12 @@ export function savePublicActivityList(list: PublicActivityListData[]): Normaliz
 }
 
 // Returns void
-export function subscribePublicActivity(onMessage: (message: PublicActivityListData) => void): NormalizeOperation {
+export function subscribePublicActivity(onMessage: (message: PublicActivityMiniEntity) => void): NormalizeOperation {
     return async (dispatch, getState) => {
         const handleMessage = (message: ApiResponse<{ item: PublicActivityListData }>) => {
             const data = message.payload.item;
             batched(dispatch, actions.enqueueRecentPublicActivity(data));
-            onMessage(data);
+            onMessage(getPublicActivityMiniEntity(getState(), data.id)!);
         };
         api.websocketPublicActivities.subscribePublicActivity(handleMessage);
         return;

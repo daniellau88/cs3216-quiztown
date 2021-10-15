@@ -7,6 +7,7 @@ export interface PublicActivityListData {
     message: string;
     type: PublicActivityType;
     params: { [key: string]: string | number };
+    created_at: number;
 }
 
 export interface PublicActivityMiniEntity {
@@ -14,4 +15,5 @@ export interface PublicActivityMiniEntity {
     message: string;
     type: PublicActivityType;
     params: { [key: string]: string | number };
+    created_at: number;
 }

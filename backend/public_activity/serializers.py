@@ -6,4 +6,4 @@ from .models import PublicActivity
 class PublicActivitySerializer(serializers.ModelSerializer):
     class Meta:
         model = PublicActivity
-        fields = ["id", "message", "type", "is_viewed", "params"]
+        fields = ["id", "message", "type", "is_viewed", "params", "created_at"]

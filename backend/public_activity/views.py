@@ -9,7 +9,7 @@ from .models import PublicActivity
 
 @api_view(["GET"])
 def list_public_activities_view(request):
-    public_activities = PublicActivity.objects.all()
+    public_activities = PublicActivity.objects.order_by("-created_at")
 
     paginator = CustomPagination()
     page = paginator.paginate_queryset(public_activities, request)
