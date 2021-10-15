@@ -47,7 +47,7 @@ export interface CardData {
     answer_details: {
         results: AnswerData[];
     }
-    card_type: string;
+    type: number;
     question: string;
     answer: string;
 }

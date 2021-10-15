@@ -55,7 +55,7 @@ type InputText = {
 
 type ImportRequestBody = {
     name: string,
-    card_type: string,
+    type: string,
     question: string,
     answer: string,
 };
@@ -103,11 +103,12 @@ const CollectionsCardAddTextPage: React.FC<Props> = ({ match: { params } }: Rout
         data.map((tuple, index) => dataCopy.push(
             {
                 name: index + tuple.question.split(' ')[0],
-                card_type: 'text',
+                type: '1',
                 question: tuple.question,
                 answer: tuple.answer,
+                collection_id: collectionId,
             } as UploadTextData));
-        return handleApiRequest(dispatch, dispatch(importCollectionCardText(collectionId, { imports: dataCopy }))).then((importResponse) => {
+        return handleApiRequest(dispatch, dispatch(importCollectionCardText(collectionId, { imports: dataCopy, type: '1' }))).then((importResponse) => {
             const payload = importResponse.payload;
             console.log(payload);
             // TODO: redirect to page for that collection

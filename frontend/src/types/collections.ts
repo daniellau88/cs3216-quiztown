@@ -43,4 +43,5 @@ export interface CollectionsImportPostData {
 
 export interface CollectionCardTextImportPostData {
     imports: UploadTextData[];
+    type: string;
 }
