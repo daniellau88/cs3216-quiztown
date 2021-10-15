@@ -10,6 +10,12 @@ def get_user_key(user_id: int):
     return "public_activity_%s" % user_id
 
 
+def create_and_broadcast_pa(message: str, type: int, params=dict):
+    pa = PublicActivity(message=message, type=type, params=params)
+    pa.save()
+    broadcast_public_activity(pa)
+
+
 def broadcast_public_activity(public_activity: PublicActivity):
     serializer = serializers.PublicActivitySerializer(public_activity)
     channel_layer = get_channel_layer()
