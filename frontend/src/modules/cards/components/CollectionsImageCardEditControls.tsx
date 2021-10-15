@@ -1,8 +1,8 @@
 import {
     Grid,
-    Typography,
     makeStyles,
 } from '@material-ui/core';
+import { Redo, Undo } from '@material-ui/icons';
 import React from 'react';
 
 import QTButton from '../../../components/QTButton';
@@ -18,7 +18,7 @@ const useStyles = makeStyles(() => ({
         justifyContent: 'center',
         border: `1px solid ${colours.GREY}`,
         borderRadius: 5,
-        boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19)',
+        boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.1), 0 2px 5px 0 rgba(0, 0, 0, 0.1)',
         marginBottom: 10,
     },
 }));
@@ -41,25 +41,21 @@ const CollectionsImageCardEditControls: React.FC<Props> = ({
     const classes = useStyles();
 
     return (
-        <>
-            <Grid container className={classes.root} direction='row'>
-                <Typography variant='h5'>
-                    Inspecting Card 
-                </Typography>
-                <QTButton outlined onClick={addOption}>
-                    New options
-                </QTButton>
-                <QTButton outlined onClick={deleteOption}>
-                    Delete options
-                </QTButton>
-                <QTButton outlined onClick={undo}>
-                    Undo
-                </QTButton>
-                <QTButton outlined onClick={redo}>
-                    Redo
-                </QTButton>
-            </Grid>
-        </>
+        <Grid container className={classes.root} direction='row'>
+            <QTButton outlined onClick={addOption}>
+                Add option
+            </QTButton>
+            <QTButton outlined onClick={deleteOption}>
+                Delete option
+            </QTButton>
+            <QTButton outlined onClick={undo}>
+                <Undo/>
+            </QTButton>
+            <QTButton outlined onClick={redo}>
+                <Redo/>
+            </QTButton>
+        </Grid>
+
     );
 
 };

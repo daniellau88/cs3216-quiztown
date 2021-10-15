@@ -38,8 +38,7 @@ const HEADER_HEIGHT = 80;
 const useStyles = makeStyles(() => ({
     root: {
         display: 'flex',
-        paddingTop: '80px',
-        paddingBottom: '80px',
+        paddingTop: '20px',
     },
     imageContainer: {
         position: 'absolute',
@@ -79,8 +78,14 @@ const CardImage: React.FC<CardImageProps> = ({
 
     const { windowHeight, windowWidth } = useWindowDimensions();
 
-    const canvasMaxWidth = windowWidth - SCREEN_PADDING > MAX_CANVAS_WIDTH ? MAX_CANVAS_WIDTH : windowWidth;
-    const canvasMaxHeight = windowHeight - HEADER_HEIGHT - SCREEN_PADDING;
+    const canvasMaxWidth = isEditing
+        ? imageMetadata.width
+        : windowWidth - SCREEN_PADDING > MAX_CANVAS_WIDTH
+            ? MAX_CANVAS_WIDTH
+            : windowWidth;
+    const canvasMaxHeight = isEditing
+        ? imageMetadata.height
+        : windowHeight - HEADER_HEIGHT - SCREEN_PADDING;
     const imageXTranslation = Math.max(canvasMaxWidth - imageMetadata.width, 0) / 2;
 
     const initCanvasWithBg = () => {
@@ -88,6 +93,7 @@ const CardImage: React.FC<CardImageProps> = ({
             hoverCursor: 'pointer',
             targetFindTolerance: 2,
             backgroundColor: 'transparent',
+            selection: isEditing,
         });
         return canvas;
     };
@@ -184,12 +190,14 @@ const CardImage: React.FC<CardImageProps> = ({
             <CssBaseline />
             <Box className={classes.root}>
                 <Grid container direction='column'>
-                    <CollectionsImageCardEditControls
-                        undo={() => stateManager?.undo()}
-                        redo={() => stateManager?.redo()}
-                        addOption={addAnswerOption}
-                        deleteOption={deleteAnswerOption}
-                    />
+                    {isEditing &&
+                        <CollectionsImageCardEditControls
+                            undo={() => stateManager?.undo()}
+                            redo={() => stateManager?.redo()}
+                            addOption={addAnswerOption}
+                            deleteOption={deleteAnswerOption}
+                        />
+                    }
                     <Box display="flex" justifyContent='center' width='100%'>
                         <Box
                             className={classes.imageContainer}

@@ -6,6 +6,9 @@ export interface CardPostData {
     image_link: string;
     box_number: number;
     next_date: string;
+    answer_details: {
+        results: AnswerData[]
+    }
 }
 
 type Coordinate = [number, number];
