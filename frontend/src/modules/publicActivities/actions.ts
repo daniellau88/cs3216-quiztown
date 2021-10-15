@@ -22,3 +22,16 @@ export function updateRecentPublicActivityList(ids: number[]): types.UpdateRecen
         ids,
     };
 }
+
+export function savePublicActivity(data: PublicActivityListData): types.SavePublicActivityAction {
+    return {
+        type: types.SAVE_PUBLIC_ACTIVITY,
+        data,
+    };
+}
+
+export function editPublicActivity(): types.EditPublicActivityAction {
+    return {
+        type: types.EDIT_PUBLIC_ACTIVITY,
+    };
+}

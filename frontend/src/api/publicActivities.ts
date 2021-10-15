@@ -1,5 +1,5 @@
 import { ApiPromise, CollectionData as CollectionDataType, CollectionQueryParams } from '../types';
-import { PublicActivityListData } from '../types/publicActivities';
+import { PublicActivityListData, PublicActivityPostData } from '../types/publicActivities';
 import { toQueryString } from '../utilities/url';
 
 import BaseAPI from './base';
@@ -12,6 +12,10 @@ export class PublicActivitiesAPI extends BaseAPI {
 
     public getPublicActivityList(params: CollectionQueryParams): ApiPromise<CollectionDataType<PublicActivityListData>> {
         return this.get(`${this.getPublicActivityUrl()}?${toQueryString(params)}` + URL_SUFFIX);
+    }
+
+    public patchPublicActivity(id: number, data: PublicActivityPostData): ApiPromise<{ item: PublicActivityListData }> {
+        return this.patch(`${this.getPublicActivityUrl()}/${id}` + URL_SUFFIX, data);
     }
 }
 

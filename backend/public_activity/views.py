@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from public_activity import serializers
+from quiztown.common.decorators import convert_keys_to_item, validate_request_data
 from quiztown.common.pagination import CustomPagination
 
 from .models import PublicActivity
@@ -19,3 +20,12 @@ def list_public_activities_view(request):
 
     serializer = serializers.PublicActivitySerializer(public_activities, many=True)
     return Response({"items": serializer.data})
+
+
+@api_view(["PATCH"])
+@convert_keys_to_item({"pk": PublicActivity})
+@validate_request_data(serializers.PublicActivityUpdateSerializer, is_update=True)
+def update_public_activities_view(request, pk_item, serializer):
+    serializer.save()
+    response_serializer = serializers.PublicActivitySerializer(serializer.instance)
+    return Response({"item": response_serializer.data})

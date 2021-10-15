@@ -7,12 +7,14 @@ import {
 } from '@material-ui/core';
 import TimelineDot from '@material-ui/lab/TimelineDot';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 import { AppState, SelectionKey } from '../../../types/store';
 import colours from '../../../utilities/colours';
 import { dateToTimeSinceText, epochTimeToDate } from '../../../utilities/datetime';
+import { handleApiRequests } from '../../../utilities/ui';
+import { updatePublicActivity } from '../operations';
 import { getPublicActivityMiniEntity } from '../selectors';
 import { getPublicActivityURL } from '../utils';
 
@@ -46,6 +48,7 @@ type Props = OwnProps;
 const PublicActivityPopupItem: React.FC<Props> = ({ id, onClick }: Props) => {
     const classes = useStyles();
     const history = useHistory();
+    const dispatch = useDispatch();
 
     const publicActivity = useSelector((state: AppState) => getPublicActivityMiniEntity(state, id));
 
@@ -55,6 +58,9 @@ const PublicActivityPopupItem: React.FC<Props> = ({ id, onClick }: Props) => {
 
     const handleClick = () => {
         onClick();
+        if (!publicActivity.is_viewed) {
+            handleApiRequests(dispatch, dispatch(updatePublicActivity(publicActivity.id, { is_viewed: true })));
+        }
         history.push(getPublicActivityURL(publicActivity));
         // TODO: send request to mark read
     };

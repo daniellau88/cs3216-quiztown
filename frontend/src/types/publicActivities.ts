@@ -32,3 +32,7 @@ interface PublicActivityBaseMiniEntity {
 
 export type PublicActivityMiniEntity =
     PublicActivityBaseMiniEntity & (CollectionImportType);
+
+export interface PublicActivityPostData {
+    is_viewed: boolean;
+}

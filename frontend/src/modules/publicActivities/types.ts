@@ -5,6 +5,8 @@ import { EntityCollection, EntityStore } from '../../types/store';
 
 export const ENQUEUE_RECENT_PUBLIC_ACTIVITY = 'publicActivities/ENQUEUE_RECENT_PUBLIC_ACTIVITY';
 export const SAVE_PUBLIC_ACTIVITY_LIST = 'publicActivities/SAVE_PUBLIC_ACTIVITY_LIST';
+export const SAVE_PUBLIC_ACTIVITY = 'publicActivities/SAVE_PUBLIC_ACTIVITY';
+export const EDIT_PUBLIC_ACTIVITY = 'publicActivities/EDIT_PUBLIC_ACTIVITY';
 export const UPDATE_RECENT_PUBLIC_ACTIVITY_LIST = 'publicActivities/UPDATE_RECENT_PUBLIC_ACTIVITY_LIST';
 
 // action types
@@ -24,10 +26,21 @@ export interface UpdateRecentPublicActivityListAction {
     ids: number[];
 }
 
+export interface SavePublicActivityAction {
+    type: typeof SAVE_PUBLIC_ACTIVITY;
+    data: PublicActivityListData;
+}
+
+export interface EditPublicActivityAction {
+    type: typeof EDIT_PUBLIC_ACTIVITY;
+}
+
 export type PublicActivitiesActionTypes =
     EnqueueRecentPublicActivityAction |
     SavePublicActivityListAction |
-    UpdateRecentPublicActivityListAction;
+    UpdateRecentPublicActivityListAction |
+    SavePublicActivityAction |
+    EditPublicActivityAction;
 
 // state types
 

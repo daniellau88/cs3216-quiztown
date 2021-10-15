@@ -38,6 +38,17 @@ const publicActivitiesReducer = produce((draft: types.PublicActivitiesState, act
             draft.recentPublicActivities = action.ids;
             return;
         }
+        case types.SAVE_PUBLIC_ACTIVITY: {
+            const data = action.data;
+            const entity = {
+                ...data,
+            };
+            saveEntityToStore(draft.publicActivities, entity);
+            return;
+        }
+        case types.EDIT_PUBLIC_ACTIVITY: {
+            return;
+        }
     }
 }, initialState);
 
