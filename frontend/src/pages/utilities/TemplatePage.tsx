@@ -91,7 +91,7 @@ const TemplatePage: React.FC<{}> = () => {
         await Promise.all(promises);
     };
 
-    const timeTaken = 5.0;
+    const timeTaken = 15.0;
     const numOptions = 3;
     const numGuesses = 4;
 

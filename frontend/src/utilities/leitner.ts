@@ -3,7 +3,7 @@ const maxDays = 30;
 const leitnerMultiplier = 1.5;
 
 const expectedTimePerOption = 5.0; // In seconds. This will need tweaking.
-const incorrectAnswerPenaltyMultiplier = 1.1;
+const incorrectAnswerPenaltyMultiplier = 1.5;
 
 export interface Feedback {
     intervalLength: number,
@@ -22,14 +22,14 @@ function getNextBoxNumber(currentBox: number, delta: number): number {
 }
 
 function getNextBoxNumberUnfloored(currentBox: number, delta: number): number {
-    return Math.min(maxBoxNumber, Math.floor(Math.pow(Math.pow(currentBox, 2) + delta, 0.5)));
+    return Math.max(0, Math.min(maxBoxNumber, Math.floor(Math.pow(Math.max(0, Math.pow(currentBox, 2) + delta), 0.5))));
 }
 
 function getDelta(timeTakenInSeconds: number, numOptions: number, numGuesses: number) {
     const actualTime = timeTakenInSeconds * Math.pow(incorrectAnswerPenaltyMultiplier, numGuesses - numOptions);
     const expectedTime = expectedTimePerOption * numOptions;
-    const timeRatio = expectedTime / actualTime - 1;
-    return Math.floor(Math.pow(timeRatio, 0.5) * 10);
+    const timeRatio = expectedTime / actualTime - actualTime / expectedTime;
+    return Math.sign(timeRatio) * Math.floor(Math.pow(Math.abs(timeRatio), 0.5) * 10);
 }
 
 function getNextIntervalLength(currentBox: number, delta: number): number {
