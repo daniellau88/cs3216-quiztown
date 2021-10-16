@@ -22,7 +22,7 @@ class QuiztownJSONRenderer(JSONRenderer):
             code, messages, payload if payload is not None else {})
 
         response = super(QuiztownJSONRenderer, self).render(
-            response_data, accepted_media_type, context, **kwargs,
+            response_data, accepted_media_type, context,
         )
 
         return response
