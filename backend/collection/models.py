@@ -47,3 +47,18 @@ class CollectionImport(TimestampedModel):
         instance.status = validated_data.get("status", instance.status)
         instance.save()
         return instance
+
+
+class CollectionTextImport(TimestampedModel):
+    collection_id = models.IntegerField()
+    question = models.CharField(max_length=1000, null=False)
+    answer = models.CharField(max_length=1000, null=False)
+
+    def create(self, validated_data):
+        return CollectionTextImport.objects.create(validated_data)
+
+    def update(self, instance, validated_data):
+        instance.question = validated_data.get("question", instance.question)
+        instance.answer = validated_data.get("answer", instance.answer)
+        instance.save()
+        return instance

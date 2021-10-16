@@ -145,7 +145,8 @@ def get_image_metadata(image_path: str):
 def import_text(question: str, answer: str, collection_id: int):
     card = Card(name=question, collection_id=collection_id,
                 question=question,
-                answer=answer)
+                answer=answer,
+                type=1)
     card.save()
 
     return card

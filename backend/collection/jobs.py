@@ -3,7 +3,7 @@ from __future__ import annotations
 import fitz
 
 from card import jobs as card_jobs
-from collection.models import CollectionImport
+from collection.models import CollectionImport, CollectionTextImport
 
 STATIC_CARD_DIRECTORY = "static/cards/"
 UPLOAD_DIRECTORY = "uploads/"
@@ -55,3 +55,10 @@ def extract_images_from_file(file_key: str) -> list[str]:
             image_keys.append(image_key)
             count += 1
     return image_keys
+
+
+def import_cards_from_text(collection_text_import: CollectionTextImport):
+    card_jobs.import_text(collection_text_import.question,
+                          collection_text_import.answer,
+                          collection_text_import.collection_id)
+    collection_text_import.save()

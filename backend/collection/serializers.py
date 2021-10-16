@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Collection, CollectionImport
+from .models import Collection, CollectionImport, CollectionTextImport
 
 
 class CollectionSerializer(serializers.ModelSerializer):
@@ -24,3 +24,20 @@ class CollectionImportSerializer(serializers.ModelSerializer):
         model = CollectionImport
         fields = ["id", "collection_id", "file_name",
                   "status", "created_at", "is_reviewed"]
+
+
+class CollectionTextImportCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CollectionTextImport
+        fields = ["question", "answer"]
+
+
+class CollectionTextImportRequestSerializer(serializers.Serializer):
+    imports = CollectionTextImportCreateSerializer(many=True)
+
+
+class CollectionTextImportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CollectionTextImport
+        fields = ["id", "collection_id", "question",
+                  "answer", "created_at"]
