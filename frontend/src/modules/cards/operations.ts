@@ -95,7 +95,6 @@ export function loadCollectionCards(collectionId: number, options: CollectionOpt
                         collection_id: collectionId,
                     },
                 };
-                console.log(newParams);
 
                 const response = await api.cards.getCardList(newParams);
                 const data = response.payload.items;

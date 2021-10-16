@@ -11,7 +11,7 @@ export class CardsAPI extends BaseAPI {
     }
 
     public getCardList(params: CollectionQueryParams): ApiPromise<CollectionDataType<CardListData>> {
-        return this.get(`${this.getCardUrl()}?${toQueryString(params)}` + URL_SUFFIX);
+        return this.get(`${this.getCardUrl()}?${toQueryString(params)}`);
     }
 
     public getCard(cardId: number): ApiPromise<{ item: CardData }> {

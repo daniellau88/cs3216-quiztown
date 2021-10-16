@@ -12,6 +12,11 @@ class CardCreateSerializer(serializers.ModelSerializer):
         exclude = ["collection_id", "image_metadata"]
 
 
+class CardListFilterSerializer(serializers.Serializer):
+    flagged = serializers.IntegerField(required=False)
+    collection_id = serializers.IntegerField(required=False)
+
+
 class CardListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Card

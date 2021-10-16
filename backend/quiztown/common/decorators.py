@@ -7,6 +7,8 @@ from rest_framework import serializers
 
 from quiztown.common.errors import ApplicationError, ErrorCode
 
+from . import utils
+
 ITEM_SUFFIX = "_item"
 
 
@@ -60,9 +62,7 @@ def validate_request_data(
             if serializer.is_valid():
                 return view(request, serializer=serializer, *args, **kwargs)
 
-            error_messages = [key + ": " + ", ".join(serializer.errors[key])
-                              for key in serializer.errors.keys()]
-
-            raise ApplicationError(ErrorCode.INVALID_REQUEST, error_messages)
+            raise ApplicationError(ErrorCode.INVALID_REQUEST,
+                                   utils.get_error_messages_from_serializer(serializer))
         return wrapper_validate_request_data
     return validate_request_data_decorator
