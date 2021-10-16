@@ -9,6 +9,7 @@ import {
 import { Add } from '@material-ui/icons';
 import * as React from 'react';
 import { useState } from 'react';
+import { Document } from 'react-pdf';
 import { useDispatch } from 'react-redux';
 
 import { UploadData } from '../../../types/uploads';
@@ -65,7 +66,10 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
     const imageSrc = 'https://picsum.photos/200/300';
 
     const [fileCardInfo, saveFileCardInfo] = useState<Array<File>>([]);
+    const [fileImageLink, saveFileImageLink] = useState<Array<string>>([]);
     const [uploadFilesChild, setUploadedResponseChild] = useState<Array<UploadData>>([]);
+
+    const [testTarget, setTarget] = useState();
 
     const upload = async (e: React.ChangeEvent<any>) => {
         const fileInfo = [...fileCardInfo];
@@ -73,6 +77,20 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
         fileInfo.push(...e.target.files);
         console.log(fileInfo);
         saveFileCardInfo(fileInfo);
+        const fileImage = [...fileImageLink];
+        const currFile = fileInfo[fileInfo.length - 1];
+        const type = currFile.name.slice(-3);
+        if (type === 'pdf') {
+            console.log('is pdf');
+            fileImage.push(type);
+            setTarget(e.target.files[0]);
+        } else {
+            const url = URL.createObjectURL(currFile);
+            if (url) {
+                fileImage.push(url);
+            }
+        }
+        saveFileImageLink(fileImage);
         [...e.target.files].map(async (file: File) => {
             return handleApiRequest(dispatch, dispatch(addUpload(file)))
                 .then((response) => {
@@ -133,13 +151,17 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
                         <Card className={`${classes.root} ${classes.center}`} key={index}>
 
                             <Grid container className={classes.image}>
-                                <CardMedia
-                                    component="img"
-                                    alt="green iguana"
-                                    height="30%"
-                                    width="auto"
-                                    image={imageSrc}
-                                />
+                                {fileImageLink[index] === 'pdf' ?
+                                    (<Document
+                                        file={testTarget}
+                                    />) :
+                                    (<CardMedia
+                                        component="img"
+                                        alt="green iguana"
+                                        height="30%"
+                                        width="auto"
+                                        image={fileImageLink[index]}
+                                    />)}
                             </Grid>
                             <CardContent className={classes.fileNameText}>
                                 <Typography component="div">

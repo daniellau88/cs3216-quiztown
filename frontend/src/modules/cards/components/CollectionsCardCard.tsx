@@ -160,7 +160,7 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
             <Card className={`${classes.root} ${classes.center}`}>
                 <CardContent>
                     <Grid container className={classes.center}>
-                        <Add className={classes.addIcon} onClick={addNewTextCard}/>
+                        <Add className={classes.addIcon} onClick={addNewTextCard} />
                     </Grid>
                     <Typography className={classes.addCardText} component="div">
                         Add Text Card
@@ -168,7 +168,7 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
                 </CardContent>
                 <CardContent>
                     <Grid container className={classes.center}>
-                        <Add className={classes.addIcon} onClick={addNewImageCard}/>
+                        <Add className={classes.addIcon} onClick={addNewImageCard} />
                     </Grid>
                     <Typography className={classes.addCardText} component="div">
                         Add Image Card

@@ -93,12 +93,12 @@ const CollectionsCardAddImagePage: React.FC<Props> = ({ match: { params } }: Rou
                 <Grid container spacing={2}>
                     <Grid container direction='row' className={classes.header}>
                         <Typography className={classes.title} variant='h5' component="div">
-                            Adding files to {collection?.name}
+                            Import cards to {collection?.name}
                         </Typography>
                     </Grid>
                     <CollectionAddFileCards setUploadedResponse={setUploadedResponse} />
                     <Grid container direction='column' className={classes.button}>
-                        <QTButton outlined onClick={reviewCollection}>Add to Collection</QTButton>
+                        <QTButton outlined onClick={reviewCollection}>Done</QTButton>
                     </Grid>
                 </Grid>
             </Box >
