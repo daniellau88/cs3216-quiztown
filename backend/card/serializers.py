@@ -48,11 +48,6 @@ class CardImportImageSerializer(serializers.Serializer):
     file_name = serializers.CharField(max_length=100)
 
 
-# class CardImportTextSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Card
-#         fields = ["id", "name", "type", "question", "answer", "collection_id"]
-
 class CardImportTextSerializer(serializers.Serializer):
     question = serializers.CharField(max_length=1000)
     answer = serializers.CharField(max_length=1000)

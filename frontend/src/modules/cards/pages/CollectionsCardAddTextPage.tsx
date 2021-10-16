@@ -17,7 +17,7 @@ import {
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
-import React, { useReducer, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 
@@ -25,7 +25,7 @@ import { UploadTextData } from '../../../types/uploads';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
 import { addUpload } from '../../uploads/operations';
-import { importTextCardToCollections } from '../operations';
+import { importTextCardToCollections, loadCollectionCards } from '../operations';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -111,8 +111,10 @@ const CollectionsCardAddTextPage: React.FC<Props> = ({ match: { params } }: Rout
         return handleApiRequest(dispatch, dispatch(importTextCardToCollections(collectionId, { imports: dataCopy, type: '1' }))).then((importResponse) => {
             const payload = importResponse.payload;
             console.log(payload);
-            // TODO: redirect to page for that collection
-            history.push(`/collections/${collectionId}`);
+
+            return handleApiRequest(dispatch, dispatch(loadCollectionCards(collectionId, {}))).finally(() => {
+                history.push(`/collections/${collectionId}`);
+            });
         });
     };
 
