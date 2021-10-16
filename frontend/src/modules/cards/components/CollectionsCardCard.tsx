@@ -110,7 +110,7 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
         if (!data || !cardId) {
             return false;
         }
-        const cardPostData: CardPostData = { ...data, flagged: data.flagged ^ 1 };
+        const cardPostData: Partial<CardPostData> = { ...data, flagged: data.flagged ^ 1 };
         console.log(cardPostData);
         console.log(data);
         return handleApiRequest(dispatch, dispatch(updateCard(cardId, cardPostData)))
