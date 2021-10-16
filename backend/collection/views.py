@@ -65,9 +65,7 @@ def delete_collection_view(request, pk_item):
 @api_view(["POST"])
 @convert_keys_to_item({"pk": Collection})
 def import_image_or_text_collection_view(request, *args, **kwargs):
-    type = request.POST.get("type", "1")
-    # pdb.set_trace()
-    if type == "1":
+    if "type" in request.data and request.data["type"] == "1":
         return import_collection_text_view(request, *args, **kwargs)
     return import_collection_view(request, *args, **kwargs)
 
@@ -87,7 +85,8 @@ def import_collection_text_view(request, pk_item, serializer):
 
         collection_text_import_instances.append(collection_text_import)
 
-        jobs.import_cards_from_text(CollectionTextImport(collection_text_import))
+        if isinstance(collection_text_import, CollectionTextImport):
+            jobs.import_cards_from_text(collection_text_import)
 
     response_serializer = serializers.CollectionTextImportSerializer(
         collection_text_import_instances, many=True)

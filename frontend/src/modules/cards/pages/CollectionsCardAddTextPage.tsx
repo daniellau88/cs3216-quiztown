@@ -112,7 +112,7 @@ const CollectionsCardAddTextPage: React.FC<Props> = ({ match: { params } }: Rout
             const payload = importResponse.payload;
             console.log(payload);
             // TODO: redirect to page for that collection
-            // history.push(`/collections/${collectionId}`);
+            history.push(`/collections/${collectionId}`);
         });
     };
 

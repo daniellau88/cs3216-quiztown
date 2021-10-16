@@ -10,7 +10,6 @@ from quiztown.common.decorators import convert_keys_to_item, validate_request_da
 from . import jobs, serializers
 from .models import Card
 
-import pdb
 
 @api_view(["GET", "POST"])
 def list_or_create_card_view(request, *args, **kwargs):
