@@ -79,13 +79,13 @@ export function discardCollection(id: number): NormalizeOperation {
     };
 }
 
-export function importCollections(collectionId: number, collectionsImport: CollectionsImportPostData): Operation<ApiResponse<CollectionMiniEntity>> {
+export function importCollections(collectionId: number, collectionsImport: CollectionsImportPostData): Operation<ApiResponse<{}>> {
     return async (dispatch, getState) => {
         console.log('in import collection');
         const response = await api.collections.importCollections(collectionId, collectionsImport);
         const data = response.payload.item;
         batched(dispatch, saveCollection(data));
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        return { ...response, payload: getCollectionMiniEntity(getState(), data.id)! };
+        return response;
     };
 }

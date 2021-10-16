@@ -2,22 +2,22 @@ import {
     Box,
     CssBaseline,
     Grid,
-    Input,
     Typography,
     makeStyles,
 } from '@material-ui/core';
 import * as React from 'react';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 
-import api from '../../../api';
 import QTButton from '../../../components/QTButton';
-import { CollectionPostData, CollectionsImportPostData } from '../../../types/collections';
+import { AppState } from '../../../types/store';
 import { UploadData } from '../../../types/uploads';
 import { handleApiRequest } from '../../../utilities/ui';
-import CollectionAddFileCards from '../components/CollectionAddFileCards';
-import { addCollection, importCollections, loadAllCollections } from '../operations';
+import CollectionAddFileCards from '../../collections/components/CollectionAddFileCards';
+import { importCollections } from '../../collections/operations';
+import { getCollectionMiniEntity } from '../../collections/selectors';
+import { loadCollectionCards } from '../operations';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -51,42 +51,34 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const AddCollectionPage: React.FC<{}> = () => {
+type Props = RouteComponentProps;
+
+const CollectionsCardAddImagePage: React.FC<Props> = ({ match: { params } }: RouteComponentProps) => {
     const classes = useStyles();
     const dispatch = useDispatch();
     const history = useHistory();
 
-    const [collectionName, setCollectionName] = useState<string>('Untitled collection');
     const [uploadFiles, setUploadedResponse] = useState<Array<UploadData>>([]);
+
+    const collectionId: number = +(params as { collectionId: string }).collectionId;
+
+    const collection = useSelector((state: AppState) => getCollectionMiniEntity(state, collectionId));
 
     const createCollection = () => {
         if (uploadFiles == undefined) {
             return;
         }
-        // TODO: change owner_id: user ? user.id : 0
-        const collectionPostDataCurrent: CollectionPostData = { name: collectionName, owner_id: 0 };
-        return handleApiRequest(dispatch, dispatch(addCollection(collectionPostDataCurrent)))
-            .then((response) => {
-                console.log(response);
-                handleApiRequest(dispatch, dispatch(importCollections(response.payload.id, { imports: uploadFiles }))).then((importResponse) => {
-                    const payload = importResponse.payload;
-                    console.log(payload);
-                    // Redirect to home page
-                    // history.push('/collections');
-                });
-                history.push('/collections');
-            })
-            .then(() => {
-                return true;
-            })
-            .catch(() => {
-                return false;
-            });
-    };
+        return handleApiRequest(dispatch, dispatch(importCollections(collectionId, { imports: uploadFiles }))).then((importResponse) => {
+            const payload = importResponse.payload;
+            console.log(payload);
+            // TODO: Redirect to preview page
+            // history.push(`/collections/${payload.collection_id}/cards/${payload.id}`);
 
-    const handleCollectionNameChange = (e: React.ChangeEvent<any>) => {
-        const newName = e.target.value;
-        setCollectionName(newName);
+            // currently it directs back to card list page for that collection
+            return handleApiRequest(dispatch, dispatch(loadCollectionCards(collectionId, {}))).finally(() => {
+                history.push(`/collections/${collectionId}`);
+            });
+        });
     };
 
     const reviewCollection = () => {
@@ -101,16 +93,12 @@ const AddCollectionPage: React.FC<{}> = () => {
                 <Grid container spacing={2}>
                     <Grid container direction='row' className={classes.header}>
                         <Typography className={classes.title} variant='h5' component="div">
-                            Adding files to
+                            Adding files to {collection?.name}
                         </Typography>
-                        <Input className={classes.input}
-                            onChange={handleCollectionNameChange}
-                            value={collectionName}
-                            placeholder="Untitled Collection" />
                     </Grid>
                     <CollectionAddFileCards setUploadedResponse={setUploadedResponse} />
                     <Grid container direction='column' className={classes.button}>
-                        <QTButton outlined onClick={reviewCollection}>Review Collection</QTButton>
+                        <QTButton outlined onClick={reviewCollection}>Add to Collection</QTButton>
                     </Grid>
                 </Grid>
             </Box >
@@ -118,4 +106,4 @@ const AddCollectionPage: React.FC<{}> = () => {
     );
 };
 
-export default AddCollectionPage;
+export default CollectionsCardAddImagePage;

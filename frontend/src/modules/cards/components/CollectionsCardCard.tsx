@@ -147,11 +147,11 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
         if (beforeRedirect) {
             return beforeRedirect().then((newId) => {
                 if (newId) {
-                    history.push(`/collections/${newId}/cards/new`);
+                    history.push(`/collections/${newId}/cards/newImage`);
                 }
             });
         } else {
-            history.push(`/collections/${collectionId}/cards/new`);
+            history.push(`/collections/${collectionId}/cards/newImage`);
         }
     };
 
