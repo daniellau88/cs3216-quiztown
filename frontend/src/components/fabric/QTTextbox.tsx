@@ -2,8 +2,6 @@ import { fabric } from 'fabric';
 
 // Bezier approximations of arcs (http://itc.ktu.lt/itc354/Riskus354.pdf)
 const BEIZER_APPROXIMATION = 1 - 0.5522847498;
-// Textbox uses default height and scaleY, so even height of 500 will display as 24. We need to use scaleY to update the rendered height.
-const DEFAULT_TEXTBOX_HEIGHT = 24;
 
 const Quizbox = fabric.util.createClass(fabric.Textbox, {
     // This type naming capitalization matters
@@ -11,8 +9,6 @@ const Quizbox = fabric.util.createClass(fabric.Textbox, {
 
     initialize: function (text:string, options:any) {
         this.text = text;
-        const scaleY = options.height / DEFAULT_TEXTBOX_HEIGHT;
-        options['scaleY'] = scaleY;
         this.callSuper('initialize', text, options);
         options || (options = {});
         this.set('willShowBorder', options.willShowBorder || true);
@@ -104,5 +100,6 @@ const Quizbox = fabric.util.createClass(fabric.Textbox, {
 (fabric as any).Quizbox.fromObject = function (object:any, callback: () => void) {
     return fabric.Object._fromObject('Quizbox', object, callback, 'text');
 };
+fabric.Object.NUM_FRACTION_DIGITS = 17;
 
 export default Quizbox;

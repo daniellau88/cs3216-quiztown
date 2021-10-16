@@ -9,8 +9,9 @@ export const FONT_SIZE = 20;
 const TEXT_MARGIN = 40;
 const TEXT_PADDING = 10;
 const CANVAS_PADDING = 40;
-const CORRECTNESS_MARGIN = 20;
 const BORDER_RADIUS = 5;
+// Textbox uses default height and scaleY, so even height of 500 will display as 24. We need to use scaleY to update the rendered height.
+const DEFAULT_TEXTBOX_HEIGHT = 24;
 
 // Image card generation utils
 
@@ -58,17 +59,21 @@ export const initAnswerOptions = (
 const createAnswerTextBox = (box: AnswerData, xTranslation:number) => {
     const top = box.bounding_box[0][1];
     const left = box.bounding_box[0][0];
+    const width = box.bounding_box[1][0] - box.bounding_box[0][0];
+    const height = box.bounding_box[1][1] - box.bounding_box[0][1];
+    const scaleY = height / DEFAULT_TEXTBOX_HEIGHT;
 
     return new QTTextbox(box.text, {
         top: top,
         left: left + xTranslation,
-        width: box.bounding_box[1][0] - box.bounding_box[0][0],
-        height: box.bounding_box[1][1] - box.bounding_box[0][1],
+        width: width,
+        height: height,
         hasBorders: false,
         borderColor: colours.BLACK,
         backgroundColor: colours.WHITE,
         stroke: colours.BLACK,
         fontSize: FONT_SIZE,
+        scaleY: scaleY,
     });
 };
 
@@ -153,10 +158,12 @@ export const validateAnswer = (
 
     const answerTop = answerData.top;
     const answerLeft = answerData.left;
-    if (!answerTop || !answerLeft) return false;
+    const answerHeight = answerData.height;
+    const answerWidth = answerData.width;
+    if (!answerTop || !answerLeft || !answerHeight || !answerWidth) return false;
 
-    return Math.abs(optionTop - answerTop) < CORRECTNESS_MARGIN
-        && Math.abs(optionLeft - answerLeft) < CORRECTNESS_MARGIN;
+    return (optionTop >= answerTop && optionTop <= answerTop + answerHeight)
+         && (optionLeft >= answerLeft && optionLeft <= answerLeft + answerWidth);
 };
 
 
