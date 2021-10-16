@@ -3,8 +3,8 @@ import threading
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from quiztown.common import utils
 from quiztown.common.decorators import convert_keys_to_item, validate_request_data
-from quiztown.common.pagination import CustomPagination
 
 from . import jobs, serializers
 from .models import Collection, CollectionImport
@@ -19,16 +19,11 @@ def list_or_create_collection_view(request, *args, **kwargs):
 
 
 def list_collections_view(request):
-    collections = Collection.objects.all()
-
-    paginator = CustomPagination()
-    page = paginator.paginate_queryset(collections, request)
-    if page is not None:
-        serializer = serializers.CollectionSerializer(page, many=True)
-        return paginator.get_paginated_response({"items": serializer.data})
-
-    serializer = serializers.CollectionSerializer(collections, many=True)
-    return Response({"items": serializer.data})
+    return utils.filter_model_by_get_request(
+        request,
+        Collection,
+        serializers.CollectionSerializer,
+    )
 
 
 @validate_request_data(serializers.CollectionSerializer)

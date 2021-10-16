@@ -2,8 +2,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from collection.models import Collection
+from quiztown.common import utils
 from quiztown.common.decorators import convert_keys_to_item, validate_request_data
-from quiztown.common.pagination import CustomPagination
 
 from . import jobs, serializers
 from .models import Card
@@ -18,21 +18,12 @@ def list_or_create_card_view(request, *args, **kwargs):
 
 
 def list_card_view(request):
-    # TODO: Custom conversion of GET request to object
-    pk = int(request.GET.get("filters[collection_id]", 0))
-    cards = Card.objects.all()
-
-    if pk != 0:
-        cards = cards.filter(collection_id=pk)
-
-    paginator = CustomPagination()
-    page = paginator.paginate_queryset(cards, request)
-    if page is not None:
-        serializer = serializers.CardSerializer(page, many=True)
-        return paginator.get_paginated_response({"items": serializer.data})
-
-    serializer = serializers.CardSerializer(cards, many=True)
-    return Response({"items": serializer.data})
+    return utils.filter_model_by_get_request(
+        request,
+        Card,
+        serializers.CardListSerializer,
+        filter_serializer_class=serializers.CardListFilterSerializer,
+    )
 
 
 @validate_request_data(serializers.CardCreateSerializer)

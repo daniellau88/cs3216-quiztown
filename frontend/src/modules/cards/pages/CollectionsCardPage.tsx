@@ -10,10 +10,9 @@ import { useDispatch } from 'react-redux';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 
 import { CollectionPostData } from '../../../types/collections';
-import { handleApiRequest, handleApiRequests } from '../../../utilities/ui';
+import { handleApiRequest } from '../../../utilities/ui';
 import { addCollection } from '../../collections/operations';
 import CollectionsCardTable from '../components/CollectionsCardTable';
-
 
 const useStyles = makeStyles(() => ({
     root: {
