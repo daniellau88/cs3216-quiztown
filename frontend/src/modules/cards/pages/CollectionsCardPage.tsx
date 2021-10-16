@@ -6,12 +6,15 @@ import {
     makeStyles,
 } from '@material-ui/core';
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 
-import { CollectionPostData } from '../../../types/collections';
+import LoadingIndicator from '../../../components/content/LoadingIndicator';
+import { CollectionMiniEntity, CollectionPostData } from '../../../types/collections';
+import { AppState } from '../../../types/store';
 import { handleApiRequest } from '../../../utilities/ui';
-import { addCollection } from '../../collections/operations';
+import { addCollection, loadCollection } from '../../collections/operations';
+import { getCollectionMiniEntity } from '../../collections/selectors';
 import CollectionsCardTable from '../components/CollectionsCardTable';
 
 const useStyles = makeStyles(() => ({
@@ -42,10 +45,18 @@ const CollectionsCardPage: React.FC<Props> = ({ match: { params } }: RouteCompon
     const history = useHistory();
 
     const collectionId: string = (params as { collectionId: string }).collectionId;
+    const collection = useSelector((state: AppState) => getCollectionMiniEntity(state, parseInt(collectionId)));
 
     const [beforeCreateCard, setBeforeCreateCard] = React.useState<(() => Promise<number>) | undefined>();
 
     const [collectionIdNumber, setCollectionIdNumber] = React.useState(0);
+    const [isLoading, setIsLoading] = React.useState(true);
+
+    React.useEffect(() => {
+        handleApiRequest(dispatch, dispatch(loadCollection(parseInt(collectionId)))).finally(() => {
+            setIsLoading(false);
+        });
+    }, []);
 
     React.useEffect(() => {
         if (collectionId == 'new') {
@@ -71,15 +82,18 @@ const CollectionsCardPage: React.FC<Props> = ({ match: { params } }: RouteCompon
         }
     }, [collectionId]);
 
+    if (isLoading) {
+        return <LoadingIndicator/>;
+    }
+
     return (
         <>
             <CssBaseline />
             <Box className={classes.root}>
                 <Grid container spacing={2}>
                     <Grid container direction='column' className={classes.header}>
-                        {/* TODO: Replace hardcoded collection details */}
                         <Typography align='center' className={classes.headerText}>
-                            CVS Physio 1
+                            {collection && collection.name}
                         </Typography>
                         <Typography align='center' className={classes.subheaderText}>
                             Here are the cards in your collection, pick one to view or edit!
