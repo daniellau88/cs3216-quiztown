@@ -58,6 +58,7 @@ export const initAnswerOptions = (
 const createAnswerTextBox = (box: AnswerData, xTranslation:number) => {
     const top = box.bounding_box[0][1];
     const left = box.bounding_box[0][0];
+
     return new QTTextbox(box.text, {
         top: top,
         left: left + xTranslation,
