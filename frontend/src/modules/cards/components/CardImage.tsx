@@ -15,7 +15,6 @@ import React, { useEffect, useState } from 'react';
 import QTButton from '../../../components/QTButton';
 import { AnswerData } from '../../../types/cards';
 import { useWindowDimensions } from '../../../utilities/customHooks';
-import { getIntervals, getNextBoxNumber, getNextIntervalEndDate } from '../../../utilities/leitner';
 import {
     initAnswerBoxes,
     initAnswerOptions,
@@ -147,9 +146,9 @@ const CardImage: React.FC<CardImageProps> = ({
     };
 
     const selectConfidence = (index: number) => {
-        const nextBoxNumber = getNextBoxNumber(currentBox, index + 1);
-        const nextDate = getNextIntervalEndDate(nextBoxNumber);
-        onCardCompleted(nextBoxNumber, nextDate);
+        // const nextBoxNumber = getNextBoxNumber(currentBox, index + 1);
+        // const nextDate = getNextIntervalEndDate(nextBoxNumber);
+        // onCardCompleted(nextBoxNumber, nextDate);
     };
 
     return (
@@ -179,14 +178,14 @@ const CardImage: React.FC<CardImageProps> = ({
                             </Typography>
                         </DialogContent>
                         <DialogActions>
-                            {getIntervals(currentBox).map((interval, index) => (
+                            {/* {getIntervals(currentBox).map((interval, index) => (
                                 <QTButton
                                     key={index}
                                     onClick={() => selectConfidence(index)}
                                 >
                                     Confidence: {index + 1}, Interval: {interval}
                                 </QTButton>
-                            ))}
+                            ))} */}
                         </DialogActions>
                     </Dialog>
                 </Grid>
