@@ -21,6 +21,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 
+import { CARD_TYPE } from '../../../components/utiltiies/constants';
 import { UploadTextData } from '../../../types/uploads';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
@@ -103,12 +104,12 @@ const CollectionsCardAddTextPage: React.FC<Props> = ({ match: { params } }: Rout
         data.map((tuple, index) => dataCopy.push(
             {
                 name: index + tuple.question.split(' ')[0],
-                type: '1',
+                type: CARD_TYPE.TEXT,
                 question: tuple.question,
                 answer: tuple.answer,
                 collection_id: collectionId,
             } as UploadTextData));
-        return handleApiRequest(dispatch, dispatch(importTextCardToCollections(collectionId, { imports: dataCopy, type: '1' }))).then((importResponse) => {
+        return handleApiRequest(dispatch, dispatch(importTextCardToCollections(collectionId, { imports: dataCopy, type: CARD_TYPE.TEXT }))).then((importResponse) => {
             const payload = importResponse.payload;
             console.log(payload);
 

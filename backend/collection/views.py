@@ -66,7 +66,7 @@ def delete_collection_view(request, pk_item):
 @api_view(["POST"])
 @convert_keys_to_item({"pk": Collection})
 def import_image_or_text_collection_view(request, *args, **kwargs):
-    if "type" in request.data and request.data["type"] == "1":
+    if "type" in request.data and request.data["type"] == Card.TEXT:
         return import_collection_text_view(request, *args, **kwargs)
     return import_collection_view(request, *args, **kwargs)
 

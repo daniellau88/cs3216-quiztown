@@ -5,7 +5,7 @@ export interface UploadData {
 
 export interface UploadTextData {
     name: string;
-    type: string;
+    type: number;
     question: string;
     answer: string;
     collection_id: number;
