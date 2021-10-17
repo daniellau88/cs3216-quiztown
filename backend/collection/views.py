@@ -2,12 +2,13 @@ import threading
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from card.models import Card
 
 from quiztown.common import utils
 from quiztown.common.decorators import convert_keys_to_item, validate_request_data
 
 from . import jobs, serializers
-from .models import Collection, CollectionImport, CollectionTextImport
+from .models import Collection, CollectionImport
 
 
 @api_view(["GET", "POST"])
@@ -85,7 +86,7 @@ def import_collection_text_view(request, pk_item, serializer):
 
         collection_text_import_instances.append(collection_text_import)
 
-        if isinstance(collection_text_import, CollectionTextImport):
+        if isinstance(collection_text_import, Card):
             jobs.import_cards_from_text(collection_text_import)
 
     response_serializer = serializers.CollectionTextImportSerializer(
