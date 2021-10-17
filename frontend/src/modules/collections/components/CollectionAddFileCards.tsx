@@ -9,7 +9,7 @@ import {
 import { Add } from '@material-ui/icons';
 import * as React from 'react';
 import { useState } from 'react';
-import { Document } from 'react-pdf';
+import { Document, Page } from 'react-pdf';
 import { useDispatch } from 'react-redux';
 
 import { UploadData } from '../../../types/uploads';
@@ -152,9 +152,11 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
 
                             <Grid container className={classes.image}>
                                 {fileImageLink[index] === 'pdf' ?
-                                    (<Document
-                                        file={testTarget}
-                                    />) :
+                                    (
+                                        <Document file={testTarget}>
+                                            <Page pageNumber={1} />
+                                        </Document>
+                                    ) :
                                     (<CardMedia
                                         component="img"
                                         alt="green iguana"
