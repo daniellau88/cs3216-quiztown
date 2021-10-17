@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import string
 
 from dataclasses import asdict, dataclass
 from shutil import copyfile
@@ -53,12 +54,7 @@ class PaddleOCRResult():
 
 def trim_ocr_text(text: str):
     # TODO: fix trimming
-    text = text.strip()
-    if text[0] == "-":
-        text = text[1:]
-    if text[-1] == "-":
-        text = text[:-1]
-    return text.strip()
+    return text.strip("~|'-" + string.whitespace)
 
 
 def import_card_from_image(image_key: str, collection_id: int, name: str = ""):
