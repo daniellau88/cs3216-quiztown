@@ -129,28 +129,49 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
             });
     };
 
-    const addNewCard = () => {
+    const addNewTextCard = () => {
         console.log(beforeRedirect);
         if (beforeRedirect) {
             return beforeRedirect().then((newId) => {
                 if (newId) {
-                    history.push(`/collections/${newId}/cards/new`);
+                    history.push(`/collections/${newId}/cards/newText`);
                 }
             });
         } else {
-            history.push(`/collections/${collectionId}/cards/new`);
+            history.push(`/collections/${collectionId}/cards/newText`);
+        }
+    };
+
+    const addNewImageCard = () => {
+        console.log(beforeRedirect);
+        if (beforeRedirect) {
+            return beforeRedirect().then((newId) => {
+                if (newId) {
+                    history.push(`/collections/${newId}/cards/newImage`);
+                }
+            });
+        } else {
+            history.push(`/collections/${collectionId}/cards/newImage`);
         }
     };
 
     if (isAddCard) {
         return (
-            <Card className={`${classes.root} ${classes.center}`} onClick={addNewCard}>
+            <Card className={`${classes.root} ${classes.center}`}>
                 <CardContent>
                     <Grid container className={classes.center}>
-                        <Add className={classes.addIcon} />
+                        <Add className={classes.addIcon} onClick={addNewTextCard} />
                     </Grid>
                     <Typography className={classes.addCardText} component="div">
-                        Add Card
+                        Add Text Card
+                    </Typography>
+                </CardContent>
+                <CardContent>
+                    <Grid container className={classes.center}>
+                        <Add className={classes.addIcon} onClick={addNewImageCard} />
+                    </Grid>
+                    <Typography className={classes.addCardText} component="div">
+                        Add Image Card
                     </Typography>
                 </CardContent>
             </Card>

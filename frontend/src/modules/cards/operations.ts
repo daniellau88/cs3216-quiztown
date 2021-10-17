@@ -1,11 +1,12 @@
 import api from '../../api';
 import { ApiResponse } from '../../types';
-import { CardData, CardEntity, CardListData, CardPostData } from '../../types/cards';
+import { CardData, CardEntity, CardListData, CardMiniEntity, CardPostData } from '../../types/cards';
+import { CollectionCardTextImportPostData } from '../../types/collections';
 import { CollectionOptions, EntityCollection, NormalizeOperation, Operation } from '../../types/store';
 import { batched, queryEntityCollection, queryEntityCollectionSet, withCachedEntity } from '../../utilities/store';
 
 import * as actions from './actions';
-import { getAllCards, getCardEntity } from './selectors';
+import { getAllCards, getCardEntity, getCardMiniEntity } from './selectors';
 
 export function loadAllCards(options: CollectionOptions): Operation<ApiResponse<EntityCollection>> {
     return (dispatch, getState) => {
@@ -103,5 +104,16 @@ export function loadCollectionCards(collectionId: number, options: CollectionOpt
             },
             (delta) => dispatch(actions.updateCollectionCardList(collectionId, delta)),
         );
+    };
+}
+
+// TODO: figure out what to do with the response
+export function importTextCardToCollections(collectionId: number, cardTextImport: CollectionCardTextImportPostData): Operation<ApiResponse<{}>> {
+    return async (dispatch, getState) => {
+        console.log('in import collection');
+        const response = await api.collections.importTextCardToCollections(collectionId, cardTextImport);
+        const data = response.payload.items;
+        batched(dispatch, saveCardList(data));
+        return response;
     };
 }

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import fitz
+from card.models import Card
 
 from card import jobs as card_jobs
 from collection.models import CollectionImport
@@ -55,3 +56,10 @@ def extract_images_from_file(file_key: str) -> list[str]:
             image_keys.append(image_key)
             count += 1
     return image_keys
+
+
+def import_cards_from_text(collection_text_import: Card):
+    card_jobs.import_text(collection_text_import.question,
+                          collection_text_import.answer,
+                          collection_text_import.collection_id)
+    collection_text_import.save()

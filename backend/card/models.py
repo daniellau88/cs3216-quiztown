@@ -22,16 +22,22 @@ class Card(TimestampedModel):
         (FLAGGED, "flagged"),
         (NOTFLAGED, "notflagged"),
     )
+    IMAGE = 0
+    TEXT = 1
 
     name = models.CharField(max_length=100)
     collection_id = models.IntegerField()
     flagged = models.PositiveSmallIntegerField(
         choices=FLAG_STATUS, default=NOTFLAGED, blank=True)
     image_file_key = models.CharField(max_length=1024, default="", blank=True)
-    image_metadata = models.JSONField(default=dict, encoder=JSONEncoder)
+    image_metadata = models.JSONField(default=dict, encoder=JSONEncoder, blank=True)
     next_date = models.DateField(default=date.today, blank=True)
     box_number = models.IntegerField(default=0)
-    answer_details = models.JSONField(default=dict, encoder=JSONEncoder)
+    answer_details = models.JSONField(default=dict, encoder=JSONEncoder, blank=True)
+    type = models.PositiveSmallIntegerField(
+        default=IMAGE, blank=True)
+    question = models.CharField(max_length=1024, default="", blank=True)
+    answer = models.CharField(max_length=1024, default="", blank=True)
 
     def create(self, validated_data):
         return Card.objects.create(validated_data)
@@ -45,5 +51,8 @@ class Card(TimestampedModel):
         instance.box_number = validated_data.get("box_number", instance.box_number)
         instance.answer_details = validated_data.get(
             "answer_details", instance.answer_details)
+        instance.type = validated_data.get("type", instance.type)
+        instance.question = validated_data.get("question", instance.question)
+        instance.answer = validated_data.get("answer", instance.answer)
         instance.save()
         return instance

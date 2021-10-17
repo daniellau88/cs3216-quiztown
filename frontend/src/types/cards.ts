@@ -47,6 +47,9 @@ export interface CardData {
     answer_details: {
         results: AnswerData[];
     }
+    type: number;
+    question: string;
+    answer: string;
 }
 
 export interface CardMiniEntity {

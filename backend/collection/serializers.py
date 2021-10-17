@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from card.models import Card
+
 from .models import Collection, CollectionImport
 
 
@@ -24,3 +26,20 @@ class CollectionImportSerializer(serializers.ModelSerializer):
         model = CollectionImport
         fields = ["id", "collection_id", "file_name",
                   "status", "created_at", "is_reviewed"]
+
+
+class CollectionTextImportCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Card
+        fields = ["question", "answer"]
+
+
+class CollectionTextImportRequestSerializer(serializers.Serializer):
+    imports = CollectionTextImportCreateSerializer(many=True)
+
+
+class CollectionTextImportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Card
+        fields = ["id", "collection_id", "question",
+                  "answer", "created_at"]

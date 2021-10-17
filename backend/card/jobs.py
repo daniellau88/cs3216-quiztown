@@ -104,7 +104,8 @@ def import_card_from_image(image_key: str, collection_id: int, name: str = ""):
     card = Card(name=name, collection_id=collection_id,
                 image_file_key=image_key,
                 answer_details={"results": json_results},
-                image_metadata=image_metadata)
+                image_metadata=image_metadata,
+                type=Card.IMAGE)
     card.save()
 
     return card
@@ -140,3 +141,13 @@ def get_image_metadata(image_path: str):
         "width": width,
         "height": height,
     }
+
+
+def import_text(question: str, answer: str, collection_id: int):
+    card = Card(name=question, collection_id=collection_id,
+                question=question,
+                answer=answer,
+                type=Card.TEXT)
+    card.save()
+
+    return card
