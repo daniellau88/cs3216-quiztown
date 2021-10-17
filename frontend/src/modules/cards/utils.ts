@@ -145,10 +145,9 @@ export const initCorrectAnswersIndicator = (
 export const validateAnswer = (
     answerOption: fabric.Text,
     answersCoordsMap: Map<string, fabric.Rect>,
+    mouseCoordinate: { x: number, y: number },
 ): boolean => {
-    const optionTop = answerOption.top;
-    const optionLeft = answerOption.left;
-    if (!optionTop || !optionLeft) return false;
+    if (!mouseCoordinate) return false;
 
     const textContent = answerOption.get('text');
     if (!textContent) return false;
@@ -162,8 +161,8 @@ export const validateAnswer = (
     const answerWidth = answerData.width;
     if (!answerTop || !answerLeft || !answerHeight || !answerWidth) return false;
 
-    return (optionTop >= answerTop && optionTop <= answerTop + answerHeight)
-         && (optionLeft >= answerLeft && optionLeft <= answerLeft + answerWidth);
+    return (mouseCoordinate.y >= answerTop && mouseCoordinate.y <= answerTop + answerHeight)
+         && (mouseCoordinate.x >= answerLeft && mouseCoordinate.x <= answerLeft + answerWidth);
 };
 
 

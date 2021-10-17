@@ -120,7 +120,7 @@ const CardImage: React.FC<CardImageProps> = ({
             }
 
             const text = e.target as fabric.Text;
-            const isAnswerCorrect = validateAnswer(text, answersCoordsMap);
+            const isAnswerCorrect = validateAnswer(text, answersCoordsMap, canvas.getPointer(e.e));
             if (isAnswerCorrect) {
                 canvas.remove(e.target);
                 revealAnswer(answersCoordsMap, text, canvas);
