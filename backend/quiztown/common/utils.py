@@ -2,46 +2,48 @@ from __future__ import annotations
 
 import typing
 
+from dataclasses import asdict
+
 import django.http
 import rest_framework.request
 
 from django.db import models
 from rest_framework import serializers
 
-from .errors import ApplicationError, ErrorCode
+from .errors import ApplicationError, ErrorCode, Message
 from .pagination import CustomPagination
 from .serializers import ListRequestSerializer
 
 
-def generate_response(code: int, messages: list[str], payload: dict):
+def generate_response(code: int, messages: list[Message], payload: dict):
     return {
         "code": code,
-        "messages": messages,
+        "messages": [asdict(message) for message in messages],
         "payload": payload,
     }
 
 
-def parse_float(value: str) -> (float | None):
+def _parse_float(value: str) -> (float | None):
     try:
         return float(value)
     except ValueError:
         return None
 
 
-def parse_int(value: str) -> (int | None):
+def _parse_int(value: str) -> (int | None):
     try:
         return int(value)
     except ValueError:
         return None
 
 
-def parse_value_from_string(value: str) -> int | float | str:
+def _parse_value_from_string(value: str) -> int | float | str:
     # Int should take precedence first
-    int_value = parse_int(value)
+    int_value = _parse_int(value)
     if int_value is not None:
         return int_value
 
-    float_value = parse_float(value)
+    float_value = _parse_float(value)
     if float_value is not None:
         return float_value
 
@@ -71,13 +73,13 @@ def convert_get_request_to_dict(get_request: django.http.request.QueryDict) -> d
 
         # If is array
         if last_field_name == "" and isinstance(current_dict, list):
-            parsed_values = [parse_value_from_string(
+            parsed_values = [_parse_value_from_string(
                 value) for value in get_request.getlist(key)]
             current_dict.extend(parsed_values)
         elif isinstance(current_dict, dict):
             value = get_request.get(key)
             assert value is not None
-            parsed_value = parse_value_from_string(value)
+            parsed_value = _parse_value_from_string(value)
             current_dict[last_field_name] = parsed_value
 
     return object

@@ -2,10 +2,13 @@ from __future__ import annotations
 
 import traceback
 
-from typing import Type
+from dataclasses import dataclass
+from typing import Type, Union
 
 import rest_framework.exceptions as rest_exceptions
 
+from rest_framework import status
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import exception_handler as rest_exception_handler
 
@@ -23,41 +26,71 @@ class ErrorCode:
     DEPENDENCY_ERROR = 201
 
 
+def is_user_error(error_code: int):
+    return error_code != 0 and error_code // 100 == 0
+
+
+def is_internal_server_error(error_code: int):
+    return error_code // 100 == 2
+
+
 class ApplicationError(Exception):
     def __init__(self, error_code: int, messages: list[str]):
         self.error_code = error_code
         self.messages = messages
 
 
+ContextType = Union[Request, dict]
+REQUEST_INTERNAL_ATTR = "_internal"
 CODE_KEY = "_code"
 MESSAGES_KEY = "_messages"
 
-KWARGS_KEY = "kwargs"
+
+class MessageType:
+    ERROR = 1
+    WARNING = 2
+    INFORMATION = 3
+    SUCCESS = 4
 
 
-def _get_kwargs_from_context(context: dict):
-    if KWARGS_KEY not in context or context[KWARGS_KEY] is None:
-        # Should not happen
-        raise ApplicationError(ErrorCode.INTERNAL_SERVER, ["Internal server error"])
-    return context[KWARGS_KEY]
+@dataclass
+class Message:
+    content: str
+    type: int
 
 
-def set_code_on_context(context: dict, code: int):
+def _get_kwargs_from_context(context: ContextType):
+    if isinstance(context, dict):
+        context = context["request"]
+
+    assert isinstance(context, Request)
+
+    if not hasattr(context, REQUEST_INTERNAL_ATTR):
+        setattr(context, REQUEST_INTERNAL_ATTR, dict())
+    return getattr(context, REQUEST_INTERNAL_ATTR)
+
+
+def set_code_on_context(context: ContextType, code: int):
     _get_kwargs_from_context(context)[CODE_KEY] = code
 
 
-def get_code_from_context(context: dict) -> int:
+def get_code_from_context(context: ContextType) -> int:
     kwargs = _get_kwargs_from_context(context)
     if CODE_KEY not in kwargs:
         return ErrorCode.SUCCESS
     return kwargs[CODE_KEY]
 
 
-def set_messages_on_context(context: dict, messages: list[str]):
-    _get_kwargs_from_context(context)[MESSAGES_KEY] = messages
+def add_message_on_context(context: ContextType, message_content: str, message_type: int):
+    kwargs = _get_kwargs_from_context(context)
+    if MESSAGES_KEY not in kwargs:
+        kwargs[MESSAGES_KEY] = []
+
+    messages = kwargs[MESSAGES_KEY]
+    messages.append((Message(message_content, message_type)))
 
 
-def get_messages_from_context(context: dict) -> list[str]:
+def get_messages_from_context(context: ContextType) -> list[Message]:
     kwargs = _get_kwargs_from_context(context)
     if MESSAGES_KEY not in kwargs:
         return []
@@ -83,7 +116,6 @@ def exception_handler(exc: Exception, context):
     traceback.print_exc()
 
     code = -1
-    messages = []
 
     if response is not None:
         exception_class = exc.__class__
@@ -92,17 +124,23 @@ def exception_handler(exc: Exception, context):
 
         if response.data:
             if isinstance(response.data, dict):
-                messages.append(response.data.get("detail"))
+                add_message_on_context(context, response.data.get(
+                    "detail", ""), MessageType.ERROR)
 
     elif exc is not None:
         if isinstance(exc, ApplicationError):
             code = exc.error_code
-            messages = exc.messages
+            for message in exc.messages:
+                add_message_on_context(context, message, MessageType.ERROR)
 
     if code == -1:
         code = ErrorCode.INTERNAL_SERVER
-        messages = ["Internal server error"]
+        add_message_on_context(context, "Internal Server Error", MessageType.ERROR)
 
     set_code_on_context(context, code)
-    set_messages_on_context(context, messages)
-    return Response({})
+
+    http_status = status.HTTP_500_INTERNAL_SERVER_ERROR
+    if is_user_error(code):
+        http_status = status.HTTP_400_BAD_REQUEST
+
+    return Response({}, status=http_status)

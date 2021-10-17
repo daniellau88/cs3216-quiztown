@@ -25,7 +25,7 @@ class Card(TimestampedModel):
     IMAGE = 0
     TEXT = 1
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, blank=True)
     collection_id = models.IntegerField()
     flagged = models.PositiveSmallIntegerField(
         choices=FLAG_STATUS, default=NOTFLAGED, blank=True)
