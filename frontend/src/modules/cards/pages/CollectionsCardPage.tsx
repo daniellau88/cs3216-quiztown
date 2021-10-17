@@ -64,7 +64,6 @@ const CollectionsCardPage: React.FC<Props> = ({ match: { params } }: RouteCompon
                 const collectionPostDataCurrent: CollectionPostData = { name: 'Untitled collection', owner_id: 0 };
                 return handleApiRequest(dispatch, dispatch(addCollection(collectionPostDataCurrent)))
                     .then((response) => {
-                        console.log('response', response);
                         const newId = response.payload.id;
                         history.replace(`/collections/${newId}`);
                         return newId;
@@ -93,7 +92,7 @@ const CollectionsCardPage: React.FC<Props> = ({ match: { params } }: RouteCompon
                 <Grid container spacing={2}>
                     <Grid container direction='column' className={classes.header}>
                         <Typography align='center' className={classes.headerText}>
-                            {collection && collection.name}
+                            {collection ? collection.name : 'Untitled collection'}
                         </Typography>
                         <Typography align='center' className={classes.subheaderText}>
                             Here are the cards in your collection, pick one to view or edit!
