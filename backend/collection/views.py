@@ -2,8 +2,8 @@ import threading
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from card.models import Card
 
+from card.models import Card
 from quiztown.common import utils
 from quiztown.common.decorators import convert_keys_to_item, validate_request_data
 
@@ -108,14 +108,22 @@ def import_collection_view(request, pk_item, serializer):
             collection_id=pk_item.id, status=CollectionImport.IN_QUEUE)
 
         collection_import = collection_import_serializer.instance
+        assert isinstance(collection_import, CollectionImport)
 
         collection_import_instances.append(collection_import)
 
-        # TODO: handle images too
-        t = threading.Thread(target=jobs.import_cards_from_pdf,
-                             args=(), kwargs={"collection_import": collection_import})
-        t.setDaemon(True)
-        t.start()
+        file_type = collection_import.file_key[-3:]
+        if file_type == "pdf":
+            # TODO: handle images too
+            t = threading.Thread(target=jobs.import_cards_from_pdf,
+                                 args=(), kwargs={"collection_import": collection_import})
+            t.setDaemon(True)
+            t.start()
+        else:
+            t = threading.Thread(target=jobs.import_card_from_image,
+                                 args=(), kwargs={"collection_import": collection_import})
+            t.setDaemon(True)
+            t.start()
 
     response_serializer = serializers.CollectionImportSerializer(
         collection_import_instances, many=True)

@@ -1,13 +1,30 @@
 from __future__ import annotations
 
 import fitz
-from card.models import Card
 
 from card import jobs as card_jobs
+from card.models import Card
 from collection.models import CollectionImport
 
 STATIC_CARD_DIRECTORY = "static/cards/"
 UPLOAD_DIRECTORY = "uploads/"
+
+
+def import_card_from_image(collection_import: CollectionImport):
+    collection_import.status = CollectionImport.IN_PROGRESS
+    collection_import.save()
+
+    try:
+        card_jobs.import_card_from_image(
+            collection_import.file_key, collection_import.collection_id)
+
+        collection_import.status = CollectionImport.COMPLETED
+        collection_import.save()
+    except Exception as e:
+        collection_import.status = CollectionImport.ERROR
+        collection_import.save()
+
+        raise e
 
 
 def import_cards_from_pdf(collection_import: CollectionImport):
