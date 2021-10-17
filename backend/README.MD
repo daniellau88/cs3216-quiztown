@@ -16,7 +16,14 @@ Alternatively, you can use environment variables `DB_NAME`, `DB_USER` and `DB_PA
 1. Pip (>= 21.2.4)
 1. MariaDB (>= 10.3.9)
 1. virtualenv (>= 20.8.1) (if setting up project in virtual environment)
+1. Redis (>= 5.0.14)
 
+### Setup Redis
+
+ 1. Run Redis in docker
+    ```
+    $ docker run -p 6379:6379 -d redis:5
+    ```
 ### Getting Started
 
  1. Install Python Dependencies
@@ -33,6 +40,11 @@ Alternatively, you can use environment variables `DB_NAME`, `DB_USER` and `DB_PA
  3. Run the webserver
     ```
     $ python manage.py runserver
+    ```
+
+ 4. Start the job queue worker
+    ```
+    $ python manage.py rqworker default
     ```
 
 ### Setting up in Virtual Environment

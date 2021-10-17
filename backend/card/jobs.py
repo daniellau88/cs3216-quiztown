@@ -15,6 +15,12 @@ from quiztown.common.errors import ApplicationError, ErrorCode
 
 from .models import Card
 
+if not os.path.exists("paddle_ocr/ch_ppocr_server_v2.0_det_infer") or \
+        not os.path.exists("paddle_ocr/ch_ppocr_mobile_v2.0_cls_infer") or \
+        not os.path.exists("paddle_ocr/ch_ppocr_server_v2.0_rec_infer"):
+    raise Exception(
+        "Please download required files for Paddle OCR according to README.MD")
+
 ocr = PaddleOCR(lang="en", use_gpu=False,
                 det_model_dir="paddle_ocr/ch_ppocr_server_v2.0_det_infer/",
                 cls_model_dir="paddle_ocr/ch_ppocr_mobile_v2.0_cls_infer/",
@@ -29,12 +35,6 @@ MIN_CONFIDENCE = 0.5
 STATIC_CARD_DIRECTORY = "static/cards/"
 UPLOAD_DIRECTORY = "uploads/"
 PADDING_PERCENTAGE = 0.1
-
-if not os.path.exists("paddle_ocr/ch_ppocr_server_v2.0_det_infer") or \
-        not os.path.exists("paddle_ocr/ch_ppocr_mobile_v2.0_cls_infer") or \
-        not os.path.exists("paddle_ocr/ch_ppocr_server_v2.0_rec_infer"):
-    raise Exception(
-        "Please download required files for Paddle OCR according to README.MD")
 
 
 @dataclass

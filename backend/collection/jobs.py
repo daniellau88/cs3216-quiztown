@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import fitz
 
+from django_rq import job
+
 from card import jobs as card_jobs
 from card.models import Card
 from collection.models import CollectionImport
@@ -10,6 +12,7 @@ STATIC_CARD_DIRECTORY = "static/cards/"
 UPLOAD_DIRECTORY = "uploads/"
 
 
+@job
 def import_card_from_image(collection_import: CollectionImport):
     collection_import.status = CollectionImport.IN_PROGRESS
     collection_import.save()
@@ -27,6 +30,7 @@ def import_card_from_image(collection_import: CollectionImport):
         raise e
 
 
+@job
 def import_cards_from_pdf(collection_import: CollectionImport):
     collection_import.status = CollectionImport.IN_PROGRESS
     collection_import.save()

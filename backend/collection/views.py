@@ -112,18 +112,11 @@ def import_collection_view(request, pk_item, serializer):
 
         collection_import_instances.append(collection_import)
 
-        file_type = collection_import.file_key[-3:]
-        if file_type == "pdf":
-            # TODO: handle images too
-            t = threading.Thread(target=jobs.import_cards_from_pdf,
-                                 args=(), kwargs={"collection_import": collection_import})
-            t.setDaemon(True)
-            t.start()
-        else:
-            t = threading.Thread(target=jobs.import_card_from_image,
-                                 args=(), kwargs={"collection_import": collection_import})
-            t.setDaemon(True)
-            t.start()
+        file_type = utils.get_extension_from_filename(collection_import.file_key)
+        if file_type == ".pdf":
+            jobs.import_cards_from_pdf.delay(collection_import=collection_import)
+        elif file_type == ".jpg" or file_type == ".png":
+            jobs.import_card_from_image.delay(collection_import=collection_import)
 
     response_serializer = serializers.CollectionImportSerializer(
         collection_import_instances, many=True)

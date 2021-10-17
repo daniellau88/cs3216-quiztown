@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "user",
     "upload",
     "rest_framework",
+    "django_rq",
 ]
 
 MIDDLEWARE = [
@@ -157,3 +158,11 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
     "authentication.backends.GoogleAuthenticationBackend",
 ]
+
+RQ_QUEUES = {
+    "default": {
+        "HOST": "localhost",
+        "PORT": 6379,
+        "DEFAULT_TIMEOUT": 360,
+    },
+}
