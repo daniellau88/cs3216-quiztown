@@ -7,6 +7,8 @@ import {
 } from '@material-ui/core';
 import * as React from 'react';
 
+import Breadcrumbs from '../../../layouts/Breadcrumbs';
+import routes from '../../../utilities/routes';
 import CollectionTable from '../components/CollectionTable';
 
 const useStyles = makeStyles(() => ({
@@ -37,6 +39,9 @@ const CollectionPage: React.FC<{}> = () => {
             <CssBaseline />
             <Box className={classes.root}>
                 <Grid container spacing={2}>
+                    <Breadcrumbs links={[
+                        { path: null, name: 'Collections' },
+                    ]} />
                     <Grid container direction='column' className={classes.header}>
                         <Typography align='center' className={classes.headerText}>
                             My Collections

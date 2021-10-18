@@ -7,6 +7,7 @@ import {
 } from '@material-ui/core';
 import * as React from 'react';
 
+import Breadcrumbs from '../../../layouts/Breadcrumbs';
 import StarredCardTable from '../components/StarredCardTable';
 
 const useStyles = makeStyles(() => ({
@@ -37,6 +38,9 @@ const CollectionsCardStarredPage: React.FC = () => {
             <CssBaseline />
             <Box className={classes.root}>
                 <Grid container spacing={2}>
+                    <Breadcrumbs links={[
+                        { path: null, name: 'Starred Cards' },
+                    ]} />
                     <Grid container direction='column' className={classes.header}>
                         <Typography align='center' className={classes.headerText}>
                             Starred Cards
