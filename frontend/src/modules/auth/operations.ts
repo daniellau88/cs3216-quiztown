@@ -24,6 +24,14 @@ export function login(loginData: LoginPostData): Operation<ApiResponse<{}>> {
     };
 }
 
+export function logout(): Operation<ApiResponse<{}>> {
+    return async (dispatch, getState) => {
+        const response = await api.auth.logout();
+        batched(dispatch, actions.deleteCurrentUser());
+        return { ...response };
+    };
+}
+
 export function saveCurrentUser(data: UserData): NormalizeOperation {
     return (dispatch) => {
         dispatch(actions.saveCurrentUser(data));

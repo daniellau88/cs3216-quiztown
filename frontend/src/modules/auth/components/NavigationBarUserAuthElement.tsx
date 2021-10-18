@@ -39,8 +39,9 @@ const NavigationBarUserAuthElement: React.FC<{}> = () => {
 
     return (
         <div className={classes.root}>
-            {
-                user !== null ? <UserDetailComponent user={user} /> : <GoogleSignInButton onSuccess={onSuccess} />
+            {user !== null ?
+                <UserDetailComponent user={user} /> :
+                <GoogleSignInButton onSuccess={onSuccess} />
             }
         </div>
     );

@@ -13,6 +13,9 @@ const authReducer = produce((draft: types.AuthState, action: types.AuthActionTyp
             draft.currentUser = data;
             return;
         }
+        case types.DELETE_CURRENT_USER: {
+            draft.currentUser = null;
+        }
     }
 }, initialState);
 

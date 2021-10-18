@@ -1,6 +1,6 @@
 import requests
 
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -86,3 +86,10 @@ def google_login_view(request, serializer):
 
     raise ApplicationError(ErrorCode.UNAUTHENTICATED, [
                            "Failed to login"])
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def logout_view(request):
+    logout(request)
+    return Response({})
