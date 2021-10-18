@@ -1,5 +1,6 @@
 import {
     Box,
+    Button,
     CssBaseline,
     Dialog,
     DialogActions,
@@ -9,15 +10,24 @@ import {
     Typography,
     makeStyles,
 } from '@material-ui/core';
+import SentimentSatisfiedIcon from '@material-ui/icons/SentimentSatisfied';
+import SentimentVeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissatisfied';
+import SentimentVerySatisfiedIcon from '@material-ui/icons/SentimentVerySatisfied';
 import { fabric } from 'fabric';
+import Moment from 'moment';
 import React, { MutableRefObject, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import StateManager from '../../../components/fabric/CanvasStateManager';
 import QTTextbox from '../../../components/fabric/QTTextbox';
 import QTButton from '../../../components/QTButton';
-import { AnswerData } from '../../../types/cards';
+import { CardEntity, CardPostData } from '../../../types/cards';
 import colours from '../../../utilities/colours';
 import { useWindowDimensions } from '../../../utilities/customHooks';
+import { addDays, roundDownDay } from '../../../utilities/datetime';
+import { Feedback, getFeedbackSet } from '../../../utilities/leitner';
+import { handleApiRequest } from '../../../utilities/ui';
+import { updateCard } from '../operations';
 import {
     FONT_SIZE,
     initAnswerBoxes,
@@ -52,10 +62,7 @@ const useStyles = makeStyles(() => ({
 
 interface CardImageProps {
     isEditing: boolean
-    id: number,
-    imageUrl: string,
-    result: AnswerData[],
-    imageMetadata: { width:number, height:number }
+    card: CardEntity
     onCardCompleted?: (nextBoxNumber:number, nextDate:Date) => void
     saveAnswerData?: (canvas:fabric.Canvas) => void
     canvasRef?: MutableRefObject<fabric.Canvas | undefined>
@@ -63,21 +70,27 @@ interface CardImageProps {
 
 const CardImage: React.FC<CardImageProps> = ({
     isEditing,
-    id,
-    imageUrl,
-    result,
-    imageMetadata,
+    card,
     onCardCompleted,
     saveAnswerData,
     canvasRef,
 }) => {
     const classes = useStyles();
+    const dispatch = useDispatch();
+
+    const id = card.id;
+    const imageUrl = card.image_link;
+    const result = card.answer_details.results;
+    const imageMetadata = card.image_metadata;
+    const boxNumber = card.box_number;
+    const numOptions = result.length;
     const CANVAS_ID = 'quiztown-canvas-' + id;
 
     const [canvas, setCanvas] = useState<fabric.Canvas>();
     const [stateManager, setStateManager] = useState<StateManager>();
     const [hasAnsweredAll, setHasAnsweredAll] = useState(false);
-    const [currentBox, setCurrentBox] = useState(0);
+    const [numGuesses, setNumGuesses] = useState(0); // TODO increment with user guess
+    const [timeTaken, setTimeTaken] = useState(0); // TODO implement stopwatch
 
     const { windowHeight, windowWidth } = useWindowDimensions();
 
@@ -161,12 +174,6 @@ const CardImage: React.FC<CardImageProps> = ({
         console.log('Close dialog');
     };
 
-    const selectConfidence = (index: number) => {
-        // const nextBoxNumber = getNextBoxNumber(currentBox, index + 1);
-        // const nextDate = getNextIntervalEndDate(nextBoxNumber);
-        // onCardCompleted(nextBoxNumber, nextDate);
-    };
-
     const addAnswerOption = () => {
         if (!canvas) return;
         canvas.add(new QTTextbox('Answer Option', {
@@ -191,6 +198,22 @@ const CardImage: React.FC<CardImageProps> = ({
         if (!canvas) return;
         canvas.getObjects().forEach(object => canvas.remove(object));
         setHasAnsweredAll(true);
+    };
+
+    const sendUpdate = (feedback: Feedback) => {
+        if (!card || !feedback) {
+            return false;
+        }
+        const cardPostData: Partial<CardPostData> = {
+            ...card,
+            box_number: feedback.nextBoxNumber,
+            next_date: Moment(roundDownDay(addDays(new Date(), feedback.intervalLength))).format('YYYY-MM-DD'),
+        };
+        console.log(cardPostData);
+        return handleApiRequest(dispatch, dispatch(updateCard(card.id, cardPostData)))
+            .then(() => {
+                return true;
+            });
     };
 
     return (
@@ -242,14 +265,17 @@ const CardImage: React.FC<CardImageProps> = ({
                         </Typography>
                     </DialogContent>
                     <DialogActions>
-                        {/* {getIntervals(currentBox).map((interval, index) => (
-                                <QTButton
-                                    key={index}
-                                    onClick={() => selectConfidence(index)}
-                                >
-                                    Confidence: {index + 1}, Interval: {interval}
-                                </QTButton>
-                            ))} */}
+                        {getFeedbackSet(timeTaken, numOptions, numGuesses, boxNumber).map((feedback: Feedback, index: number) => {
+                            console.log(feedback);
+                            return <Button key={index} onClick={() => sendUpdate(feedback)}>
+                                <Grid alignItems='center' justifyContent='center' direction='column'>
+                                    {index == 0 ? <SentimentVeryDissatisfiedIcon /> : index == 1 ? <SentimentSatisfiedIcon /> : <SentimentVerySatisfiedIcon />}
+                                    <Typography align='center'>
+                                        Interval: {feedback.intervalLength}
+                                    </Typography>
+                                </Grid>
+                            </Button>;
+                        })}
                     </DialogActions>
                 </Dialog>
             </Grid>

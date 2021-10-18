@@ -7,10 +7,12 @@ import {
     Typography,
     makeStyles,
 } from '@material-ui/core';
+import SentimentSatisfiedIcon from '@material-ui/icons/SentimentSatisfied';
+import SentimentVeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissatisfied';
+import SentimentVerySatisfiedIcon from '@material-ui/icons/SentimentVerySatisfied';
 import * as React from 'react';
 import { GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
 import { useDispatch } from 'react-redux';
-import ReactSlider from 'react-slider';
 
 import api from '../../api';
 import GoogleSignInButton from '../../modules/auth/components/GoogleSignInButton';
@@ -18,8 +20,9 @@ import { googleLogin } from '../../modules/auth/operations';
 import { addCollection, deleteCollection, updateCollection } from '../../modules/collections/operations';
 import { GoogleLoginPostData } from '../../types/auth';
 import { CollectionPostData } from '../../types/collections';
-import { getFeedback } from '../../utilities/leitner';
+import { Feedback, getFeedbackSet } from '../../utilities/leitner';
 import { handleApiRequest } from '../../utilities/ui';
+
 import '../../assets/css/slider.css';
 
 const useStyles = makeStyles(() => ({
@@ -35,7 +38,6 @@ const TemplatePage: React.FC<{}> = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
     const [currentBox, setCurrentBox] = React.useState(0);
-    const [interval, setInterval] = React.useState(0);
 
     console.log('Template page.');
 
@@ -91,21 +93,15 @@ const TemplatePage: React.FC<{}> = () => {
         await Promise.all(promises);
     };
 
-    const timeTaken = 15.0;
+    const timeTaken = 10.0;
     const numOptions = 3;
-    const numGuesses = 4;
+    const numGuesses = 0;
 
-    const testLeitner = () => {
+    const testLeitner = (feedback: Feedback) => {
         console.log('Leitner button poked!');
-        const feedback = getFeedback(timeTaken, numOptions, numGuesses, currentBox);
         console.log(feedback.nextBoxNumber);
         console.log(feedback.intervalLength);
         setCurrentBox(feedback.nextBoxNumber);
-        setInterval(feedback.intervalLength);
-    };
-
-    const onSliderChange = (value: any) => {
-        setInterval(value);
     };
 
     const onGoogleLoginSuccess = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
@@ -147,25 +143,17 @@ const TemplatePage: React.FC<{}> = () => {
                 </Grid>
             </Box>
             <Box className={classes.root}>
-                <ReactSlider
-                    className="horizontal-slider"
-                    thumbClassName="example-thumb"
-                    trackClassName="example-track"
-                    min={0}
-                    max={30}
-                    defaultValue={interval}
-                    value={interval}
-                    renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
-                    onAfterChange={(value) => onSliderChange(value)}
-                />
-            </Box>
-            <Box className={classes.root}>
-                <Typography>Current Box: {currentBox}, Your interval is set to: {interval} </Typography>
-                <Grid>
-                    <Button onClick={() => testLeitner()}>
-                        Next Question
+                {getFeedbackSet(timeTaken, numOptions, numGuesses, currentBox).map((feedback: Feedback, index: number) => {
+                    console.log(feedback);
+                    return <Button key={index} onClick={() => testLeitner(feedback)}>
+                        <Grid alignItems='center' justifyContent='center' direction='column'>
+                            {index == 0 ? <SentimentVeryDissatisfiedIcon /> : index == 1 ? <SentimentSatisfiedIcon /> : <SentimentVerySatisfiedIcon />}
+                            <Typography align='center'>
+                                Interval: {feedback.intervalLength}
+                            </Typography>
+                        </Grid>
                     </Button>;
-                </Grid>
+                })}
             </Box>
             <Box className={classes.root}>
                 <GoogleSignInButton onSuccess={onGoogleLoginSuccess} />
