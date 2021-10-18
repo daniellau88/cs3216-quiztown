@@ -11,6 +11,7 @@ import CollectionsImageCardEditPage from '../modules/cards/pages/CollectionsImag
 import CollectionAddPage from '../modules/collections/pages/CollectionAddPage';
 import CollectionPage from '../modules/collections/pages/CollectionPage';
 import HomePage from '../pages/HomePage';
+import InfoPage from '../pages/InfoPage';
 import TemplatePage from '../pages/utilities/TemplatePage';
 import routes from '../utilities/routes';
 
@@ -19,6 +20,7 @@ const MainRouter = (): JSX.Element => {
         <>
             <Switch>
                 <Route exact path={'/'} component={HomePage} />
+                <Route exact path={routes.INFO} component={InfoPage} />
                 <Route exact path={routes.COLLECTIONS.INDEX} component={CollectionPage} />
                 <Route exact path={routes.COLLECTIONS.NEW} component={CollectionAddPage} />
                 <Route exact path={routes.COLLECTIONS.SHOW} component={CollectionsCardPage} />

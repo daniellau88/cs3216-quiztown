@@ -22,6 +22,7 @@ const ROUTES = {
     CARDS: {
         SHOW_STARRED: '/cards/starred',
     },
+    INFO: '/info',
     TEST: '/test',
 };
 
