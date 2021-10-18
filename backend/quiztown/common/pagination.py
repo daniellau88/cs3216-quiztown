@@ -1,7 +1,7 @@
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
-DEFAULT_LIMIT = 20
+DEFAULT_LIMIT = 100
 
 
 class CustomPagination(LimitOffsetPagination):

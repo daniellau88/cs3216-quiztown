@@ -21,7 +21,7 @@ import {
 } from '../types/store';
 
 const CACHE_DURATION = 120000; // 120 seconds
-const DEFAULT_ITEMS_PER_PAGE = 25;
+const DEFAULT_ITEMS_PER_PAGE = 100;
 const DEFAULT_SORT_BY = 'id';
 const DEFAULT_SORT_ORDER = 'asc';
 
