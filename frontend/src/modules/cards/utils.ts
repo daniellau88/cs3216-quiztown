@@ -24,7 +24,8 @@ export const initAnswerOptions = (
     const canvasWidth = canvas.getWidth();
     const canvasHeight = canvas.getHeight();
 
-    const origin = new fabric.Point(CANVAS_PADDING, canvasHeight - CANVAS_PADDING);
+    const origin = new fabric.Point(CANVAS_PADDING, canvasHeight + CANVAS_PADDING);
+    canvas.setHeight(canvasHeight + 2*CANVAS_PADDING);
 
     data.forEach(option => {
         const text = new QTText(option.text, {
@@ -38,14 +39,17 @@ export const initAnswerOptions = (
         });
         text.setPositionByOrigin(origin, 'left', 'top');
         const textWidth = text.getBoundingRect().width;
+        const textHeight = text.getBoundingRect().height;
 
         if (origin.x + textWidth > canvasWidth) {
             origin.setX(CANVAS_PADDING);
-            origin.setY(origin.y - TEXT_MARGIN);
+            origin.setY(origin.y + TEXT_MARGIN);
 
             optionsCoordsMap.set(option.text, new fabric.Point(origin.x, origin.y));
             text.setPositionByOrigin(origin, 'left', 'top');
             origin.setX(origin.x + textWidth + TEXT_MARGIN);
+            // Dynamically resize canvas as more answer options are added
+            canvas.setHeight(canvas.getHeight() + TEXT_MARGIN + textHeight);
 
         } else {
             optionsCoordsMap.set(option.text, new fabric.Point(origin.x, origin.y));

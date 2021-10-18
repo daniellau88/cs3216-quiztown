@@ -33,7 +33,6 @@ import CollectionsImageCardEditControls from './CollectionsImageCardEditControls
 
 const MAX_CANVAS_WIDTH = 1280;
 const SCREEN_PADDING = 40;
-const HEADER_HEIGHT = 80;
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -44,6 +43,10 @@ const useStyles = makeStyles(() => ({
         position: 'absolute',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    showAnswerContainer: {
+        alignSelf: 'center',
+        marginTop: '20px',
     },
 }));
 
@@ -83,10 +86,9 @@ const CardImage: React.FC<CardImageProps> = ({
         : windowWidth - SCREEN_PADDING > MAX_CANVAS_WIDTH
             ? MAX_CANVAS_WIDTH
             : windowWidth;
-    const canvasMaxHeight = isEditing
-        ? imageMetadata.height
-        : windowHeight - HEADER_HEIGHT - SCREEN_PADDING;
+    const canvasMaxHeight = imageMetadata.height;
     const imageXTranslation = Math.max(canvasMaxWidth - imageMetadata.width, 0) / 2;
+
 
     const initCanvasWithBg = () => {
         const canvas = new fabric.Canvas(CANVAS_ID, {
@@ -185,35 +187,46 @@ const CardImage: React.FC<CardImageProps> = ({
         stateManager?.saveState();
     };
 
+    const revealAllAnswers = () => {
+        if (!canvas) return;
+        canvas.getObjects().forEach(object => canvas.remove(object));
+        setHasAnsweredAll(true);
+    };
+
     return (
         <>
             <CssBaseline />
-            <Box className={classes.root}>
-                <Grid container direction='column'>
-                    {isEditing &&
-                        <CollectionsImageCardEditControls
-                            undo={() => stateManager?.undo()}
-                            redo={() => stateManager?.redo()}
-                            addOption={addAnswerOption}
-                            deleteOption={deleteAnswerOption}
-                        />
-                    }
-                    <Box display="flex" justifyContent='center' width='100%'>
-                        <Box
-                            className={classes.imageContainer}
-                            style={{ height: canvasMaxHeight, width: canvasMaxWidth }}
-                        >
-                            <img
-                                src={imageUrl}
-                                style={{ position: 'absolute', left: (canvasMaxWidth - imageMetadata.width) / 2 }}
-                            />
-                        </Box>
-                        <canvas
-                            id={CANVAS_ID}
-                            width={canvasMaxWidth}
-                            height={canvasMaxHeight}
+            <Grid container direction='column' className={classes.root}>
+                {isEditing &&
+                    <CollectionsImageCardEditControls
+                        undo={() => stateManager?.undo()}
+                        redo={() => stateManager?.redo()}
+                        addOption={addAnswerOption}
+                        deleteOption={deleteAnswerOption}
+                    />
+                }
+                <Box display="flex" justifyContent='center' width='100%'>
+                    <Box
+                        className={classes.imageContainer}
+                        style={{ height: canvasMaxHeight, width: canvasMaxWidth }}
+                    >
+                        <img
+                            src={imageUrl}
+                            style={{ position: 'absolute', left: (canvasMaxWidth - imageMetadata.width) / 2 }}
                         />
                     </Box>
+                    <canvas
+                        id={CANVAS_ID}
+                        width={canvasMaxWidth}
+                        height={canvasMaxHeight}
+                    />
+                </Box>
+                <Grid item className={classes.showAnswerContainer}>
+                    {!isEditing &&
+                        <QTButton outlined onClick={revealAllAnswers}>
+                            Show answer
+                        </QTButton>
+                    }
                 </Grid>
 
                 <Dialog
@@ -239,7 +252,7 @@ const CardImage: React.FC<CardImageProps> = ({
                             ))} */}
                     </DialogActions>
                 </Dialog>
-            </Box>
+            </Grid>
         </>
     );
 };
