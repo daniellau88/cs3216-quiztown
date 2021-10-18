@@ -8,7 +8,7 @@ from dataclasses import asdict
 import django.http
 import rest_framework.request
 
-from django.db import models
+from django.db.models.query import QuerySet
 from rest_framework import serializers
 
 from .errors import ApplicationError, ErrorCode, Message
@@ -94,7 +94,7 @@ def get_error_messages_from_serializer(serializer: serializers.Serializer) -> li
 
 def filter_model_by_get_request(
         request: rest_framework.request.Request,
-        model_class: typing.Type[models.Model],
+        model_queryset: QuerySet,
         model_serializer_class: typing.Type[serializers.Serializer],
         filter_serializer_class: typing.Type[serializers.Serializer] | None = None):
     get_request = convert_get_request_to_dict(request.GET)
@@ -103,8 +103,6 @@ def filter_model_by_get_request(
     if not get_serializer.is_valid():
         raise ApplicationError(ErrorCode.INVALID_REQUEST,
                                get_error_messages_from_serializer(get_serializer))
-
-    model_query = model_class.objects.all()
 
     filters = get_serializer.data.get("filters", {})
     if filter_serializer_class and filters:
@@ -118,16 +116,16 @@ def filter_model_by_get_request(
             filter = {}
             filter[field] = value
             # TODO: handle date range
-            model_query = model_query.filter(**filter)
+            model_queryset = model_queryset.filter(**filter)
 
     sort_by = get_serializer.data.get("sort_by", "")
     order = get_serializer.data.get("order", "")
     if sort_by and order:
         sort_field_name = "-" + sort_by if order == "desc" else sort_by
-        model_query = model_query.order_by(sort_field_name)
+        model_queryset = model_queryset.order_by(sort_field_name)
 
     paginator = CustomPagination()
-    page = paginator.paginate_queryset(model_query, request)
+    page = paginator.paginate_queryset(model_queryset, request)
 
     response_serializer = model_serializer_class(page, many=True)
     return paginator.get_paginated_response({"items": response_serializer.data})

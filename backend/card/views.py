@@ -1,9 +1,12 @@
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from collection.models import Collection
+from card.helpers import get_default_card_queryset_by_request
+from collection import helpers as collection_helpers
 from quiztown.common import utils
 from quiztown.common.decorators import convert_keys_to_item, validate_request_data
+from quiztown.common.errors import ApplicationError, ErrorCode
 
 from . import jobs, serializers
 from .models import Card
@@ -20,7 +23,7 @@ def list_or_create_card_view(request, *args, **kwargs):
 def list_card_view(request):
     return utils.filter_model_by_get_request(
         request,
-        Card,
+        get_default_card_queryset_by_request(request),
         serializers.CardListSerializer,
         filter_serializer_class=serializers.CardListFilterSerializer,
     )
@@ -28,17 +31,25 @@ def list_card_view(request):
 
 @validate_request_data(serializers.CardCreateSerializer)
 def create_card_view(request, serializer):
+    collection_id = request.data["collection_id"]
+    # Check if have permission to add to particular collection
+    try:
+        collection_helpers.get_default_collection_queryset_by_request(
+            request).get(id=collection_id)
+    except ObjectDoesNotExist:
+        raise ApplicationError(ErrorCode.NOT_FOUND, ["Item not found"])
+
     serializer.save()
     return Response({"item": serializer.data})
 
 
-@api_view(["GET", "PUT", "DELETE"])
+@api_view(["GET", "PATCH", "DELETE"])
 @convert_keys_to_item({"pk": Card})
 def get_or_update_or_delete_card_view(request, *args, **kwargs):
     if request.method == "GET":
         return get_card_view(request, *args, **kwargs)
 
-    elif request.method == "PUT":
+    elif request.method == "PATCH":
         return update_card_view(request, *args, **kwargs)
 
     elif request.method == "DELETE":
@@ -64,6 +75,7 @@ def delete_card_view(request, pk_item, *args, **kwargs):
     return Response({})
 
 
+# Deprecated
 @api_view(["POST"])
 @validate_request_data(serializers.CardImportImageSerializer)
 def import_card_view(request, serializer, pk, *args, **kwargs):

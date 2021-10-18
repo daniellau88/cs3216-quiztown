@@ -5,6 +5,7 @@ import traceback
 from dataclasses import dataclass
 from typing import Type, Union
 
+import redis.exceptions
 import rest_framework.exceptions as rest_exceptions
 
 from rest_framework import status
@@ -132,6 +133,9 @@ def exception_handler(exc: Exception, context):
             code = exc.error_code
             for message in exc.messages:
                 add_message_on_context(context, message, MessageType.ERROR)
+        if isinstance(exc, redis.exceptions.ConnectionError):
+            code = ErrorCode.DEPENDENCY_ERROR
+            add_message_on_context(context, "Connection Error", MessageType.ERROR)
 
     if code == -1:
         code = ErrorCode.INTERNAL_SERVER
