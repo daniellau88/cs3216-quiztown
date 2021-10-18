@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os.path
 import typing
 
 from dataclasses import asdict
@@ -130,3 +131,8 @@ def filter_model_by_get_request(
 
     response_serializer = model_serializer_class(page, many=True)
     return paginator.get_paginated_response({"items": response_serializer.data})
+
+
+def get_extension_from_filename(filename: str):
+    extension = os.path.splitext(filename)[1]
+    return extension.lower()

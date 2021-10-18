@@ -19,4 +19,5 @@ from django.urls import include, path
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/", include("quiztown.rest_api_urls")),
+    path("django-rq/", include("django_rq.urls")),
 ]
