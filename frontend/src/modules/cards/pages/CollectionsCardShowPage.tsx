@@ -1,24 +1,36 @@
+import { Box, CssBaseline, Grid, makeStyles } from '@material-ui/core';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { RouteComponentProps, generatePath, useHistory } from 'react-router-dom';
 import { Dispatch } from 'redux';
 
 import LoadingIndicator from '../../../components/content/LoadingIndicator';
+import Breadcrumbs from '../../../layouts/Breadcrumbs';
 import { AppState } from '../../../types/store';
 import { dateToISOFormat } from '../../../utilities/datetime';
+import routes from '../../../utilities/routes';
 import { handleApiRequest } from '../../../utilities/ui';
+import { getCollectionMiniEntity } from '../../collections/selectors';
 import CardImage from '../components/CardImage';
 import { loadCard, updateCard } from '../operations';
 import { getCardEntity } from '../selectors';
 
+const useStyles = makeStyles(() => ({
+    root: {
+        display: 'flex',
+        paddingBottom: '8vh',
+    },
+}));
 
 type Props = RouteComponentProps;
 
 const CollectionsCardShowPage: React.FC<Props> = ({ match: { params } }: RouteComponentProps) => {
+    const classes = useStyles();
     const history = useHistory();
     const dispatch = useDispatch();
     const cardId: number = +(params as { cardId: string }).cardId;
     const collectionId: number = +(params as { collectionId: string }).collectionId;
+    const collection = useSelector((state: AppState) => getCollectionMiniEntity(state, collectionId));
     const card = useSelector((state: AppState) => getCardEntity(state, cardId));
 
     const [isLoading, setIsLoading] = React.useState(true);
@@ -46,19 +58,29 @@ const CollectionsCardShowPage: React.FC<Props> = ({ match: { params } }: RouteCo
 
     return (
         <>
-            {isLoading && (
-                <LoadingIndicator />
-            )}
-            {!isLoading && card && (
-                <CardImage
-                    id={card.id}
-                    imageUrl={card.image_link}
-                    result={card.answer_details.results}
-                    onCardCompleted={onCardCompleted}
-                    imageMetadata={card.image_metadata}
-                    isEditing={false}
-                />
-            )}
+            <CssBaseline />
+            <Box className={classes.root}>
+                <Grid container spacing={2}>
+                    <Breadcrumbs links={[
+                        { path: routes.COLLECTIONS.INDEX, name: 'Collections' },
+                        { path: generatePath(routes.COLLECTIONS.SHOW, { collectionId: collectionId }), name: collection ? collection.name : 'Untitled collection' },
+                        { path: null, name: card ? card.name : 'Untitled Card' },
+                    ]} />
+                    {isLoading && (
+                        <LoadingIndicator />
+                    )}
+                    {!isLoading && card && (
+                        <CardImage
+                            id={card.id}
+                            imageUrl={card.image_link}
+                            result={card.answer_details.results}
+                            onCardCompleted={onCardCompleted}
+                            imageMetadata={card.image_metadata}
+                            isEditing={false}
+                        />
+                    )}
+                </Grid>
+            </Box>
         </>
     );
 

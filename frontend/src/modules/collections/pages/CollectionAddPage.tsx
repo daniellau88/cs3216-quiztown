@@ -13,8 +13,10 @@ import { useHistory } from 'react-router-dom';
 
 import api from '../../../api';
 import QTButton from '../../../components/QTButton';
+import Breadcrumbs from '../../../layouts/Breadcrumbs';
 import { CollectionPostData, CollectionsImportPostData } from '../../../types/collections';
 import { UploadData } from '../../../types/uploads';
+import routes from '../../../utilities/routes';
 import { handleApiRequest } from '../../../utilities/ui';
 import CollectionAddFileCards from '../components/CollectionAddFileCards';
 import { addCollection, importCollections, loadAllCollections } from '../operations';
@@ -22,7 +24,6 @@ import { addCollection, importCollections, loadAllCollections } from '../operati
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
-        paddingTop: '40px',
         paddingBottom: '80px',
     },
     header: {
@@ -99,6 +100,10 @@ const AddCollectionPage: React.FC<{}> = () => {
             <CssBaseline />
             <Box className={classes.root}>
                 <Grid container spacing={2}>
+                    <Breadcrumbs links={[
+                        { path: routes.COLLECTIONS.INDEX, name: 'Collections' },
+                        { path: null, name: 'Add Collection' },
+                    ]} />
                     <Grid container direction='row' className={classes.header}>
                         <Typography className={classes.title} variant='h5' component="div">
                             Adding files to

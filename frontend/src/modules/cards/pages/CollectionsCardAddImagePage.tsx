@@ -8,11 +8,13 @@ import {
 import * as React from 'react';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { RouteComponentProps, generatePath, useHistory } from 'react-router-dom';
 
 import QTButton from '../../../components/QTButton';
+import Breadcrumbs from '../../../layouts/Breadcrumbs';
 import { AppState } from '../../../types/store';
 import { UploadData } from '../../../types/uploads';
+import routes from '../../../utilities/routes';
 import { handleApiRequest } from '../../../utilities/ui';
 import CollectionAddFileCards from '../../collections/components/CollectionAddFileCards';
 import { importCollections } from '../../collections/operations';
@@ -22,7 +24,6 @@ import { loadCollectionCards } from '../operations';
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
-        paddingTop: '40px',
         paddingBottom: '80px',
     },
     header: {
@@ -91,6 +92,11 @@ const CollectionsCardAddImagePage: React.FC<Props> = ({ match: { params } }: Rou
             <CssBaseline />
             <Box className={classes.root}>
                 <Grid container spacing={2}>
+                    <Breadcrumbs links={[
+                        { path: routes.COLLECTIONS.INDEX, name: 'Collections' },
+                        { path: generatePath(routes.COLLECTIONS.SHOW, { collectionId: collectionId }), name: collection ? collection.name : 'Untitled collection' },
+                        { path: null, name: 'Add Image Card' },
+                    ]} />
                     <Grid container direction='row' className={classes.header}>
                         <Typography className={classes.title} variant='h5' component="div">
                             Import cards to {collection?.name}

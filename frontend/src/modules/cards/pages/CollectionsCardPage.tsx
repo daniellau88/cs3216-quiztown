@@ -10,8 +10,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 
 import LoadingIndicator from '../../../components/content/LoadingIndicator';
-import { CollectionMiniEntity, CollectionPostData } from '../../../types/collections';
+import Breadcrumbs from '../../../layouts/Breadcrumbs';
+import { CollectionPostData } from '../../../types/collections';
 import { AppState } from '../../../types/store';
+import routes from '../../../utilities/routes';
 import { handleApiRequest } from '../../../utilities/ui';
 import { addCollection, loadCollection } from '../../collections/operations';
 import { getCollectionMiniEntity } from '../../collections/selectors';
@@ -90,6 +92,10 @@ const CollectionsCardPage: React.FC<Props> = ({ match: { params } }: RouteCompon
             <CssBaseline />
             <Box className={classes.root}>
                 <Grid container spacing={2}>
+                    <Breadcrumbs links={[
+                        { path: routes.COLLECTIONS.INDEX, name: 'Collections' },
+                        { path: null, name: collection ? collection.name : 'Untitled collection' },
+                    ]} />
                     <Grid container direction='column' className={classes.header}>
                         <Typography align='center' className={classes.headerText}>
                             {collection ? collection.name : 'Untitled collection'}

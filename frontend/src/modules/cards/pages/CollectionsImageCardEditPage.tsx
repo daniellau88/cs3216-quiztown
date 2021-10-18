@@ -1,4 +1,6 @@
 import {
+    Box,
+    CssBaseline,
     Divider,
     Grid,
     Typography,
@@ -7,19 +9,26 @@ import {
 import { fabric } from 'fabric';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { RouteComponentProps, generatePath, useHistory } from 'react-router-dom';
 import { Dispatch } from 'redux';
 
 import LoadingIndicator from '../../../components/content/LoadingIndicator';
 import QTButton from '../../../components/QTButton';
+import Breadcrumbs from '../../../layouts/Breadcrumbs';
 import { AnswerData } from '../../../types/cards';
 import { AppState } from '../../../types/store';
+import routes from '../../../utilities/routes';
 import { handleApiRequest } from '../../../utilities/ui';
+import { getCollectionMiniEntity } from '../../collections/selectors';
 import CardImage from '../components/CardImage';
 import { loadCard, updateCard } from '../operations';
 import { getCardEntity } from '../selectors';
 
 const useStyles = makeStyles(() => ({
+    root: {
+        display: 'flex',
+        paddingBottom: '8vh',
+    },
     container: {
         paddingRight: '80px',
         paddingLeft: '80px',
@@ -37,6 +46,7 @@ const CollectionsImageCardEditPage: React.FC<Props> = ({ match: { params } }: Ro
     const dispatch = useDispatch();
     const cardId: number = +(params as { cardId: string }).cardId;
     const collectionId: number = +(params as { collectionId: string }).collectionId;
+    const collection = useSelector((state: AppState) => getCollectionMiniEntity(state, collectionId));
     const card = useSelector((state: AppState) => getCardEntity(state, cardId));
     const canvasRef = React.useRef<fabric.Canvas>();
 
@@ -102,31 +112,43 @@ const CollectionsImageCardEditPage: React.FC<Props> = ({ match: { params } }: Ro
     }
 
     return (
-        <Grid container direction='column' className={classes.container}>
-            <Typography variant='h3'>
-                Editing Card - {card && card.name}
-            </Typography>
-            <Divider/>
+        <>
+            <CssBaseline />
+            <Box className={classes.root}>
+                <Grid container spacing={2}>
+                    <Breadcrumbs links={[
+                        { path: routes.COLLECTIONS.INDEX, name: 'Collections' },
+                        { path: generatePath(routes.COLLECTIONS.SHOW, { collectionId: collectionId }), name: collection ? collection.name : 'Untitled collection' },
+                        { path: null, name: card ? card.name : 'Untitled Card' },
+                    ]} />
+                    <Grid container direction='column' className={classes.container}>
+                        <Typography variant='h3'>
+                            Editing Card - {card && card.name}
+                        </Typography>
+                        <Divider />
 
-            <Grid item>
-                {!isLoading && card && (
-                    <CardImage
-                        id={card.id}
-                        imageUrl={card.image_link}
-                        result={card.answer_details.results}
-                        imageMetadata={card.image_metadata}
-                        isEditing={true}
-                        canvasRef={canvasRef}
-                    />
-                )}
-            </Grid>
+                        <Grid item>
+                            {!isLoading && card && (
+                                <CardImage
+                                    id={card.id}
+                                    imageUrl={card.image_link}
+                                    result={card.answer_details.results}
+                                    imageMetadata={card.image_metadata}
+                                    isEditing={true}
+                                    canvasRef={canvasRef}
+                                />
+                            )}
+                        </Grid>
 
-            <Grid item className={classes.alignRight}>
-                <QTButton onClick={confirmEdit} outlined>
-                    Confirm
-                </QTButton>
-            </Grid>
-        </Grid>
+                        <Grid item className={classes.alignRight}>
+                            <QTButton onClick={confirmEdit} outlined>
+                                Confirm
+                            </QTButton>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Box>
+        </>
     );
 
 };
