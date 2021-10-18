@@ -90,7 +90,7 @@ const CardImage: React.FC<CardImageProps> = ({
     const [stateManager, setStateManager] = useState<StateManager>();
     const [hasAnsweredAll, setHasAnsweredAll] = useState(false);
     const [numGuesses, setNumGuesses] = useState(0); // TODO increment with user guess
-    const [timeTaken, setTimeTaken] = useState(0); // TODO implement stopwatch
+    const [timeTaken, setTimeTaken] = useState<number>(0); // TODO implement stopwatch
 
     const { windowHeight, windowWidth } = useWindowDimensions();
 
@@ -102,6 +102,7 @@ const CardImage: React.FC<CardImageProps> = ({
     const canvasMaxHeight = imageMetadata.height;
     const imageXTranslation = Math.max(canvasMaxWidth - imageMetadata.width, 0) / 2;
 
+    const startTime = Moment();
 
     const initCanvasWithBg = () => {
         const canvas = new fabric.Canvas(CANVAS_ID, {
@@ -139,7 +140,7 @@ const CardImage: React.FC<CardImageProps> = ({
             if (isAnswerCorrect) {
                 canvas.remove(e.target);
                 revealAnswer(answersCoordsMap, text, canvas);
-                setHasAnsweredAll(updateCorrectAnswersIndicator(answersIndicator));
+                stopTime().then(() => setHasAnsweredAll(updateCorrectAnswersIndicator(answersIndicator)));
             } else {
                 e.target.opacity = 1;
                 resetToOriginalPosition(optionsCoordsMap, text);
@@ -159,7 +160,6 @@ const CardImage: React.FC<CardImageProps> = ({
         });
         setCanvas(canvas);
         setStateManager(stateManager);
-
     }, []);
 
     useEffect(() => {
@@ -169,6 +169,11 @@ const CardImage: React.FC<CardImageProps> = ({
             canvas.setViewportTransform([canvas.getZoom() * scale, 0, 0, canvas.getZoom() * scale, 0, 0]);
         }
     }, [windowHeight, windowWidth]);
+
+    const stopTime = async () => {
+        const endTime = Moment();
+        setTimeTaken(Moment.duration(endTime.diff(startTime)).seconds());
+    };
 
     const onClose = () => {
         console.log('Close dialog');
@@ -197,7 +202,7 @@ const CardImage: React.FC<CardImageProps> = ({
     const revealAllAnswers = () => {
         if (!canvas) return;
         canvas.getObjects().forEach(object => canvas.remove(object));
-        setHasAnsweredAll(true);
+        stopTime().then(() => setHasAnsweredAll(true));
     };
 
     const sendUpdate = (feedback: Feedback) => {
@@ -209,7 +214,6 @@ const CardImage: React.FC<CardImageProps> = ({
             box_number: feedback.nextBoxNumber,
             next_date: Moment(roundDownDay(addDays(new Date(), feedback.intervalLength))).format('YYYY-MM-DD'),
         };
-        console.log(cardPostData);
         return handleApiRequest(dispatch, dispatch(updateCard(card.id, cardPostData)))
             .then(() => {
                 return true;
