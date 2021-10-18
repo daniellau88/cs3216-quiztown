@@ -150,6 +150,9 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_PAGINATION_CLASS": "quiztown.common.pagination.CustomPagination",
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
+    ]
 }
 
 AUTH_USER_MODEL = "user.User"
