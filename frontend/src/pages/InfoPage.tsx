@@ -49,7 +49,7 @@ const InfoPage: React.FC<{}> = () => {
             <Box className={classes.root}>
                 <Grid container spacing={2}>
                     <Breadcrumbs links={[
-                        { path: null, name: 'Starred Cards' },
+                        { path: null, name: 'Info' },
                     ]} />
                     <Box display='flex' flexDirection='column' className={classes.root}>
                         <Typography align='center' className={classes.headerText}>

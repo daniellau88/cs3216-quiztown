@@ -130,10 +130,7 @@ const CollectionsImageCardEditPage: React.FC<Props> = ({ match: { params } }: Ro
                         <Grid item>
                             {!isLoading && card && (
                                 <CardImage
-                                    id={card.id}
-                                    imageUrl={card.image_link}
-                                    result={card.answer_details.results}
-                                    imageMetadata={card.image_metadata}
+                                    card={card}
                                     isEditing={true}
                                     canvasRef={canvasRef}
                                 />

@@ -71,11 +71,8 @@ const CollectionsCardShowPage: React.FC<Props> = ({ match: { params } }: RouteCo
                     )}
                     {!isLoading && card && (
                         <CardImage
-                            id={card.id}
-                            imageUrl={card.image_link}
-                            result={card.answer_details.results}
+                            card={card}
                             onCardCompleted={onCardCompleted}
-                            imageMetadata={card.image_metadata}
                             isEditing={false}
                         />
                     )}

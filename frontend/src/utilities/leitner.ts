@@ -2,8 +2,10 @@ const maxBoxNumber = 10;
 const maxDays = 30;
 const leitnerMultiplier = 1.5;
 
-const expectedTimePerOption = 5.0; // In seconds. This will need tweaking.
-const incorrectAnswerPenaltyMultiplier = 1.5;
+const expectedTimePerOption = 6.0; // In seconds. This will need tweaking.
+const incorrectAnswerPenaltyMultiplier = 1.25;
+
+const skipConfidence = 9.0; // Delta if user skips question.
 
 export interface Feedback {
     intervalLength: number,
@@ -17,10 +19,17 @@ export function getFeedbackWithInterval(interval: number): Feedback {
 }
 
 // When user answers a question, we use their statistics to predict the desired box number.
-export function getFeedback(timeTakenInSeconds: number, numOptions: number, numGuesses: number, currentBox: number): Feedback {
+export function getFeedbackSet(timeTakenInSeconds: number, numOptions: number, numGuesses: number, currentBox: number): Feedback[] {
+    return [-1, 0, 1].map(x => getFeedback(timeTakenInSeconds, numOptions, numGuesses, currentBox, x));
+}
+
+function getFeedback(timeTakenInSeconds: number, numOptions: number, numGuesses: number, currentBox: number, confidence: number): Feedback {
+    if (confidence < 0) {
+        return { intervalLength: 1, nextBoxNumber: 0 };
+    }
     const delta = getDelta(timeTakenInSeconds, numOptions, numGuesses);
-    const nextBox = getNextBoxNumber(currentBox, delta);
-    const intervalLength = getNextIntervalLength(currentBox, delta);
+    const nextBox = getNextBoxNumber(currentBox, delta) + confidence;
+    const intervalLength = getIntervalFromBoxNumber(getNextBoxNumberUnfloored(currentBox, delta) + confidence);
     return { intervalLength: intervalLength, nextBoxNumber: nextBox };
 }
 
@@ -37,14 +46,15 @@ function getBoxNumberFromInterval(interval: number) {
 }
 
 function getDelta(timeTakenInSeconds: number, numOptions: number, numGuesses: number) {
+    // Default value for when user skips question.
+    if (numGuesses == 0) {
+        return skipConfidence;
+    }
+    // Else, use metrics.
     const actualTime = timeTakenInSeconds * Math.pow(incorrectAnswerPenaltyMultiplier, numGuesses - numOptions);
     const expectedTime = expectedTimePerOption * numOptions;
     const timeRatio = expectedTime / actualTime - actualTime / expectedTime;
     return Math.sign(timeRatio) * Math.floor(Math.pow(Math.abs(timeRatio), 0.5) * 10);
-}
-
-function getNextIntervalLength(currentBox: number, delta: number): number {
-    return getIntervalFromBoxNumber(getNextBoxNumberUnfloored(currentBox, delta));
 }
 
 function getIntervalFromBoxNumber(box: number): number {
