@@ -64,8 +64,7 @@ const AddCollectionPage: React.FC<{}> = () => {
         if (uploadFiles == undefined) {
             return;
         }
-        // TODO: change owner_id: user ? user.id : 0
-        const collectionPostDataCurrent: CollectionPostData = { name: collectionName, owner_id: 0 };
+        const collectionPostDataCurrent: CollectionPostData = { name: collectionName };
         return handleApiRequest(dispatch, dispatch(addCollection(collectionPostDataCurrent)))
             .then((response) => {
                 console.log(response);

@@ -43,7 +43,7 @@ const TemplatePage: React.FC<{}> = () => {
 
     const testCreateApi = () => {
         console.log('You clicked me! I\'m created! hehehe');
-        const collectionPostDataStub: CollectionPostData = { name: 'hi', owner_id: 1 };
+        const collectionPostDataStub: CollectionPostData = { name: 'hi' };
         return handleApiRequest(dispatch, dispatch(addCollection(collectionPostDataStub)))
             .then((response) => {
                 console.log(response);
@@ -58,7 +58,7 @@ const TemplatePage: React.FC<{}> = () => {
 
     const testUpdateApi = () => {
         console.log('You clicked me! I\'m updated! uwu');
-        const collectionPostDataStub: CollectionPostData = { name: 'hi', owner_id: 1 };
+        const collectionPostDataStub: CollectionPostData = { name: 'hi' };
         return handleApiRequest(dispatch, dispatch(updateCollection(1, collectionPostDataStub)))
             .then((response) => {
                 console.log(response);

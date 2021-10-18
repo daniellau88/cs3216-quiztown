@@ -6,12 +6,6 @@ from .models import Card
 STATIC_CARD_URL = settings.STATIC_URL + "cards/"
 
 
-class CardCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Card
-        exclude = ["image_metadata"]
-
-
 class CardListFilterSerializer(serializers.Serializer):
     flagged = serializers.IntegerField(required=False)
     collection_id = serializers.IntegerField(required=False)
@@ -41,6 +35,21 @@ class CardSerializer(serializers.ModelSerializer):
         rep = super(CardSerializer, self).to_representation(data)
         rep["image_link"] = STATIC_CARD_URL + rep["image_file_key"]
         return rep
+
+
+class CardCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Card
+        fields = ["name", "collection_id", "flagged", "image_file_key",
+                  "next_date", "box_number", "image_metadata", "answer_details",
+                  "type", "question", "answer"]
+
+
+class CardUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Card
+        fields = ["name", "flagged", "next_date", "box_number",
+                  "answer_details", "question", "answer"]
 
 
 class CardImportImageSerializer(serializers.Serializer):

@@ -1,15 +1,16 @@
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import response
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from card.helpers import get_default_card_queryset_by_request
 from collection import helpers as collection_helpers
+from collection.models import Collection
 from quiztown.common import utils
 from quiztown.common.decorators import convert_keys_to_item, validate_request_data
 from quiztown.common.errors import ApplicationError, ErrorCode
 
 from . import jobs, serializers
-from .models import Card
 
 
 @api_view(["GET", "POST"])
@@ -44,12 +45,21 @@ def create_card_view(request, serializer):
 
 
 @api_view(["GET", "PATCH", "DELETE"])
-@convert_keys_to_item({"pk": Card})
+@convert_keys_to_item({"pk": get_default_card_queryset_by_request})
 def get_or_update_or_delete_card_view(request, *args, **kwargs):
     if request.method == "GET":
         return get_card_view(request, *args, **kwargs)
 
-    elif request.method == "PATCH":
+    # Only can edit own items
+    if request.user.is_authenticated and request.method != "GET":
+        collection_id = kwargs["pk_item"].collection_id
+        collection = collection_helpers.get_default_collection_queryset_by_request(
+            request).get(id=collection_id)
+        assert isinstance(collection, Collection)
+        if collection.owner_id != request.user.user_id:
+            raise ApplicationError(ErrorCode.UNAUTHENTICATED, ["No permission to edit"])
+
+    if request.method == "PATCH":
         return update_card_view(request, *args, **kwargs)
 
     elif request.method == "DELETE":
@@ -62,12 +72,14 @@ def get_card_view(request, pk_item, *args, **kwargs):
 
 
 @validate_request_data(
-    serializers.CardSerializer,
+    serializers.CardUpdateSerializer,
     is_update=True,
 )
 def update_card_view(request, pk_item, serializer, *args, **kwargs):
     serializer.save()
-    return Response({"item": serializer.data})
+
+    response_serializer = serializers.CardSerializer(serializer.instance)
+    return Response({"item": response_serializer.data})
 
 
 def delete_card_view(request, pk_item, *args, **kwargs):

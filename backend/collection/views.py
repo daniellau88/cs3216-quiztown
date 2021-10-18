@@ -27,10 +27,12 @@ def list_collections_view(request):
     )
 
 
-@validate_request_data(serializers.CollectionSerializer)
+@validate_request_data(serializers.CollectionCreateSerializer)
 def create_collection_view(request, serializer):
     serializer.save(owner_id=request.user.id)
-    return Response({"item": serializer.data})
+
+    response_serializer = serializers.CollectionSerializer(serializer.instance)
+    return Response({"item": response_serializer.data})
 
 
 @api_view(["GET", "PATCH", "DELETE"])
@@ -44,7 +46,7 @@ def get_or_update_or_delete_collection_view(request, *args, **kwargs):
         if kwargs["pk_item"].owner_id != request.user.user_id:
             raise ApplicationError(ErrorCode.UNAUTHENTICATED, ["No permission to edit"])
 
-    if request.method == "PUT":
+    if request.method == "PATCH":
         return update_collection_view(request, *args, **kwargs)
     elif request.method == "DELETE":
         return delete_collection_view(request, *args, **kwargs)
@@ -56,12 +58,14 @@ def get_collection_view(request, pk_item):
 
 
 @validate_request_data(
-    serializers.CollectionSerializer,
+    serializers.CollectionUpdateSerializer,
     is_update=True,
 )
 def update_collection_view(request, pk_item, serializer):
     serializer.save()
-    return Response({"item": serializer.data})
+
+    response_serializer = serializers.CollectionSerializer(serializer.instance)
+    return Response({"item": response_serializer.data})
 
 
 def delete_collection_view(request, pk_item):

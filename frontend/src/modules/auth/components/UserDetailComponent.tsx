@@ -21,6 +21,7 @@ const useStyles = makeStyles((theme) => ({
     },
     items: {
         marginLeft: 10,
+        textAlign: 'left',
     },
     paper: {
         border: '1px solid',
