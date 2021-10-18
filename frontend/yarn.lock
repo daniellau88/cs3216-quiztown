@@ -1937,11 +1937,6 @@
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
   integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
 
-"@types/pdfjs-dist@*":
-  version "2.7.5"
-  resolved "https://registry.nlark.com/@types/pdfjs-dist/download/@types/pdfjs-dist-2.7.5.tgz#53fc13e30b6bd18acdb3617fb6332a43225e0ffa"
-  integrity sha1-U/wT4wtr0YrNs2F/tjMqQyJeD/o=
-
 "@types/prettier@^2.0.0":
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/@types/prettier/-/prettier-2.4.1.tgz#e1303048d5389563e130f5bdd89d37a99acb75eb"
@@ -1971,13 +1966,13 @@
   dependencies:
     "@types/react" "^16"
 
-"@types/react-pdf@^5.0.7":
-  version "5.0.7"
-  resolved "https://registry.nlark.com/@types/react-pdf/download/@types/react-pdf-5.0.7.tgz#befcde41da992998a55d41068b8033266923e431"
-  integrity sha1-vvzeQdqZKZilXUEGi4AzJmkj5DE=
+"@types/react-pdf@^5.0.8":
+  version "5.0.8"
+  resolved "https://registry.yarnpkg.com/@types/react-pdf/-/react-pdf-5.0.8.tgz#872cf81a193f56aee2ede1351c8ff94b3e48b087"
+  integrity sha512-SClOJ0+9by7bxGaDILu5svo1yCI6aTJdSntOT+h9qWMc6SZlILMrMjyA7A6pMRNkLD0TAZwfk72awlDsZtCPSQ==
   dependencies:
-    "@types/pdfjs-dist" "*"
     "@types/react" "*"
+    pdfjs-dist "^2.9.359"
 
 "@types/react-redux@^7.1.16", "@types/react-redux@^7.1.18":
   version "7.1.18"
@@ -2037,6 +2032,13 @@
     "@types/prop-types" "*"
     "@types/scheduler" "*"
     csstype "^3.0.2"
+
+"@types/redux-persist@^4.3.1":
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/@types/redux-persist/-/redux-persist-4.3.1.tgz#aa4c876859e0bea5155e5f7980e5b8c4699dc2e6"
+  integrity sha1-qkyHaFngvqUVXl95gOW4xGmdwuY=
+  dependencies:
+    redux-persist "*"
 
 "@types/redux@^3.6.0":
   version "3.6.0"
@@ -8767,6 +8769,11 @@ pdfjs-dist@2.9.359:
   resolved "https://registry.npmmirror.com/pdfjs-dist/download/pdfjs-dist-2.9.359.tgz#e67bafebf20e50fc41f1a5c189155ad008ac4f81"
   integrity sha1-5nuv6/IOUPxB8aXBiRVa0AisT4E=
 
+pdfjs-dist@^2.9.359:
+  version "2.10.377"
+  resolved "https://registry.yarnpkg.com/pdfjs-dist/-/pdfjs-dist-2.10.377.tgz#feadc9f31bf1790795994e54b18930974cf4970a"
+  integrity sha512-i0jRShtvgfsVQUNCoFYH4SVhPO3U0yhtiFLfZ0RR0B+68N+Vnwq+8B3cjWjLEwWGh8wg1XQ/sYMYKUlHn/Qpsw==
+
 performance-now@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
@@ -10121,6 +10128,11 @@ redux-devtools-extension@^2.13.8:
   version "2.13.9"
   resolved "https://registry.yarnpkg.com/redux-devtools-extension/-/redux-devtools-extension-2.13.9.tgz#6b764e8028b507adcb75a1cae790f71e6be08ae7"
   integrity sha512-cNJ8Q/EtjhQaZ71c8I9+BPySIBVEKssbPpskBfsXqb8HJ002A3KRVHfeRzwRo6mGPqsm7XuHTqNSNeS1Khig0A==
+
+redux-persist@*, redux-persist@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/redux-persist/-/redux-persist-6.0.0.tgz#b4d2972f9859597c130d40d4b146fecdab51b3a8"
+  integrity sha512-71LLMbUq2r02ng2We9S215LtPu3fY0KgaGE0k8WRgl6RkqxtGfl7HUozz1Dftwsb0D/5mZ8dwAaPbtnzfvbEwQ==
 
 redux-thunk@^2.3.0:
   version "2.3.0"
