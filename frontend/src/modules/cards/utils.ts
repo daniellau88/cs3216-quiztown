@@ -282,16 +282,19 @@ export const mergeTextboxes = (canvas: fabric.Canvas, objects: fabric.Object[]):
             continue;
         }
         const combinedTextContent = firstTextContent.concat(secondTextContent);
+        const height = bottomRightPoint[1] - topLeftPoint[1];
+        const scaleY = height / DEFAULT_TEXTBOX_HEIGHT;
         mainTextbox = new QTTextbox(combinedTextContent, {
             top: topLeftPoint[1],
             left: topLeftPoint[0],
             width: bottomRightPoint[0] - topLeftPoint[0],
-            height: bottomRightPoint[1] - topLeftPoint[1],
+            height: height,
             hasBorders: false,
             borderColor: colours.BLACK,
             backgroundColor: colours.WHITE,
             stroke: colours.BLACK,
             fontSize: FONT_SIZE,
+            scaleY: scaleY,
         });
     }
 

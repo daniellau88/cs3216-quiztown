@@ -42,16 +42,6 @@ const CollectionsCardShowPage: React.FC<Props> = ({ match: { params } }: RouteCo
         });
     };
 
-    const onCardCompleted = (nextBoxNumber: number, nextDate: Date) => {
-        handleApiRequest(dispatch, dispatch(updateCard(cardId, {
-            box_number: nextBoxNumber,
-            next_date: dateToISOFormat(nextDate),
-        }))).finally(() => {
-            setIsLoading(false);
-        });
-        history.push(`/collections/${collectionId}`);
-    };
-
     React.useEffect(() => {
         onUpdate(cardId, dispatch);
     }, [dispatch, collectionId, cardId]);
@@ -72,7 +62,6 @@ const CollectionsCardShowPage: React.FC<Props> = ({ match: { params } }: RouteCo
                     {!isLoading && card && (
                         <CardImage
                             card={card}
-                            onCardCompleted={onCardCompleted}
                             isEditing={false}
                         />
                     )}
