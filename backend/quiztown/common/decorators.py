@@ -2,7 +2,13 @@ from __future__ import annotations
 
 import typing
 
+from typing import Callable, Union
+
+import rest_framework.request
+
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
+from django.db.models.query import QuerySet
 from rest_framework import serializers
 
 from quiztown.common.errors import ApplicationError, ErrorCode
@@ -10,29 +16,37 @@ from quiztown.common.errors import ApplicationError, ErrorCode
 from . import utils
 
 ITEM_SUFFIX = "_item"
+QuerySetType = Union[Callable[[rest_framework.request.Request],
+                              QuerySet], typing.Type[models.Model]]
+
+
+def get_queryset(queryset_class: QuerySetType, request: rest_framework.request.Request) -> QuerySet:
+    if isinstance(queryset_class, type) and issubclass(queryset_class, models.Model):
+        return queryset_class.objects.all()
+    else:
+        return queryset_class(request)
 
 
 # Automatically converts all keys to object
 # e.g. pk will be converted to pk_item (based on ITEM_SUFFIX)
-def convert_keys_to_item(model_classes: dict[str, typing.Type[models.Model]]):
+def convert_keys_to_item(model_classes: dict[str, QuerySetType]):
     def convert_keys_to_item_decorator(view):
         def wrapper_convert_keys_to_item_decorator(request, *args, **kwargs):
             kwargs_keys = list(kwargs.keys())
             for kwargs_key in kwargs_keys:
                 if kwargs_key not in model_classes:
                     continue
-                model_class = model_classes[kwargs_key]
+                model_class = get_queryset(model_classes[kwargs_key], request)
 
                 try:
                     pk = kwargs[kwargs_key]
-                    item = model_class.objects.get(id=pk)
+                    item = model_class.get(id=pk)
 
                     kwargs.pop(kwargs_key)
                     new_key_name = kwargs_key + ITEM_SUFFIX
                     kwargs[new_key_name] = item
-                except model_class.DoesNotExist:
-                    raise ApplicationError(ErrorCode.NOT_FOUND, [
-                                           model_class.__name__ + " not found"])
+                except ObjectDoesNotExist:
+                    raise ApplicationError(ErrorCode.NOT_FOUND, ["Item not found"])
 
             return view(request, *args, **kwargs)
         return wrapper_convert_keys_to_item_decorator

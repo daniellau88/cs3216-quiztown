@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import NavigationBarUserAuthElement from '../../modules/auth/components/NavigationBarUserAuthElement';
 import routes from '../../utilities/routes';
 import { headerSize } from '../utiltiies/constants';
 
@@ -49,6 +50,7 @@ const NavigationBarElements: React.FC<Props> = (props: Props) => {
                 onMouseEnter={props.onMouseEnter}
                 onMouseLeave={props.onMouseLeave}
             />
+            <NavigationBarUserAuthElement />
         </>
     );
 };

@@ -1,4 +1,3 @@
-import threading
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -6,9 +5,10 @@ from rest_framework.response import Response
 from card.models import Card
 from quiztown.common import utils
 from quiztown.common.decorators import convert_keys_to_item, validate_request_data
+from quiztown.common.errors import ApplicationError, ErrorCode
 
-from . import jobs, serializers
-from .models import Collection, CollectionImport
+from . import helpers, jobs, serializers
+from .models import CollectionImport
 
 
 @api_view(["GET", "POST"])
@@ -22,23 +22,32 @@ def list_or_create_collection_view(request, *args, **kwargs):
 def list_collections_view(request):
     return utils.filter_model_by_get_request(
         request,
-        Collection,
+        helpers.get_default_collection_queryset_by_request(request),
         serializers.CollectionSerializer,
+        search_fields=["name"],
     )
 
 
-@validate_request_data(serializers.CollectionSerializer)
+@validate_request_data(serializers.CollectionCreateSerializer)
 def create_collection_view(request, serializer):
-    serializer.save()
-    return Response({"item": serializer.data})
+    serializer.save(owner_id=request.user.id)
+
+    response_serializer = serializers.CollectionSerializer(serializer.instance)
+    return Response({"item": response_serializer.data})
 
 
-@api_view(["GET", "PUT", "DELETE"])
-@convert_keys_to_item({"pk": Collection})
+@api_view(["GET", "PATCH", "DELETE"])
+@convert_keys_to_item({"pk": helpers.get_default_collection_queryset_by_request})
 def get_or_update_or_delete_collection_view(request, *args, **kwargs):
     if request.method == "GET":
         return get_collection_view(request, *args, **kwargs)
-    elif request.method == "PUT":
+
+    # Only can edit own items
+    if request.user.is_authenticated and request.method != "GET":
+        if kwargs["pk_item"].owner_id != request.user.user_id:
+            raise ApplicationError(ErrorCode.UNAUTHENTICATED, ["No permission to edit"])
+
+    if request.method == "PATCH":
         return update_collection_view(request, *args, **kwargs)
     elif request.method == "DELETE":
         return delete_collection_view(request, *args, **kwargs)
@@ -50,12 +59,14 @@ def get_collection_view(request, pk_item):
 
 
 @validate_request_data(
-    serializers.CollectionSerializer,
+    serializers.CollectionUpdateSerializer,
     is_update=True,
 )
 def update_collection_view(request, pk_item, serializer):
     serializer.save()
-    return Response({"item": serializer.data})
+
+    response_serializer = serializers.CollectionSerializer(serializer.instance)
+    return Response({"item": response_serializer.data})
 
 
 def delete_collection_view(request, pk_item):
@@ -64,8 +75,13 @@ def delete_collection_view(request, pk_item):
 
 
 @api_view(["POST"])
-@convert_keys_to_item({"pk": Collection})
+@convert_keys_to_item({"pk": helpers.get_default_collection_queryset_by_request})
 def import_image_or_text_collection_view(request, *args, **kwargs):
+    # Only can edit own items
+    if request.user.is_authenticated and request.method != "GET":
+        if kwargs["pk_item"].owner_id != request.user.user_id:
+            raise ApplicationError(ErrorCode.UNAUTHENTICATED, ["No permission to edit"])
+
     if "type" in request.data and request.data["type"] == Card.TEXT:
         return import_collection_text_view(request, *args, **kwargs)
     return import_collection_view(request, *args, **kwargs)
@@ -125,19 +141,21 @@ def import_collection_view(request, pk_item, serializer):
 
 
 @api_view(["GET"])
-def get_collection_import_view(request, pk, pkImport):
-    collection_import = CollectionImport.objects.get(id=pkImport)
-    serializer = serializers.CollectionImportSerializer(collection_import)
+@convert_keys_to_item({
+    "pk": helpers.get_default_collection_queryset_by_request,
+    "pkImport": helpers.get_default_collection_import_queryset_by_request,
+})
+def get_collection_import_view(request, pk_item, pkImport_item):
+    serializer = serializers.CollectionImportSerializer(pkImport_item)
     return Response({"item": serializer.data})
 
 
 @api_view(["GET"])
-def list_collection_import_view(request, pk):
-    imports = CollectionImport.objects.filter(collection_id=pk)
-    # TODO: change filter format
-    if "filter[is_reviewed]" in request.GET:
-        filter = request.GET.get("filter[is_reviewed]")
-        imports = imports.filter(is_reviewed=bool(filter))
-    imports = imports.order_by("-created_at")
-    serializer = serializers.CollectionImportSerializer(imports, many=True)
-    return Response({"items": serializer.data})
+@convert_keys_to_item({"pk": helpers.get_default_collection_queryset_by_request})
+def list_collection_import_view(request, pk_item):
+    return utils.filter_model_by_get_request(
+        request,
+        helpers.get_default_collection_import_queryset_by_request(
+            request).filter(collection_id=pk_item.id),
+        serializers.CollectionImportSerializer,
+    )

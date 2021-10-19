@@ -63,7 +63,7 @@ const CollectionsCardPage: React.FC<Props> = ({ match: { params } }: RouteCompon
     React.useEffect(() => {
         if (collectionId == 'new') {
             const beforeCreateCardFunc = () => {
-                const collectionPostDataCurrent: CollectionPostData = { name: 'Untitled collection', owner_id: 0 };
+                const collectionPostDataCurrent: CollectionPostData = { name: 'Untitled collection' };
                 return handleApiRequest(dispatch, dispatch(addCollection(collectionPostDataCurrent)))
                     .then((response) => {
                         const newId = response.payload.id;
@@ -84,7 +84,7 @@ const CollectionsCardPage: React.FC<Props> = ({ match: { params } }: RouteCompon
     }, [collectionId]);
 
     if (isLoading) {
-        return <LoadingIndicator/>;
+        return <LoadingIndicator />;
     }
 
     return (
