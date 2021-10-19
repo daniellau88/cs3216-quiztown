@@ -1,4 +1,7 @@
 import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
     Checkbox,
     FormControl,
     Grid,
@@ -10,9 +13,6 @@ import {
     Typography,
     withStyles,
 } from '@material-ui/core';
-import MuiExpansionPanel from '@material-ui/core/ExpansionPanel';
-import MuiExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import MuiExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import * as React from 'react';
 import { isBrowser } from 'react-device-detect';
@@ -36,7 +36,7 @@ const ExpansionPanel = withStyles({
         },
     },
     expanded: {},
-})(MuiExpansionPanel);
+})(Accordion);
 
 const ExpansionPanelSummary = withStyles({
     root: {
@@ -55,13 +55,13 @@ const ExpansionPanelSummary = withStyles({
         },
     },
     expanded: {},
-})(MuiExpansionPanelSummary);
+})(AccordionSummary);
 
 const ExpansionPanelDetails = withStyles({
     root: {
         padding: '12px 16px',
     },
-})(MuiExpansionPanelDetails);
+})(AccordionDetails);
 
 export interface TableBaseFilter {
     type: string;
@@ -240,7 +240,7 @@ const TableFilters: React.FC<Props> = ({ collection, filters, onUpdate }: Props)
                                                     <Checkbox
                                                         name={filter.key}
                                                         value={activeFilters[filter.key]}
-                                                        checked={currentFilter}
+                                                        checked={currentFilter > 0}
                                                         onChange={(event) => {
                                                             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                                                             handleFilterChange(event.target.name!, event.target.checked ? 1 : 0);
