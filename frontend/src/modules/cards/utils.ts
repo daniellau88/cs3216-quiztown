@@ -211,3 +211,91 @@ export const updateCorrectAnswersIndicator = (correctAnswersIndicator: fabric.Te
 
     return updatedAnswerCount == parseInt(maxCorrectAnswers);
 };
+
+
+type BoundingRect = { top: number, left: number, width: number, height: number }
+/**
+ * Textbox position in a grouped selection will be relative to group instead of canvas, this converts the position
+ * such that it comes relative to canvas.
+ */
+const getBoundingRectRelativeToCanvas = (textbox: fabric.Textbox): BoundingRect => {
+    const textGroupLeft = textbox.group?.left;
+    const textGroupWidth = textbox.group?.width;
+    const textGroupTop = textbox.group?.top;
+    const textGroupHeight = textbox.group?.height;
+    const boundingRect = textbox.getBoundingRect();
+
+    if (!textGroupWidth || !textGroupLeft || !textGroupTop || !textGroupHeight) {
+        return boundingRect;
+    }
+
+    boundingRect.left = textGroupLeft + boundingRect.left + (textGroupWidth / 2);
+    boundingRect.top = textGroupTop + boundingRect.top + (textGroupHeight / 2);
+    return boundingRect;
+};
+
+export const mergeTextboxes = (canvas: fabric.Canvas, objects: fabric.Object[]): void => {
+    const textboxes = objects.map(object => object as fabric.Textbox);
+    if (textboxes.length <= 1) return;
+
+    let mainTextbox = textboxes[0];
+    for (let i = 1; i < textboxes.length; i++) {
+        const otherTextbox = textboxes[i];
+
+        const mainRect = getBoundingRectRelativeToCanvas(mainTextbox);
+        const otherRect = getBoundingRectRelativeToCanvas(otherTextbox);
+
+        const yDifference = Math.abs(mainRect.top - otherRect.top);
+        const xDifference = Math.abs(mainRect.left - otherRect.left);
+        const hasYOverlap = yDifference <= mainRect.height;
+        const hasXOverlap = xDifference <= mainRect.width;
+        let firstTextbox;
+        let secondTextbox;
+
+        if (!hasYOverlap && !hasXOverlap) {
+            firstTextbox = mainRect.top + mainRect.left < otherRect.top + otherRect.left
+                ? mainTextbox
+                : otherTextbox;
+            secondTextbox = firstTextbox == mainTextbox ? otherTextbox : mainTextbox;
+
+        } else {
+            const xOverlapPercentage = xDifference / mainRect.width;
+            const yOverlapPercentage = yDifference / otherRect.width;
+
+            firstTextbox = xOverlapPercentage > yOverlapPercentage
+                ? mainRect.top <= otherRect.top
+                    ? mainTextbox
+                    : otherTextbox
+                : mainRect.left <= otherRect.left
+                    ? mainTextbox
+                    : otherTextbox;
+            secondTextbox = firstTextbox == mainTextbox ? otherTextbox : mainTextbox;
+        }
+
+        const firstTextContent = firstTextbox.text;
+        const secondTextContent = secondTextbox.text;
+        const topLeftPoint = [Math.min(mainRect.left, otherRect.left), Math.min(mainRect.top, otherRect.top)];
+        const bottomRightPoint = [Math.max(mainRect.left + mainRect.width, otherRect.left + otherRect.width),
+            Math.max(mainRect.top + mainRect.height, otherRect.top + otherRect.height)];
+
+        if (!firstTextContent || !secondTextContent) {
+            continue;
+        }
+        const combinedTextContent = firstTextContent.concat(secondTextContent);
+        mainTextbox = new QTTextbox(combinedTextContent, {
+            top: topLeftPoint[1],
+            left: topLeftPoint[0],
+            width: bottomRightPoint[0] - topLeftPoint[0],
+            height: bottomRightPoint[1] - topLeftPoint[1],
+            hasBorders: false,
+            borderColor: colours.BLACK,
+            backgroundColor: colours.WHITE,
+            stroke: colours.BLACK,
+            fontSize: FONT_SIZE,
+        });
+    }
+
+    objects.forEach(object => canvas.remove(object));
+    canvas.add(mainTextbox);
+    canvas.discardActiveObject();
+};

@@ -33,6 +33,7 @@ import {
     initAnswerBoxes,
     initAnswerOptions,
     initCorrectAnswersIndicator,
+    mergeTextboxes,
     resetToOriginalPosition,
     revealAnswer,
     updateCorrectAnswersIndicator,
@@ -199,6 +200,13 @@ const CardImage: React.FC<CardImageProps> = ({
         stateManager?.saveState();
     };
 
+    const mergeAnswerOption = () => {
+        if (!canvas) return;
+        const activeObjects = canvas.getActiveObjects();
+        mergeTextboxes(canvas, activeObjects);
+        stateManager?.saveState();
+    };
+
     const revealAllAnswers = () => {
         if (!canvas) return;
         canvas.getObjects().forEach(object => canvas.remove(object));
@@ -230,6 +238,7 @@ const CardImage: React.FC<CardImageProps> = ({
                         redo={() => stateManager?.redo()}
                         addOption={addAnswerOption}
                         deleteOption={deleteAnswerOption}
+                        mergeOption={mergeAnswerOption}
                     />
                 }
                 <Box display="flex" justifyContent='center' width='100%'>

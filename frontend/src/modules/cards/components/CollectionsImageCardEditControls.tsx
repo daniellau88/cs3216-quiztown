@@ -28,6 +28,7 @@ interface OwnProps {
     redo: () => void;
     addOption: () => void;
     deleteOption: () => void;
+    mergeOption: () => void;
 }
 
 type Props = OwnProps;
@@ -37,6 +38,7 @@ const CollectionsImageCardEditControls: React.FC<Props> = ({
     redo,
     addOption,
     deleteOption,
+    mergeOption,
 }) => {
     const classes = useStyles();
 
@@ -47,6 +49,9 @@ const CollectionsImageCardEditControls: React.FC<Props> = ({
             </QTButton>
             <QTButton outlined onClick={deleteOption}>
                 Delete option
+            </QTButton>
+            <QTButton outlined onClick={mergeOption}>
+                Merge option
             </QTButton>
             <QTButton outlined onClick={undo}>
                 <Undo/>
