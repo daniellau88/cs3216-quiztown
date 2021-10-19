@@ -24,6 +24,7 @@ const enhancer = applyMiddleware(...middlewares);
 export default function configureStore(): Store<AppState, AnyAction> {
     const persistConfig = {
         key: 'root',
+        whitelist: ['auth'], // For now only cache auth
         storage,
     };
 
