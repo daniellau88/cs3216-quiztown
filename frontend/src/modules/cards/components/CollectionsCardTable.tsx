@@ -27,6 +27,12 @@ const CollectionsCardTable: React.FC<OwnProps> = ({ collectionId, beforeCreateCa
     const [isLoading, setIsLoading] = React.useState(true);
 
     const filters: TableFilter[] = [
+        {
+            type: 'select-checkbox',
+            key: 'flagged',
+            label: 'Starred',
+            options: { value: 1, label: 'Show Only Starred' },
+        },
     ];
 
     const onUpdate = (options: CollectionOptions, dispatch: Dispatch<any>) => {

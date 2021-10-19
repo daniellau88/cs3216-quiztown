@@ -11,7 +11,7 @@ export function toQueryString(object: Record<string, any>, prefix = ''): string 
         const value = object[key];
 
         if (object.constructor === Array) {
-            key = `${prefix}[]`;
+            key = `${prefix}`;
         } else if (object.constructor === Object) {
             key = prefix ? `${prefix}[${key}]` : key;
         }
