@@ -19,7 +19,10 @@ def import_card_from_image(collection_import: CollectionImport):
 
     try:
         card_jobs.import_card_from_image(
-            collection_import.file_key, collection_import.collection_id)
+            collection_import.file_key,
+            collection_import.collection_id,
+            collection_import.id,
+        )
 
         collection_import.status = CollectionImport.COMPLETED
         collection_import.save()
@@ -39,7 +42,11 @@ def import_cards_from_pdf(collection_import: CollectionImport):
         image_keys = extract_images_from_file(collection_import.file_key)
 
         for image_key in image_keys:
-            card_jobs.import_card_from_image(image_key, collection_import.collection_id)
+            card_jobs.import_card_from_image(
+                image_key,
+                collection_import.collection_id,
+                collection_import.id,
+            )
 
         collection_import.status = CollectionImport.COMPLETED
         collection_import.save()
@@ -83,4 +90,3 @@ def import_cards_from_text(collection_text_import: Card):
     card_jobs.import_text(collection_text_import.question,
                           collection_text_import.answer,
                           collection_text_import.collection_id)
-    collection_text_import.save()

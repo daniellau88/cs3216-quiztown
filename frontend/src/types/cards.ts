@@ -32,6 +32,7 @@ export interface CardListData {
     box_number: number;
     next_date: string;
     created_at: number;
+    is_reviewed: boolean;
 }
 
 export interface CardData {
@@ -50,6 +51,7 @@ export interface CardData {
     type: number;
     question: string;
     answer: string;
+    is_reviewed: boolean;
 }
 
 export interface CardMiniEntity {
@@ -61,7 +63,9 @@ export interface CardMiniEntity {
     box_number: number;
     next_date: string;
     created_at: number;
+    is_reviewed: boolean;
 }
+
 export interface CardEntity {
     id: number;
     name: string;
@@ -75,4 +79,8 @@ export interface CardEntity {
     answer_details: {
         results: AnswerData[];
     }
+    type: number;
+    question: string;
+    answer: string;
+    is_reviewed: boolean;
 }

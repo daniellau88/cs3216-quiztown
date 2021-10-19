@@ -27,7 +27,7 @@ def list_card_view(request):
         get_default_card_queryset_by_request(request),
         serializers.CardListSerializer,
         filter_serializer_class=serializers.CardListFilterSerializer,
-        search_fields=["image_file_key", "name"],
+        search_fields=["name"],
     )
 
 

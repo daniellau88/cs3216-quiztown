@@ -9,6 +9,8 @@ STATIC_CARD_URL = settings.STATIC_URL + "cards/"
 class CardListFilterSerializer(serializers.Serializer):
     flagged = serializers.IntegerField(required=False)
     collection_id = serializers.IntegerField(required=False)
+    is_reviewed = serializers.IntegerField(required=False)
+    collection_import_id = serializers.IntegerField(required=False)
 
 
 class CardListSerializer(serializers.ModelSerializer):
@@ -16,7 +18,7 @@ class CardListSerializer(serializers.ModelSerializer):
         model = Card
         fields = ["id", "name", "collection_id", "flagged", "image_file_key",
                   "next_date", "box_number", "created_at",
-                  "type", "question", "answer"]
+                  "type", "question", "answer", "is_reviewed"]
 
     def to_representation(self, data):
         rep = super(CardListSerializer, self).to_representation(data)
@@ -29,7 +31,7 @@ class CardSerializer(serializers.ModelSerializer):
         model = Card
         fields = ["id", "name", "collection_id", "flagged", "image_file_key",
                   "next_date", "box_number", "image_metadata", "answer_details",
-                  "created_at", "type", "question", "answer"]
+                  "created_at", "type", "question", "answer", "is_reviewed"]
 
     def to_representation(self, data):
         rep = super(CardSerializer, self).to_representation(data)
@@ -49,7 +51,7 @@ class CardUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Card
         fields = ["name", "flagged", "next_date", "box_number",
-                  "answer_details", "question", "answer"]
+                  "answer_details", "question", "answer", "is_reviewed"]
 
 
 class CardImportImageSerializer(serializers.Serializer):

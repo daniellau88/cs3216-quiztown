@@ -7,7 +7,12 @@ import * as types from './types';
 const initialState: types.CardsState = {
     cards: createEntityStore(),
     allCards: createEntityCollection(),
-    collectionCards: createEntityCollectionSet(),
+    collectionCards: createEntityCollectionSet({
+        filters: {
+            'is_reviewed': 1,
+        },
+    }),
+    importCards: createEntityCollectionSet(),
 };
 
 const cardsReducer = produce((draft: types.CardsState, action: types.CardsActionTypes) => {
@@ -47,11 +52,16 @@ const cardsReducer = produce((draft: types.CardsState, action: types.CardsAction
             resetCollectionCache(draft.allCards);
             if (collectionId) {
                 resetCollectionSetCache(draft.collectionCards, collectionId);
+                resetCollectionSetCache(draft.importCards, collectionId);
             }
             return;
         }
         case types.UPDATE_COLLECTION_CARD_LIST: {
             saveDeltaToCollectionSet(draft.collectionCards, action.collectionId, action.delta);
+            return;
+        }
+        case types.UPDATE_COLLECTION_IMPORT_CARD_LIST: {
+            saveDeltaToCollectionSet(draft.importCards, action.collectionImportId, action.delta);
             return;
         }
     }
