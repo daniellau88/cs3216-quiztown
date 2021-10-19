@@ -24,6 +24,7 @@ def list_collections_view(request):
         request,
         helpers.get_default_collection_queryset_by_request(request),
         serializers.CollectionSerializer,
+        search_fields=["name"],
     )
 
 

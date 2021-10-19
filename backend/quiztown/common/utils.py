@@ -8,6 +8,7 @@ from dataclasses import asdict
 import django.http
 import rest_framework.request
 
+from django.db.models import Q
 from django.db.models.query import QuerySet
 from rest_framework import serializers
 
@@ -96,7 +97,8 @@ def filter_model_by_get_request(
         request: rest_framework.request.Request,
         model_queryset: QuerySet,
         model_serializer_class: typing.Type[serializers.Serializer],
-        filter_serializer_class: typing.Type[serializers.Serializer] | None = None):
+        filter_serializer_class: typing.Type[serializers.Serializer] | None = None,
+        search_fields: list[str] = []):
     get_request = convert_get_request_to_dict(request.GET)
     get_serializer = ListRequestSerializer(data=get_request)
 
@@ -117,6 +119,19 @@ def filter_model_by_get_request(
             filter[field] = value
             # TODO: handle date range
             model_queryset = model_queryset.filter(**filter)
+
+    search = get_serializer.data.get("search", "")
+    if search and search_fields:
+        search_or_filter = None
+        for field in search_fields:
+            filter = {}
+            # Filter by <field_name>__contains (in DB will filter by '%<string_given>%')
+            filter[field + "__contains"] = search
+            if search_or_filter is None:
+                search_or_filter = Q(**filter)
+            else:
+                search_or_filter = search_or_filter | Q(**filter)
+        model_queryset = model_queryset.filter(search_or_filter)
 
     sort_by = get_serializer.data.get("sort_by", "")
     order = get_serializer.data.get("order", "")
