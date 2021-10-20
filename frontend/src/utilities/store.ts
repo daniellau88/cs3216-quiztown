@@ -308,6 +308,16 @@ export function batched(dispatch: ThunkDispatch<AppState, {}, AnyAction>, ...arg
 }
 
 /**
+ * Selects and returns the collection with the given ID from the given collection set.
+ * Returns default if id not found.
+ * This method is meant to be used within the selectors.
+ */
+export function selectCollectionFromSet(collectionSet: EntityCollectionSet, id: SelectionKey): EntityCollection {
+    const collection = id && collectionSet.byId[id];
+    return collection || createEntityCollection(collectionSet.defaults);
+}
+
+/**
  * Returns the entity with the given ID. This method attempts to use the cached
  * entity obtained using the given selector if possible. If this is not possible,
  * the entity will be fetched using the `fetchData` function.

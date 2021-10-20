@@ -33,6 +33,11 @@ const CollectionsCardTable: React.FC<OwnProps> = ({ collectionId, beforeCreateCa
             label: 'Starred',
             options: { value: 1, label: 'Show Only Starred' },
         },
+        {
+            type: 'hidden',
+            key: 'is_reviewed',
+            label: '',
+        },
     ];
 
     const onUpdate = (options: CollectionOptions, dispatch: Dispatch<any>) => {
