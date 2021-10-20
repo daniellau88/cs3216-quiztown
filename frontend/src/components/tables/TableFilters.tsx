@@ -1,4 +1,7 @@
 import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
     Checkbox,
     FormControl,
     Grid,
@@ -10,11 +13,9 @@ import {
     Typography,
     withStyles,
 } from '@material-ui/core';
-import MuiExpansionPanel from '@material-ui/core/ExpansionPanel';
-import MuiExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import MuiExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import * as React from 'react';
+import { isBrowser } from 'react-device-detect';
 
 import { EntityCollection } from '../../types/store';
 import { OptionsType, optionsToNameMap } from '../../utilities/options';
@@ -22,6 +23,8 @@ import { OptionsType, optionsToNameMap } from '../../utilities/options';
 
 const ExpansionPanel = withStyles({
     root: {
+        minWidth: isBrowser ? '50vw' : '90vw',
+        maxWidth: isBrowser ? '50vw' : '90vw',
         border: '1px solid rgba(0, 0, 0, .1)',
         margin: '0 0 12px',
         boxShadow: 'none',
@@ -33,12 +36,14 @@ const ExpansionPanel = withStyles({
         },
     },
     expanded: {},
-})(MuiExpansionPanel);
+})(Accordion);
 
 const ExpansionPanelSummary = withStyles({
     root: {
         backgroundColor: 'rgba(0, 0, 0, .015)',
         borderBottom: '1px solid rgba(0, 0, 0, .1)',
+        minWidth: isBrowser ? '50vw' : '90vw',
+        maxWidth: isBrowser ? '50vw' : '90vw',
         minHeight: 48,
         '&$expanded': {
             minHeight: 48,
@@ -50,13 +55,13 @@ const ExpansionPanelSummary = withStyles({
         },
     },
     expanded: {},
-})(MuiExpansionPanelSummary);
+})(AccordionSummary);
 
 const ExpansionPanelDetails = withStyles({
     root: {
         padding: '12px 16px',
     },
-})(MuiExpansionPanelDetails);
+})(AccordionDetails);
 
 export interface TableBaseFilter {
     type: string;
@@ -78,9 +83,16 @@ export interface TableSingleSelectFilter extends TableBaseFilter {
     options: OptionsType[];
 }
 
+export interface TableCheckBoxFilter extends TableBaseFilter {
+    type: 'select-checkbox';
+    // The available options of the select filter.
+    options: OptionsType;
+}
+
 export type TableFilter =
     | TableSelectFilter
-    | TableSingleSelectFilter;
+    | TableSingleSelectFilter
+    | TableCheckBoxFilter;
 
 interface OwnProps {
     // The entity collection on which the filters are applied.
@@ -101,6 +113,10 @@ function buildInitialFilterState(collection: EntityCollection, filters: TableFil
             case 'single-select':
             case 'select': {
                 initialState[filter.key] = collection.filters[filter.key] || [];
+                break;
+            }
+            case 'select-checkbox': {
+                initialState[filter.key] = collection.filters[filter.key] || 0;
                 break;
             }
         }
@@ -210,6 +226,27 @@ const TableFilters: React.FC<Props> = ({ collection, filters, onUpdate }: Props)
                                                         </MenuItem>
                                                     ))}
                                                 </Select>
+                                            </FormControl>
+                                        </Grid>
+                                    );
+                                }
+                                case 'select-checkbox': {
+                                    const currentFilter = activeFilters[filter.key] || 0;
+
+                                    return (
+                                        <Grid key={index} item xs={12} sm={6} lg={3} xl={2}>
+                                            <FormControl>
+                                                <Grid container direction='row' alignItems='center'>
+                                                    <Checkbox
+                                                        name={filter.key}
+                                                        value={activeFilters[filter.key]}
+                                                        checked={currentFilter > 0}
+                                                        onChange={(event) => {
+                                                            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                                                            handleFilterChange(event.target.name!, event.target.checked ? 1 : 0);
+                                                        }} />
+                                                    <Typography> {filter.options.label} </Typography>
+                                                </Grid>
                                             </FormControl>
                                         </Grid>
                                     );

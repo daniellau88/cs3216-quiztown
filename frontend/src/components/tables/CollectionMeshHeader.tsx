@@ -1,6 +1,7 @@
 import { Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
+import { isBrowser } from 'react-device-detect';
 
 import { ApiPromise } from '../../types';
 import { CollectionOptions, EntityCollection } from '../../types/store';
@@ -70,19 +71,30 @@ const CollectionMeshHeader: React.FC<OwnProps> = ({ collection, onUpdate, filter
     };
 
     const searchElement = isSearchable ? (
-        <Grid item xs={12} md={6} lg={5} xl={4}>
+        <Grid item xs={12} md={6} lg={5} xl={4} style={{ maxWidth: isBrowser ? '40vw' : '90vw', paddingLeft: '1vw' }}>
             <SearchInput className={classes.search} handleChange={updateSearchQuery} value={query} placeholder="Search..." />
         </Grid>
     ) : null;
 
     return (
         <>
-            <Grid className={classes.firstRow} container justifyContent="space-between" spacing={0}>
-                {searchElement}
-            </Grid>
-            {filters && filters.length > 0 && (
-                <TableFilters collection={collection} filters={filters} onUpdate={setFilters} />
-            )}
+            {isBrowser ? (
+                <Grid className={classes.firstRow} container justifyContent="space-between" spacing={0}>
+                    {searchElement}
+                    {filters && filters.length > 0 && (
+                        <TableFilters collection={collection} filters={filters} onUpdate={setFilters} />
+                    )}
+                </Grid>
+            ) :
+                (
+                    <Grid className={classes.firstRow} container justifyContent="space-between" spacing={2}>
+                        {searchElement}
+                        {filters && filters.length > 0 && (
+                            <TableFilters collection={collection} filters={filters} onUpdate={setFilters} />
+                        )}
+                    </Grid>
+                )
+            }
         </>
     );
 };
