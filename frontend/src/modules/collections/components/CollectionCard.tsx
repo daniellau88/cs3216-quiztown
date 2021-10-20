@@ -149,6 +149,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                 <CardMedia
                     component="img"
                     image={data?.image_link || defaultCollectionImage}
+                    style={ data ? { width: '100%' } : {} }
                     className={classes.collectionImage}
                 />
             </Box>

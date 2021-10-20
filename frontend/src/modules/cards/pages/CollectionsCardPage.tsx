@@ -94,7 +94,7 @@ const CollectionsCardPage: React.FC<Props> = ({ match: { params } }: RouteCompon
     }, [collectionId]);
 
     const onCollectionNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.value.length > 20) {
+        if (event.target.value.length > 30) {
             return;
         }
         setCollectionName(event.target.value);
@@ -102,7 +102,7 @@ const CollectionsCardPage: React.FC<Props> = ({ match: { params } }: RouteCompon
         const timeout = setTimeout(() => {
             if (!collection) return;
 
-            const collectionPostData: CollectionPostData = { name: collectionName, owner_id: collection.owner_id};
+            const collectionPostData: CollectionPostData = { name: collectionName };
             handleApiRequest(dispatch, dispatch(updateCollection(collection.id, collectionPostData)));
         }, 500);
         setNameChangeTimeout(timeout);
