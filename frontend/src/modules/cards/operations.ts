@@ -107,6 +107,31 @@ export function loadCollectionCards(collectionId: number, options: CollectionOpt
     };
 }
 
+export function loadCollectionImportCards(collectionImportId: number, options: CollectionOptions): Operation<ApiResponse<EntityCollection>> {
+    return (dispatch, getState) => {
+        return queryEntityCollectionSet(
+            () => getState().cards.importCards,
+            collectionImportId,
+            options,
+            async (params) => {
+                const newParams = {
+                    ...params,
+                    filters: {
+                        ...params.filters,
+                        collection_import_id: collectionImportId,
+                    },
+                };
+
+                const response = await api.cards.getCardList(newParams);
+                const data = response.payload.items;
+                batched(dispatch, saveCardList(data));
+                return response;
+            },
+            (delta) => dispatch(actions.updateCollectionImportCardList(collectionImportId, delta)),
+        );
+    };
+}
+
 // TODO: figure out what to do with the response
 export function importTextCardToCollections(collectionId: number, cardTextImport: CollectionCardTextImportPostData): Operation<ApiResponse<{}>> {
     return async (dispatch, getState) => {

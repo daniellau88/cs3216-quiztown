@@ -38,6 +38,8 @@ class Card(TimestampedModel):
         default=IMAGE, blank=True)
     question = models.CharField(max_length=1024, default="", blank=True)
     answer = models.CharField(max_length=1024, default="", blank=True)
+    collection_import_id = models.IntegerField(default=0)
+    is_reviewed = models.BooleanField(default=False)
 
     def create(self, validated_data):
         return Card.objects.create(validated_data)

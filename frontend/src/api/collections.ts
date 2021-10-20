@@ -12,7 +12,7 @@ export class CollectionsAPI extends BaseAPI {
     }
 
     public getCollectionList(params: CollectionQueryParams): ApiPromise<CollectionDataType<CollectionListData>> {
-        return this.get(`${this.getCollectionUrl()}?${toQueryString(params)}`);
+        return this.get(`${this.getCollectionUrl()}/?${toQueryString(params)}`);
     }
 
     public getCollection(id: number): ApiPromise<{ item: CollectionData }> {

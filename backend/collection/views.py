@@ -159,3 +159,27 @@ def list_collection_import_view(request, pk_item):
             request).filter(collection_id=pk_item.id),
         serializers.CollectionImportSerializer,
     )
+
+
+@api_view(["POST"])
+@convert_keys_to_item({
+    "pk": helpers.get_default_collection_queryset_by_request,
+    "pkImport": helpers.get_default_collection_import_queryset_by_request,
+})
+def review_collection_import_view(request, pk_item, pkImport_item):
+    # Only can edit own items
+    if request.user.is_authenticated and request.method != "GET":
+        if pk_item.owner_id != request.user.user_id:
+            raise ApplicationError(ErrorCode.UNAUTHENTICATED, ["No permission to edit"])
+
+    import_cards = Card.objects.filter(collection_import_id=pkImport_item.id)
+    for card in import_cards:
+        card.is_reviewed = True
+        card.save()
+
+    pkImport_item.is_reviewed = True
+    pkImport_item.save()
+
+    response_serializer = serializers.CollectionImportSerializer(pkImport_item)
+
+    return Response({"item": response_serializer.data})

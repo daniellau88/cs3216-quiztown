@@ -57,7 +57,7 @@ def trim_ocr_text(text: str):
     return text.strip("~|'-" + string.whitespace)
 
 
-def import_card_from_image(image_key: str, collection_id: int, name: str = ""):
+def import_card_from_image(image_key: str, collection_id: int, collection_import_id: int, name: str = ""):
     if not os.path.isfile(UPLOAD_DIRECTORY + image_key):
         raise ApplicationError(ErrorCode.NOT_FOUND, ["File not found"])
 
@@ -101,7 +101,8 @@ def import_card_from_image(image_key: str, collection_id: int, name: str = ""):
                 image_file_key=image_key,
                 answer_details={"results": json_results},
                 image_metadata=image_metadata,
-                type=Card.IMAGE)
+                type=Card.IMAGE,
+                collection_import_id=collection_import_id)
     card.save()
 
     return card
@@ -143,7 +144,8 @@ def import_text(question: str, answer: str, collection_id: int):
     card = Card(name=question, collection_id=collection_id,
                 question=question,
                 answer=answer,
-                type=Card.TEXT)
+                type=Card.TEXT,
+                is_reviewed=True)
     card.save()
 
     return card

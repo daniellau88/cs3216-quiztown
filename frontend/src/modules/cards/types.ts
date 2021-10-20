@@ -10,6 +10,7 @@ export const ADD_CARD = 'cards/ADD_CARD';
 export const EDIT_CARD = 'cards/EDIT_CARD';
 export const DELETE_CARD = 'cards/DELETE_CARD';
 export const UPDATE_COLLECTION_CARD_LIST = 'cards/UPDATE_COLLECTION_CARD_LIST';
+export const UPDATE_COLLECTION_IMPORT_CARD_LIST = 'cards/UPDATE_COLLECTION_IMPORT_CARD_LIST';
 
 // Action Types
 
@@ -49,6 +50,12 @@ export interface UpdateCollectionCardListAction {
     delta: CollectionDelta;
 }
 
+export interface UpdateCollectionImportCardListAction {
+    type: typeof UPDATE_COLLECTION_IMPORT_CARD_LIST;
+    collectionImportId: number;
+    delta: CollectionDelta;
+}
+
 export type CardsActionTypes =
     SaveCardListAction |
     SaveCardAction |
@@ -56,11 +63,13 @@ export type CardsActionTypes =
     AddCardAction |
     EditCardAction |
     DeleteCardAction |
-    UpdateCollectionCardListAction;
+    UpdateCollectionCardListAction |
+    UpdateCollectionImportCardListAction;
 
 // State Types
 export interface CardsState {
     allCards: EntityCollection;
     cards: EntityStore<CardMiniEntity, CardEntity>;
     collectionCards: EntityCollectionSet;
+    importCards: EntityCollectionSet;
 }

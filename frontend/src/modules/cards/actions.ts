@@ -52,3 +52,11 @@ export function updateCollectionCardList(collectionId: number, delta: Collection
         delta,
     };
 }
+
+export function updateCollectionImportCardList(collectionImportId: number, delta: CollectionDelta): types.UpdateCollectionImportCardListAction {
+    return {
+        type: types.UPDATE_COLLECTION_IMPORT_CARD_LIST,
+        collectionImportId,
+        delta,
+    };
+}

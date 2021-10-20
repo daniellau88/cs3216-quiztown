@@ -33,6 +33,7 @@ const NavigationBarUserAuthElement: React.FC<{}> = () => {
             return handleApiRequest(dispatch, dispatch(googleLogin(loginPostData)))
                 .then(() => {
                     console.log('Logged in');
+                    location.reload();
                 });
         }
     };
