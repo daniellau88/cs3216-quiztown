@@ -38,3 +38,14 @@ class CollectionImportCreateSerializer(serializers.ModelSerializer):
 
 class CollectionImportRequestSerializer(serializers.Serializer):
     imports = CollectionImportCreateSerializer(many=True)
+
+
+class CollectionTextImportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Card
+        fields = ["id", "collection_id", "question",
+                  "answer", "created_at"]
+
+
+class CollectionListFilterSerializer(serializers.Serializer):
+    private = serializers.IntegerField(required=False)

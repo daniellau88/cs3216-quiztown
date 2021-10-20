@@ -4,9 +4,12 @@ from quiztown.common.models import TimestampedModel
 
 
 class Collection(TimestampedModel):
+    PRIVATE = 0
+    PUBLIC = 1
+
     name = models.CharField(max_length=30)
     owner_id = models.IntegerField()
-    private = models.IntegerField(default=1)
+    private = models.IntegerField(default=PRIVATE)
     image_link = models.CharField(max_length=1024, default="")
 
     def create(self, validated_data):

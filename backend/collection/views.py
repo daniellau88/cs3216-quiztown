@@ -25,6 +25,7 @@ def list_collections_view(request):
         request,
         helpers.get_default_collection_queryset_by_request(request),
         serializers.CollectionSerializer,
+        filter_serializer_class=serializers.CollectionListFilterSerializer,
         search_fields=["name"],
     )
 
