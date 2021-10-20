@@ -13,13 +13,18 @@ import { Add, ReorderOutlined } from '@material-ui/icons';
 import DeleteIcon from '@material-ui/icons/Delete';
 import LabelIcon from '@material-ui/icons/Label';
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
+import defaultCollectionImage from '../../../assets/images/logo512.png';
+import LoadingIndicator from '../../../components/content/LoadingIndicator';
 import QTButton from '../../../components/QTButton';
 import { CollectionMiniEntity } from '../../../types/collections';
+import { AppState } from '../../../types/store';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
+import { loadCollectionCards } from '../../cards/operations';
+import { getCollectionCardList } from '../../cards/selectors';
 import { deleteCollection } from '../operations';
 
 const useStyles = makeStyles(() => ({
@@ -54,6 +59,17 @@ const useStyles = makeStyles(() => ({
     collectionText: {
         fontSize: '1.5vh',
     },
+    imageContainer: {
+        height: '40%',
+        backgroundColor: colours.BLUE,
+    },
+    collectionImage: {
+        display: 'block',
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        width: 'auto',
+        height: '100%',
+    },
 }));
 
 interface OwnProps {
@@ -67,18 +83,28 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
     const classes = useStyles();
     const history = useHistory();
     const dispatch = useDispatch();
-    // TODO: Replace mock data
+
     const collectionName = data?.name;
     const collectionId = data?.id;
-    const collectionNumCards = '12';
+    // TODO: Replace tags mock data
     const collectionTags = ['Tag1', 'Tag2'];
-    const imageSrc = 'https://picsum.photos/200/300';
 
-    // TODO: Implement functions
+    const collectionCardList = useSelector((state: AppState) => getCollectionCardList(state, collectionId));
+
+    const [isLoading, setIsLoading] = React.useState(true);
+
+    React.useEffect(() => {
+        if (!collectionId) return;
+        handleApiRequest(dispatch, dispatch(loadCollectionCards(collectionId, {}))).finally(() => {
+            setIsLoading(false);
+        });
+    }, []);
+
     const openCollection = () => {
         history.push(`/collections/${collectionId}`);
     };
 
+    // TODO: Implement collection testing start
     const startCollection = () => {
         console.log('Start');
 
@@ -95,7 +121,6 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
     };
 
     const addNewCollection = () => {
-        console.log('Add new');
         history.push('/collections/new');
     };
 
@@ -114,15 +139,20 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
         );
     }
 
+    if (isLoading) {
+        return <LoadingIndicator/>;
+    }
+
     return (
         <Card className={classes.root}>
-            <CardMedia
-                component="img"
-                alt="green iguana"
-                height="40%"
-                width="auto"
-                image={imageSrc}
-            />
+            <Box className={classes.imageContainer}>
+                <CardMedia
+                    component="img"
+                    image={data?.image_link || defaultCollectionImage}
+                    style={ data ? { width: '100%' } : {} }
+                    className={classes.collectionImage}
+                />
+            </Box>
 
             <CardContent className={classes.cardContent}>
                 <Typography className={classes.collectionNameText} component="div" >
@@ -131,7 +161,8 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                 <Grid container alignItems='center'>
                     <ReorderOutlined className={classes.collectionIcon} />
                     <Typography className={classes.collectionText} style={{ marginLeft: 6 }}>
-                        {collectionNumCards} cards
+                        {collectionCardList.totalEntities} 
+                        {collectionCardList.totalEntities > 1 || collectionCardList.totalEntities == 0 ? ' cards' : ' card'}
                     </Typography>
                     <Grid item style={{ width: '2vw' }} />
                     <LabelIcon className={classes.collectionIcon} />

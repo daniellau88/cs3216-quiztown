@@ -15,14 +15,17 @@ import LabelIcon from '@material-ui/icons/Label';
 import Star from '@material-ui/icons/Star';
 import StarOutline from '@material-ui/icons/StarOutline';
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
+import defaultCollectionImage from '../../../assets/images/logo512.png';
 import QTButton from '../../../components/QTButton';
 import { CardMiniEntity, CardPostData } from '../../../types/cards';
+import { AppState } from '../../../types/store';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
-import { deleteCard, updateCard } from '../operations';
+import { addCard, deleteCard, updateCard } from '../operations';
+import { getCardEntity } from '../selectors';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -53,6 +56,17 @@ const useStyles = makeStyles(() => ({
         marginTop: '-28px',
         marginLeft: '20px',
         color: colours.WHITE,
+    },
+    imageContainer: {
+        height: '40%',
+        backgroundColor: colours.BLUE,
+    },
+    collectionImage: {
+        display: 'block',
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        width: 'auto',
+        height: '100%',
     },
     cardContent: {
         paddingTop: '1.5vh',
@@ -89,13 +103,16 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
     const cardName = data?.name;
     const cardId = data?.id;
     const cardStarred = data?.flagged;
-    const cardTags = ['Tag1', 'Tag2'];
     const collectionId = data?.collection_id || id;
-    const imageSrc = 'https://picsum.photos/200/300';
+    // TODO: Update tags, or remove them if no tags are used in cards
+    const cardTags = ['Tag1', 'Tag2'];
 
-    // TODO: Implement functions
+    const cardEntity = useSelector((state: AppState) => getCardEntity(state, cardId));
+
     const duplicateCard = () => {
-        console.log('Duplicate');
+        if (!cardEntity) return;
+        const cardPostData: CardPostData = { ...cardEntity };
+        return handleApiRequest(dispatch, dispatch(addCard(cardPostData)));
     };
 
     const openCard = () => {
@@ -178,13 +195,14 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
 
     return (
         <Card className={classes.root}>
-            <CardMedia
-                component="img"
-                alt="green iguana"
-                height="40%"
-                width="auto"
-                image={imageSrc}
-            />
+            <Box className={classes.imageContainer}>
+                <CardMedia
+                    component="img"
+                    image={data?.image_link || defaultCollectionImage}
+                    style={ data ? { width: '100%' } : {} }
+                    className={classes.collectionImage}
+                />
+            </Box>
 
             <CardContent className={classes.cardContent}>
                 <Typography className={classes.cardNameText} component="div" >

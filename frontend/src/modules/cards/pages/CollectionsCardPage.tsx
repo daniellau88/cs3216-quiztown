@@ -2,6 +2,7 @@ import {
     Box,
     CssBaseline,
     Grid,
+    TextField,
     Typography,
     makeStyles,
 } from '@material-ui/core';
@@ -15,7 +16,7 @@ import { CollectionPostData } from '../../../types/collections';
 import { AppState } from '../../../types/store';
 import routes from '../../../utilities/routes';
 import { handleApiRequest } from '../../../utilities/ui';
-import { addCollection, loadCollection } from '../../collections/operations';
+import { addCollection, loadCollection, updateCollection } from '../../collections/operations';
 import { getCollectionMiniEntity } from '../../collections/selectors';
 import CollectionsCardTable from '../components/CollectionsCardTable';
 
@@ -31,8 +32,9 @@ const useStyles = makeStyles(() => ({
         paddingLeft: 20,
         paddingRight: 20,
     },
-    headerText: {
-        fontSize: '5vh',
+    headerTextContainer: {
+        justifySelf: 'center',
+        alignSelf: 'center',
     },
     subheaderText: {
         fontSize: '2vh',
@@ -50,15 +52,23 @@ const CollectionsCardPage: React.FC<Props> = ({ match: { params } }: RouteCompon
     const collection = useSelector((state: AppState) => getCollectionMiniEntity(state, parseInt(collectionId)));
 
     const [beforeCreateCard, setBeforeCreateCard] = React.useState<(() => Promise<number>) | undefined>();
-
+    const [nameChangeTimeout, setNameChangeTimeout] = React.useState<NodeJS.Timeout | null>(null);
+    const [collectionName, setCollectionName] = React.useState(collection ? collection.name : 'Untitled collection');
     const [collectionIdNumber, setCollectionIdNumber] = React.useState(0);
     const [isLoading, setIsLoading] = React.useState(true);
 
     React.useEffect(() => {
-        handleApiRequest(dispatch, dispatch(loadCollection(parseInt(collectionId)))).finally(() => {
-            setIsLoading(false);
-        });
+        handleApiRequest(dispatch, dispatch(loadCollection(parseInt(collectionId))))
+            .finally(() => {
+                setIsLoading(false);
+            });
     }, []);
+
+    React.useEffect(() => {
+        if (collection && collectionName == 'Untitled collection') {
+            setCollectionName(collection.name);
+        }
+    }, [collection]);
 
     React.useEffect(() => {
         if (collectionId == 'new') {
@@ -83,6 +93,21 @@ const CollectionsCardPage: React.FC<Props> = ({ match: { params } }: RouteCompon
         }
     }, [collectionId]);
 
+    const onCollectionNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.value.length > 30) {
+            return;
+        }
+        setCollectionName(event.target.value);
+        if (nameChangeTimeout) clearTimeout(nameChangeTimeout);
+        const timeout = setTimeout(() => {
+            if (!collection) return;
+
+            const collectionPostData: CollectionPostData = { name: collectionName };
+            handleApiRequest(dispatch, dispatch(updateCollection(collection.id, collectionPostData)));
+        }, 500);
+        setNameChangeTimeout(timeout);
+    };
+
     if (isLoading) {
         return <LoadingIndicator />;
     }
@@ -97,9 +122,15 @@ const CollectionsCardPage: React.FC<Props> = ({ match: { params } }: RouteCompon
                         { path: null, name: collection ? collection.name : 'Untitled collection' },
                     ]} />
                     <Grid container direction='column' className={classes.header}>
-                        <Typography align='center' className={classes.headerText}>
-                            {collection ? collection.name : 'Untitled collection'}
-                        </Typography>
+                        <Grid item className={classes.headerTextContainer}>
+                            <TextField
+                                id="name"
+                                inputProps={{ style: { textAlign: 'center', fontSize: '5vh' } }}
+                                value={collectionName}
+                                onChange={onCollectionNameChange}
+                            />
+                        </Grid>
+
                         <Typography align='center' className={classes.subheaderText}>
                             Here are the cards in your collection, pick one to view or edit!
                         </Typography>
