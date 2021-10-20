@@ -42,7 +42,14 @@ const CollectionsCardTable: React.FC<OwnProps> = ({ collectionId, beforeCreateCa
 
     const onUpdate = (options: CollectionOptions, dispatch: Dispatch<any>) => {
         setIsLoading(true);
-        return handleApiRequest(dispatch, dispatch(loadCollectionCards(collectionId, options))).finally(() => {
+        const queryFilters = {
+            ...options.filters,
+        };
+        if (!options.filters?.flagged) {
+            delete queryFilters.flagged;
+        }
+        const queryOptions: CollectionOptions = { ...options, filters: queryFilters };
+        return handleApiRequest(dispatch, dispatch(loadCollectionCards(collectionId, queryOptions))).finally(() => {
             setIsLoading(false);
         });
     };
