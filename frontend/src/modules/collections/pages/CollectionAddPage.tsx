@@ -8,18 +8,18 @@ import {
 } from '@material-ui/core';
 import * as React from 'react';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
-import api from '../../../api';
 import QTButton from '../../../components/QTButton';
 import Breadcrumbs from '../../../layouts/Breadcrumbs';
-import { CollectionPostData, CollectionsImportPostData } from '../../../types/collections';
+import { CollectionPostData } from '../../../types/collections';
+import { AppState } from '../../../types/store';
 import { UploadData } from '../../../types/uploads';
 import routes from '../../../utilities/routes';
 import { handleApiRequest } from '../../../utilities/ui';
 import CollectionAddFileCards from '../components/CollectionAddFileCards';
-import { addCollection, importCollections, loadAllCollections } from '../operations';
+import { addCollection, importCollections } from '../operations';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -28,10 +28,10 @@ const useStyles = makeStyles((theme) => ({
     },
     header: {
         paddingTop: 10,
-        paddingBottom: 60,
+        paddingBottom: 10,
     },
     title: {
-        marginLeft: theme.spacing(0),
+        marginLeft: theme.spacing(1),
         marginRight: theme.spacing(0),
     },
     input: {
@@ -50,6 +50,10 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    description: {
+        marginLeft: theme.spacing(1),
+        paddingBottom: '5vh',
+    },
 }));
 
 const AddCollectionPage: React.FC<{}> = () => {
@@ -67,31 +71,16 @@ const AddCollectionPage: React.FC<{}> = () => {
         const collectionPostDataCurrent: CollectionPostData = { name: collectionName };
         return handleApiRequest(dispatch, dispatch(addCollection(collectionPostDataCurrent)))
             .then((response) => {
-                console.log(response);
-                handleApiRequest(dispatch, dispatch(importCollections(response.payload.id, { imports: uploadFiles }))).then((importResponse) => {
-                    const payload = importResponse.payload;
-                    console.log(payload);
-                    // Redirect to home page
-                    // history.push('/collections');
-                });
+                handleApiRequest(dispatch, dispatch(importCollections(response.payload.id, { imports: uploadFiles })));
+            })
+            .finally(() => {
                 history.push('/collections');
-            })
-            .then(() => {
-                return true;
-            })
-            .catch(() => {
-                return false;
             });
     };
 
     const handleCollectionNameChange = (e: React.ChangeEvent<any>) => {
         const newName = e.target.value;
         setCollectionName(newName);
-    };
-
-    const reviewCollection = () => {
-        console.log('review collection..');
-        createCollection();
     };
 
     return (
@@ -112,9 +101,12 @@ const AddCollectionPage: React.FC<{}> = () => {
                             value={collectionName}
                             placeholder="Untitled Collection" />
                     </Grid>
+                    <Typography variant='body1' component="div" className={classes.description}>
+                        Upload files to automatically generate cards! We will notify you when they are ready for your review.
+                    </Typography>
                     <CollectionAddFileCards setUploadedResponse={setUploadedResponse} />
                     <Grid container direction='column' className={classes.button}>
-                        <QTButton outlined onClick={reviewCollection}>Review Collection</QTButton>
+                        <QTButton outlined onClick={createCollection}>Done</QTButton>
                     </Grid>
                 </Grid>
             </Box >
