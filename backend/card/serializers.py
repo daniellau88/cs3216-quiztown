@@ -54,11 +54,11 @@ class CardUpdateSerializer(serializers.ModelSerializer):
                   "answer_details", "question", "answer", "is_reviewed"]
 
 
-class CardImportImageSerializer(serializers.Serializer):
-    file_key = serializers.CharField(max_length=50)
-    file_name = serializers.CharField(max_length=100)
+class CollectionImportTextSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Card
+        fields = ["name", "question", "answer"]
 
 
-class CardImportTextSerializer(serializers.Serializer):
-    question = serializers.CharField(max_length=1000)
-    answer = serializers.CharField(max_length=1000)
+class CollectionImportTextRequestSerializer(serializers.Serializer):
+    imports = CollectionImportTextSerializer(many=True)

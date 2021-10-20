@@ -32,6 +32,7 @@ export interface UpdateCardListAction {
 export interface AddCardAction {
     type: typeof ADD_CARD;
     id: number;
+    collection_id: number;
 }
 
 export interface EditCardAction {

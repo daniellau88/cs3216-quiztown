@@ -21,16 +21,14 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps, generatePath, useHistory } from 'react-router-dom';
 
-import { CARD_TYPE } from '../../../components/utiltiies/constants';
 import Breadcrumbs from '../../../layouts/Breadcrumbs';
+import { UploadTextData } from '../../../types/collections';
 import { AppState } from '../../../types/store';
-import { UploadTextData } from '../../../types/uploads';
 import colours from '../../../utilities/colours';
 import routes from '../../../utilities/routes';
 import { handleApiRequest } from '../../../utilities/ui';
 import { getCollectionMiniEntity } from '../../collections/selectors';
-import { addUpload } from '../../uploads/operations';
-import { importTextCardToCollections, loadCollectionCards } from '../operations';
+import { importTextCards, loadCollectionCards } from '../operations';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -109,15 +107,11 @@ const CollectionsCardAddTextPage: React.FC<Props> = ({ match: { params } }: Rout
         data.map((tuple, index) => dataCopy.push(
             {
                 name: index + tuple.question.split(' ')[0],
-                type: CARD_TYPE.TEXT,
                 question: tuple.question,
                 answer: tuple.answer,
-                collection_id: collectionId,
-            } as UploadTextData));
-        return handleApiRequest(dispatch, dispatch(importTextCardToCollections(collectionId, { imports: dataCopy, type: CARD_TYPE.TEXT }))).then((importResponse) => {
+            }));
+        return handleApiRequest(dispatch, dispatch(importTextCards(collectionId, { imports: dataCopy }))).then((importResponse) => {
             const payload = importResponse.payload;
-            console.log(payload);
-
             return handleApiRequest(dispatch, dispatch(loadCollectionCards(collectionId, {}))).finally(() => {
                 history.push(`/collections/${collectionId}`);
             });
@@ -137,7 +131,7 @@ const CollectionsCardAddTextPage: React.FC<Props> = ({ match: { params } }: Rout
                     <Grid container direction='column' className={classes.container}>
                         <Grid container className={classes.header}>
                             <Typography variant="h4" className="self-start mb-4">
-                            Adding Cards to Anatomy
+                                Adding Cards to Anatomy
                             </Typography>
                         </Grid>
                         <TableContainer component={Paper} className="px-8 py-6">
@@ -216,7 +210,7 @@ const CollectionsCardAddTextPage: React.FC<Props> = ({ match: { params } }: Rout
                                             addRow();
                                         }}
                                     >
-                                    Add Card
+                                        Add Card
                                     </Button>
                                 </Box>
                                 <Box flexGrow={1} />
@@ -230,7 +224,7 @@ const CollectionsCardAddTextPage: React.FC<Props> = ({ match: { params } }: Rout
                                             submit();
                                         }}
                                     >
-                                    Done
+                                        Done
                                     </Button>
                                 </Box>
                             </Box>

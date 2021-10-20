@@ -89,10 +89,16 @@ export interface TableCheckBoxFilter extends TableBaseFilter {
     options: OptionsType;
 }
 
+export interface TableHiddenFilter extends TableBaseFilter {
+    type: 'hidden';
+    // Default value to be set in initial state
+}
+
 export type TableFilter =
     | TableSelectFilter
     | TableSingleSelectFilter
-    | TableCheckBoxFilter;
+    | TableCheckBoxFilter
+    | TableHiddenFilter;
 
 interface OwnProps {
     // The entity collection on which the filters are applied.
@@ -117,6 +123,10 @@ function buildInitialFilterState(collection: EntityCollection, filters: TableFil
             }
             case 'select-checkbox': {
                 initialState[filter.key] = collection.filters[filter.key] || 0;
+                break;
+            }
+            case 'hidden': {
+                initialState[filter.key] = collection.filters[filter.key];
                 break;
             }
         }

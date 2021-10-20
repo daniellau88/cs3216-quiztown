@@ -24,10 +24,11 @@ export function saveCard(data: CardData): types.SaveCardAction {
     };
 }
 
-export function addCard(id: number): types.AddCardAction {
+export function addCard(id: number, collection_id: number): types.AddCardAction {
     return {
         type: types.ADD_CARD,
         id,
+        collection_id,
     };
 }
 

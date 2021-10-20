@@ -1,6 +1,6 @@
 import { CardEntity, CardMiniEntity } from '../../types/cards';
 import { AppState, EntityCollection, EntitySelection, SelectionKey } from '../../types/store';
-import { createEntityCollection, selectEntity, selectMiniEntity } from '../../utilities/store';
+import { selectCollectionFromSet, selectEntity, selectMiniEntity } from '../../utilities/store';
 
 function getLocalState(state: AppState) {
     return state.cards;
@@ -19,5 +19,5 @@ export function getCardEntity(state: AppState, id: SelectionKey): EntitySelectio
 }
 
 export function getCollectionCardList(state: AppState, id: SelectionKey): EntityCollection {
-    return (id && getLocalState(state).collectionCards.byId[id]) || createEntityCollection();
+    return selectCollectionFromSet(getLocalState(state).collectionCards, id);
 }
