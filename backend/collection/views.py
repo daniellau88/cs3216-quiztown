@@ -2,13 +2,14 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from card import serializers as card_serializers
 from card.models import Card
 from quiztown.common import utils
 from quiztown.common.decorators import convert_keys_to_item, validate_request_data
 from quiztown.common.errors import ApplicationError, ErrorCode
 
 from . import helpers, jobs, serializers
-from .models import CollectionImport
+from .models import Collection, CollectionImport
 
 
 @api_view(["GET", "POST"])
@@ -76,43 +77,13 @@ def delete_collection_view(request, pk_item):
 
 @api_view(["POST"])
 @convert_keys_to_item({"pk": helpers.get_default_collection_queryset_by_request})
-def import_image_or_text_collection_view(request, *args, **kwargs):
+@validate_request_data(serializers.CollectionImportRequestSerializer)
+def import_file_collection_view(request, pk_item, serializer):
     # Only can edit own items
     if request.user.is_authenticated and request.method != "GET":
-        if kwargs["pk_item"].owner_id != request.user.user_id:
+        if pk_item.owner_id != request.user.user_id:
             raise ApplicationError(ErrorCode.UNAUTHENTICATED, ["No permission to edit"])
 
-    if "type" in request.data and request.data["type"] == Card.TEXT:
-        return import_collection_text_view(request, *args, **kwargs)
-    return import_collection_view(request, *args, **kwargs)
-
-
-@validate_request_data(serializers.CollectionTextImportRequestSerializer)
-def import_collection_text_view(request, pk_item, serializer):
-    collection_text_import_instances = []
-
-    for collection_text_import_data in serializer.data["imports"]:
-        collection_text_import_serializer = serializers.CollectionTextImportCreateSerializer(
-            data=collection_text_import_data)
-
-        collection_text_import_serializer.is_valid()
-        collection_text_import_serializer.save(collection_id=pk_item.id)
-
-        collection_text_import = collection_text_import_serializer.instance
-
-        collection_text_import_instances.append(collection_text_import)
-
-        if isinstance(collection_text_import, Card):
-            jobs.import_cards_from_text(collection_text_import)
-
-    response_serializer = serializers.CollectionTextImportSerializer(
-        collection_text_import_instances, many=True)
-
-    return Response({"items": response_serializer.data})
-
-
-@validate_request_data(serializers.CollectionImportRequestSerializer)
-def import_collection_view(request, pk_item, serializer):
     collection_import_instances = []
 
     for collection_import_data in serializer.data["imports"]:
@@ -129,6 +100,7 @@ def import_collection_view(request, pk_item, serializer):
         collection_import_instances.append(collection_import)
 
         file_type = utils.get_extension_from_filename(collection_import.file_key)
+        # TODO: add apkg
         if file_type == ".pdf":
             jobs.import_cards_from_pdf.delay(collection_import=collection_import)
         elif file_type == ".jpg" or file_type == ".png":
@@ -136,6 +108,37 @@ def import_collection_view(request, pk_item, serializer):
 
     response_serializer = serializers.CollectionImportSerializer(
         collection_import_instances, many=True)
+
+    return Response({"items": response_serializer.data})
+
+
+@api_view(["POST"])
+@convert_keys_to_item({"pk": helpers.get_default_collection_queryset_by_request})
+@validate_request_data(card_serializers.CollectionImportTextRequestSerializer)
+def import_text_collection_view(request, pk_item, serializer):
+    collection_id = pk_item.id
+
+    # Only can edit own items
+    if request.user.is_authenticated and request.method != "GET":
+        assert isinstance(pk_item, Collection)
+        if pk_item.owner_id != request.user.user_id:
+            raise ApplicationError(ErrorCode.UNAUTHENTICATED, ["No permission to edit"])
+
+    card_instances = []
+
+    for card_import_text_data in serializer.data["imports"]:
+        card = card_serializers.CollectionImportTextSerializer(
+            data=card_import_text_data)
+        card.is_valid()
+
+        card.save(collection_id=collection_id,
+                  type=Card.TEXT,
+                  is_reviewed=True)
+
+        card_instances.append(card.instance)
+
+    response_serializer = card_serializers.CardListSerializer(
+        card_instances, many=True)
 
     return Response({"items": response_serializer.data})
 

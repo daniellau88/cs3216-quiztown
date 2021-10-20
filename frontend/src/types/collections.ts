@@ -1,4 +1,4 @@
-import { UploadData, UploadTextData } from './uploads';
+import { UploadData } from './uploads';
 
 export interface CollectionPostData {
     name: string;
@@ -42,7 +42,12 @@ export interface CollectionsImportPostData {
     imports: UploadData[];
 }
 
-export interface CollectionCardTextImportPostData {
+export interface UploadTextData {
+    name: string;
+    question: string;
+    answer: string;
+}
+
+export interface CollectionsImportTextPostData {
     imports: UploadTextData[];
-    type: number;
 }

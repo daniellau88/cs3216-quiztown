@@ -1,12 +1,12 @@
 import api from '../../api';
 import { ApiResponse } from '../../types';
-import { CardData, CardEntity, CardListData, CardMiniEntity, CardPostData } from '../../types/cards';
-import { CollectionCardTextImportPostData } from '../../types/collections';
+import { CardData, CardEntity, CardListData, CardPostData } from '../../types/cards';
+import { CollectionsImportTextPostData } from '../../types/collections';
 import { CollectionOptions, EntityCollection, NormalizeOperation, Operation } from '../../types/store';
 import { batched, queryEntityCollection, queryEntityCollectionSet, withCachedEntity } from '../../utilities/store';
 
 import * as actions from './actions';
-import { getAllCards, getCardEntity, getCardMiniEntity } from './selectors';
+import { getAllCards, getCardEntity, getCollectionCardList } from './selectors';
 
 export function loadAllCards(options: CollectionOptions): Operation<ApiResponse<EntityCollection>> {
     return (dispatch, getState) => {
@@ -45,7 +45,7 @@ export function addCard(card: CardPostData): Operation<ApiResponse<CardEntity>> 
     return async (dispatch, getState) => {
         const response = await api.cards.addCard(card);
         const data = response.payload.item;
-        batched(dispatch, saveCard(data), actions.addCard(data.id));
+        batched(dispatch, saveCard(data), actions.addCard(data.id, data.collection_id));
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return { ...response, payload: getCardEntity(getState(), data.id)! };
     };
@@ -132,13 +132,12 @@ export function loadCollectionImportCards(collectionImportId: number, options: C
     };
 }
 
-// TODO: figure out what to do with the response
-export function importTextCardToCollections(collectionId: number, cardTextImport: CollectionCardTextImportPostData): Operation<ApiResponse<{}>> {
+export function importTextCards(collectionId: number, cardTextImport: CollectionsImportTextPostData): Operation<ApiResponse<EntityCollection>> {
     return async (dispatch, getState) => {
-        console.log('in import collection');
-        const response = await api.collections.importTextCardToCollections(collectionId, cardTextImport);
+        const response = await api.collections.importTextCollectionCards(collectionId, cardTextImport);
         const data = response.payload.items;
-        batched(dispatch, saveCardList(data));
-        return response;
+        const batchedAdd = data.map(x => actions.addCard(x.id, x.collection_id));
+        batched(dispatch, saveCardList(data), ...batchedAdd);
+        return { ...response, payload: getCollectionCardList(getState(), collectionId) };
     };
 }

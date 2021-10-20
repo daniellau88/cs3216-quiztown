@@ -39,6 +39,7 @@ const cardsReducer = produce((draft: types.CardsState, action: types.CardsAction
         case types.ADD_CARD: {
             draft.allCards.ids.push(action.id);
             resetCollectionCache(draft.allCards);
+            resetCollectionSetCache(draft.collectionCards, action.collection_id);
             return;
         }
         case types.EDIT_CARD: {
