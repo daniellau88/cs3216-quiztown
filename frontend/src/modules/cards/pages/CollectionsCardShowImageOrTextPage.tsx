@@ -8,7 +8,6 @@ import LoadingIndicator from '../../../components/content/LoadingIndicator';
 import { CARD_TYPE } from '../../../components/utiltiies/constants';
 import Breadcrumbs from '../../../layouts/Breadcrumbs';
 import { AppState } from '../../../types/store';
-import colours from '../../../utilities/colours';
 import routes from '../../../utilities/routes';
 import { handleApiRequest } from '../../../utilities/ui';
 import { getCollectionMiniEntity } from '../../collections/selectors';
@@ -21,24 +20,6 @@ const useStyles = makeStyles(() => ({
     root: {
         display: 'flex',
         paddingBottom: '8vh',
-    },
-    showAnswerEnabled: {
-        fontSize: '1.5vh',
-        height: '100%',
-        width: '10vw',
-        borderRadius: '10px',
-        border: '1px solid black',
-    },
-    showAnswerGreyout: {
-        fontSize: '1.5vh',
-        height: '100%',
-        width: '10vw',
-        borderRadius: '10px',
-        border: '1px solid black',
-        backgroundColor: colours.LIGHTGREY,
-    },
-    text: {
-        fontSize: '5vh',
     },
 }));
 
