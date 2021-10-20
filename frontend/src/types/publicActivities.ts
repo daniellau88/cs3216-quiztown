@@ -1,6 +1,5 @@
 export enum PublicActivityType {
     CollectionImport = 1,
-    CollectionTemp = 2,
 }
 
 interface CollectionImportType {
