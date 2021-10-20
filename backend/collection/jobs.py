@@ -9,6 +9,8 @@ from collection.models import CollectionImport
 from public_activity import utils as public_activity_utils
 from public_activity.models import PublicActivity
 
+from .models import Collection, CollectionImport
+
 STATIC_CARD_DIRECTORY = "static/cards/"
 UPLOAD_DIRECTORY = "uploads/"
 
@@ -22,8 +24,13 @@ def import_card_from_image(collection_import: CollectionImport):
     collection_import.status = CollectionImport.IN_PROGRESS
     collection_import.save()
 
-    params = {"collection_id": collection_import.collection_id,
-              "import_id": collection_import.id}
+    collection = Collection.objects.get(id=collection_import.collection_id)
+    owner_id = collection.owner_id
+
+    params = {
+        "collection_id": collection_import.collection_id,
+        "import_id": collection_import.id,
+    }
 
     try:
         card_jobs.import_card_from_image(
@@ -37,14 +44,20 @@ def import_card_from_image(collection_import: CollectionImport):
 
         public_activity_utils.create_and_broadcast_pa(
             SUCCESS_MESSAGE % collection_import.file_name,
-            PublicActivity.COLLECTION_IMPORT, params=params)
+            PublicActivity.COLLECTION_IMPORT,
+            owner_id,
+            params=params,
+        )
     except Exception as e:
         collection_import.status = CollectionImport.ERROR
         collection_import.save()
 
         public_activity_utils.create_and_broadcast_pa(
             FAILURE_MESSAGE % collection_import.file_name,
-            PublicActivity.COLLECTION_IMPORT, params=params)
+            PublicActivity.COLLECTION_IMPORT,
+            owner_id,
+            params=params,
+        )
 
         raise e
 
@@ -54,8 +67,13 @@ def import_cards_from_pdf(collection_import: CollectionImport):
     collection_import.status = CollectionImport.IN_PROGRESS
     collection_import.save()
 
-    params = {"collection_id": collection_import.collection_id,
-              "import_id": collection_import.id}
+    collection = Collection.objects.get(id=collection_import.collection_id)
+    owner_id = collection.owner_id
+
+    params = {
+        "collection_id": collection_import.collection_id,
+        "import_id": collection_import.id,
+    }
 
     try:
         image_keys = extract_images_from_file(collection_import.file_key)
@@ -72,14 +90,20 @@ def import_cards_from_pdf(collection_import: CollectionImport):
 
         public_activity_utils.create_and_broadcast_pa(
             SUCCESS_MESSAGE % collection_import.file_name,
-            PublicActivity.COLLECTION_IMPORT, params=params)
+            PublicActivity.COLLECTION_IMPORT,
+            owner_id,
+            params=params,
+        )
     except Exception as e:
         collection_import.status = CollectionImport.ERROR
         collection_import.save()
 
         public_activity_utils.create_and_broadcast_pa(
             FAILURE_MESSAGE % collection_import.file_name,
-            PublicActivity.COLLECTION_IMPORT, params=params)
+            PublicActivity.COLLECTION_IMPORT,
+            owner_id,
+            params=params,
+        )
         raise e
 
 

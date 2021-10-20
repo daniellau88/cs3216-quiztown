@@ -10,8 +10,8 @@ def get_user_key(user_id: int):
     return "public_activity_%s" % user_id
 
 
-def create_and_broadcast_pa(message: str, type: int, params=dict):
-    pa = PublicActivity(message=message, type=type, params=params)
+def create_and_broadcast_pa(message: str, type: int, user_id: int, params=dict):
+    pa = PublicActivity(message=message, type=type, user_id=user_id, params=params)
     pa.save()
     broadcast_public_activity(pa)
 

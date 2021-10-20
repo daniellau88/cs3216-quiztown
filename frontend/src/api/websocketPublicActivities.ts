@@ -7,13 +7,21 @@ import { Token, getCookie } from './helpers/server-context';
 import { URL_SUFFIX } from './helpers/url-suffix';
 
 const BaseWebsocketURL = 'ws://localhost:8000/ws';
+const RestartInterval = 3000;
 
 export class WebsocketPublicActivitiesAPI {
-    public subscribePublicActivity(onMessage: (message: ApiResponse<{ item: PublicActivityListData }>) => void): void {
-        this.sendConnection(`${BaseWebsocketURL}/subscribePublicActivity` + URL_SUFFIX, onMessage);
+    private static isSubscribedPublicActivity = false;
+
+    public subscribePublicActivity(onMessage: (message: ApiResponse<{ item: PublicActivityListData }>) => void, restartConnection = true): void {
+        if (WebsocketPublicActivitiesAPI.isSubscribedPublicActivity) {
+            console.log('Already subscribed');
+            return;
+        }
+        WebsocketPublicActivitiesAPI.isSubscribedPublicActivity = true;
+        this.sendConnection(`${BaseWebsocketURL}/subscribePublicActivity` + URL_SUFFIX, onMessage, restartConnection);
     }
 
-    protected sendConnection<D>(endpoint: string, onMessage: (res: ApiResponse<D>) => void): void {
+    protected sendConnection<D>(endpoint: string, onMessage: (res: ApiResponse<D>) => void, restartConnection = true): void {
         const client = new w3cwebsocket(endpoint, '', '', this.getConfigHeaders());
 
         client.onopen = () => {
@@ -31,6 +39,12 @@ export class WebsocketPublicActivitiesAPI {
         client.onclose = () => {
             if (process.env.NODE_ENV === 'development') {
                 console.info(`[WebsocketAPI] ${endpoint} closed`);
+            }
+            if (restartConnection) {
+                // Try to reconnect
+                setTimeout(() => {
+                    this.sendConnection(endpoint, onMessage, restartConnection);
+                }, RestartInterval);
             }
         };
         client.onerror = (err) => {
