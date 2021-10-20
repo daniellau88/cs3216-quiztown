@@ -8,3 +8,9 @@ export function saveCurrentUser(data: UserData): types.SaveCurrentUserAction {
         data,
     };
 }
+
+export function deleteCurrentUser(): types.DeleteCurrentUserAction {
+    return {
+        type: types.DELETE_CURRENT_USER,
+    };
+}

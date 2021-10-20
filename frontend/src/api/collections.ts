@@ -25,7 +25,7 @@ export class CollectionsAPI extends BaseAPI {
     }
 
     public patchCollection(id: number, data: CollectionPostData): ApiPromise<{ item: CollectionData }> {
-        return this.put(`${this.getCollectionUrl()}/${id}` + URL_SUFFIX, data);
+        return this.patch(`${this.getCollectionUrl()}/${id}` + URL_SUFFIX, data);
     }
 
     public deleteCollection(id: number): ApiPromise<{}> {

@@ -2,7 +2,8 @@ import { UploadData, UploadTextData } from './uploads';
 
 export interface CollectionPostData {
     name: string;
-    owner_id: number;
+    private?: boolean;
+    image_link?: string;
 }
 
 export interface CollectionListData {

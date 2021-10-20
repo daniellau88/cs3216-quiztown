@@ -26,7 +26,7 @@ export class CardsAPI extends BaseAPI {
     }
 
     public patchCard(cardId: number, data: Partial<CardPostData>): ApiPromise<{ item: CardData }> {
-        return this.put(`${this.getCardUrl()}/${cardId}` + URL_SUFFIX, data);
+        return this.patch(`${this.getCardUrl()}/${cardId}` + URL_SUFFIX, data);
     }
 
     public deleteCard(cardId: number): ApiPromise<{}> {

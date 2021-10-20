@@ -4,6 +4,8 @@ import { SnackbarProvider } from 'notistack';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { Route, Router } from 'react-router-dom';
+import persistStore from 'redux-persist/es/persistStore';
+import { PersistGate } from 'redux-persist/integration/react';
 
 import AppLayout from './layouts/AppLayout';
 import Notifier from './modules/notifications/components/Notifier';
@@ -14,6 +16,7 @@ import './assets/css/fonts.css';
 
 const history = createBrowserHistory();
 const store = configureStore();
+const persistor = persistStore(store);
 
 const theme = createTheme({
     palette,
@@ -26,16 +29,18 @@ const theme = createTheme({
 const App: React.FC = () => {
     return (
         <Provider store={store}>
-            <Router history={history}>
-                <ThemeProvider theme={theme}>
-                    <SnackbarProvider>
-                        <AppLayout>
-                            <Notifier />
-                            <Route path="" render={MainRouter}></Route>
-                        </AppLayout>
-                    </SnackbarProvider>
-                </ThemeProvider>
-            </Router>
+            <PersistGate persistor={persistor}>
+                <Router history={history}>
+                    <ThemeProvider theme={theme}>
+                        <SnackbarProvider>
+                            <AppLayout>
+                                <Notifier />
+                                <Route path="" render={MainRouter}></Route>
+                            </AppLayout>
+                        </SnackbarProvider>
+                    </ThemeProvider>
+                </Router>
+            </PersistGate>
         </Provider>
     );
 };

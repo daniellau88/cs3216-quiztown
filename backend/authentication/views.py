@@ -1,7 +1,8 @@
 import requests
 
-from django.contrib.auth import authenticate, login
-from rest_framework.decorators import api_view
+from django.contrib.auth import authenticate, login, logout
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from quiztown.common.decorators import validate_request_data
@@ -19,6 +20,7 @@ def test_view(request):
 
 
 @api_view(["POST"])
+@permission_classes([AllowAny])
 @validate_request_data(serializers.LoginRequestSerializer)
 def login_view(request, serializer, *args, **kwargs):
     username = serializer.validated_data["username"]
@@ -35,6 +37,7 @@ def login_view(request, serializer, *args, **kwargs):
 
 
 @api_view(["POST"])
+@permission_classes([AllowAny])
 @validate_request_data(serializers.GoogleLoginRequestSerializer)
 def google_login_view(request, serializer):
     token_id = serializer.validated_data["token_id"]
@@ -83,3 +86,10 @@ def google_login_view(request, serializer):
 
     raise ApplicationError(ErrorCode.UNAUTHENTICATED, [
                            "Failed to login"])
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def logout_view(request):
+    logout(request)
+    return Response({})
