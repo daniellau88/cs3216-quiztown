@@ -8,7 +8,6 @@ import {
 import * as React from 'react';
 
 import Breadcrumbs from '../../../layouts/Breadcrumbs';
-import routes from '../../../utilities/routes';
 import CollectionTable from '../components/CollectionTable';
 
 const useStyles = makeStyles(() => ({
