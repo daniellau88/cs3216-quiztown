@@ -11,6 +11,7 @@ class Collection(TimestampedModel):
     owner_id = models.IntegerField()
     private = models.IntegerField(default=PRIVATE)
     image_link = models.CharField(max_length=1024, default="")
+    origin = models.IntegerField(default=0)
 
     def create(self, validated_data):
         return Collection.objects.create(validated_data)

@@ -187,3 +187,11 @@ def review_collection_import_view(request, pk_item, pkImport_item):
     response_serializer = serializers.CollectionImportSerializer(pkImport_item)
 
     return Response({"item": response_serializer.data})
+
+
+@api_view(["POST"])
+@convert_keys_to_item({"pk": Collection})
+@validate_request_data(serializers.CollectionSerializer)
+def duplicate_collection(request, pk_item, serializer):
+    newcollection = jobs.duplicate_collection(pk_item, request.user.user_id)
+    return Response({"items": newcollection})

@@ -5,7 +5,6 @@ import fitz
 from django_rq import job
 
 from card import jobs as card_jobs
-from collection.models import CollectionImport
 from public_activity import utils as public_activity_utils
 from public_activity.models import PublicActivity
 
@@ -134,3 +133,16 @@ def extract_images_from_file(file_key: str) -> list[str]:
             image_keys.append(image_key)
             count += 1
     return image_keys
+
+
+@job
+def duplicate_collection(collection_to_duplicate: Collection, new_owner: int):
+    collection = Collection(name=collection_to_duplicate.name,
+                            owner_id=new_owner,
+                            image_link=collection_to_duplicate.image_link,
+                            origin=collection_to_duplicate.pk)
+    collection.save()
+
+    card_jobs.duplicate_cards(collection.pk)
+
+    return collection

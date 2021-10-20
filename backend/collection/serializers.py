@@ -8,7 +8,8 @@ from .models import Collection, CollectionImport
 class CollectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Collection
-        fields = ["id", "name", "owner_id", "private", "created_at", "image_link"]
+        fields = ["id", "name", "owner_id", "private", "created_at", "image_link",
+                  "origin"]
 
 
 class CollectionCreateSerializer(serializers.ModelSerializer):
