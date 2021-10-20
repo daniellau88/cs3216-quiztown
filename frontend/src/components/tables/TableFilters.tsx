@@ -116,7 +116,7 @@ function buildInitialFilterState(collection: EntityCollection, filters: TableFil
                 break;
             }
             case 'select-checkbox': {
-                initialState[filter.key] = collection.filters[filter.key] || false;
+                initialState[filter.key] = collection.filters[filter.key] || 0;
                 break;
             }
         }
@@ -231,7 +231,7 @@ const TableFilters: React.FC<Props> = ({ collection, filters, onUpdate }: Props)
                                     );
                                 }
                                 case 'select-checkbox': {
-                                    const currentFilter = activeFilters[filter.key] || false;
+                                    const currentFilter = activeFilters[filter.key] || 0;
 
                                     return (
                                         <Grid key={index} item xs={12} sm={6} lg={3} xl={2}>
