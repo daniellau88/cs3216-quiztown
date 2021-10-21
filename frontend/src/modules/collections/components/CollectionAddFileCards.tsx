@@ -63,13 +63,11 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
     const classes = useStyles();
     const dispatch = useDispatch();
 
-    const imageSrc = 'https://picsum.photos/200/300';
-
     const [fileCardInfo, saveFileCardInfo] = useState<Array<File>>([]);
     const [fileImageLink, saveFileImageLink] = useState<Array<string>>([]);
+    const [filePDFLink, saveFilePDFLink] = useState<Array<any>>([]);
     const [uploadFilesChild, setUploadedResponseChild] = useState<Array<UploadData>>([]);
-
-    const [testTarget, setTarget] = useState();
+    const [numPages, setNumPages] = useState<number>(1);
 
     const upload = async (e: React.ChangeEvent<any>) => {
         const fileInfo = [...fileCardInfo];
@@ -78,12 +76,13 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
         console.log(fileInfo);
         saveFileCardInfo(fileInfo);
         const fileImage = [...fileImageLink];
+        const filePDF = [...filePDFLink];
         const currFile = fileInfo[fileInfo.length - 1];
         const type = currFile.name.slice(-3);
         if (type === 'pdf') {
-            console.log('is pdf');
             fileImage.push(type);
-            setTarget(e.target.files[0]);
+            filePDF.push(e.target.files[e.target.files.length - 1]);
+            saveFilePDFLink(filePDF);
         } else {
             const url = URL.createObjectURL(currFile);
             if (url) {
@@ -108,6 +107,10 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
                     return false;
                 });
         });
+    };
+
+    const onDocumentLoadSuccess = ({ numPages }: any) => {
+        setNumPages(numPages);
     };
 
     return (
@@ -153,8 +156,10 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
                             <Grid container className={classes.image}>
                                 {fileImageLink[index] === 'pdf' ?
                                     (
-                                        <Document file={testTarget}>
-                                            <Page pageNumber={1} />
+                                        <Document
+                                            file={filePDFLink[index]}
+                                            onLoadSuccess={onDocumentLoadSuccess}>
+                                            <Page pageNumber={1} width={100} height={100 / numPages} />
                                         </Document>
                                     ) :
                                     (<CardMedia
