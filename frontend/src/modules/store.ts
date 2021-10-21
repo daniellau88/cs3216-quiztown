@@ -9,12 +9,14 @@ import authReducer from './auth/reducers';
 import cardsReducer from './cards/reducers';
 import collectionsReducer from './collections/reducers';
 import notificationsReducer from './notifications/reducers';
+import publicActivitiesReducer from './publicActivities/reducers';
 
 const rootReducer: Reducer<AppState> = combineReducers<AppState>({
     auth: authReducer,
     collections: collectionsReducer,
     cards: cardsReducer,
     notifications: notificationsReducer,
+    publicActivities: publicActivitiesReducer,
 });
 
 const middlewares: Middleware[] = [thunk];

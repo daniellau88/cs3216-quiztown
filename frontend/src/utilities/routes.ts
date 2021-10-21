@@ -18,6 +18,9 @@ const ROUTES = {
             NEWTEXT: '/collections/:collectionId/cards/newText',
             NEWIMAGE: '/collections/:collectionId/cards/newImage',
         },
+        IMPORT: {
+            SHOW: '/collections/:collectionId/imports/:importId',
+        },
     },
     CARDS: {
         SHOW_STARRED: '/cards/starred',

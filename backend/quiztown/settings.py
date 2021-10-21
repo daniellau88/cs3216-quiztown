@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "channels",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
     "card",
     "user",
     "upload",
+    "public_activity",
     "rest_framework",
     "django_rq",
 ]
@@ -77,6 +79,15 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "quiztown.wsgi.application"
+ASGI_APPLICATION = "quiztown.asgi.application"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 
 
 # Database

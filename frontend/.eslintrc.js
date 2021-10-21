@@ -22,6 +22,7 @@ module.exports = {
     'plugins': [
         'react',
         '@typescript-eslint',
+        'react-hooks',
     ],
     'rules': {
         'quotes': ['error', 'single'],
@@ -50,5 +51,8 @@ module.exports = {
         ],
         'sort-imports': ['error', { 'ignoreDeclarationSort': true }],
         'comma-dangle': ['error', 'always-multiline'],
+        'react-hooks/rules-of-hooks': 'warn',
+        'react-hooks/exhaustive-deps': 'warn',
+
     },
 };

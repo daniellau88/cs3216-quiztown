@@ -1,8 +1,13 @@
+const getCookie = (): string => {
+    return document.cookie;
+};
+
 // ref: https://stackoverflow.com/a/50735730
-const getCookie = (name: string): string => {
+const getCookieByFieldName = (name: string): string => {
     let cookieValue = '';
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
+    const cookieString = getCookie();
+    if (cookieString && cookieString !== '') {
+        const cookies = cookieString.split(';');
         for (let i = 0; i < cookies.length; i++) {
             const cookie = cookies[i].trim();
             if (cookie.substring(0, name.length + 1) === (name + '=')) {
@@ -15,7 +20,19 @@ const getCookie = (name: string): string => {
 };
 
 const getCsrfTokenCookie = (): string => {
-    return getCookie('csrftoken');
+    return getCookieByFieldName('csrftoken');
 };
 
-export { getCsrfTokenCookie };
+class Token {
+    private static csrfToken = getCsrfTokenCookie();
+
+    public static getCsrfToken(): string {
+        return Token.csrfToken;
+    }
+
+    public static refreshCsrfToken(): void {
+        Token.csrfToken = getCsrfTokenCookie();
+    }
+}
+
+export { Token, getCookie };

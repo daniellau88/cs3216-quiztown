@@ -125,7 +125,7 @@ def get_paddle_ocr_text_bounding_boxes_from_image(image_file_path: str) -> list[
             result_row[0]), result_row[1][0], result_row[1][1])
 
     if result is None:
-        return []
+        raise ApplicationError(ErrorCode.DEPENDENCY_ERROR, ["Error parsing image"])
 
     return [convert_result_row_to_object(result_row) for result_row in result]
 

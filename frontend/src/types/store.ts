@@ -5,6 +5,7 @@ import { AuthState } from '../modules/auth/types';
 import { CardsState } from '../modules/cards/types';
 import { CollectionsState } from '../modules/collections/types';
 import { NotificationsState } from '../modules/notifications/types';
+import { PublicActivitiesState } from '../modules/publicActivities/types';
 
 /**
  * Describes the overall shape of the application's Redux store state.
@@ -14,6 +15,7 @@ export interface AppState {
     cards: CardsState;
     collections: CollectionsState;
     notifications: NotificationsState;
+    publicActivities: PublicActivitiesState;
 }
 
 export type Operation<R> = ThunkAction<Promise<R>, AppState, {}, AnyAction>;

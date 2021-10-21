@@ -83,23 +83,25 @@ Alternatively, you can use environment variables `DB_NAME`, `DB_USER` and `DB_PA
 
 ```
 {
-   "python.linting.enabled": true,
-   "python.linting.flake8Enabled": true,
-   "python.formatting.provider": "autopep8",
-   "python.linting.flake8Args": [
-      "--config",
-      "backend/.flake8"
-   ],
-   "python.formatting.autopep8Args": [
-      "--global-config",
-      "backend/pyproject.toml"
-   ],
-   "[python]": {
-      "editor.codeActionsOnSave": {
-         "source.organizeImports": true
-      }
-   },
-   "python.analysis.typeCheckingMode": "basic",
-   "python.analysis.indexing": true,
+    "python.pythonPath": "backend/venv/bin/python",
+    "python.defaultInterpreterPath": "backend/venv/bin/python",
+    "python.linting.enabled": true,
+    "python.linting.flake8Enabled": true,
+    "python.formatting.provider": "autopep8",
+    "python.linting.flake8Args": [
+        "--config",
+        "backend/.flake8"
+    ],
+    "python.formatting.autopep8Args": [
+        "--global-config",
+        "backend/pyproject.toml"
+    ],
+    "[python]": {
+        "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+        }
+    },
+    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.indexing": true,
 }
 ```
