@@ -85,17 +85,6 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
     const dispatch = useDispatch();
 
     const collectionId = data?.id;
-    const collectionCardList = useSelector((state: AppState) => getCollectionCardList(state, collectionId));
-
-    const [isLoading, setIsLoading] = React.useState(true);
-
-    React.useEffect(() => {
-        if (!collectionId) return;
-        handleApiRequest(dispatch, dispatch(loadCollectionCards(collectionId, {}))).finally(() => {
-            setIsLoading(false);
-        });
-    }, []);
-
 
     const addNewCollection = () => {
         history.push('/collections/new');
@@ -143,10 +132,6 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
             });
     };
 
-    if (isLoading) {
-        return <LoadingIndicator />;
-    }
-
     return (
         <Card className={classes.root}>
             <Box className={classes.imageContainer}>
@@ -165,8 +150,8 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                 <Grid container alignItems='center'>
                     <ReorderOutlined className={classes.collectionIcon} />
                     <Typography className={classes.collectionText} style={{ marginLeft: 6 }}>
-                        {collectionCardList.totalEntities}
-                        {collectionCardList.totalEntities > 1 || collectionCardList.totalEntities == 0 ? ' cards' : ' card'}
+                        {data.num_cards}
+                        {data.num_cards > 1 || data.num_cards == 0 ? ' cards' : ' card'}
                     </Typography>
                     <Grid item style={{ width: '2vw' }} />
                     {collectionTags.length > 0 &&

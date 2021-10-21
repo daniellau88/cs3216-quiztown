@@ -1,15 +1,18 @@
 from rest_framework import serializers
 
+from card.models import Card
+
 from .models import Collection, CollectionImport, CollectionTag, Tag
 
 
 class CollectionSerializer(serializers.ModelSerializer):
     tags = serializers.SerializerMethodField()
+    num_cards = serializers.SerializerMethodField()
 
     class Meta:
         model = Collection
         fields = ["id", "name", "owner_id", "private", "created_at", "image_link",
-                  "origin", "tags"]
+                  "origin", "tags", "num_cards"]
 
     def get_tags(self, obj):
         tag_ids = CollectionTag.objects.filter(
@@ -17,6 +20,10 @@ class CollectionSerializer(serializers.ModelSerializer):
         tag_ids_set = list(set(tag_ids))
         tags = Tag.objects.filter(id__in=tag_ids_set).values_list("name", flat=True)
         return tags
+
+    def get_num_cards(self, obj):
+        card_num = Card.objects.filter(collection_id=obj.id, is_reviewed=True).count()
+        return card_num
 
 
 class CollectionCreateSerializer(serializers.ModelSerializer):

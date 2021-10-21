@@ -15,6 +15,7 @@ export interface CollectionListData {
     owner_id: number; // TODO: change to owner object
     image_link: string;
     tags: string[];
+    num_cards: number;
 }
 
 
@@ -26,6 +27,7 @@ export interface CollectionMiniEntity {
     owner_id: number;
     image_link: string;
     tags: string[];
+    num_cards: number;
 }
 
 export interface CollectionsCardImportPostData {
