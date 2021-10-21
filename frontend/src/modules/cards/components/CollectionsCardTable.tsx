@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import CollectionMesh from '../../../components/tables/CollectionMesh';
+import { SortFilter } from '../../../components/tables/CollectionMeshHeader';
 import { TableFilter } from '../../../components/tables/TableFilters';
 import { AppState, CollectionOptions, EntityCollection } from '../../../types/store';
 import { handleApiRequest } from '../../../utilities/ui';
@@ -40,6 +41,21 @@ const CollectionsCardTable: React.FC<OwnProps> = ({ collectionId, beforeCreateCa
         },
     ];
 
+    const orders: SortFilter[] = [
+        {
+            name: 'Date Created',
+            order: 'card_card.created_at',
+        },
+        {
+            name: 'Date Updated',
+            order: 'card_card.updated_at',
+        },
+        {
+            name: 'Name',
+            order: 'card_card.name',
+        },
+    ];
+
     const onUpdate = (options: CollectionOptions, dispatch: Dispatch<any>) => {
         setIsLoading(true);
         const queryFilters = {
@@ -48,7 +64,11 @@ const CollectionsCardTable: React.FC<OwnProps> = ({ collectionId, beforeCreateCa
         if (!options.filters?.flagged) {
             delete queryFilters.flagged;
         }
-        const queryOptions: CollectionOptions = { ...options, filters: queryFilters };
+        const queryOptions: CollectionOptions = {
+            ...options,
+            filters: queryFilters,
+        };
+        console.log(queryOptions);
         return handleApiRequest(dispatch, dispatch(loadCollectionCards(collectionId, queryOptions))).finally(() => {
             setIsLoading(false);
         });
@@ -71,7 +91,9 @@ const CollectionsCardTable: React.FC<OwnProps> = ({ collectionId, beforeCreateCa
             gridComponent={CollectionsCardGridComponent}
             leadingComponent={isBrowser ? <CollectionsCardCard isAddCard={true} id={collectionId} beforeRedirect={beforeCreateCard} /> : undefined}
             filters={filters}
+            orders={orders}
             isSearchable
+            isSortable
         />
     );
 };

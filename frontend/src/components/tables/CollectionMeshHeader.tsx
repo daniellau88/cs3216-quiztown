@@ -1,4 +1,4 @@
-import { Grid } from '@material-ui/core';
+import { Button, Checkbox, FormControl, Grid, Input, InputLabel, ListItemText, MenuItem, Select, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import { isBrowser } from 'react-device-detect';
@@ -9,6 +9,10 @@ import SearchInput from '../fields/SearchInput';
 
 import TableFilters, { TableFilter } from './TableFilters';
 
+export type SortFilter = {
+    name: string,
+    order: string,
+}
 
 const useStyles = makeStyles((theme) => ({
     firstRow: {
@@ -28,6 +32,11 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: theme.spacing(0),
         marginRight: theme.spacing(0),
     },
+    sort: {
+        marginLeft: theme.spacing(0),
+        marginRight: theme.spacing(0),
+        marginBottom: '1vh',
+    },
     lastItem: {
         marginLeft: 'auto',
     },
@@ -46,11 +55,17 @@ interface OwnProps {
     actions?: React.ReactElement | null;
     // A list of filters to be used for filtering the collection.
     filters?: TableFilter[];
+    // Whether the collection supports sorting.
+    isSortable?: boolean;
+    // A list of orderings to be used for sorting.
+    orders?: SortFilter[];
 }
 
-const CollectionMeshHeader: React.FC<OwnProps> = ({ collection, onUpdate, filters, isSearchable }: OwnProps) => {
+const CollectionMeshHeader: React.FC<OwnProps> = ({ collection, onUpdate, filters, isSearchable, orders, isSortable }: OwnProps) => {
     const classes = useStyles();
     const [query, setQuery] = React.useState(collection.search);
+    const [order, setOrder] = React.useState(collection.sortBy);
+    const [direction, setDirection] = React.useState(collection.sortOrder);
     const [timerId, setTimerId] = React.useState<number | null>(null);
 
     const setFilters = (activeFilters: Record<string, any>) => onUpdate({ filters: activeFilters });
@@ -69,6 +84,19 @@ const CollectionMeshHeader: React.FC<OwnProps> = ({ collection, onUpdate, filter
 
         setTimerId(newTimerId);
     };
+    console.log(order);
+
+    const updateSortQuery = (e: React.ChangeEvent<any>) => {
+        const newOrder = e.target.value;
+        setOrder(newOrder);
+        onUpdate({ sortBy: newOrder });
+    };
+
+    const toggleSortDirection = () => {
+        const newDirection = direction == 'asc' ? 'desc' : 'asc';
+        setDirection(newDirection);
+        onUpdate({ sortOrder: newDirection });
+    };
 
     const searchElement = isSearchable ? (
         <Grid item xs={12} md={6} lg={5} xl={4} style={{ maxWidth: isBrowser ? '40vw' : '90vw', paddingLeft: '1vw' }}>
@@ -76,19 +104,62 @@ const CollectionMeshHeader: React.FC<OwnProps> = ({ collection, onUpdate, filter
         </Grid>
     ) : null;
 
+    const sortOrderElement = isSortable ? (
+        <Grid item xs={12} md={6} lg={5} xl={4} style={{ maxWidth: '45vw', paddingLeft: '1vw' }}>
+            <FormControl fullWidth>
+                <Select
+                    value={order}
+                    onChange={(event) => {
+                        updateSortQuery(event);
+                    }}
+                    displayEmpty
+                    fullWidth
+                    input={<Input />}
+                    label={order}
+                >
+                    {orders?.map((order) => (
+                        <MenuItem key={order.order} value={order.order}>
+                            <ListItemText primary={order.name} />
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+        </Grid>
+    ) : null;
+
+    const sortDirectionElement = isSortable ? (
+        <Grid item xs={12} md={6} lg={5} xl={4} style={{ maxWidth: '45vw', paddingLeft: '1vw' }}>
+            <Button onClick={toggleSortDirection}>
+                <Typography>
+                    {direction == 'asc' ? 'Ascending' : 'Descending'}
+                </Typography>
+            </Button>
+        </Grid >
+    ) : null;
+
     return (
         <>
             {isBrowser ? (
-                <Grid className={classes.firstRow} container justifyContent="space-between" spacing={0}>
-                    {searchElement}
+                <Grid className={classes.firstRow} container justifyContent="space-between" direction='row' spacing={0}>
+                    <Grid container direction='column' spacing={1} style={{ maxWidth: '40vw' }}>
+                        {searchElement}
+                        <Grid container direction='row' style={{ minWidth: '40vw', maxWidth: '40vw' }} alignItems='center'>
+                            {sortOrderElement}
+                            {sortDirectionElement}
+                        </Grid>
+                    </Grid>
                     {filters && filters.length > 0 && (
                         <TableFilters collection={collection} filters={filters} onUpdate={setFilters} />
                     )}
                 </Grid>
             ) :
                 (
-                    <Grid className={classes.firstRow} container justifyContent="space-between" spacing={2}>
+                    <Grid className={classes.firstRow} container justifyContent="space-between" spacing={1}>
                         {searchElement}
+                        <Grid container direction='row' justifyContent='center' alignItems='center' spacing={1} style={{ minWidth: '100%', maxWidth: '100%', marginBottom: '1vh' }}>
+                            {sortOrderElement}
+                            {sortDirectionElement}
+                        </Grid>
                         {filters && filters.length > 0 && (
                             <TableFilters collection={collection} filters={filters} onUpdate={setFilters} />
                         )}

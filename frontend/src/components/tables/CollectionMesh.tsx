@@ -8,7 +8,7 @@ import { ApiPromise } from '../../types';
 import { CollectionOptions, EntityCollection } from '../../types/store';
 import LoadingIndicator from '../content/LoadingIndicator';
 
-import CollectionMeshHeader from './CollectionMeshHeader';
+import CollectionMeshHeader, { SortFilter } from './CollectionMeshHeader';
 import { TableFilter } from './TableFilters';
 
 const useStyles = makeStyles((theme) => ({
@@ -44,6 +44,10 @@ interface OwnProps<P> {
     isSearchable?: boolean;
     // A list of filters to be used for filtering the collection.
     filters?: TableFilter[];
+    // Whether the collection supports sorting.
+    isSortable?: boolean;
+    // A list of orderings to be used for sorting.
+    orders?: SortFilter[];
     // Additional actions displayed on the table header.
     headerActions?: React.ReactElement | null;
     rowProps?: Record<string, P>;
@@ -59,6 +63,8 @@ const CollectionMesh: React.FC<Props> = ({
     leadingComponent,
     isSearchable,
     filters,
+    isSortable,
+    orders,
     rowProps,
 }: Props) => {
     const classes = useStyles();
@@ -70,6 +76,8 @@ const CollectionMesh: React.FC<Props> = ({
                 onUpdate={onUpdate}
                 filters={filters}
                 isSearchable={isSearchable}
+                orders={orders}
+                isSortable={isSortable}
             />
             <Grid container alignItems='center'>
                 {isLoading && (
