@@ -11,7 +11,8 @@ const initialState: types.CardsState = {
         filters: {
             'is_reviewed': 1,
         },
-        sortBy: 'card_card.created_at',
+        sortBy: 'card_card.updated_at',
+        sortOrder: 'desc',
     }),
     importCards: createEntityCollectionSet(),
 };

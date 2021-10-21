@@ -6,7 +6,10 @@ import * as types from './types';
 
 const initialState: types.CollectionsState = {
     collections: createEntityStore(),
-    allCollections: createEntityCollection(),
+    allCollections: createEntityCollection({
+        sortBy: 'collection_collection.updated_at',
+        sortOrder: 'desc',
+    }),
 };
 
 const collectionsReducer = produce((draft: types.CollectionsState, action: types.CollectionsActionTypes) => {
