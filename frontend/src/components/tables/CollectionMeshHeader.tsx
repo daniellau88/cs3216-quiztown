@@ -84,7 +84,6 @@ const CollectionMeshHeader: React.FC<OwnProps> = ({ collection, onUpdate, filter
 
         setTimerId(newTimerId);
     };
-    console.log(order);
 
     const updateSortQuery = (e: React.ChangeEvent<any>) => {
         const newOrder = e.target.value;

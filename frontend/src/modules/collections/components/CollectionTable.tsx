@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import CollectionMesh from '../../../components/tables/CollectionMesh';
+import { SortFilter } from '../../../components/tables/CollectionMeshHeader';
 import { TableFilter } from '../../../components/tables/TableFilters';
 import { CollectionOptions, EntityCollection } from '../../../types/store';
 import { handleApiRequest } from '../../../utilities/ui';
@@ -21,6 +22,21 @@ const CollectionTable: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = React.useState(true);
 
     const filters: TableFilter[] = [
+    ];
+
+    const orders: SortFilter[] = [
+        {
+            name: 'Date Created',
+            order: 'collection_collection.created_at',
+        },
+        {
+            name: 'Date Updated',
+            order: 'collection_collection.updated_at',
+        },
+        {
+            name: 'Name',
+            order: 'collection_collection.name',
+        },
     ];
 
     const onUpdate = (options: CollectionOptions, dispatch: Dispatch<any>) => {
@@ -42,7 +58,9 @@ const CollectionTable: React.FC<{}> = () => {
             gridComponent={CollectionGridComponent}
             leadingComponent={isBrowser ? <CollectionCard isAddCollectionCard={true} /> : undefined}
             filters={filters}
+            orders={orders}
             isSearchable
+            isSortable
         />
     );
 };
