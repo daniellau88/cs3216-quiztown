@@ -49,9 +49,35 @@ class CollectionCreateSerializer(serializers.ModelSerializer):
 
 
 class CollectionUpdateSerializer(serializers.ModelSerializer):
+    tags = serializers.ListField(child=serializers.CharField())
+
     class Meta:
         model = Collection
-        fields = ["name", "private", "image_link"]
+        fields = ["name", "private", "image_link", "tags"]
+
+    def update(self, instance, validated_data):
+        if "tags" in validated_data:
+            tags = validated_data.pop("tags")
+            new_tag_ids = set()
+            for tag in tags:
+                tag_object = Tag.objects.get_or_create(name=tag)[0]
+                new_tag_ids.add(tag_object.id)
+
+            old_collection_tag = CollectionTag.objects.filter(collection_id=instance.id)
+            old_tag_ids = set(
+                [collection_tag.tag_id for collection_tag in old_collection_tag])
+
+            to_add_tag_ids = new_tag_ids - old_tag_ids
+            for tag_id in to_add_tag_ids:
+                CollectionTag.objects.get_or_create(
+                    collection_id=instance.id, tag_id=tag_id)
+
+            to_remove_tag_ids = old_tag_ids - new_tag_ids
+            if len(to_remove_tag_ids) > 0:
+                CollectionTag.objects.filter(
+                    collection_id=instance.id, tag_id__in=to_remove_tag_ids).delete()
+
+        return super().update(instance, validated_data)
 
 
 class CollectionImportSerializer(serializers.ModelSerializer):
