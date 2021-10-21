@@ -8,13 +8,12 @@ import {
 } from '@material-ui/core';
 import * as React from 'react';
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 import QTButton from '../../../components/QTButton';
 import Breadcrumbs from '../../../layouts/Breadcrumbs';
 import { CollectionPostData } from '../../../types/collections';
-import { AppState } from '../../../types/store';
 import { UploadData } from '../../../types/uploads';
 import routes from '../../../utilities/routes';
 import { handleApiRequest } from '../../../utilities/ui';

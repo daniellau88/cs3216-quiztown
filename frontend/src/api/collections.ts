@@ -42,6 +42,18 @@ export class CollectionsAPI extends BaseAPI {
     public importTextCollectionCards(collectionId: number, data: CollectionsImportTextPostData): ApiPromise<CollectionDataType<CardListData>> {
         return this.post(`${this.getCollectionUrl()}/${collectionId}/importText` + URL_SUFFIX, data);
     }
+
+    public getCollectionImportList(collectionId: number): ApiPromise<{}> {
+        return this.get(`${this.getCollectionUrl()}/${collectionId}/imports` + URL_SUFFIX);
+    }
+
+    public getCollectionImport(collectionId: number, importId: number): ApiPromise<{}> {
+        return this.get(`${this.getCollectionUrl()}/${collectionId}/imports/${importId}` + URL_SUFFIX);
+    }
+
+    public reviewCollectionImport(collectionId: number, importId: number): ApiPromise<{}> {
+        return this.post(`${this.getCollectionUrl()}/${collectionId}/imports/${importId}/review` + URL_SUFFIX);
+    }
 }
 
 export default CollectionsAPI;

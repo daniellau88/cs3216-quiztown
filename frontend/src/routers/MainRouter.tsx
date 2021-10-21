@@ -10,6 +10,7 @@ import CollectionsCardStarredPage from '../modules/cards/pages/CollectionsCardSt
 import CollectionsImageCardEditPage from '../modules/cards/pages/CollectionsImageCardEditPage';
 import CollectionAddPage from '../modules/collections/pages/CollectionAddPage';
 import CollectionDiscoverPage from '../modules/collections/pages/CollectionDiscoverPage';
+import CollectionImportReviewPage from '../modules/collections/pages/CollectionImportReviewPage';
 import CollectionPage from '../modules/collections/pages/CollectionPage';
 import QuizPage from '../modules/quiz/pages/QuizPage';
 import HomePage from '../pages/HomePage';
@@ -27,6 +28,7 @@ const MainRouter = (): JSX.Element => {
                 <Route exact path={routes.COLLECTIONS.NEW} component={CollectionAddPage} />
                 <Route exact path={routes.COLLECTIONS.SHOW} component={CollectionsCardPage} />
                 <Route exact path={routes.COLLECTIONS.DISCOVER} component={CollectionDiscoverPage} />
+                <Route exact path={routes.COLLECTIONS.IMPORT.SHOW} component={CollectionImportReviewPage} />
                 <Route exact path={routes.COLLECTIONS.CARD.NEWTEXT} component={CollectionsCardAddTextPage} />
                 <Route exact path={routes.COLLECTIONS.CARD.NEWIMAGE} component={CollectionsCardAddImagePage} />
                 <Route exact path={routes.COLLECTIONS.CARD.NEW} component={CollectionsCardAddPage} />
