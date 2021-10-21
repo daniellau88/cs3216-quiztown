@@ -11,6 +11,7 @@ const initialState: types.CardsState = {
         filters: {
             'is_reviewed': 1,
         },
+        sortBy: 'card_card.created_at',
     }),
     importCards: createEntityCollectionSet(),
 };
@@ -49,7 +50,13 @@ const cardsReducer = produce((draft: types.CardsState, action: types.CardsAction
         case types.DELETE_CARD: {
             const collectionId = draft.cards.byId[action.id]?.collection_id;
             removeFromStore(draft.cards, action.id);
-
+            if (draft.allCards) {
+                draft.allCards.ids = draft.allCards.ids.filter((id) => id !== action.id);
+            }
+            if (collectionId && draft.collectionCards && draft.collectionCards.byId[collectionId]) {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                draft.collectionCards.byId[collectionId]!.ids = draft.collectionCards.byId[collectionId]!.ids.filter((id) => id !== action.id);
+            }
             resetCollectionCache(draft.allCards);
             if (collectionId) {
                 resetCollectionSetCache(draft.collectionCards, collectionId);
