@@ -139,6 +139,7 @@ def extract_images_from_file(file_key: str) -> list[str]:
 def duplicate_collection(collection_to_duplicate: Collection, new_owner: int):
     collection = Collection(name=collection_to_duplicate.name,
                             owner_id=new_owner,
+                            private=Collection.PRIVATE,
                             image_link=collection_to_duplicate.image_link,
                             origin=collection_to_duplicate.pk)
     collection.save()

@@ -9,6 +9,7 @@ import CollectionsCardShowImageOrTextPage from '../modules/cards/pages/Collectio
 import CollectionsCardStarredPage from '../modules/cards/pages/CollectionsCardStarredPage';
 import CollectionsImageCardEditPage from '../modules/cards/pages/CollectionsImageCardEditPage';
 import CollectionAddPage from '../modules/collections/pages/CollectionAddPage';
+import CollectionDiscoverPage from '../modules/collections/pages/CollectionDiscoverPage';
 import CollectionPage from '../modules/collections/pages/CollectionPage';
 import HomePage from '../pages/HomePage';
 import InfoPage from '../pages/InfoPage';
@@ -24,6 +25,7 @@ const MainRouter = (): JSX.Element => {
                 <Route exact path={routes.COLLECTIONS.INDEX} component={CollectionPage} />
                 <Route exact path={routes.COLLECTIONS.NEW} component={CollectionAddPage} />
                 <Route exact path={routes.COLLECTIONS.SHOW} component={CollectionsCardPage} />
+                <Route exact path={routes.COLLECTIONS.DISCOVER} component={CollectionDiscoverPage} />
                 <Route exact path={routes.COLLECTIONS.CARD.NEWTEXT} component={CollectionsCardAddTextPage} />
                 <Route exact path={routes.COLLECTIONS.CARD.NEWIMAGE} component={CollectionsCardAddImagePage} />
                 <Route exact path={routes.COLLECTIONS.CARD.NEW} component={CollectionsCardAddPage} />

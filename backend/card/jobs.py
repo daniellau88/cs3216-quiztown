@@ -161,6 +161,8 @@ def duplicate_cards(collection_id: int):
                     answer_details=card_to_duplicate.answer_details,
                     type=card_to_duplicate.type,
                     question=card_to_duplicate.question,
-                    answer=card_to_duplicate.answer)
+                    answer=card_to_duplicate.answer,
+                    collection_import_id=card_to_duplicate.collection_import_id,
+                    is_reviewed=False)
         card.save()
 
