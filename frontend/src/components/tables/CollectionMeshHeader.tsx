@@ -1,4 +1,4 @@
-import { Button, Checkbox, FormControl, Grid, Input, InputLabel, ListItemText, MenuItem, Select, Typography } from '@material-ui/core';
+import { Button, FormControl, Grid, Input, ListItemText, MenuItem, Select, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import { isBrowser } from 'react-device-detect';
