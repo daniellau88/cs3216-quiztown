@@ -84,11 +84,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const collectionName = data?.name;
     const collectionId = data?.id;
-    // TODO: Replace tags mock data
-    const collectionTags = ['Tag1', 'Tag2'];
-
     const collectionCardList = useSelector((state: AppState) => getCollectionCardList(state, collectionId));
 
     const [isLoading, setIsLoading] = React.useState(true);
@@ -99,6 +95,33 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
             setIsLoading(false);
         });
     }, []);
+
+
+    const addNewCollection = () => {
+        history.push('/collections/new');
+    };
+
+    if (isAddCollectionCard) {
+        return (
+            <Card className={`${classes.root} ${classes.center}`} onClick={addNewCollection}>
+                <CardContent>
+                    <Grid container className={classes.center}>
+                        <Add className={classes.addIcon} />
+                    </Grid>
+                    <Typography className={classes.addCollectionText} component="div">
+                        Add Collection
+                    </Typography>
+                </CardContent>
+            </Card>
+        );
+    }
+
+    if (!data) {
+        return null;
+    }
+
+    const collectionName = data.name;
+    const collectionTags = data.tags;
 
     const openCollection = () => {
         history.push(`/collections/${collectionId}`);
@@ -120,27 +143,8 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
             });
     };
 
-    const addNewCollection = () => {
-        history.push('/collections/new');
-    };
-
-    if (isAddCollectionCard) {
-        return (
-            <Card className={`${classes.root} ${classes.center}`} onClick={addNewCollection}>
-                <CardContent>
-                    <Grid container className={classes.center}>
-                        <Add className={classes.addIcon} />
-                    </Grid>
-                    <Typography className={classes.addCollectionText} component="div">
-                        Add Collection
-                    </Typography>
-                </CardContent>
-            </Card>
-        );
-    }
-
     if (isLoading) {
-        return <LoadingIndicator/>;
+        return <LoadingIndicator />;
     }
 
     return (
@@ -149,7 +153,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                 <CardMedia
                     component="img"
                     image={data?.image_link || defaultCollectionImage}
-                    style={ data ? { width: '100%' } : {} }
+                    style={data ? { width: '100%' } : {}}
                     className={classes.collectionImage}
                 />
             </Box>
@@ -161,14 +165,18 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                 <Grid container alignItems='center'>
                     <ReorderOutlined className={classes.collectionIcon} />
                     <Typography className={classes.collectionText} style={{ marginLeft: 6 }}>
-                        {collectionCardList.totalEntities} 
+                        {collectionCardList.totalEntities}
                         {collectionCardList.totalEntities > 1 || collectionCardList.totalEntities == 0 ? ' cards' : ' card'}
                     </Typography>
                     <Grid item style={{ width: '2vw' }} />
-                    <LabelIcon className={classes.collectionIcon} />
-                    <Typography className={classes.collectionText} style={{ marginLeft: 6 }}>
-                        {collectionTags.join(', ')}
-                    </Typography>
+                    {collectionTags.length > 0 &&
+                        <>
+                            <LabelIcon className={classes.collectionIcon} />
+                            <Typography className={classes.collectionText} style={{ marginLeft: 6 }}>
+                                {collectionTags.join(', ')}
+                            </Typography>
+                        </>
+                    }
                 </Grid>
             </CardContent>
 
@@ -177,12 +185,12 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                     <Box display='flex' height='100%' width='100%'>
                         <Grid container item xs={3} alignItems='center'>
                             <QTButton outlined height='95%' width='95%' onClick={startCollection}>
-                            Test Me!
+                                Test Me!
                             </QTButton>
                         </Grid>
                         <Grid container item xs={3} alignItems='center'>
                             <QTButton height='95%' width='95%' onClick={openCollection}>
-                            View
+                                View
                             </QTButton>
                         </Grid>
                         <Box flexGrow={1} />

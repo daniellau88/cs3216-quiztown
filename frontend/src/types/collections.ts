@@ -4,6 +4,7 @@ export interface CollectionPostData {
     name: string;
     private?: boolean;
     image_link?: string;
+    tags?: string[];
 }
 
 export interface CollectionListData {
@@ -13,16 +14,9 @@ export interface CollectionListData {
     created_at: number;
     owner_id: number; // TODO: change to owner object
     image_link: string;
+    tags: string[];
 }
 
-export interface CollectionData {
-    id: number;
-    name: string;
-    private: boolean;
-    created_at: number;
-    owner_id: number; // TODO: change to owner object
-    image_link: string;
-}
 
 export interface CollectionMiniEntity {
     id: number;
@@ -31,6 +25,7 @@ export interface CollectionMiniEntity {
     created_at: number;
     owner_id: number;
     image_link: string;
+    tags: string[];
 }
 
 export interface CollectionsCardImportPostData {

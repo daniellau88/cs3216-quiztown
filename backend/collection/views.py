@@ -32,7 +32,7 @@ def list_collections_view(request):
 
 @validate_request_data(serializers.CollectionCreateSerializer)
 def create_collection_view(request, serializer):
-    serializer.save(owner_id=request.user.id)
+    serializer.save(owner_id=request.user.user_id)
 
     response_serializer = serializers.CollectionSerializer(serializer.instance)
     return Response({"item": response_serializer.data})

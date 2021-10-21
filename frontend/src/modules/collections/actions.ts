@@ -1,4 +1,4 @@
-import { CollectionData, CollectionListData } from '../../types/collections';
+import { CollectionListData } from '../../types/collections';
 import { CollectionDelta } from '../../types/store';
 
 import * as types from './types';
@@ -10,7 +10,7 @@ export function saveCollectionList(list: CollectionListData[]): types.SaveCollec
     };
 }
 
-export function saveCollection(data: CollectionData): types.SaveCollectionAction {
+export function saveCollection(data: CollectionListData): types.SaveCollectionAction {
     return {
         type: types.SAVE_COLLECTION,
         data,

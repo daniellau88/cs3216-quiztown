@@ -1,4 +1,4 @@
-import { CollectionData, CollectionListData, CollectionMiniEntity } from '../../types/collections';
+import { CollectionListData, CollectionMiniEntity } from '../../types/collections';
 import { CollectionDelta, EntityCollection, EntityStore } from '../../types/store';
 
 // Action Names
@@ -19,7 +19,7 @@ export interface SaveCollectionListAction {
 
 export interface SaveCollectionAction {
     type: typeof SAVE_COLLECTION;
-    data: CollectionData;
+    data: CollectionListData;
 }
 
 export interface UpdateCollectionListAction {
