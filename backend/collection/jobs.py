@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import cv2
 import fitz
 
 from django_rq import job
@@ -17,6 +18,7 @@ UPLOAD_DIRECTORY = "uploads/"
 SUCCESS_MESSAGE = "The file %s has been successfully processed."
 FAILURE_MESSAGE = "The file %s failed to be processed, please try again."
 
+cv2.setNumThreads(0)
 
 @job
 def import_card_from_image(collection_import: CollectionImport):

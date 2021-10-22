@@ -6,6 +6,7 @@ import string
 from dataclasses import asdict, dataclass
 from shutil import copyfile
 
+import cv2
 import pytesseract
 
 from paddleocr import PaddleOCR
@@ -36,6 +37,7 @@ STATIC_CARD_DIRECTORY = "static/cards/"
 UPLOAD_DIRECTORY = "uploads/"
 PADDING_PERCENTAGE = 0.1
 
+cv2.setNumThreads(0)
 
 @dataclass
 class PaddleOCRResult():
