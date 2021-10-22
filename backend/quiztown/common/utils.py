@@ -3,6 +3,7 @@ from __future__ import annotations
 import os.path
 import typing
 
+from collections import OrderedDict
 from dataclasses import asdict
 
 import django.http
@@ -87,10 +88,27 @@ def convert_get_request_to_dict(get_request: django.http.request.QueryDict) -> d
     return object
 
 
+def _flatten_dict(dictionary: dict, result: dict = {}, prefix: str = ""):
+    for key, value in dictionary.items():
+        new_key = prefix + "." + key if prefix != "" else key
+        if isinstance(value, dict):
+            _flatten_dict(value, result, new_key)
+        else:
+            result[new_key] = value
+    return result
+
+
 def get_error_messages_from_serializer(serializer: serializers.Serializer) -> list[str]:
-    error_messages = [key + ": " + ", ".join(serializer.errors[key])
-                      for key in serializer.errors.keys()]
+    flatten_errors = _flatten_dict(serializer.errors)
+    error_messages = [key + ": " + ", ".join(flatten_errors[key])
+                      for key in flatten_errors.keys()]
     return error_messages
+
+
+def _add_filter_to_queryset(queryset: QuerySet, key: str, value) -> QuerySet:
+    filter = {}
+    filter[key] = value
+    return queryset.filter(**filter)
 
 
 def filter_model_by_get_request(
@@ -109,16 +127,22 @@ def filter_model_by_get_request(
     filters = get_serializer.data.get("filters", {})
     if filter_serializer_class and filters:
         filter_serializer = filter_serializer_class(data=filters)
-
         if not filter_serializer.is_valid():
             raise ApplicationError(ErrorCode.INVALID_REQUEST,
                                    get_error_messages_from_serializer(filter_serializer))
 
         for field, value in filter_serializer.data.items():
-            filter = {}
-            filter[field] = value
-            # TODO: handle date range
-            model_queryset = model_queryset.filter(**filter)
+            if isinstance(value, OrderedDict):
+                start = value.get("start", "")
+                if start:
+                    model_queryset = _add_filter_to_queryset(
+                        model_queryset, field + "__gte", start)
+                end = value.get("end", "")
+                if end:
+                    model_queryset = _add_filter_to_queryset(
+                        model_queryset, field + "__lte", end)
+            else:
+                model_queryset = _add_filter_to_queryset(model_queryset, field, value)
 
     search = get_serializer.data.get("search", "")
     if search and search_fields:
