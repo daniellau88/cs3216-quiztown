@@ -87,7 +87,7 @@ const CollectionsImageCardEditPage: React.FC<Props> = ({ match: { params } }: Ro
         return answerData;
     };
 
-    const confirmEdit = () => {
+    const saveEditChanges = (isAutosave: boolean) => {
         if (!canvasRef) return;
         const answerBoxes = canvasRef.current?.getObjects();
         if (!answerBoxes) return;
@@ -98,7 +98,9 @@ const CollectionsImageCardEditPage: React.FC<Props> = ({ match: { params } }: Ro
                     results: cardAnswerDetails,
                 },
             }))).finally(() => {
-                history.push(`/collections/${collectionId}`);
+                if (!isAutosave) {
+                    history.push(`/collections/${collectionId}`);
+                }
             });
         }
     };
@@ -133,12 +135,13 @@ const CollectionsImageCardEditPage: React.FC<Props> = ({ match: { params } }: Ro
                                     card={card}
                                     isEditing={true}
                                     canvasRef={canvasRef}
+                                    saveEdits={saveEditChanges}
                                 />
                             )}
                         </Grid>
 
                         <Grid item className={classes.alignRight}>
-                            <QTButton onClick={confirmEdit} outlined>
+                            <QTButton onClick={() => saveEditChanges(false)} outlined>
                                 Confirm
                             </QTButton>
                         </Grid>

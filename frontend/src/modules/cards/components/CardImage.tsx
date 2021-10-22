@@ -33,6 +33,7 @@ import {
     initAnswerBoxes,
     initAnswerOptions,
     initCorrectAnswersIndicator,
+    mergeTextboxes,
     resetToOriginalPosition,
     revealAnswer,
     updateCorrectAnswersIndicator,
@@ -63,17 +64,15 @@ const useStyles = makeStyles(() => ({
 interface CardImageProps {
     isEditing: boolean
     card: CardEntity
-    onCardCompleted?: (nextBoxNumber:number, nextDate:Date) => void
-    saveAnswerData?: (canvas:fabric.Canvas) => void
     canvasRef?: MutableRefObject<fabric.Canvas | undefined>
+    saveEdits?: (isAutosave: boolean) => void
 }
 
 const CardImage: React.FC<CardImageProps> = ({
     isEditing,
     card,
-    onCardCompleted,
-    saveAnswerData,
     canvasRef,
+    saveEdits,
 }) => {
     const classes = useStyles();
     const dispatch = useDispatch();
@@ -157,6 +156,7 @@ const CardImage: React.FC<CardImageProps> = ({
         const stateManager = new StateManager(canvas);
         canvas.on('object:modified', () => {
             stateManager.saveState();
+            saveEdits && saveEdits(true);
         });
         setCanvas(canvas);
         setStateManager(stateManager);
@@ -189,6 +189,7 @@ const CardImage: React.FC<CardImageProps> = ({
             fontSize: FONT_SIZE,
         }));
         stateManager?.saveState();
+        saveEdits && saveEdits(true);
     };
 
     const deleteAnswerOption = () => {
@@ -197,6 +198,15 @@ const CardImage: React.FC<CardImageProps> = ({
         activeObjects.forEach(object => canvas.remove(object));
         canvas.discardActiveObject();
         stateManager?.saveState();
+        saveEdits && saveEdits(true);
+    };
+
+    const mergeAnswerOption = () => {
+        if (!canvas) return;
+        const activeObjects = canvas.getActiveObjects();
+        mergeTextboxes(canvas, activeObjects);
+        stateManager?.saveState();
+        saveEdits && saveEdits(true);
     };
 
     const revealAllAnswers = () => {
@@ -230,6 +240,7 @@ const CardImage: React.FC<CardImageProps> = ({
                         redo={() => stateManager?.redo()}
                         addOption={addAnswerOption}
                         deleteOption={deleteAnswerOption}
+                        mergeOption={mergeAnswerOption}
                     />
                 }
                 <Box display="flex" justifyContent='center' width='100%'>
