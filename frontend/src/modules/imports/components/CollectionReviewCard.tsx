@@ -6,7 +6,8 @@ import LoadingIndicator from '../../../components/content/LoadingIndicator';
 import { AppState } from '../../../types/store';
 import { handleApiRequest } from '../../../utilities/ui';
 import CardImage from '../../cards/components/CardImage';
-import { loadCard } from '../../cards/operations';
+import { loadCard, updateCard } from '../../cards/operations';
+import { formatCardData } from '../../cards/pages/CollectionsImageCardEditPage';
 import { getCardEntity } from '../../cards/selectors';
 
 interface OwnProps {
@@ -20,6 +21,7 @@ const CollectionReviewCard: React.FC<Props> = ({ cardId }) => {
 
     const [isLoading, setIsLoading] = React.useState(true);
 
+    const canvasRef = React.useRef<fabric.Canvas>();
     const card = useSelector((state: AppState) => getCardEntity(state, cardId));
 
     const onUpdate = (cardId: number, dispatch: Dispatch<any>) => {
@@ -35,6 +37,20 @@ const CollectionReviewCard: React.FC<Props> = ({ cardId }) => {
         onUpdate(cardId, dispatch);
     }, [dispatch, cardId]);
 
+    const saveEditChanges = (isAutosave: boolean) => {
+        if (!canvasRef || !cardId) return;
+        const answerBoxes = canvasRef.current?.getObjects();
+        if (!answerBoxes) return;
+        const cardAnswerDetails = formatCardData(answerBoxes);
+        if (cardAnswerDetails) {
+            handleApiRequest(dispatch, dispatch(updateCard(cardId, {
+                answer_details: {
+                    results: cardAnswerDetails,
+                },
+            })));
+        }
+    };
+
     if (isLoading) return <LoadingIndicator/>;
 
     if (!card || !cardId) return null;
@@ -43,6 +59,8 @@ const CollectionReviewCard: React.FC<Props> = ({ cardId }) => {
         <CardImage
             card={card}
             isEditing={true}
+            canvasRef={canvasRef}
+            saveEdits={saveEditChanges}
         />
     );
 };

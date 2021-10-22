@@ -50,24 +50,25 @@ const CollectionsImageCardEditControls: React.FC<Props> = ({
     const classes = useStyles();
 
     return (
-        <Grid container className={classes.root} direction='row'>
-            <QTButton outlined onClick={undo}>
-                <Undo/>
-            </QTButton>
-            <QTButton outlined onClick={redo}>
-                <Redo/>
-            </QTButton>
-            <QTButton outlined onClick={addOption}>
-                Add option
-            </QTButton>
-            <QTButton outlined onClick={deleteOption}>
-                Delete option
-            </QTButton>
-            <QTButton outlined onClick={mergeOption}>
-                Merge option
-            </QTButton>
-        </Grid>
-
+        <Box className={classes.root}>
+            <Grid container className={classes.controlsContainer} direction='row'>
+                <QTButton outlined onClick={undo}>
+                    <Undo />
+                </QTButton>
+                <QTButton outlined onClick={redo}>
+                    <Redo />
+                </QTButton>
+                <QTButton outlined onClick={addOption}>
+                    Add option
+                </QTButton>
+                <QTButton outlined onClick={deleteOption}>
+                    Delete option
+                </QTButton>
+                <QTButton outlined onClick={mergeOption}>
+                    Merge option
+                </QTButton>
+            </Grid>
+        </Box>
     );
 
 };

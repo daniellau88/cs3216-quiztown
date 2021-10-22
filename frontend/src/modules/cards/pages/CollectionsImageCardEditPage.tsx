@@ -38,6 +38,34 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
+export const formatCardData = (answerBoxes: fabric.Object[]): AnswerData[] => {
+    const FULL_CONFIDENCE = 1;
+    const answerData: AnswerData[] = [];
+
+    if (!answerBoxes) return answerData;
+
+    answerBoxes.forEach(answerBox => {
+        const textbox = answerBox as fabric.Textbox;
+        const top = textbox.top,
+            width = textbox.getScaledWidth(),
+            height = textbox.getScaledHeight(),
+            left = textbox.left,
+            text = textbox.text;
+
+        if (!text || !top || !width || !height || !left) return;
+
+        answerData.push({
+            bounding_box: [[left, top], [left + width, top + height]],
+            text: text,
+            confidence: FULL_CONFIDENCE,
+        });
+
+    });
+
+    return answerData;
+};
+
+
 type Props = RouteComponentProps;
 
 const CollectionsImageCardEditPage: React.FC<Props> = ({ match: { params } }: RouteComponentProps) => {
@@ -58,33 +86,6 @@ const CollectionsImageCardEditPage: React.FC<Props> = ({ match: { params } }: Ro
         handleApiRequest(dispatch, dispatch(loadCard(cardId))).finally(() => {
             setIsLoading(false);
         });
-    };
-
-    const formatCardData = (answerBoxes:fabric.Object[]) => {
-        const FULL_CONFIDENCE = 1;
-        const answerData:AnswerData[] = [];
-
-        if (!answerBoxes) return;
-
-        answerBoxes.forEach(answerBox => {
-            const textbox = answerBox as fabric.Textbox;
-            const top = textbox.top,
-                width = textbox.getScaledWidth(),
-                height = textbox.getScaledHeight(),
-                left = textbox.left,
-                text = textbox.text;
-
-            if (!text || !top || !width || !height || !left) return;
-
-            answerData.push({
-                bounding_box: [[left, top], [left + width, top + height]],
-                text: text,
-                confidence: FULL_CONFIDENCE,
-            });
-
-        });
-
-        return answerData;
     };
 
     const saveEditChanges = (isAutosave: boolean) => {
