@@ -22,6 +22,6 @@ application = ProtocolTypeRouter({
     "websocket": AuthMiddlewareStack(
         URLRouter(
             public_activity.routing.websocket_urlpatterns,
-        )
+        ),
     ),
 })

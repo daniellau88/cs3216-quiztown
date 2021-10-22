@@ -14,8 +14,15 @@ def get_default_collection_queryset_by_request(request: rest_framework.request.R
     return Collection.objects.filter(or_filter)
 
 
+def get_editable_collection_queryset_by_request(request: rest_framework.request.Request) -> QuerySet:
+    user = request.user
+    if not user.is_authenticated:
+        return Collection.objects.none()
+    return Collection.objects.filter(owner_id=user.user_id)
+
+
 def get_default_collection_import_queryset_by_request(request: rest_framework.request.Request) -> QuerySet:
     # TODO: Change to cache if performance dies
-    collection_ids = get_default_collection_queryset_by_request(
+    collection_ids = get_editable_collection_queryset_by_request(
         request).values_list("id", flat=True)
     return CollectionImport.objects.filter(collection_id__in=collection_ids)

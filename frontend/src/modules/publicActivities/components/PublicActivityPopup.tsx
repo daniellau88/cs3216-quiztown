@@ -34,7 +34,7 @@ const PublicActivityPopup: React.FC<{}> = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
 
-    const [hasNewMessage, setHasNewMessage] = React.useState(true);
+    const [hasNewMessage, setHasNewMessage] = React.useState(false);
 
     const onMessage = (message: PublicActivityMiniEntity) => {
         setHasNewMessage(true);
@@ -94,7 +94,6 @@ const PublicActivityPopup: React.FC<{}> = () => {
                                         {index > 0 ? <Divider /> : null}
                                         <PublicActivityPopupItem id={id} onClick={handleClose} />
                                     </React.Fragment>
-
                                 ))}
                             </List>
                         </Paper>

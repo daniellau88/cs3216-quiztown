@@ -11,7 +11,7 @@ export class PublicActivitiesAPI extends BaseAPI {
     }
 
     public getPublicActivityList(params: CollectionQueryParams): ApiPromise<CollectionDataType<PublicActivityListData>> {
-        return this.get(`${this.getPublicActivityUrl()}?${toQueryString(params)}` + URL_SUFFIX);
+        return this.get(`${this.getPublicActivityUrl()}?${toQueryString(params)}`);
     }
 
     public patchPublicActivity(id: number, data: PublicActivityPostData): ApiPromise<{ item: PublicActivityListData }> {
