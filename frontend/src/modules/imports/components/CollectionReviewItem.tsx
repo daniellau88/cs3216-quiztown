@@ -32,13 +32,14 @@ const useStyles = makeStyles(() => ({
 
 interface OwnProps {
     cardId: number,
-    onSelect: (cardId:number) => void
+    onSelect: (cardId: number) => void
+    onDelete: (cardId: number) => any
     isSelected: boolean,
 }
 
 type Props = OwnProps;
 
-const CollectionReviewItem: React.FC<Props> = ({ cardId, onSelect, isSelected }) => {
+const CollectionReviewItem: React.FC<Props> = ({ cardId, onSelect, isSelected, onDelete }) => {
     const classes = useStyles();
 
     const card = useSelector((state: AppState) => getCardMiniEntity(state, cardId));
@@ -46,29 +47,31 @@ const CollectionReviewItem: React.FC<Props> = ({ cardId, onSelect, isSelected })
     if (!card) return null;
 
     return (
-        <Button onClick={() => onSelect(cardId)}>
-            <Grid
-                container
-                alignItems='center'
-                justifyContent='center'
-                className={`
+        <Grid
+            container
+            alignItems='center'
+            justifyContent='center'
+            className={`
                     ${classes.reviewItemContainer}
                     ${isSelected ? classes.selectedReviewItem : null}
                 `}
-            >
-                <Grid item xs={9}>
+        >
+            <Grid item xs={9}>
+                <Button onClick={() => onSelect(cardId)}>
                     <CardMedia
                         component="img"
                         alt="imported image"
                         className={classes.reviewItemMedia}
                         image={card.image_link}
                     />
-                </Grid>
-                <Grid item xs={3}>
-                    <Delete />
-                </Grid>
+                </Button>
             </Grid>
-        </Button>
+            <Grid item xs={3}>
+                <Button onClick={() => onDelete(cardId)}>
+                    <Delete />
+                </Button>
+            </Grid>
+        </Grid>
     );
 };
 

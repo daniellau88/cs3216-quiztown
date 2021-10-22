@@ -18,7 +18,7 @@ import { AppState } from '../../../types/store';
 import colours from '../../../utilities/colours';
 import routes from '../../../utilities/routes';
 import { handleApiRequest } from '../../../utilities/ui';
-import { loadCollectionImportCards } from '../../cards/operations';
+import { deleteCard, loadCollectionImportCards } from '../../cards/operations';
 import { addCollection, loadCollection } from '../../collections/operations';
 import { getCollectionMiniEntity } from '../../collections/selectors';
 import CollectionReviewCard from '../components/CollectionReviewCard';
@@ -94,9 +94,27 @@ const CollectionReviewPage: React.FC<Props> = ({ match: { params } }: RouteCompo
         return handleApiRequest(dispatch, dispatch(addCollection(collectionPostDataCurrent)));
     };
 
-    const selectCard = (selectedCardId:number) => {
-
+    const selectCard = (selectedCardId: number) => {
         setCurrCardId(selectedCardId);
+    };
+
+    const deleteImportedCard = (selectedCardId: number): any => {
+        if (!importedCardIds) return false;
+
+        const newCardIds = [...importedCardIds];
+        const index = newCardIds.indexOf(selectedCardId);
+        if (index > -1) {
+            newCardIds.splice(index, 1);
+        }
+        setImportedCardIds(newCardIds);
+        if (newCardIds.length > 0) {
+            setCurrCardId(newCardIds[0]);
+        }
+
+        return handleApiRequest(dispatch, dispatch(deleteCard(selectedCardId)))
+            .then(() => {
+                return true;
+            });
     };
 
     if (isLoading) return <LoadingIndicator />;
@@ -135,6 +153,7 @@ const CollectionReviewPage: React.FC<Props> = ({ match: { params } }: RouteCompo
                                         cardIds={importedCardIds || []}
                                         currCardId={currCardId}
                                         onSelect={selectCard}
+                                        onDelete={deleteImportedCard}
                                     />
                                 </Grid>
                                 <Grid item xs={2} className={classes.fullHeight}>

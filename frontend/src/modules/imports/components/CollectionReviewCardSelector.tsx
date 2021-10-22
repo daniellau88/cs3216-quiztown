@@ -39,12 +39,13 @@ const useStyles = makeStyles(() => ({
 interface OwnProps {
     cardIds: number[]
     currCardId: number | undefined
-    onSelect: (cardId:number) => void
+    onSelect: (cardId: number) => void
+    onDelete: (cardId: number) => any
 }
 
 type Props = OwnProps;
 
-const CollectionReviewCardSelector: React.FC<Props> = ({ cardIds, onSelect, currCardId }) => {
+const CollectionReviewCardSelector: React.FC<Props> = ({ cardIds, onSelect, currCardId, onDelete }) => {
     const classes = useStyles();
 
     const ITEMS_PER_SLIDE = 4;
@@ -71,6 +72,7 @@ const CollectionReviewCardSelector: React.FC<Props> = ({ cardIds, onSelect, curr
                                 onSelect={onSelect}
                                 cardIds={cardIdsInSlide}
                                 currCardId={currCardId}
+                                onDelete={onDelete}
                             />
                         );
                     })

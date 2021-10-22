@@ -6,14 +6,15 @@ import * as React from 'react';
 import CollectionReviewItem from './CollectionReviewItem';
 
 interface OwnProps {
-    onSelect: (cardId:number) => void
+    onSelect: (cardId: number) => void
+    onDelete: (cardId: number) => any
     cardIds: number[]
     currCardId: number | undefined
 }
 
 type Props = OwnProps;
 
-const CollectionReviewSlide: React.FC<Props> = ({ onSelect, cardIds, currCardId }) => {
+const CollectionReviewSlide: React.FC<Props> = ({ onSelect, cardIds, currCardId, onDelete }) => {
     return (
         <Grid container direction='row' spacing={4}>
             {
@@ -22,6 +23,7 @@ const CollectionReviewSlide: React.FC<Props> = ({ onSelect, cardIds, currCardId 
                         <CollectionReviewItem
                             cardId={cardId}
                             onSelect={onSelect}
+                            onDelete={onDelete}
                             isSelected={currCardId ? currCardId == cardId : false}
                         />
                     </Grid>
