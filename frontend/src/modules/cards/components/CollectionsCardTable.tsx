@@ -44,15 +44,15 @@ const CollectionsCardTable: React.FC<OwnProps> = ({ collectionId, beforeCreateCa
     const orders: SortFilter[] = [
         {
             name: 'Date Created',
-            order: 'card_card.created_at',
+            order: 'created_at',
         },
         {
             name: 'Date Updated',
-            order: 'card_card.updated_at',
+            order: 'updated_at',
         },
         {
             name: 'Name',
-            order: 'card_card.name',
+            order: 'name',
         },
     ];
 
@@ -68,7 +68,6 @@ const CollectionsCardTable: React.FC<OwnProps> = ({ collectionId, beforeCreateCa
             ...options,
             filters: queryFilters,
         };
-        console.log(queryOptions);
         return handleApiRequest(dispatch, dispatch(loadCollectionCards(collectionId, queryOptions))).finally(() => {
             setIsLoading(false);
         });

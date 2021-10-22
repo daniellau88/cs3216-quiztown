@@ -7,7 +7,7 @@ import * as types from './types';
 const initialState: types.CollectionsState = {
     collections: createEntityStore(),
     allCollections: createEntityCollection({
-        sortBy: 'collection_collection.updated_at',
+        sortBy: 'updated_at',
         sortOrder: 'desc',
     }),
 };

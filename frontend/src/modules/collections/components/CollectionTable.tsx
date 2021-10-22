@@ -27,15 +27,15 @@ const CollectionTable: React.FC<{}> = () => {
     const orders: SortFilter[] = [
         {
             name: 'Date Created',
-            order: 'collection_collection.created_at',
+            order: 'created_at',
         },
         {
             name: 'Date Updated',
-            order: 'collection_collection.updated_at',
+            order: 'updated_at',
         },
         {
             name: 'Name',
-            order: 'collection_collection.name',
+            order: 'name',
         },
     ];
 
