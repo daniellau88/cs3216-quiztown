@@ -186,7 +186,7 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
                                     ) :
                                     (<CardMedia
                                         component="img"
-                                        alt="green iguana"
+                                        alt="uploaded image"
                                         height="30%"
                                         width="auto"
                                         image={fileImageLink[index]}

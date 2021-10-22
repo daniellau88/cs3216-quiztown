@@ -10,8 +10,8 @@ import CollectionsCardStarredPage from '../modules/cards/pages/CollectionsCardSt
 import CollectionsImageCardEditPage from '../modules/cards/pages/CollectionsImageCardEditPage';
 import CollectionAddPage from '../modules/collections/pages/CollectionAddPage';
 import CollectionDiscoverPage from '../modules/collections/pages/CollectionDiscoverPage';
-import CollectionImportReviewPage from '../modules/collections/pages/CollectionImportReviewPage';
 import CollectionPage from '../modules/collections/pages/CollectionPage';
+import CollectionImportReviewPage from '../modules/imports/pages/CollectionImportReviewPage';
 import QuizPage from '../modules/quiz/pages/QuizPage';
 import HomePage from '../pages/HomePage';
 import InfoPage from '../pages/InfoPage';
