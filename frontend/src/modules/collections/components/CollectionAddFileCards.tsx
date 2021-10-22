@@ -39,6 +39,11 @@ const useStyles = makeStyles((theme) => ({
     fileNameText: {
         fontSize: '3vh',
     },
+    pdfNameText: {
+        fontSize: '1.5vh',
+        paddingLeft: '15vh',
+        textOverflow: 'ellipsis',
+    },
     card: {
         justifyContent: 'center',
         alignItems: 'center',
@@ -50,6 +55,11 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'center',
         height: '100vh',
         width: '30vh',
+    },
+    pdf: {
+        height: '30vh',
+        width: '15vh',
+        // margin: 0,
     },
 }));
 
@@ -68,6 +78,7 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
     const [filePDFLink, saveFilePDFLink] = useState<Array<any>>([]);
     const [uploadFilesChild, setUploadedResponseChild] = useState<Array<UploadData>>([]);
     const [numPages, setNumPages] = useState<number>(1);
+    const [height, setHeight] = useState(0);
 
     const upload = async (e: React.ChangeEvent<any>) => {
         const fileInfo = [...fileCardInfo];
@@ -113,6 +124,13 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
         setNumPages(numPages);
     };
 
+    const measuredRef = React.useCallback(node => {
+        if (node !== null) {
+            setHeight(node.getBoundingClientRect().height);
+            console.log(node.getBoundingClientRect().height);
+        }
+    }, []);
+
     return (
         <Grid container>
             <Grid container item
@@ -152,14 +170,18 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
                         className={classes.card}
                     >
                         <Card className={`${classes.root} ${classes.center}`} key={index}>
-
-                            <Grid container className={classes.image}>
+                            <Grid container ref={measuredRef}>
                                 {fileImageLink[index] === 'pdf' ?
                                     (
                                         <Document
                                             file={filePDFLink[index]}
+                                            className={classes.pdf}
                                             onLoadSuccess={onDocumentLoadSuccess}>
-                                            <Page pageNumber={1} width={100} height={100 / numPages} />
+                                            <Page pageNumber={1}
+                                                key={`${numPages}_${height}`}
+                                                width={height}
+                                                height={height}
+                                            />
                                         </Document>
                                     ) :
                                     (<CardMedia
@@ -168,9 +190,10 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
                                         height="30%"
                                         width="auto"
                                         image={fileImageLink[index]}
+                                        className={classes.image}
                                     />)}
                             </Grid>
-                            <CardContent className={classes.fileNameText}>
+                            <CardContent className={classes.pdfNameText}>
                                 <Typography component="div">
                                     {file.name}
                                 </Typography>
