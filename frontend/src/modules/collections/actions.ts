@@ -43,3 +43,17 @@ export function deleteCollection(id: number): types.DeleteCollectionAction {
         id: id,
     };
 }
+
+export function savePublicCollectionList(list: CollectionListData[]): types.SavePublicCollectionListAction {
+    return {
+        type: types.SAVE_PUBLIC_COLLECTION_LIST,
+        list,
+    };
+}
+
+export function updatePublicCollectionList(delta: CollectionDelta): types.UpdatePublicCollectionListAction {
+    return {
+        type: types.UPDATE_PUBLIC_COLLECTION_LIST,
+        delta,
+    };
+}

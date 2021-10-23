@@ -10,6 +10,11 @@ const initialState: types.CollectionsState = {
         sortBy: 'updated_at',
         sortOrder: 'desc',
     }),
+    publicCollections: createEntityStore(),
+    allPublicCollections: createEntityCollection({
+        sortBy: 'updated_at',
+        sortOrder: 'desc',
+    }),
 };
 
 const collectionsReducer = produce((draft: types.CollectionsState, action: types.CollectionsActionTypes) => {
@@ -48,6 +53,17 @@ const collectionsReducer = produce((draft: types.CollectionsState, action: types
                 collections.ids = collections.ids.filter((id) => id !== action.id);
             }
             resetCollectionCache(draft.allCollections);
+            return;
+        }
+        case types.SAVE_PUBLIC_COLLECTION_LIST: {
+            const list = action.list.map((data) => ({
+                ...data,
+            }));
+            saveListToStore(draft.publicCollections, list);
+            return;
+        }
+        case types.UPDATE_PUBLIC_COLLECTION_LIST: {
+            saveDeltaToCollection(draft.allPublicCollections, action.delta);
             return;
         }
     }

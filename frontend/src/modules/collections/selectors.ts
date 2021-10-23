@@ -13,3 +13,7 @@ export function getAllCollections(state: AppState): EntityCollection {
 export function getCollectionMiniEntity(state: AppState, id: SelectionKey): EntitySelection<CollectionMiniEntity> {
     return selectMiniEntity(getLocalState(state).collections, id);
 }
+
+export function getAllPublicCollections(state: AppState): EntityCollection {
+    return getLocalState(state).allPublicCollections;
+}

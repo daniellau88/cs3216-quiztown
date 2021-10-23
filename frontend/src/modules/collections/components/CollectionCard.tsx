@@ -75,19 +75,26 @@ const useStyles = makeStyles(() => ({
 interface OwnProps {
     data?: CollectionMiniEntity;
     isAddCollectionCard?: boolean;
+    canDuplicate?: boolean;
 }
 
 type Props = OwnProps;
 
-const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) => {
+const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard, canDuplicate }: Props) => {
     const classes = useStyles();
     const history = useHistory();
     const dispatch = useDispatch();
 
     const collectionId = data?.id;
 
+    const [isDiscoverCard, setDiscoverCard] = React.useState<boolean>(false);
+
     const addNewCollection = () => {
         history.push('/collections/new');
+    };
+
+    const duplicateCollection = () => {
+        console.log('saving to my own collection...');
     };
 
     if (isAddCollectionCard) {
@@ -107,6 +114,10 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
 
     if (!data) {
         return null;
+    }
+
+    if (canDuplicate) {
+        setDiscoverCard(true);
     }
 
     const collectionName = data.name;
@@ -168,16 +179,21 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
             <CardActions>
                 <Grid container alignItems='center' style={{ paddingLeft: '0.5vw' }}>
                     <Box display='flex' height='100%' width='100%'>
-                        <Grid container item xs={3} alignItems='center'>
+                        {!isDiscoverCard && (<Grid container item xs={3} alignItems='center'>
                             <QTButton outlined height='95%' width='95%' onClick={startCollection}>
                                 Test Me!
                             </QTButton>
-                        </Grid>
+                        </Grid>)}
                         <Grid container item xs={3} alignItems='center'>
                             <QTButton height='95%' width='95%' onClick={openCollection}>
                                 View
                             </QTButton>
                         </Grid>
+                        {isDiscoverCard && (<Grid container item xs={3} alignItems='center'>
+                            <QTButton height='95%' width='95%' onClick={duplicateCollection}>
+                                Save to my collection
+                            </QTButton>
+                        </Grid>)}
                         <Box flexGrow={1} />
                         {data.permissions.can_delete &&
                             <Box display='flex' minHeight='100%' style={{ paddingRight: '0.5vw' }} justifyContent='center' alignItems='center'>

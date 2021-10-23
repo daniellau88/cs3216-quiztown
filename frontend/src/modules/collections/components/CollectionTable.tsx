@@ -8,16 +8,23 @@ import { SortFilter } from '../../../components/tables/CollectionMeshHeader';
 import { TableFilter } from '../../../components/tables/TableFilters';
 import { CollectionOptions, EntityCollection } from '../../../types/store';
 import { handleApiRequest } from '../../../utilities/ui';
-import { loadAllCollections } from '../operations';
-import { getAllCollections } from '../selectors';
+import { loadAllCollections, loadAllPublicCollections } from '../operations';
+import { getAllCollections, getAllPublicCollections } from '../selectors';
 
 import CollectionCard from './CollectionCard';
 import CollectionGridComponent from './CollectionGridComponent';
 
+interface OwnProps {
+    // Whether the collection for discover page.
+    isDiscoverCollections?: boolean;
+}
 
-const CollectionTable: React.FC<{}> = () => {
+type Props = OwnProps;
+
+const CollectionTable: React.FC<Props> = ({ isDiscoverCollections }: Props) => {
     const dispatch = useDispatch();
     const allCollections: EntityCollection = useSelector(getAllCollections);
+    const allPublicCollections: EntityCollection = useSelector(getAllPublicCollections);
 
     const [isLoading, setIsLoading] = React.useState(true);
 
@@ -46,13 +53,26 @@ const CollectionTable: React.FC<{}> = () => {
         });
     };
 
+    const onUpdateDiscover = (options: CollectionOptions, dispatch: Dispatch<any>) => {
+        setIsLoading(true);
+        return handleApiRequest(dispatch, dispatch(loadAllPublicCollections(options))).finally(() => {
+            setIsLoading(false);
+        });
+    };
+
     React.useEffect(() => {
-        onUpdate({}, dispatch);
+        if (isDiscoverCollections) {
+            // TODO: make the filter object const
+            const publicOptions = { filters: { 'private': 1 } };
+            onUpdateDiscover(publicOptions, dispatch);
+        } else {
+            onUpdate({}, dispatch);
+        }
     }, [dispatch]);
 
     return (
         <CollectionMesh
-            collection={allCollections}
+            collection={isDiscoverCollections ? allPublicCollections : allCollections}
             isLoading={isLoading}
             onUpdate={(options: CollectionOptions) => onUpdate(options, dispatch)}
             gridComponent={CollectionGridComponent}
@@ -61,6 +81,7 @@ const CollectionTable: React.FC<{}> = () => {
             orders={orders}
             isSearchable
             isSortable
+            canDuplicate={isDiscoverCollections}
         />
     );
 };
