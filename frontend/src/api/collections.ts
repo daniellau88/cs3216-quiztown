@@ -50,6 +50,10 @@ export class CollectionsAPI extends BaseAPI {
     public getAllCollectionTags(): ApiPromise<CollectionTagsData> {
         return this.get(`${this.getCollectionUrl()}/tags` + URL_SUFFIX);
     }
+
+    public duplicatePublicCollection(collectionId: number): ApiPromise<{ item: CollectionListData }> {
+        return this.post(`${this.getCollectionUrl()}/${collectionId}/duplicate` + URL_SUFFIX);
+    }
 }
 
 export default CollectionsAPI;

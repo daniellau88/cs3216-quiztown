@@ -20,7 +20,7 @@ import QTButton from '../../../components/QTButton';
 import { CollectionMiniEntity } from '../../../types/collections';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
-import { deleteCollection } from '../operations';
+import { deleteCollection, duplicatePublicCollection } from '../operations';
 
 import CollectionTagSelector from './CollectionTagSelector';
 
@@ -95,6 +95,14 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard, canDuplica
 
     const duplicateCollection = () => {
         console.log('saving to my own collection...');
+        if (!collectionId) {
+            return false;
+        }
+        return handleApiRequest(dispatch, dispatch(duplicatePublicCollection(collectionId)))
+            .then(() => {
+                console.log('successfully saved to my own collection...');
+                return true;
+            });
     };
 
     if (isAddCollectionCard) {
