@@ -4,7 +4,7 @@ import { SnackbarProvider } from 'notistack';
 import * as React from 'react';
 import { pdfjs } from 'react-pdf';
 import { Provider } from 'react-redux';
-import { Route, Router } from 'react-router-dom';
+import { Router } from 'react-router-dom';
 import persistStore from 'redux-persist/es/persistStore';
 import { PersistGate } from 'redux-persist/integration/react';
 
@@ -42,7 +42,7 @@ const App: React.FC = () => {
                             <AuthGateway>
                                 <AppLayout>
                                     <Notifier />
-                                    <Route path="" render={MainRouter}></Route>
+                                    <MainRouter />
                                 </AppLayout>
                             </AuthGateway>
                         </SnackbarProvider>

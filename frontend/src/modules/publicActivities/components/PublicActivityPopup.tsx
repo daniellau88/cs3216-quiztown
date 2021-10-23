@@ -22,11 +22,19 @@ import { getRecentPublicActivities } from '../selectors';
 import PublicActivityPopupItem from './PublicActivityPopupItem';
 
 const useStyles = makeStyles((theme) => ({
+    root: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        margin: 3,
+    },
     paper: {
         padding: theme.spacing(1),
     },
     popper: {
-        width: '30vh',
+        minWidth: 250,
+        maxWidth: 400,
+        width: '30vw',
     },
 }));
 
@@ -72,7 +80,7 @@ const PublicActivityPopup: React.FC<{}> = () => {
     };
 
     return (
-        <div>
+        <div className={classes.root}>
             <IconButton
                 color="inherit"
                 ref={anchorRef}
