@@ -11,7 +11,6 @@ export type QuizMiniEntity = {
     cardIds: number[],
 }
 
-
 export type QuizEntity = {
     id: number,
     cardIds: number[],
