@@ -10,12 +10,15 @@ import colours from '../../../utilities/colours';
 import CollectionReviewSlide from './CollectionReviewSlide';
 
 const useStyles = makeStyles(() => ({
+    container: {
+        paddingTop: '15px',
+        paddingBottom: '10px',
+    },
     carousel: {
         display: 'flex',
         alignItems: 'center',
         flexDirection: 'column',
         width: '100%',
-        padding: '8px',
     },
     carouselButtonsWrapper: {
         '&:hover': {
@@ -32,6 +35,15 @@ const useStyles = makeStyles(() => ({
         '&:hover': {
             backgroundColor: 'transparent',
             opacity: '1 !important',
+        },
+    },
+    activeIndicator: {
+        color: `${colours.BLUE} !important`,
+    },
+    indicator: {
+        color: `${colours.LIGHTGREY}`,
+        '&:hover': {
+            color: `${colours.LIGHTBLUE}`,
         },
     },
 }));
@@ -52,7 +64,7 @@ const CollectionReviewCardSelector: React.FC<Props> = ({ cardIds, onSelect, curr
     const numSlides = Array.from({length: Math.ceil(cardIds.length / ITEMS_PER_SLIDE)}, (x, i) => (i + 1) * ITEMS_PER_SLIDE);
 
     return (
-        <Grid container>
+        <Grid container className={classes.container}>
             <Carousel
                 className={classes.carousel}
                 autoPlay={false}
@@ -61,6 +73,8 @@ const CollectionReviewCardSelector: React.FC<Props> = ({ cardIds, onSelect, curr
                 navButtonsAlwaysVisible={true}
                 navButtonsWrapperProps={{ className: classes.carouselButtonsWrapper }}
                 navButtonsProps={{ className: classes.carouselButtons }}
+                indicatorIconButtonProps={{ className: classes.indicator}}
+                activeIndicatorIconButtonProps={{ className: classes.activeIndicator}}
             >
                 {
                     numSlides.map(endItemIdx => {

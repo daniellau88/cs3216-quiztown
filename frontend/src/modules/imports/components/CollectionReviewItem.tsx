@@ -22,11 +22,16 @@ const useStyles = makeStyles(() => ({
     reviewItemMedia: {
         paddingLeft: '1vh',
         height: '8vh',
-        width: 'auto',
+        width: '6vw',
     },
     selectedReviewItem: {
         border: `1px solid ${colours.BLUE} !important`,
         boxShadow: `0 1px 2px 0 ${colours.LIGHTBLUE}, 0 1px 3px 0 ${colours.LIGHTBLUE}`,
+    },
+    button: {
+        '&:hover': {
+            backgroundColor: 'transparent',
+        },
     },
 }));
 
@@ -56,8 +61,8 @@ const CollectionReviewItem: React.FC<Props> = ({ cardId, onSelect, isSelected, o
                     ${isSelected ? classes.selectedReviewItem : null}
                 `}
         >
-            <Grid item xs={9}>
-                <Button onClick={() => onSelect(cardId)}>
+            <Grid item xs={8}>
+                <Button onClick={() => onSelect(cardId)} className={classes.button}>
                     <CardMedia
                         component="img"
                         alt="imported image"
@@ -66,8 +71,8 @@ const CollectionReviewItem: React.FC<Props> = ({ cardId, onSelect, isSelected, o
                     />
                 </Button>
             </Grid>
-            <Grid item xs={3}>
-                <Button onClick={() => onDelete(cardId)}>
+            <Grid item xs={4}>
+                <Button onClick={() => onDelete(cardId)} className={classes.button}>
                     <Delete />
                 </Button>
             </Grid>
