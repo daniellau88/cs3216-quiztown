@@ -4,6 +4,7 @@ import {
     CardContent,
     CssBaseline,
     Grid,
+    Typography,
     makeStyles,
 } from '@material-ui/core';
 import * as React from 'react';
@@ -55,6 +56,7 @@ const QuizPage: React.FC = () => {
     const classes = useStyles();
     const history = useHistory();
     const [currentIndex, setCurrentIndex] = React.useState<number>(0);
+    const [done, setDone] = React.useState<boolean>(false);
 
     const quizEntity = useSelector(getAutomatedQuizEntity);
     console.log(quizEntity);
@@ -70,6 +72,8 @@ const QuizPage: React.FC = () => {
     const nextQuestion = () => {
         if (currentIndex + 1 < totalCards) {
             setCurrentIndex(currentIndex + 1);
+        } else {
+            setDone(true);
         }
     };
 
@@ -85,7 +89,14 @@ const QuizPage: React.FC = () => {
                         <Card className={classes.mainCard}>
                             <CardContent className={classes.cardContent}>
                                 <Box display='flex' height='100%' width='100%' flexDirection='row'>
-                                    <QuizCard cardId={cardIds[currentIndex]} onComplete={nextQuestion} />
+                                    {done ? (
+                                        <QuizCard cardId={cardIds[currentIndex]} onComplete={nextQuestion} />
+                                    ) :
+                                        (
+                                            <Typography align='center' variant='h4' style={{ width: '100%' }}>
+                                                You&apos;ve completed the quiz!
+                                            </Typography>
+                                        )}
                                 </Box>
                             </CardContent>
                         </Card>

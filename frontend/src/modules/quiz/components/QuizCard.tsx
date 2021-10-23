@@ -1,10 +1,12 @@
-import React, { Dispatch } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import LoadingIndicator from '../../../components/content/LoadingIndicator';
+import { CARD_TYPE } from '../../../components/utiltiies/constants';
 import { AppState } from '../../../types/store';
 import { handleApiRequest } from '../../../utilities/ui';
 import CardImage from '../../cards/components/CardImage';
+import CardText from '../../cards/components/CardText';
 import { loadCard } from '../../cards/operations';
 import { getCardEntity } from '../../cards/selectors';
 
@@ -18,6 +20,8 @@ type Props = OwnProps;
 const QuizCard: React.FC<Props> = (props: Props) => {
     const dispatch = useDispatch();
     const card = useSelector((state: AppState) => getCardEntity(state, props.cardId));
+
+    console.log(card);
 
     const [isLoading, setIsLoading] = React.useState(true);
 
@@ -34,7 +38,13 @@ const QuizCard: React.FC<Props> = (props: Props) => {
             {isLoading && (
                 <LoadingIndicator />
             )}
-            {!isLoading && card && (
+            {!isLoading && card && (card.type == CARD_TYPE.TEXT ?
+                <CardText
+                    card={card}
+                    isEditing={false}
+                    onComplete={props.onComplete}
+                />
+                :
                 <CardImage
                     card={card}
                     isEditing={false}
