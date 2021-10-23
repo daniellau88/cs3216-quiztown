@@ -1,6 +1,6 @@
 import { ApiPromise, CollectionData as CollectionDataType, CollectionQueryParams } from '../types';
 import { CardListData } from '../types/cards';
-import { CollectionData, CollectionListData, CollectionPostData, CollectionsImportPostData, CollectionsImportTextPostData } from '../types/collections';
+import { CollectionListData, CollectionPostData, CollectionsImportPostData, CollectionsImportTextPostData } from '../types/collections';
 import { toQueryString } from '../utilities/url';
 
 import BaseAPI from './base';
@@ -15,16 +15,16 @@ export class CollectionsAPI extends BaseAPI {
         return this.get(`${this.getCollectionUrl()}/?${toQueryString(params)}`);
     }
 
-    public getCollection(id: number): ApiPromise<{ item: CollectionData }> {
+    public getCollection(id: number): ApiPromise<{ item: CollectionListData }> {
         return this.get(`${this.getCollectionUrl()}/${id}` + URL_SUFFIX);
     }
 
-    public addCollection(data: CollectionPostData): ApiPromise<{ item: CollectionData }> {
+    public addCollection(data: CollectionPostData): ApiPromise<{ item: CollectionListData }> {
         console.log('Adding collection. Data name: ' + data.name);
         return this.post(`${this.getCollectionUrl()}` + URL_SUFFIX, data);
     }
 
-    public patchCollection(id: number, data: CollectionPostData): ApiPromise<{ item: CollectionData }> {
+    public patchCollection(id: number, data: CollectionPostData): ApiPromise<{ item: CollectionListData }> {
         return this.patch(`${this.getCollectionUrl()}/${id}` + URL_SUFFIX, data);
     }
 
@@ -32,7 +32,7 @@ export class CollectionsAPI extends BaseAPI {
         return this.delete(`${this.getCollectionUrl()}/${id}` + URL_SUFFIX);
     }
 
-    public importCollections(collectionId: number, data: CollectionsImportPostData): ApiPromise<{ item: CollectionData }> {
+    public importCollections(collectionId: number, data: CollectionsImportPostData): ApiPromise<{ item: CollectionListData }> {
         // console.log('Import collection. Data name: ' + data[0].file_key);
         return this.post(`${this.getCollectionUrl()}/${collectionId}/import` + URL_SUFFIX, data);
     }

@@ -1,6 +1,6 @@
 import api from '../../api';
 import { ApiResponse } from '../../types';
-import { CollectionData, CollectionListData, CollectionMiniEntity, CollectionPostData, CollectionsImportPostData } from '../../types/collections';
+import { CollectionListData, CollectionMiniEntity, CollectionPostData, CollectionsImportPostData } from '../../types/collections';
 import { CollectionOptions, EntityCollection, NormalizeOperation, Operation } from '../../types/store';
 import { batched, queryEntityCollection, withCachedEntity } from '../../utilities/store';
 
@@ -49,7 +49,7 @@ export function saveCollectionList(list: CollectionListData[]): NormalizeOperati
     };
 }
 
-export function saveCollection(data: CollectionData): NormalizeOperation {
+export function saveCollection(data: CollectionListData): NormalizeOperation {
     return (dispatch) => {
         dispatch(actions.saveCollection(data));
     };

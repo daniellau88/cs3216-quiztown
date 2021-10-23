@@ -52,3 +52,18 @@ class CollectionImport(TimestampedModel):
         instance.status = validated_data.get("status", instance.status)
         instance.save()
         return instance
+
+
+class Tag(TimestampedModel):
+    name = models.CharField(max_length=100, unique=True)
+
+    def create(self, validated_data):
+        return Tag.objects.create(validated_data)
+
+
+class CollectionTag(TimestampedModel):
+    collection_id = models.IntegerField()
+    tag_id = models.IntegerField()
+
+    def create(self, validated_data):
+        return CollectionTag.objects.create(validated_data)
