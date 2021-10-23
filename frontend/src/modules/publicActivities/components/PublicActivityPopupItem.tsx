@@ -62,7 +62,6 @@ const PublicActivityPopupItem: React.FC<Props> = ({ id, onClick }: Props) => {
             handleApiRequests(dispatch, dispatch(updatePublicActivity(publicActivity.id, { is_viewed: true })));
         }
         history.push(getPublicActivityURL(publicActivity));
-        // TODO: send request to mark read
     };
 
     return (

@@ -13,13 +13,12 @@ import { RouteComponentProps, generatePath, useHistory } from 'react-router-dom'
 
 import LoadingIndicator from '../../../components/content/LoadingIndicator';
 import Breadcrumbs from '../../../layouts/Breadcrumbs';
-import { CollectionPostData } from '../../../types/collections';
 import { AppState } from '../../../types/store';
 import colours from '../../../utilities/colours';
 import routes from '../../../utilities/routes';
 import { handleApiRequest } from '../../../utilities/ui';
 import { deleteCard, loadCollectionImportCards } from '../../cards/operations';
-import { addCollection, loadCollection } from '../../collections/operations';
+import { completeCollectionImportReview, loadCollection } from '../../collections/operations';
 import { getCollectionMiniEntity } from '../../collections/selectors';
 import CollectionReviewCard from '../components/CollectionReviewCard';
 import CollectionReviewCardSelector from '../components/CollectionReviewCardSelector';
@@ -38,10 +37,9 @@ const useStyles = makeStyles(() => ({
         borderRadius: 5,
         boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.1), 0 2px 5px 0 rgba(0, 0, 0, 0.1)',
         width: '80vw',
-        height: '20vh',
     },
     sideGridButton: {
-        height: '100%', 
+        height: '20vh',
         width: '100%',
         backgroundColor: colours.BLUE,
         textTransform: 'none',
@@ -66,19 +64,18 @@ const CollectionReviewPage: React.FC<Props> = ({ match: { params } }: RouteCompo
     const [importedCardIds, setImportedCardIds] = React.useState<number[]>();
     const [currCardId, setCurrCardId] = React.useState<number>();
 
-    const collectionId: string = (params as { collectionId: string }).collectionId;
-    const importId: string = (params as { importId: string }).importId;
-    const collection = useSelector((state: AppState) => getCollectionMiniEntity(state, parseInt(collectionId)));
+    const collectionId: number = parseInt((params as { collectionId: string }).collectionId);
+    const importId: number = parseInt((params as { importId: string }).importId);
+    const collection = useSelector((state: AppState) => getCollectionMiniEntity(state, collectionId));
 
     React.useEffect(() => {
-        handleApiRequest(dispatch, dispatch(loadCollection(parseInt(collectionId))))
-            .finally(() => {
-                setIsLoading(false);
-            })
+        setCurrCardId(undefined);
+
+        handleApiRequest(dispatch, dispatch(loadCollection(collectionId)))
             .catch(() => {
                 history.replace('/collections');
             });
-        handleApiRequest(dispatch, dispatch(loadCollectionImportCards(parseInt(importId), {})))
+        handleApiRequest(dispatch, dispatch(loadCollectionImportCards(importId, {})))
             .then(res => {
                 const cardIds = res.payload.ids;
                 setImportedCardIds(cardIds);
@@ -86,12 +83,17 @@ const CollectionReviewPage: React.FC<Props> = ({ match: { params } }: RouteCompo
                 if (cardIds.length > 0) {
                     setCurrCardId(cardIds[0]);
                 }
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
-    }, []);
+    }, [collectionId, importId]);
 
     const completeReview = () => {
-        const collectionPostDataCurrent: CollectionPostData = { name: 'Random' };
-        return handleApiRequest(dispatch, dispatch(addCollection(collectionPostDataCurrent)));
+        handleApiRequest(dispatch, dispatch(completeCollectionImportReview(collectionId, importId)))
+            .finally(() => {
+                history.replace(`/collections/${collectionId}`);
+            });
     };
 
     const selectCard = (selectedCardId: number) => {
@@ -118,6 +120,21 @@ const CollectionReviewPage: React.FC<Props> = ({ match: { params } }: RouteCompo
     };
 
     if (isLoading) return <LoadingIndicator />;
+
+    if (!currCardId) {
+        return (
+            <Grid container spacing={2} className={classes.root} direction='column'>
+                <Breadcrumbs links={[
+                    { path: routes.COLLECTIONS.INDEX, name: 'Collections' },
+                    { path: generatePath(routes.COLLECTIONS.SHOW, { collectionId: collectionId }), name: collection ? collection.name : 'Untitled collection' },
+                    { path: null, name: 'Review' },
+                ]} />
+                <Typography variant='h5' align='center'> 
+                    It seems liks you have no cards to be reviewed for this import!
+                </Typography>
+            </Grid>
+        );
+    }
 
     return (
         <>
