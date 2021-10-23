@@ -25,12 +25,6 @@ const NavigationBarDropdownElements: React.FC = () => {
                 size='h6'
                 isDropdown={true}
             />
-            <NavigationBarElement
-                text='Test[Dev]'
-                route={routes.TEST}
-                size='h6'
-                isDropdown={true}
-            />
         </>
     );
 };

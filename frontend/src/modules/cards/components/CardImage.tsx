@@ -17,6 +17,7 @@ import { fabric } from 'fabric';
 import Moment from 'moment';
 import React, { MutableRefObject, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router';
 
 import StateManager from '../../../components/fabric/CanvasStateManager';
 import QTTextbox from '../../../components/fabric/QTTextbox';
@@ -66,6 +67,7 @@ interface CardImageProps {
     card: CardEntity
     canvasRef?: MutableRefObject<fabric.Canvas | undefined>
     saveEdits?: (isAutosave: boolean) => void
+    onComplete?: () => void
 }
 
 const CardImage: React.FC<CardImageProps> = ({
@@ -73,9 +75,11 @@ const CardImage: React.FC<CardImageProps> = ({
     card,
     canvasRef,
     saveEdits,
+    onComplete = () => { return; },
 }) => {
     const classes = useStyles();
     const dispatch = useDispatch();
+    const history = useHistory();
 
     const id = card.id;
     const imageUrl = card.image_link;
@@ -89,7 +93,7 @@ const CardImage: React.FC<CardImageProps> = ({
     const [stateManager, setStateManager] = useState<StateManager>();
     const [hasAnsweredAll, setHasAnsweredAll] = useState(false);
     const [numGuesses, setNumGuesses] = useState(0); // TODO increment with user guess
-    const [timeTaken, setTimeTaken] = useState<number>(0); // TODO implement stopwatch
+    const [timeTaken, setTimeTaken] = useState<number>(0);
 
     const { windowHeight, windowWidth } = useWindowDimensions();
 
@@ -226,6 +230,7 @@ const CardImage: React.FC<CardImageProps> = ({
         };
         return handleApiRequest(dispatch, dispatch(updateCard(card.id, cardPostData)))
             .then(() => {
+                onComplete ? onComplete() : history.goBack();
                 return true;
             });
     };
@@ -279,11 +284,10 @@ const CardImage: React.FC<CardImageProps> = ({
                             You have answered all the questions in the cards, how confident did you feel?
                         </Typography>
                     </DialogContent>
-                    <DialogActions>
+                    <DialogActions style={{ justifyContent: 'center' }}>
                         {getFeedbackSet(timeTaken, numOptions, numGuesses, boxNumber).map((feedback: Feedback, index: number) => {
-                            console.log(feedback);
                             return <Button key={index} onClick={() => sendUpdate(feedback)}>
-                                <Grid alignItems='center' justifyContent='center' direction='column'>
+                                <Grid container alignItems='center' justifyContent='center' direction='column'>
                                     {index == 0 ? <SentimentVeryDissatisfiedIcon /> : index == 1 ? <SentimentSatisfiedIcon /> : <SentimentVerySatisfiedIcon />}
                                     <Typography align='center'>
                                         Interval: {feedback.intervalLength}

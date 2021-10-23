@@ -9,9 +9,15 @@ import {
 } from '@material-ui/core';
 import * as React from 'react';
 import { isBrowser } from 'react-device-detect';
+import { useDispatch } from 'react-redux';
+import { generatePath, useHistory } from 'react-router-dom';
 
+import { setAutomatedQuiz } from '../../modules/quiz/operations';
 import { CollectionMiniEntity } from '../../types/collections';
+import { QuizData } from '../../types/quiz';
 import colours from '../../utilities/colours';
+import routes from '../../utilities/routes';
+import { handleApiRequest } from '../../utilities/ui';
 import { UndoneCardsMap } from '../HomePage';
 
 import CollectionToggle from './CollectionToggle';
@@ -67,6 +73,13 @@ const useStyles = makeStyles(() => ({
         fontSize: isBrowser ? '3vh' : '2vh',
         color: colours.WHITE,
     },
+    link: {
+        color: colours.BLUE,
+        textDecoration: 'none',
+        '&:hover': {
+            textDecoration: 'underline',
+        },
+    },
 }));
 
 interface OwnProps {
@@ -82,6 +95,8 @@ const BannerCard: React.FC<Props> = (props: Props) => {
     const undoneCardsMaps = props.undoneCardsMaps;
 
     const classes = useStyles();
+    const dispatch = useDispatch();
+    const history = useHistory();
     const [collectionCount, setCollectionCount] = React.useState<number>(0);
 
     const totalUndone: number = undoneCardsMaps.filter(map => !map.inactive).reduce((prev, curr) => prev + curr.cards.length, 0);
@@ -90,9 +105,19 @@ const BannerCard: React.FC<Props> = (props: Props) => {
         setCollectionCount(collectionCount + (didActivate ? 1 : -1));
     };
 
+    const startQuiz = () => {
+        const cardIds = undoneCardsMaps.flatMap(undoneCardsMap => undoneCardsMap.cards).map(cardMiniEntity => cardMiniEntity.id);
+        const quizData: QuizData = {
+            cardIds: cardIds,
+        };
+        dispatch(setAutomatedQuiz(quizData)).then(() => {
+            history.push(generatePath(routes.QUIZ));
+        });
+    };
+
     React.useEffect(() => {
         props.onChange();
-    }, [collectionCount]);
+    }, [props, collectionCount]);
 
     React.useEffect(() => {
         setCollectionCount([...undoneCardsMaps].filter(map => !map.inactive).filter(map => map.cards.length > 0).length);
@@ -132,7 +157,7 @@ const BannerCard: React.FC<Props> = (props: Props) => {
                             </Grid>
                         </Grid>
                         <Grid className={classes.sideGrid}>
-                            <Button className={classes.sideGridButton}>
+                            <Button className={classes.sideGridButton} onClick={startQuiz}>
                                 <Typography className={classes.sideButtonText}>
                                     Start Learning
                                 </Typography>

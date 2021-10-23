@@ -1,18 +1,20 @@
 import { Box, CssBaseline, Grid, makeStyles } from '@material-ui/core';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RouteComponentProps, generatePath, useHistory } from 'react-router-dom';
+import { RouteComponentProps, generatePath } from 'react-router-dom';
 import { Dispatch } from 'redux';
 
 import LoadingIndicator from '../../../components/content/LoadingIndicator';
+import { CARD_TYPE } from '../../../components/utiltiies/constants';
 import Breadcrumbs from '../../../layouts/Breadcrumbs';
 import { AppState } from '../../../types/store';
-import { dateToISOFormat } from '../../../utilities/datetime';
 import routes from '../../../utilities/routes';
-import { handleApiRequest } from '../../../utilities/ui';
+import { handleApiRequests } from '../../../utilities/ui';
+import { loadCollection } from '../../collections/operations';
 import { getCollectionMiniEntity } from '../../collections/selectors';
-import CardImage from '../components/CardImage';
-import { loadCard, updateCard } from '../operations';
+import CollectionsCardImage from '../components/CollectionsCardImage';
+import CollectionsCardText from '../components/CollectionsCardText';
+import { loadCard } from '../operations';
 import { getCardEntity } from '../selectors';
 
 const useStyles = makeStyles(() => ({
@@ -26,7 +28,6 @@ type Props = RouteComponentProps;
 
 const CollectionsCardShowPage: React.FC<Props> = ({ match: { params } }: RouteComponentProps) => {
     const classes = useStyles();
-    const history = useHistory();
     const dispatch = useDispatch();
     const cardId: number = +(params as { cardId: string }).cardId;
     const collectionId: number = +(params as { collectionId: string }).collectionId;
@@ -35,9 +36,11 @@ const CollectionsCardShowPage: React.FC<Props> = ({ match: { params } }: RouteCo
 
     const [isLoading, setIsLoading] = React.useState(true);
 
+    console.log(card);
+
     const onUpdate = (cardId: number, dispatch: Dispatch<any>) => {
         setIsLoading(true);
-        handleApiRequest(dispatch, dispatch(loadCard(cardId))).finally(() => {
+        handleApiRequests(dispatch, dispatch(loadCard(cardId)), dispatch(loadCollection(collectionId))).finally(() => {
             setIsLoading(false);
         });
     };
@@ -59,10 +62,19 @@ const CollectionsCardShowPage: React.FC<Props> = ({ match: { params } }: RouteCo
                     {isLoading && (
                         <LoadingIndicator />
                     )}
-                    {!isLoading && card && (
-                        <CardImage
+                    {!isLoading && card && (card.type == CARD_TYPE.TEXT ?
+                        <CollectionsCardText
+                            collectionId={collectionId}
+                            cardId={cardId}
                             card={card}
-                            isEditing={false}
+                            collection={collection}
+                        />
+                        :
+                        <CollectionsCardImage
+                            collectionId={collectionId}
+                            cardId={cardId}
+                            card={card}
+                            collection={collection}
                         />
                     )}
                 </Grid>
@@ -71,6 +83,5 @@ const CollectionsCardShowPage: React.FC<Props> = ({ match: { params } }: RouteCo
     );
 
 };
-
 
 export default CollectionsCardShowPage;

@@ -10,6 +10,7 @@ const useStyles = makeStyles((theme) => ({
     header: {
         paddingLeft: theme.spacing(1),
         marginBottom: theme.spacing(3),
+        width: '100%',
         border: 'none',
         boxShadow: 'none',
     },

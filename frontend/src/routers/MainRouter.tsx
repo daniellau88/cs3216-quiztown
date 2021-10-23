@@ -5,12 +5,13 @@ import CollectionsCardAddImagePage from '../modules/cards/pages/CollectionsCardA
 import CollectionsCardAddPage from '../modules/cards/pages/CollectionsCardAddPage';
 import CollectionsCardAddTextPage from '../modules/cards/pages/CollectionsCardAddTextPage';
 import CollectionsCardPage from '../modules/cards/pages/CollectionsCardPage';
-import CollectionsCardShowImageOrTextPage from '../modules/cards/pages/CollectionsCardShowImageOrTextPage';
+import CollectionsCardShowPage from '../modules/cards/pages/CollectionsCardShowPage';
 import CollectionsCardStarredPage from '../modules/cards/pages/CollectionsCardStarredPage';
 import CollectionsImageCardEditPage from '../modules/cards/pages/CollectionsImageCardEditPage';
 import CollectionAddPage from '../modules/collections/pages/CollectionAddPage';
 import CollectionDiscoverPage from '../modules/collections/pages/CollectionDiscoverPage';
 import CollectionPage from '../modules/collections/pages/CollectionPage';
+import QuizPage from '../modules/quiz/pages/QuizPage';
 import HomePage from '../pages/HomePage';
 import InfoPage from '../pages/InfoPage';
 import TemplatePage from '../pages/utilities/TemplatePage';
@@ -29,10 +30,11 @@ const MainRouter = (): JSX.Element => {
                 <Route exact path={routes.COLLECTIONS.CARD.NEWTEXT} component={CollectionsCardAddTextPage} />
                 <Route exact path={routes.COLLECTIONS.CARD.NEWIMAGE} component={CollectionsCardAddImagePage} />
                 <Route exact path={routes.COLLECTIONS.CARD.NEW} component={CollectionsCardAddPage} />
-                <Route exact path={routes.COLLECTIONS.CARD.SHOW} component={CollectionsCardShowImageOrTextPage} />
+                <Route exact path={routes.COLLECTIONS.CARD.SHOW} component={CollectionsCardShowPage} />
                 <Route exact path={routes.CARDS.SHOW_STARRED} component={CollectionsCardStarredPage} />
                 {/* TODO: Distinguish between image card edit and text card edit somewhere */}
                 <Route exact path={routes.COLLECTIONS.CARD.EDIT} component={CollectionsImageCardEditPage} />
+                <Route exact path={routes.QUIZ} component={QuizPage} />
                 <Route exact path={routes.TEST} component={TemplatePage} />
             </Switch>
         </>
