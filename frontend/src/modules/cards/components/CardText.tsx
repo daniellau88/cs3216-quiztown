@@ -13,6 +13,7 @@ import SentimentVerySatisfiedIcon from '@material-ui/icons/SentimentVerySatisfie
 import Moment from 'moment';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router';
 
 import { CardEntity, CardPostData } from '../../../types/cards';
 import colours from '../../../utilities/colours';
@@ -78,6 +79,8 @@ const CardText: React.FC<CardTextProps> = ({
 }) => {
     const classes = useStyles();
     const dispatch = useDispatch();
+    const history = useHistory();
+
     const boxNumber = card.box_number;
 
     const [hasAnsweredAll, setHasAnsweredAll] = useState(false);
@@ -105,7 +108,7 @@ const CardText: React.FC<CardTextProps> = ({
         };
         return handleApiRequest(dispatch, dispatch(updateCard(card.id, cardPostData)))
             .then(() => {
-                onComplete();
+                onComplete ? onComplete() : history.goBack();
                 return true;
             });
     };

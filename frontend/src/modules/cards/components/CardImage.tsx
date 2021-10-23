@@ -17,6 +17,7 @@ import { fabric } from 'fabric';
 import Moment from 'moment';
 import React, { MutableRefObject, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router';
 
 import StateManager from '../../../components/fabric/CanvasStateManager';
 import QTTextbox from '../../../components/fabric/QTTextbox';
@@ -78,6 +79,7 @@ const CardImage: React.FC<CardImageProps> = ({
 }) => {
     const classes = useStyles();
     const dispatch = useDispatch();
+    const history = useHistory();
 
     const id = card.id;
     const imageUrl = card.image_link;
@@ -228,7 +230,7 @@ const CardImage: React.FC<CardImageProps> = ({
         };
         return handleApiRequest(dispatch, dispatch(updateCard(card.id, cardPostData)))
             .then(() => {
-                onComplete();
+                onComplete ? onComplete() : history.goBack();
                 return true;
             });
     };
