@@ -5,8 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { GoogleLoginPostData } from '../../../types/auth';
 import { handleApiRequest } from '../../../utilities/ui';
-import { googleLogin } from '../operations';
-import { getCurrentUser } from '../selectors';
+import { googleLogin, loadCurrentUser } from '../operations';
+import { getCurrentUser, getIsAuthenticated } from '../selectors';
 
 import GoogleSignInButton from './GoogleSignInButton';
 import UserDetailComponent from './UserDetailComponent';
@@ -40,7 +40,7 @@ const NavigationBarUserAuthElement: React.FC<{}> = () => {
 
     return (
         <div className={classes.root}>
-            {user !== null ?
+            {user != null ?
                 <UserDetailComponent user={user} /> :
                 <GoogleSignInButton onSuccess={onSuccess} />
             }

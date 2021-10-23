@@ -9,6 +9,7 @@ import persistStore from 'redux-persist/es/persistStore';
 import { PersistGate } from 'redux-persist/integration/react';
 
 import AppLayout from './layouts/AppLayout';
+import AuthGateway from './modules/auth/components/AuthGateway';
 import Notifier from './modules/notifications/components/Notifier';
 import configureStore from './modules/store';
 import MainRouter from './routers/MainRouter';
@@ -38,10 +39,12 @@ const App: React.FC = () => {
                 <Router history={history}>
                     <ThemeProvider theme={theme}>
                         <SnackbarProvider>
-                            <AppLayout>
-                                <Notifier />
-                                <Route path="" render={MainRouter}></Route>
-                            </AppLayout>
+                            <AuthGateway>
+                                <AppLayout>
+                                    <Notifier />
+                                    <Route path="" render={MainRouter}></Route>
+                                </AppLayout>
+                            </AuthGateway>
                         </SnackbarProvider>
                     </ThemeProvider>
                 </Router>

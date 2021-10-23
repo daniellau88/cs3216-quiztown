@@ -169,8 +169,9 @@ def review_collection_import_view(request, pk_item, pkImport_item):
 
 
 @api_view(["POST"])
-@convert_keys_to_item({"pk": Collection})
+@convert_keys_to_item({"pk": helpers.get_editable_collection_queryset_by_request})
 @validate_request_data(serializers.CollectionSerializer)
 def duplicate_collection(request, pk_item, serializer):
+    # TODO: Fix this
     newcollection = jobs.duplicate_collection(pk_item, request.user.user_id)
     return Response({"items": newcollection})

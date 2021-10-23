@@ -4,6 +4,7 @@ import * as types from './types';
 
 const initialState: types.AuthState = {
     currentUser: null,
+    isAuthenticated: false,
 };
 
 const authReducer = produce((draft: types.AuthState, action: types.AuthActionTypes) => {
@@ -15,6 +16,11 @@ const authReducer = produce((draft: types.AuthState, action: types.AuthActionTyp
         }
         case types.DELETE_CURRENT_USER: {
             draft.currentUser = null;
+            return;
+        }
+        case types.SAVE_IS_AUTHENTICATED: {
+            draft.isAuthenticated = action.isAuthenticated;
+            return;
         }
     }
 }, initialState);

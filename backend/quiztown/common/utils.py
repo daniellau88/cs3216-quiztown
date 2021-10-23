@@ -13,16 +13,23 @@ from django.db.models import Q
 from django.db.models.query import QuerySet
 from rest_framework import serializers
 
+from quiztown.common.middlewares import get_request
+
 from .errors import ApplicationError, ErrorCode, Message
 from .pagination import CustomPagination
 from .serializers import ListRequestSerializer
 
 
 def generate_response(code: int, messages: list[Message], payload: dict):
+    request = get_request()
+
     return {
         "code": code,
         "messages": [asdict(message) for message in messages],
         "payload": payload,
+        "metadata": {
+            "is_authenticated": request.user.is_authenticated,
+        },
     }
 
 

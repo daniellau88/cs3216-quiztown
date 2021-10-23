@@ -1,10 +1,13 @@
-import { Avatar, Button, ClickAwayListener, Menu, MenuItem, Typography, makeStyles } from '@material-ui/core';
+import { Avatar, Button, ClickAwayListener, Menu, Typography, makeStyles } from '@material-ui/core';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 import { UserData } from '../../../types/auth';
 import { handleApiRequests } from '../../../utilities/ui';
 import { logout } from '../operations';
+
+import GoogleSignOutMenuItem from './GoogleSignOutMenuItem';
 
 interface Props {
     user: UserData;
@@ -50,6 +53,7 @@ const useStyles = makeStyles((theme) => ({
 const UserDetailComponent: React.FC<Props> = ({ user }) => {
     const dispatch = useDispatch();
     const classes = useStyles();
+    const history = useHistory();
     const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
     const menuOpen = Boolean(anchorEl);
 
@@ -63,6 +67,7 @@ const UserDetailComponent: React.FC<Props> = ({ user }) => {
 
     const handleLogout = () => {
         handleApiRequests(dispatch, dispatch(logout())).finally(() => {
+            history.push('');
             location.reload();
         });
         handleClose();
@@ -88,7 +93,7 @@ const UserDetailComponent: React.FC<Props> = ({ user }) => {
                     paper: classes.drawerPaper,
                 }}
             >
-                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                <GoogleSignOutMenuItem onSuccess={handleLogout}>Logout</GoogleSignOutMenuItem>
             </Menu>
 
         </div>
