@@ -59,11 +59,8 @@ const QuizPage: React.FC = () => {
     const [done, setDone] = React.useState<boolean>(false);
 
     const quizEntity = useSelector(getAutomatedQuizEntity);
-    console.log(quizEntity);
     const cardIds = quizEntity ? quizEntity.cardIds : [];
     const totalCards = cardIds.length;
-
-    console.log(cardIds);
 
     if (cardIds.length < 1) {
         history.push(generatePath(routes.ROOT));
@@ -89,7 +86,7 @@ const QuizPage: React.FC = () => {
                         <Card className={classes.mainCard}>
                             <CardContent className={classes.cardContent}>
                                 <Box display='flex' height='100%' width='100%' flexDirection='row'>
-                                    {done ? (
+                                    {!done ? (
                                         <QuizCard cardId={cardIds[currentIndex]} onComplete={nextQuestion} />
                                     ) :
                                         (
