@@ -21,6 +21,7 @@ const ROUTES = {
         IMPORT: {
             SHOW: '/collections/:collectionId/imports/:importId',
         },
+        DISCOVER: '/collections/discover',
     },
     CARDS: {
         SHOW_STARRED: '/cards/starred',

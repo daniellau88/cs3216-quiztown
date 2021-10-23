@@ -9,7 +9,7 @@ import {
 import { Add } from '@material-ui/icons';
 import * as React from 'react';
 import { useState } from 'react';
-import { Document } from 'react-pdf';
+import { Document, Page } from 'react-pdf';
 import { useDispatch } from 'react-redux';
 
 import { UploadData } from '../../../types/uploads';
@@ -39,6 +39,11 @@ const useStyles = makeStyles((theme) => ({
     fileNameText: {
         fontSize: '3vh',
     },
+    pdfNameText: {
+        fontSize: '1.5vh',
+        paddingLeft: '15vh',
+        textOverflow: 'ellipsis',
+    },
     card: {
         justifyContent: 'center',
         alignItems: 'center',
@@ -50,6 +55,11 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'center',
         height: '100vh',
         width: '30vh',
+    },
+    pdf: {
+        height: '30vh',
+        width: '15vh',
+        // margin: 0,
     },
 }));
 
@@ -63,13 +73,12 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
     const classes = useStyles();
     const dispatch = useDispatch();
 
-    const imageSrc = 'https://picsum.photos/200/300';
-
     const [fileCardInfo, saveFileCardInfo] = useState<Array<File>>([]);
     const [fileImageLink, saveFileImageLink] = useState<Array<string>>([]);
+    const [filePDFLink, saveFilePDFLink] = useState<Array<any>>([]);
     const [uploadFilesChild, setUploadedResponseChild] = useState<Array<UploadData>>([]);
-
-    const [testTarget, setTarget] = useState();
+    const [numPages, setNumPages] = useState<number>(1);
+    const [height, setHeight] = useState(0);
 
     const upload = async (e: React.ChangeEvent<any>) => {
         const fileInfo = [...fileCardInfo];
@@ -78,12 +87,13 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
         console.log(fileInfo);
         saveFileCardInfo(fileInfo);
         const fileImage = [...fileImageLink];
+        const filePDF = [...filePDFLink];
         const currFile = fileInfo[fileInfo.length - 1];
         const type = currFile.name.slice(-3);
         if (type === 'pdf') {
-            console.log('is pdf');
             fileImage.push(type);
-            setTarget(e.target.files[0]);
+            filePDF.push(e.target.files[e.target.files.length - 1]);
+            saveFilePDFLink(filePDF);
         } else {
             const url = URL.createObjectURL(currFile);
             if (url) {
@@ -109,6 +119,17 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
                 });
         });
     };
+
+    const onDocumentLoadSuccess = ({ numPages }: any) => {
+        setNumPages(numPages);
+    };
+
+    const measuredRef = React.useCallback(node => {
+        if (node !== null) {
+            setHeight(node.getBoundingClientRect().height);
+            console.log(node.getBoundingClientRect().height);
+        }
+    }, []);
 
     return (
         <Grid container>
@@ -149,21 +170,30 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
                         className={classes.card}
                     >
                         <Card className={`${classes.root} ${classes.center}`} key={index}>
-
-                            <Grid container className={classes.image}>
+                            <Grid container ref={measuredRef}>
                                 {fileImageLink[index] === 'pdf' ?
-                                    (<Document
-                                        file={testTarget}
-                                    />) :
+                                    (
+                                        <Document
+                                            file={filePDFLink[index]}
+                                            className={classes.pdf}
+                                            onLoadSuccess={onDocumentLoadSuccess}>
+                                            <Page pageNumber={1}
+                                                key={`${numPages}_${height}`}
+                                                width={height}
+                                                height={height}
+                                            />
+                                        </Document>
+                                    ) :
                                     (<CardMedia
                                         component="img"
                                         alt="green iguana"
                                         height="30%"
                                         width="auto"
                                         image={fileImageLink[index]}
+                                        className={classes.image}
                                     />)}
                             </Grid>
-                            <CardContent className={classes.fileNameText}>
+                            <CardContent className={classes.pdfNameText}>
                                 <Typography component="div">
                                     {file.name}
                                 </Typography>

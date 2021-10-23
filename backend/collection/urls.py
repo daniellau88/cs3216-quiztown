@@ -11,6 +11,7 @@ urlpatterns = [
     path("<int:pk>/imports/", views.list_collection_import_view),
     path("<int:pk>/imports/<int:pkImport>/", views.get_collection_import_view),
     path("<int:pk>/imports/<int:pkImport>/review", views.review_collection_import_view),
+    path("<int:pk>/duplicate/", views.duplicate_collection),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

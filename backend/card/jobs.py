@@ -149,3 +149,20 @@ def import_text(question: str, answer: str, collection_id: int):
     card.save()
 
     return card
+
+
+def duplicate_cards(collection_id: int):
+    for card_to_duplicate in Card.objects.filter(collection_id=collection_id):
+        card = Card(name=card_to_duplicate.name,
+                    collection_id=collection_id,
+                    image_file_key=card_to_duplicate.image_file_key,
+                    image_metadata=card_to_duplicate.image_metadata,
+                    box_number=0,
+                    answer_details=card_to_duplicate.answer_details,
+                    type=card_to_duplicate.type,
+                    question=card_to_duplicate.question,
+                    answer=card_to_duplicate.answer,
+                    collection_import_id=card_to_duplicate.collection_import_id,
+                    is_reviewed=False)
+        card.save()
+
