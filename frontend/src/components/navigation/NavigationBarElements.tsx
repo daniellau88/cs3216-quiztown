@@ -50,14 +50,6 @@ const NavigationBarElements: React.FC<Props> = (props: Props) => {
                 onMouseEnter={props.onMouseEnter}
                 onMouseLeave={props.onMouseLeave}
             />
-            <NavigationBarElement
-                text='Test[Dev]'
-                route={routes.TEST}
-                size={props.size}
-                flexGrow={props.flexGrow}
-                onMouseEnter={props.onMouseEnter}
-                onMouseLeave={props.onMouseLeave}
-            />
             <NavigationBarUserAuthElement />
         </>
     );

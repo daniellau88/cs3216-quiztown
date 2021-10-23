@@ -63,8 +63,6 @@ const WeekOutlook: React.FC<Props> = (props: Props) => {
     for (let i = 1; i < 8; i++) {
         const undoneCardsMaps: UndoneCardsMap[] = [];
         const day = roundDownDay(addDays(new Date(), i));
-        console.log(Moment(day).format('YYYY-MM-DD'));
-        console.log(props.cards[1]?.next_date.toString());
         for (const c of props.collections.map(c => c.id)) {
             undoneCardsMaps.push({ collectionId: c, cards: props.cards.filter(card => card.collection_id == c).filter(card => card.next_date.toString() == Moment(day).format('YYYY-MM-DD')) });
         }

@@ -10,6 +10,7 @@ import cardsReducer from './cards/reducers';
 import collectionsReducer from './collections/reducers';
 import notificationsReducer from './notifications/reducers';
 import publicActivitiesReducer from './publicActivities/reducers';
+import quizReducer from './quiz/reducers';
 
 const rootReducer: Reducer<AppState> = combineReducers<AppState>({
     auth: authReducer,
@@ -17,6 +18,7 @@ const rootReducer: Reducer<AppState> = combineReducers<AppState>({
     cards: cardsReducer,
     notifications: notificationsReducer,
     publicActivities: publicActivitiesReducer,
+    quiz: quizReducer,
 });
 
 const middlewares: Middleware[] = [thunk];
@@ -26,7 +28,7 @@ const enhancer = applyMiddleware(...middlewares);
 export default function configureStore(): Store<AppState, AnyAction> {
     const persistConfig = {
         key: 'root',
-        whitelist: ['auth'], // For now only cache auth
+        whitelist: ['auth', 'quiz'], // For now only cache auth & quiz
         storage,
     };
 

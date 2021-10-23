@@ -11,6 +11,7 @@ import CollectionsImageCardEditPage from '../modules/cards/pages/CollectionsImag
 import CollectionAddPage from '../modules/collections/pages/CollectionAddPage';
 import CollectionDiscoverPage from '../modules/collections/pages/CollectionDiscoverPage';
 import CollectionPage from '../modules/collections/pages/CollectionPage';
+import QuizPage from '../modules/quiz/pages/QuizPage';
 import HomePage from '../pages/HomePage';
 import InfoPage from '../pages/InfoPage';
 import TemplatePage from '../pages/utilities/TemplatePage';
@@ -33,6 +34,7 @@ const MainRouter = (): JSX.Element => {
                 <Route exact path={routes.CARDS.SHOW_STARRED} component={CollectionsCardStarredPage} />
                 {/* TODO: Distinguish between image card edit and text card edit somewhere */}
                 <Route exact path={routes.COLLECTIONS.CARD.EDIT} component={CollectionsImageCardEditPage} />
+                <Route exact path={routes.QUIZ} component={QuizPage} />
                 <Route exact path={routes.TEST} component={TemplatePage} />
             </Switch>
         </>
