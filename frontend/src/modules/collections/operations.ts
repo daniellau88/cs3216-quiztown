@@ -125,16 +125,6 @@ export function savePublicCollectionList(list: CollectionListData[]): NormalizeO
     };
 }
 
-export function savePublicCollection(id: number, collection: CollectionPostData): Operation<ApiResponse<CollectionMiniEntity>> {
-    return async (dispatch, getState) => {
-        const response = await api.collections.patchCollection(id, collection);
-        const data = response.payload.item;
-        batched(dispatch, saveCollection(data), actions.editCollection());
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        return { ...response, payload: getCollectionMiniEntity(getState(), data.id)! };
-    };
-}
-
 export function duplicatePublicCollection(collectionId: number): Operation<ApiResponse<CollectionMiniEntity>> {
     return async (dispatch, getState) => {
         const response = await api.collections.duplicatePublicCollection(collectionId);
