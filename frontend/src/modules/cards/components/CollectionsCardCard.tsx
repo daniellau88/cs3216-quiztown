@@ -69,7 +69,7 @@ const useStyles = makeStyles(() => ({
     },
     cardContent: {
         paddingTop: '1.5vh',
-        paddingBottom: '0vh',
+        paddingBottom: '3vh',
     },
     cardIcon: {
         fontSize: '2.5vh',
