@@ -1,3 +1,4 @@
+import { Permissions } from './index';
 
 export interface CardPostData {
     name: string;
@@ -33,6 +34,7 @@ export interface CardListData {
     next_date: string;
     created_at: number;
     is_reviewed: boolean;
+    permissions: Permissions;
 }
 
 export interface CardData {
@@ -52,6 +54,7 @@ export interface CardData {
     question: string;
     answer: string;
     is_reviewed: boolean;
+    permissions: Permissions;
 }
 
 export interface CardMiniEntity {
@@ -64,6 +67,7 @@ export interface CardMiniEntity {
     next_date: string;
     created_at: number;
     is_reviewed: boolean;
+    permissions: Permissions;
 }
 
 export interface CardEntity {
@@ -83,4 +87,5 @@ export interface CardEntity {
     question: string;
     answer: string;
     is_reviewed: boolean;
+    permissions: Permissions;
 }

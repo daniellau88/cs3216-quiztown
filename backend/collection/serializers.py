@@ -2,17 +2,19 @@ from rest_framework import serializers
 
 from card.models import Card
 
+from . import helpers
 from .models import Collection, CollectionImport, CollectionTag, Tag
 
 
 class CollectionSerializer(serializers.ModelSerializer):
     tags = serializers.SerializerMethodField()
     num_cards = serializers.SerializerMethodField()
+    permissions = serializers.SerializerMethodField()
 
     class Meta:
         model = Collection
         fields = ["id", "name", "owner_id", "private", "created_at", "image_link",
-                  "origin", "tags", "num_cards"]
+                  "origin", "tags", "num_cards", "permissions"]
 
     def get_tags(self, obj):
         tag_ids = CollectionTag.objects.filter(
@@ -24,6 +26,16 @@ class CollectionSerializer(serializers.ModelSerializer):
     def get_num_cards(self, obj):
         card_num = Card.objects.filter(collection_id=obj.id, is_reviewed=True).count()
         return card_num
+
+    def get_permissions(self, obj):
+        collection = list(helpers.get_editable_collection_queryset_by_request(
+            self.context["request"]).filter(id=obj.id))
+        has_permission = len(collection) > 0
+        return {
+            "can_update": has_permission,
+            "can_delete": has_permission,
+            "can_create_card": has_permission,
+        }
 
 
 class CollectionCreateSerializer(serializers.ModelSerializer):

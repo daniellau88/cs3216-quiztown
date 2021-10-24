@@ -1,6 +1,6 @@
 import produce from 'immer';
 
-import { createEntityCollection, createEntityCollectionSet, createEntityStore, removeFromStore, resetCollectionCache, resetEntityCache, saveDeltaToCollection, saveDeltaToCollectionSet, saveEntityToStore, saveListToStore } from '../../utilities/store';
+import { createEntityCollection, createEntityStore, removeFromStore, resetCollectionCache, resetEntityCache, saveDeltaToCollection, saveDeltaToCollectionSet, saveEntityToStore, saveListToStore } from '../../utilities/store';
 
 import * as types from './types';
 

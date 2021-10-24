@@ -64,6 +64,10 @@ export interface CollectionQueryParams {
     order: 'asc' | 'desc';
 }
 
+export type Permissions<T extends string = 'can_update' | 'can_delete'> = {
+    [key in T]: boolean;
+};
+
 declare module 'redux' {
     // Overload to add thunk support to Redux's dispatch() function.
     export interface Dispatch<A extends Action = AnyAction> {

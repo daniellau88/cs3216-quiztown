@@ -173,7 +173,8 @@ def filter_model_by_get_request(
     paginator = CustomPagination()
     page = paginator.paginate_queryset(model_queryset, request)
 
-    response_serializer = model_serializer_class(page, many=True)
+    response_serializer = model_serializer_class(
+        page, many=True, context={"request": request})
     return paginator.get_paginated_response({"items": response_serializer.data})
 
 

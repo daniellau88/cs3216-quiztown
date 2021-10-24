@@ -1,5 +1,9 @@
 import { UploadData } from './uploads';
 
+import { Permissions } from './index';
+
+type CollectionPermissions = Permissions<'can_update' | 'can_delete' | 'can_create_card'>;
+
 export interface CollectionPostData {
     name: string;
     private?: boolean;
@@ -16,6 +20,7 @@ export interface CollectionListData {
     image_link: string;
     tags: string[];
     num_cards: number;
+    permissions: CollectionPermissions;
 }
 
 
@@ -28,6 +33,7 @@ export interface CollectionMiniEntity {
     image_link: string;
     tags: string[];
     num_cards: number;
+    permissions: CollectionPermissions;
 }
 
 export interface CollectionsCardImportPostData {

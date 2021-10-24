@@ -39,7 +39,10 @@ def create_card_view(request, serializer):
         raise ApplicationError(ErrorCode.NOT_FOUND, ["Item not found"])
 
     serializer.save()
-    return Response({"item": serializer.data})
+
+    response_serializer = serializers.CardSerializer(
+        serializer.instance, context={"request": request})
+    return Response({"item": response_serializer.data})
 
 
 @api_view(["GET", "PATCH", "DELETE"])
@@ -54,7 +57,7 @@ def get_or_update_or_delete_card_view(request, *args, **kwargs):
 
 @convert_keys_to_item({"pk": helpers.get_default_card_queryset_by_request})
 def get_card_view(request, pk_item, *args, **kwargs):
-    serializer = serializers.CardSerializer(pk_item)
+    serializer = serializers.CardSerializer(pk_item, context={"request": request})
     return Response({"item": serializer.data})
 
 
@@ -66,7 +69,8 @@ def get_card_view(request, pk_item, *args, **kwargs):
 def update_card_view(request, pk_item, serializer, *args, **kwargs):
     serializer.save()
 
-    response_serializer = serializers.CardSerializer(serializer.instance)
+    response_serializer = serializers.CardSerializer(
+        serializer.instance, context={"request": request})
     return Response({"item": response_serializer.data})
 
 

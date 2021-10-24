@@ -6,7 +6,11 @@ import * as types from './types';
 
 const initialState: types.CardsState = {
     cards: createEntityStore(),
-    allCards: createEntityCollection(),
+    allCards: createEntityCollection({
+        filters: {
+            'is_reviewed': 1,
+        },
+    }),
     collectionCards: createEntityCollectionSet({
         filters: {
             'is_reviewed': 1,
@@ -14,7 +18,11 @@ const initialState: types.CardsState = {
         sortBy: 'updated_at',
         sortOrder: 'desc',
     }),
-    importCards: createEntityCollectionSet(),
+    importCards: createEntityCollectionSet({
+        filters: {
+            'is_reviewed': 0,
+        },
+    }),
 };
 
 const cardsReducer = produce((draft: types.CardsState, action: types.CardsActionTypes) => {

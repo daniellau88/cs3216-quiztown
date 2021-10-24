@@ -112,6 +112,10 @@ const CollectionsCardPage: React.FC<Props> = ({ match: { params } }: RouteCompon
         return <LoadingIndicator />;
     }
 
+    if (!collection) {
+        return null;
+    }
+
     return (
         <>
             <CssBaseline />
@@ -138,7 +142,7 @@ const CollectionsCardPage: React.FC<Props> = ({ match: { params } }: RouteCompon
 
                     <Grid item xs={12}>
                         <Grid container justifyContent="space-between" spacing={6} className={classes.table} >
-                            <CollectionsCardTable collectionId={collectionIdNumber} beforeCreateCard={beforeCreateCard} />
+                            <CollectionsCardTable collectionId={collectionIdNumber} beforeCreateCard={beforeCreateCard} showAddCard={collection?.permissions.can_create_card} />
                         </Grid>
                     </Grid>
                 </Grid>
