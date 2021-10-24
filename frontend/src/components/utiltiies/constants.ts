@@ -4,3 +4,5 @@ export const CARD_TYPE: { [key: string]: number } = {
     IMAGE: 0,
     TEXT: 1,
 };
+
+export const STATIC_URL = '/static/';

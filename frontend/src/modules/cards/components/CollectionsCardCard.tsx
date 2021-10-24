@@ -18,8 +18,9 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
-import defaultCollectionImage from '../../../assets/images/logo512.png';
+import defaultCollectionImage from '../../../assets/images/defaultCardImage.jpg';
 import QTButton from '../../../components/QTButton';
+import { STATIC_URL } from '../../../components/utiltiies/constants';
 import { CardMiniEntity, CardPostData } from '../../../types/cards';
 import { AppState } from '../../../types/store';
 import colours from '../../../utilities/colours';
@@ -193,12 +194,14 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
         );
     }
 
+    console.log(data?.image_link);
+
     return (
         <Card className={classes.root}>
             <Box className={classes.imageContainer}>
                 <CardMedia
                     component="img"
-                    image={data?.image_link || defaultCollectionImage}
+                    image={data?.image_link && data.image_link != (STATIC_URL + 'cards/') ? data?.image_link : defaultCollectionImage}
                     style={ data ? { width: '100%' } : {} }
                     className={classes.collectionImage}
                 />
