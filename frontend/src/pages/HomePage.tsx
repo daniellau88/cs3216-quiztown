@@ -4,6 +4,7 @@ import {
     Typography,
     makeStyles,
 } from '@material-ui/core';
+import moment from 'moment';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, generatePath } from 'react-router-dom';
@@ -17,6 +18,7 @@ import { CardMiniEntity } from '../types/cards';
 import { CollectionMiniEntity } from '../types/collections';
 import { AppState, EntityCollection } from '../types/store';
 import colours from '../utilities/colours';
+import { dateToISOFormat } from '../utilities/datetime';
 import { multiselect } from '../utilities/multiselect';
 import routes from '../utilities/routes';
 import { handleApiRequests } from '../utilities/ui';
@@ -93,11 +95,15 @@ const HomePage: React.FC<{}> = () => {
 
     React.useEffect(() => {
         setIsLoading(true);
-        // TODO: only query for undone cards
+        const undoneCardFilter = {
+            next_date: {
+                end: dateToISOFormat(moment().add(7, 'days').toDate()),
+            },
+        };
         handleApiRequests(
             dispatch,
             dispatch(loadAllCollections({})),
-            dispatch(loadAllCards({ filters: {} })),
+            dispatch(loadAllCards({ filters: undoneCardFilter })),
         ).finally(() => setIsLoading(false));
     }, [dispatch]);
 

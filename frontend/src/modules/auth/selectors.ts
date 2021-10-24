@@ -9,3 +9,7 @@ function getLocalState(state: AppState) {
 export function getCurrentUser(state: AppState): UserData | null {
     return getLocalState(state).currentUser;
 }
+
+export function getIsAuthenticated(state: AppState): boolean {
+    return getLocalState(state).isAuthenticated;
+}

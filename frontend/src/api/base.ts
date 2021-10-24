@@ -13,6 +13,7 @@ const DEFAULT_API_RESPONSE: ApiResponse<{}> = Object.freeze({
             type: StatusMessageType.Error,
         },
     ],
+    metadata: {},
     errors: {},
 });
 

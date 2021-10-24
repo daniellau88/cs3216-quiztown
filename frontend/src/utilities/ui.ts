@@ -2,7 +2,7 @@ import { hideLoading, showLoading } from 'react-redux-loading-bar';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-// import { enqueueNotification } from 'modules/notifications/operations';
+import { saveIsAuthenticated } from '../modules/auth/actions';
 import { enqueueNotification } from '../modules/notifications/actions';
 import { ApiResponse, StatusMessage, StatusMessageType } from '../types';
 
@@ -84,6 +84,9 @@ export function withStatusMessages<R, S, E>(
 ): Promise<ApiResponse<R>> {
     return promise
         .then((response) => {
+            if (response.metadata.is_authenticated != undefined) {
+                dispatch(saveIsAuthenticated(response.metadata.is_authenticated));
+            }
             showStatusMessages(dispatch, response.messages);
             return response;
         })

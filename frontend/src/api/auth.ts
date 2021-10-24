@@ -32,12 +32,16 @@ export class AuthAPI extends BaseAPI {
 
     public logout(): ApiPromise<{}> {
         console.log('Logging out');
-        const resp: ApiPromise<{ item: UserData }> = this.post(`${this.getAuthUrl()}/logout` + URL_SUFFIX);
+        const resp: ApiPromise<{}> = this.post(`${this.getAuthUrl()}/logout` + URL_SUFFIX);
         const apiResponse = resp.then((response) => {
             Token.refreshCsrfToken();
             return response;
         });
         return apiResponse;
+    }
+
+    public getUser(): ApiPromise<{ item: UserData }> {
+        return this.get(`${this.getAuthUrl()}/user` + URL_SUFFIX);
     }
 }
 

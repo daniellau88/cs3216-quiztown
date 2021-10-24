@@ -62,12 +62,12 @@ export type SelectionKey = number | null | undefined;
  */
 export type EntitySelection<T> = (T & EntityMetadata) | null;
 
-type DateRangeFilter = {
-    start: Date;
-    end: Date;
+type RangeFilter<T> = {
+    start?: T;
+    end?: T;
 };
 
-type CollectionFilter = number | string | number[] | string[] | DateRangeFilter;
+type CollectionFilter = number | string | number[] | string[] | RangeFilter<string> | RangeFilter<number>;
 
 interface EntityCollectionCacheEntry {
     // The cached entity IDs.

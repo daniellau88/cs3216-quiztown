@@ -6,10 +6,9 @@ from card import serializers as card_serializers
 from card.models import Card
 from quiztown.common import utils
 from quiztown.common.decorators import convert_keys_to_item, validate_request_data
-from quiztown.common.errors import ApplicationError, ErrorCode
 
 from . import helpers, jobs, serializers
-from .models import Collection, CollectionImport
+from .models import CollectionImport
 
 
 @api_view(["GET", "POST"])
@@ -39,27 +38,22 @@ def create_collection_view(request, serializer):
 
 
 @api_view(["GET", "PATCH", "DELETE"])
-@convert_keys_to_item({"pk": helpers.get_default_collection_queryset_by_request})
 def get_or_update_or_delete_collection_view(request, *args, **kwargs):
     if request.method == "GET":
         return get_collection_view(request, *args, **kwargs)
-
-    # Only can edit own items
-    if request.user.is_authenticated and request.method != "GET":
-        if kwargs["pk_item"].owner_id != request.user.user_id:
-            raise ApplicationError(ErrorCode.UNAUTHENTICATED, ["No permission to edit"])
-
-    if request.method == "PATCH":
+    elif request.method == "PATCH":
         return update_collection_view(request, *args, **kwargs)
     elif request.method == "DELETE":
         return delete_collection_view(request, *args, **kwargs)
 
 
+@convert_keys_to_item({"pk": helpers.get_default_collection_queryset_by_request})
 def get_collection_view(request, pk_item):
     serializer = serializers.CollectionSerializer(pk_item)
     return Response({"item": serializer.data})
 
 
+@convert_keys_to_item({"pk": helpers.get_editable_collection_queryset_by_request})
 @validate_request_data(
     serializers.CollectionUpdateSerializer,
     is_update=True,
@@ -71,20 +65,16 @@ def update_collection_view(request, pk_item, serializer):
     return Response({"item": response_serializer.data})
 
 
+@convert_keys_to_item({"pk": helpers.get_editable_collection_queryset_by_request})
 def delete_collection_view(request, pk_item):
     pk_item.delete()
     return Response({})
 
 
 @api_view(["POST"])
-@convert_keys_to_item({"pk": helpers.get_default_collection_queryset_by_request})
+@convert_keys_to_item({"pk": helpers.get_editable_collection_queryset_by_request})
 @validate_request_data(serializers.CollectionImportRequestSerializer)
 def import_file_collection_view(request, pk_item, serializer):
-    # Only can edit own items
-    if request.user.is_authenticated and request.method != "GET":
-        if pk_item.owner_id != request.user.user_id:
-            raise ApplicationError(ErrorCode.UNAUTHENTICATED, ["No permission to edit"])
-
     collection_import_instances = []
 
     for collection_import_data in serializer.data["imports"]:
@@ -114,16 +104,10 @@ def import_file_collection_view(request, pk_item, serializer):
 
 
 @api_view(["POST"])
-@convert_keys_to_item({"pk": helpers.get_default_collection_queryset_by_request})
+@convert_keys_to_item({"pk": helpers.get_editable_collection_queryset_by_request})
 @validate_request_data(card_serializers.CollectionImportTextRequestSerializer)
 def import_text_collection_view(request, pk_item, serializer):
     collection_id = pk_item.id
-
-    # Only can edit own items
-    if request.user.is_authenticated and request.method != "GET":
-        assert isinstance(pk_item, Collection)
-        if pk_item.owner_id != request.user.user_id:
-            raise ApplicationError(ErrorCode.UNAUTHENTICATED, ["No permission to edit"])
 
     card_instances = []
 
@@ -146,7 +130,7 @@ def import_text_collection_view(request, pk_item, serializer):
 
 @api_view(["GET"])
 @convert_keys_to_item({
-    "pk": helpers.get_default_collection_queryset_by_request,
+    "pk": helpers.get_editable_collection_queryset_by_request,
     "pkImport": helpers.get_default_collection_import_queryset_by_request,
 })
 def get_collection_import_view(request, pk_item, pkImport_item):
@@ -167,15 +151,10 @@ def list_collection_import_view(request, pk_item):
 
 @api_view(["POST"])
 @convert_keys_to_item({
-    "pk": helpers.get_default_collection_queryset_by_request,
+    "pk": helpers.get_editable_collection_queryset_by_request,
     "pkImport": helpers.get_default_collection_import_queryset_by_request,
 })
 def review_collection_import_view(request, pk_item, pkImport_item):
-    # Only can edit own items
-    if request.user.is_authenticated and request.method != "GET":
-        if pk_item.owner_id != request.user.user_id:
-            raise ApplicationError(ErrorCode.UNAUTHENTICATED, ["No permission to edit"])
-
     import_cards = Card.objects.filter(collection_import_id=pkImport_item.id)
     for card in import_cards:
         card.is_reviewed = True
@@ -190,8 +169,9 @@ def review_collection_import_view(request, pk_item, pkImport_item):
 
 
 @api_view(["POST"])
-@convert_keys_to_item({"pk": Collection})
+@convert_keys_to_item({"pk": helpers.get_editable_collection_queryset_by_request})
 @validate_request_data(serializers.CollectionSerializer)
 def duplicate_collection(request, pk_item, serializer):
+    # TODO: Fix this
     newcollection = jobs.duplicate_collection(pk_item, request.user.user_id)
     return Response({"items": newcollection})

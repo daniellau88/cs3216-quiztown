@@ -2,7 +2,7 @@ import requests
 
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from quiztown.common.decorators import validate_request_data
@@ -93,3 +93,11 @@ def google_login_view(request, serializer):
 def logout_view(request):
     logout(request)
     return Response({})
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def user_view(request, *args, **kwargs):
+    user = request.user
+    serializer = UserSerializer(user)
+    return Response({"item": serializer.data})

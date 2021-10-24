@@ -8,7 +8,6 @@ import * as React from 'react';
 
 import logo from '../../assets/images/logo512.png';
 import { NAV_BAR_HEIGHT } from '../../layouts/AppLayout';
-import PublicActivityPopup from '../../modules/publicActivities/components/PublicActivityPopup';
 
 import NavigationBarDropdown from './NavigationBarDropdown';
 import NavigationBarElements from './NavigationBarElements';
@@ -61,9 +60,6 @@ const NavigationBar: React.FC<{}> = () => {
                     </Box>
                     <Box display='flex' justifyContent='flex-end' width='inherit' className={classes.sectionSmall}>
                         <NavigationBarDropdown />
-                    </Box>
-                    <Box>
-                        <PublicActivityPopup />
                     </Box>
                 </Box>
             </Toolbar>

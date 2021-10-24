@@ -14,3 +14,10 @@ export function deleteCurrentUser(): types.DeleteCurrentUserAction {
         type: types.DELETE_CURRENT_USER,
     };
 }
+
+export function saveIsAuthenticated(isAuthenticated: boolean): types.SaveIsAuthenticatedAction {
+    return {
+        type: types.SAVE_IS_AUTHENTICATED,
+        isAuthenticated,
+    };
+}

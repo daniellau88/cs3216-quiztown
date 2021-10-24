@@ -28,6 +28,9 @@ export interface ApiResponse<D, E = {}> {
     code: number;
     payload: D;
     messages: StatusMessage[];
+    metadata: {
+        is_authenticated?: boolean;
+    };
     errors: E;
 }
 
