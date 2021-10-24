@@ -1,4 +1,5 @@
 import {
+    Box,
     Button,
     Card,
     CardContent,
@@ -36,25 +37,17 @@ const useStyles = makeStyles(() => ({
         alignSelf: 'center',
         marginTop: '20px',
     },
-    showAnswerEnabled: {
+    showAnswer: {
         fontSize: '1.5vh',
         height: '100%',
         width: '10vw',
         borderRadius: '10px',
         border: '1px solid black',
-    },
-    showAnswerGreyout: {
-        fontSize: '1.5vh',
-        height: '100%',
-        width: '10vw',
-        borderRadius: '10px',
-        border: '1px solid black',
-        backgroundColor: colours.LIGHTGREY,
     },
     text: {
         fontSize: '5vh',
     },
-    cardContent: {
+    mainGrid: {
         rowGap: '20px',
     },
     buttonGap: {
@@ -62,7 +55,17 @@ const useStyles = makeStyles(() => ({
     },
     textAnswer: {
         fontSize: '5vh',
-        color: colours.WHITE,
+        color: colours.WHITE + '00',
+    },
+    fullWidth: {
+        width: '100%',
+    },
+    card: {
+        width: '95%',
+        justifyContent: 'center',
+    },
+    cardContent: {
+        width: '100%',
     },
 }));
 
@@ -117,11 +120,11 @@ const CardText: React.FC<CardTextProps> = ({
         <>
             <CssBaseline />
             <Grid container direction='column' className={classes.root}>
-                <Grid container direction='column' spacing={2} alignItems='center' className={classes.cardContent}>
-                    <Card>
-                        <CardContent>
-                            <Grid container item alignItems='center'>
-                                <Grid container item alignItems='center'>
+                <Grid container direction='column' spacing={2} alignItems='center' className={classes.mainGrid}>
+                    <Card className={classes.card}>
+                        <CardContent className={classes.cardContent}>
+                            <Grid container item alignItems='center' className={classes.fullWidth}>
+                                <Grid container item alignItems='center' className={classes.fullWidth}>
                                     Question
                                 </Grid>
                                 <Typography align='center' className={classes.text}>
@@ -130,10 +133,10 @@ const CardText: React.FC<CardTextProps> = ({
                             </Grid>
                         </CardContent>
                     </Card>
-                    <Card>
-                        <CardContent>
-                            <Grid container item alignItems='center'>
-                                <Grid container item alignItems='center'>
+                    <Card className={classes.card}>
+                        <CardContent className={classes.cardContent}>
+                            <Grid container item alignItems='center' className={classes.fullWidth}>
+                                <Grid container item alignItems='center' className={classes.fullWidth}>
                                     Answer
                                 </Grid>
                                 <Typography align='center' className={hasAnsweredAll ? classes.text : classes.textAnswer}>
@@ -143,25 +146,33 @@ const CardText: React.FC<CardTextProps> = ({
                         </CardContent>
                     </Card>
                     <Grid container item direction='column' alignItems='center' className={classes.buttonGap}>
-                        <Button
-                            className={hasAnsweredAll ? classes.showAnswerGreyout : classes.showAnswerEnabled}
-                            onClick={() => revealAllAnswers()}
-                        >
-                            Show Answer
-                        </Button>
-                        <Typography>
-                            How confident did you feel?
-                        </Typography>
-                        {getFeedbackSet(timeTaken, 0, 0, 0, boxNumber).map((feedback: Feedback, index: number) => {
-                            return <Button key={index} onClick={() => sendUpdate(feedback)}>
-                                <Grid container alignItems='center' justifyContent='center' direction='column'>
-                                    {index == 0 ? <SentimentVeryDissatisfiedIcon /> : index == 1 ? <SentimentSatisfiedIcon /> : <SentimentVerySatisfiedIcon />}
-                                    <Typography align='center'>
-                                        Interval: {feedback.intervalLength}
-                                    </Typography>
-                                </Grid>
-                            </Button>;
-                        })}
+                        {!hasAnsweredAll && (
+                            <Button
+                                className={classes.showAnswer}
+                                onClick={() => revealAllAnswers()}
+                            >
+                                Show Answer
+                            </Button>
+                        )}
+                        {hasAnsweredAll && (
+                            <Box display='flex' flexDirection='column' alignItems='center' justifyContent='center' style={{ width: '95%' }}>
+                                <Typography>
+                                    How confident did you feel?
+                                </Typography>
+                                <Box display='flex' alignItems='center' justifyContent='center' style={{ width: '95%' }}>
+                                    {getFeedbackSet(timeTaken, 0, 0, 0, boxNumber).map((feedback: Feedback, index: number) => {
+                                        return <Button key={index} onClick={() => sendUpdate(feedback)}>
+                                            <Grid container alignItems='center' justifyContent='center' direction='column'>
+                                                {index == 0 ? <SentimentVeryDissatisfiedIcon /> : index == 1 ? <SentimentSatisfiedIcon /> : <SentimentVerySatisfiedIcon />}
+                                                <Typography align='center'>
+                                                    Interval: {feedback.intervalLength}
+                                                </Typography>
+                                            </Grid>
+                                        </Button>;
+                                    })}
+                                </Box>
+                            </Box>
+                        )}
                     </Grid>
                 </Grid >
             </Grid>

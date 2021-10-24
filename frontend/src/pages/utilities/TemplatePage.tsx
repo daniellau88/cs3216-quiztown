@@ -143,7 +143,7 @@ const TemplatePage: React.FC<{}> = () => {
                 </Grid>
             </Box>
             <Box className={classes.root}>
-                {getFeedbackSet(timeTaken, numOptions, numGuesses, currentBox).map((feedback: Feedback, index: number) => {
+                {getFeedbackSet(timeTaken, numOptions, numGuesses, 0, currentBox).map((feedback: Feedback, index: number) => {
                     console.log(feedback);
                     return <Button key={index} onClick={() => testLeitner(feedback)}>
                         <Grid alignItems='center' justifyContent='center' direction='column'>
