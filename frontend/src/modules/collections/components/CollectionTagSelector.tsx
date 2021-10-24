@@ -13,10 +13,10 @@ import LabelIcon from '@material-ui/icons/Label';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 
-import { CollectionPostData } from '../../../types/collections';
+import { CollectionMiniEntity, CollectionPostData } from '../../../types/collections';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
-import { updateCollection } from '../operations';
+import { getAllCollectionTags, updateCollection } from '../operations';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -52,31 +52,34 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface OwnProps {
-    activeTags: string[];
-    allTags: string[];
-    addTag: (newTag: string) => void;
-    deleteTag: (deletedTag: string) => void;
+    collectionData: CollectionMiniEntity;
 }
 
 type Props = OwnProps;
 
-const CollectionTagSelector: React.FC<Props> = ({ activeTags, allTags, addTag, deleteTag }) => {
+const CollectionTagSelector: React.FC<Props> = ({ collectionData }) => {
     const classes = useStyles();
+    const dispatch = useDispatch();
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [currTags, setCurrTags] = React.useState(new Set(activeTags));
-    const [availableTags, setAvailableTags] = React.useState(new Set(allTags));
+    const [currTags, setCurrTags] = React.useState(new Set(collectionData.tags));
+    const [availableTagOptions, setAvailableTagOptions] = React.useState<Set<string>>(new Set([]));
+    const [allPossibleTags, setAllPossibleTags] = React.useState<Set<string>>(new Set([]));
     const [newTagName, setNewTagName] = React.useState('');
 
     const open = Boolean(anchorEl);
 
     const noSelectedTags = currTags.size === 0;
 
-
     React.useEffect(() => {
-        setAvailableTags(new Set(allTags));
-        setCurrTags(new Set(activeTags));
-    }, [allTags.length, activeTags.length]);
+        handleApiRequest(dispatch, dispatch(getAllCollectionTags()))
+            .then(res => {
+                const allTags = res.payload.items;
+                const formattedTags = new Set(allTags.map(item => item.name));
+                setAvailableTagOptions(formattedTags);
+                setAllPossibleTags(formattedTags);
+            });
+    }, [dispatch]);
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -89,15 +92,41 @@ const CollectionTagSelector: React.FC<Props> = ({ activeTags, allTags, addTag, d
     const onNewTagNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const currTagName = event.target.value;
         if (currTagName.length === 0) {
-            setAvailableTags(new Set(allTags));
+            setAvailableTagOptions(new Set(allPossibleTags));
             setNewTagName(currTagName);
             return;
         }
         if (currTagName.length > 30) return;
 
-        const newAvailableTags = new Set([...allTags].filter(tag => tag.includes(currTagName)));
+        const newAvailableTags = new Set([...allPossibleTags].filter(tag => tag.includes(currTagName)));
         setNewTagName(currTagName);
-        setAvailableTags(newAvailableTags);
+        setAvailableTagOptions(newAvailableTags);
+    };
+
+    const deleteTag = (deletedTag: string) => {
+        const updatedCurrTags = new Set(currTags);
+        updatedCurrTags.delete(deletedTag);
+        const updatedCurrTagsArr = [...updatedCurrTags];
+
+        setCurrTags(new Set(updatedCurrTagsArr));
+
+        const collectionPostData: CollectionPostData = { name: collectionData.name , tags: updatedCurrTagsArr};
+        handleApiRequest(dispatch, dispatch(updateCollection(collectionData.id, collectionPostData)));
+    };
+
+    const addTag = (newTag: string) => {
+        const updatedCurrTags = new Set(currTags);
+        const updatedAllPossibleTags = new Set(allPossibleTags);
+        updatedCurrTags.add(newTag);
+        updatedAllPossibleTags.add(newTag);
+        const updateAllTagsArr = [...updatedAllPossibleTags];
+        const updatedCurrTagsArr = [...updatedCurrTags];
+
+        setAllPossibleTags(new Set(updateAllTagsArr));
+        setCurrTags(new Set(updatedCurrTagsArr));
+
+        const collectionPostData: CollectionPostData = { name: collectionData.name , tags: updatedCurrTagsArr};
+        handleApiRequest(dispatch, dispatch(updateCollection(collectionData.id, collectionPostData)));
     };
 
     const onCreateNewTag = () => {
@@ -106,7 +135,7 @@ const CollectionTagSelector: React.FC<Props> = ({ activeTags, allTags, addTag, d
     };
 
     const shouldHideTagCreation = (): boolean => {
-        const matchingTagNames = [...availableTags].filter(tag => tag.includes(newTagName));
+        const matchingTagNames = [...availableTagOptions].filter(tag => tag.includes(newTagName));
         const isEmptyTagName = newTagName === '';
         const tagNameAlreadyExists = matchingTagNames.length === 1 && matchingTagNames[0] === newTagName;
         return isEmptyTagName || tagNameAlreadyExists;
@@ -164,7 +193,7 @@ const CollectionTagSelector: React.FC<Props> = ({ activeTags, allTags, addTag, d
                         </Grid>
                     </Grid>
                 </MenuItem>
-                {[...availableTags].map((tag, idx) => (
+                {[...availableTagOptions].map((tag, idx) => (
                     <MenuItem key={idx} onClick={() => addTag(tag)}>
                         <Typography className={classes.tagText} noWrap={true}>
                             {tag}
