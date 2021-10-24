@@ -2,10 +2,6 @@ import {
     Box,
     Button,
     CssBaseline,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
     Grid,
     Typography,
     makeStyles,
@@ -21,7 +17,6 @@ import { useHistory } from 'react-router';
 
 import StateManager from '../../../components/fabric/CanvasStateManager';
 import QTTextbox from '../../../components/fabric/QTTextbox';
-import QTButton from '../../../components/QTButton';
 import { CardEntity, CardPostData } from '../../../types/cards';
 import colours from '../../../utilities/colours';
 import { useWindowDimensions } from '../../../utilities/customHooks';
@@ -59,6 +54,13 @@ const useStyles = makeStyles(() => ({
     showAnswerContainer: {
         alignSelf: 'center',
         marginTop: '20px',
+    },
+    showAnswer: {
+        fontSize: '1.5vh',
+        height: '100%',
+        width: '10vw',
+        borderRadius: '10px',
+        border: '1px solid black',
     },
 }));
 
@@ -180,10 +182,6 @@ const CardImage: React.FC<CardImageProps> = ({
         setTimeTaken(Moment.duration(endTime.diff(startTime)).seconds());
     };
 
-    const onClose = () => {
-        console.log('Close dialog');
-    };
-
     const addAnswerOption = () => {
         if (!canvas) return;
         canvas.add(new QTTextbox('Answer Option', {
@@ -266,38 +264,34 @@ const CardImage: React.FC<CardImageProps> = ({
                     />
                 </Box>
                 <Grid item className={classes.showAnswerContainer}>
-                    {!isEditing &&
-                        <QTButton outlined onClick={revealAllAnswers}>
-                            Show answer
-                        </QTButton>
-                    }
+                    {!isEditing && !hasAnsweredAll && (
+                        <Button
+                            className={classes.showAnswer}
+                            onClick={revealAllAnswers}
+                        >
+                            Show Answer
+                        </Button>
+                    )}
+                    {hasAnsweredAll && (
+                        <Box display='flex' flexDirection='column' alignItems='center' justifyContent='center' style={{ width: '95%' }}>
+                            <Typography>
+                                How confident did you feel?
+                            </Typography>
+                            <Box display='flex' alignItems='center' justifyContent='center' style={{ width: '95%' }}>
+                                {getFeedbackSet(timeTaken, numOptions, numGuesses, numWrongGuesses, boxNumber).map((feedback: Feedback, index: number) => {
+                                    return <Button key={index} onClick={() => sendUpdate(feedback)}>
+                                        <Grid container alignItems='center' justifyContent='center' direction='column'>
+                                            {index == 0 ? <SentimentVeryDissatisfiedIcon /> : index == 1 ? <SentimentSatisfiedIcon /> : <SentimentVerySatisfiedIcon />}
+                                            <Typography align='center'>
+                                                Interval: {feedback.intervalLength}
+                                            </Typography>
+                                        </Grid>
+                                    </Button>;
+                                })}
+                            </Box>
+                        </Box>
+                    )}
                 </Grid>
-
-                <Dialog
-                    open={hasAnsweredAll}
-                    onClose={onClose}
-                >
-                    <DialogTitle>
-                        Card completed!
-                    </DialogTitle>
-                    <DialogContent>
-                        <Typography>
-                            You have answered all the questions in the cards, how confident did you feel?
-                        </Typography>
-                    </DialogContent>
-                    <DialogActions style={{ justifyContent: 'center' }}>
-                        {getFeedbackSet(timeTaken, numOptions, numGuesses, numWrongGuesses, boxNumber).map((feedback: Feedback, index: number) => {
-                            return <Button key={index} onClick={() => sendUpdate(feedback)}>
-                                <Grid container alignItems='center' justifyContent='center' direction='column'>
-                                    {index == 0 ? <SentimentVeryDissatisfiedIcon /> : index == 1 ? <SentimentSatisfiedIcon /> : <SentimentVerySatisfiedIcon />}
-                                    <Typography align='center'>
-                                        Interval: {feedback.intervalLength}
-                                    </Typography>
-                                </Grid>
-                            </Button>;
-                        })}
-                    </DialogActions>
-                </Dialog>
             </Grid>
         </>
     );
