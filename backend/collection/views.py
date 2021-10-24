@@ -124,7 +124,7 @@ def import_text_collection_view(request, pk_item, serializer):
         card_instances.append(card.instance)
 
     response_serializer = card_serializers.CardListSerializer(
-        card_instances, many=True)
+        card_instances, many=True, context={"request": request})
 
     return Response({"items": response_serializer.data})
 
