@@ -29,7 +29,6 @@ import { deleteCollection } from '../operations';
 
 const useStyles = makeStyles(() => ({
     root: {
-        // TODO: Make mobile responsive
         width: '95%',
         height: '95%',
         position: 'relative',

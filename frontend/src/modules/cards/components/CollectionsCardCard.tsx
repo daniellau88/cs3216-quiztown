@@ -5,6 +5,7 @@ import {
     CardActions,
     CardContent,
     CardMedia,
+    Divider,
     Grid,
     Typography,
     makeStyles,
@@ -30,28 +31,26 @@ import { getCardEntity } from '../selectors';
 
 const useStyles = makeStyles(() => ({
     root: {
-        // TODO: Make mobile responsive
         width: '95%',
         height: '95%',
-        position: 'relative',
+    },
+    addCardRoot: {
+        display: 'flex',
+        width: '95%',
+        height: '95%',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     center: {
         display: 'flex',
+        height: '100%',
+        width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
     },
     addIcon: {
         fontSize: '10vh',
         color: colours.BLUE,
-    },
-    progressBar: {
-        width: '100%',
-        position: 'absolute',
-        top: 0,
-        paddingLeft: '20px',
-    },
-    progressText: {
-        color: colours.WHITE,
     },
     tags: {
         marginTop: '-28px',
@@ -84,6 +83,12 @@ const useStyles = makeStyles(() => ({
     },
     cardText: {
         fontSize: '1.5vh',
+    },
+    addCardContent: {
+        height: '100%',
+        width: '50%',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 }));
 
@@ -173,23 +178,26 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
 
     if (isAddCard) {
         return (
-            <Card className={`${classes.root} ${classes.center}`}>
-                <CardContent>
-                    <Grid container className={classes.center}>
-                        <Add className={classes.addIcon} onClick={addNewTextCard} />
-                    </Grid>
-                    <Typography className={classes.addCardText} component="div">
-                        Add Text Card
-                    </Typography>
-                </CardContent>
-                <CardContent>
-                    <Grid container className={classes.center}>
-                        <Add className={classes.addIcon} onClick={addNewImageCard} />
-                    </Grid>
-                    <Typography className={classes.addCardText} component="div">
-                        Add Image Card
-                    </Typography>
-                </CardContent>
+            <Card className={classes.addCardRoot}>
+                <Box display='flex' style={{ height: '100%', width: '100%' }}>
+                    <Box className={classes.addCardContent} onClick={addNewTextCard}>
+                        <Grid container className={classes.center} direction='column'>
+                            <Add className={classes.addIcon} />
+                            <Typography align='center' className={classes.addCardText} component="div">
+                                Add Text Card
+                            </Typography>
+                        </Grid>
+                    </Box>
+                    <Divider orientation='vertical' />
+                    <Box className={classes.addCardContent} onClick={addNewImageCard}>
+                        <Grid container className={classes.center} direction='column'>
+                            <Add className={classes.addIcon} />
+                            <Typography align='center' className={classes.addCardText} component="div">
+                                Add Image Card
+                            </Typography>
+                        </Grid>
+                    </Box>
+                </Box>
             </Card>
         );
     }
