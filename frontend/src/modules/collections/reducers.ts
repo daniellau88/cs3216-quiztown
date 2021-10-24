@@ -11,6 +11,9 @@ const initialState: types.CollectionsState = {
         sortOrder: 'desc',
     }),
     allPublicCollections: createEntityCollection({
+        filters: {
+            private: 1,
+        },
         sortBy: 'updated_at',
         sortOrder: 'desc',
     }),

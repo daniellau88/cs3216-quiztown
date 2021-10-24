@@ -111,6 +111,7 @@ class CollectionImportRequestSerializer(serializers.Serializer):
 
 class CollectionListFilterSerializer(serializers.Serializer):
     private = serializers.IntegerField(required=False)
+    owner_id = serializers.IntegerField(required=False)
 
 
 class TagSerializer(serializers.ModelSerializer):

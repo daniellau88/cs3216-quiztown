@@ -23,6 +23,7 @@ import { handleApiRequest } from '../../../utilities/ui';
 import { getCurrentUser } from '../../auth/selectors';
 import { deleteCollection, duplicatePublicCollection } from '../operations';
 
+import CollectionTag from './CollectionTag';
 import CollectionTagSelector from './CollectionTagSelector';
 
 const useStyles = makeStyles(() => ({
@@ -174,9 +175,9 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                     </Grid>
 
                     <Grid item className={classes.tagSelectorContainer}>
-                        <CollectionTagSelector
-                            collectionData={{ id: data.id, tags: data.tags }}
-                        />
+                        {data.permissions.can_update ?
+                            <CollectionTagSelector collectionData={{ id: data.id, tags: data.tags }} /> :
+                            <CollectionTag collectionData={{ tags: data.tags }} />}
                     </Grid>
                 </Grid>
             </CardContent>

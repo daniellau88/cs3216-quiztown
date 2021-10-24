@@ -8,18 +8,15 @@ import { SortFilter } from '../../../components/tables/CollectionMeshHeader';
 import { TableFilter } from '../../../components/tables/TableFilters';
 import { CollectionOptions, EntityCollection } from '../../../types/store';
 import { handleApiRequest } from '../../../utilities/ui';
-import { getCurrentUser } from '../../auth/selectors';
-import { loadAllCollections } from '../operations';
-import { getAllCollections } from '../selectors';
+import { loadAllPublicCollections } from '../operations';
+import { getAllPublicCollections } from '../selectors';
 
-import CollectionCard from './CollectionCard';
 import CollectionGridComponent from './CollectionGridComponent';
 
 
-const CollectionTable: React.FC<{}> = () => {
+const CollectionDiscoverTable: React.FC<{}> = () => {
     const dispatch = useDispatch();
-    const allCollections: EntityCollection = useSelector(getAllCollections);
-    const currentUser = useSelector(getCurrentUser);
+    const allPublicCollections: EntityCollection = useSelector(getAllPublicCollections);
 
     const [isLoading, setIsLoading] = React.useState(true);
 
@@ -43,29 +40,21 @@ const CollectionTable: React.FC<{}> = () => {
 
     const onUpdate = (options: CollectionOptions, dispatch: Dispatch<any>) => {
         setIsLoading(true);
-        const newOptions = {
-            ...options,
-            filters: {
-                ...options.filters,
-                owner_id: currentUser!.user_id,
-            },
-        };
-        return handleApiRequest(dispatch, dispatch(loadAllCollections(newOptions))).finally(() => {
+        return handleApiRequest(dispatch, dispatch(loadAllPublicCollections(options))).finally(() => {
             setIsLoading(false);
         });
     };
 
     React.useEffect(() => {
-        onUpdate({}, dispatch);
-    }, [dispatch]);
+        onUpdate(allPublicCollections.defaults, dispatch);
+    }, []);
 
     return (
         <CollectionMesh
-            collection={allCollections}
+            collection={allPublicCollections}
             isLoading={isLoading}
             onUpdate={(options: CollectionOptions) => onUpdate(options, dispatch)}
             gridComponent={CollectionGridComponent}
-            leadingComponent={isBrowser ? <CollectionCard isAddCollectionCard={true} /> : undefined}
             filters={filters}
             orders={orders}
             isSearchable
@@ -74,4 +63,4 @@ const CollectionTable: React.FC<{}> = () => {
     );
 };
 
-export default CollectionTable;
+export default CollectionDiscoverTable;

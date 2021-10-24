@@ -8,7 +8,7 @@ import {
 import * as React from 'react';
 
 import Breadcrumbs from '../../../layouts/Breadcrumbs';
-import CollectionTable from '../components/CollectionTable';
+import CollectionDiscoverTable from '../components/CollectionDiscoverTable';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -52,7 +52,7 @@ const CollectionDiscoverPage: React.FC<{}> = () => {
 
                     <Grid item xs={12}>
                         <Grid container justifyContent="space-between" spacing={6} className={classes.table} >
-                            <CollectionTable />
+                            <CollectionDiscoverTable />
                         </Grid>
                     </Grid>
                 </Grid>
