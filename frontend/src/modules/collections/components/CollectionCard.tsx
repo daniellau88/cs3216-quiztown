@@ -17,10 +17,10 @@ import { useHistory } from 'react-router-dom';
 
 import defaultCollectionImage from '../../../assets/images/logo512.png';
 import QTButton from '../../../components/QTButton';
-import { CollectionMiniEntity } from '../../../types/collections';
+import { CollectionMiniEntity, CollectionPostData, TagData } from '../../../types/collections';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
-import { deleteCollection } from '../operations';
+import { deleteCollection, getAllCollectionTags, updateCollection } from '../operations';
 
 import CollectionTagSelector from './CollectionTagSelector';
 
@@ -111,10 +111,17 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
     }
 
     const collectionName = data.name;
-    const MOCK_COLLECTION_TAGS_DATA: string[] = [];
-    const MOCK_USER_TAGS_DATA = ['M1', 'Upper limb', 'Lower limb', 'Black socks', 'Green jeans', 'Apple oranges', 'Tean dream', 'Homeward'];
-    const [collectionTags, setCollectionTags] = React.useState(MOCK_COLLECTION_TAGS_DATA || data.tags);
-    const [allTags, setAllTags] = React.useState(MOCK_USER_TAGS_DATA);
+    const [collectionTags, setCollectionTags] = React.useState<string[]>(data.tags || []);
+    const [allTags, setAllTags] = React.useState<string[]>([]);
+
+    React.useEffect(() => {
+        handleApiRequest(dispatch, dispatch(getAllCollectionTags()))
+            .then(res => {
+                const allTags = res.payload.items;
+                const formattedTags = allTags.map(item => item.name);
+                setAllTags(formattedTags);
+            });
+    }, [allTags.length]);
 
     const openCollection = () => {
         history.push(`/collections/${collectionId}`);
@@ -136,11 +143,34 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
             });
     };
 
-    const createNewTag = (tag: string) => {
+    const addTag = (newTag: string) => {
+        const updatedCollectionTags = new Set(collectionTags);
         const updatedAllTags = new Set(allTags);
-        updatedAllTags.add(tag);
+        updatedCollectionTags.add(newTag);
+        updatedAllTags.add(newTag);
         const updateAllTagsArr = [...updatedAllTags];
+        const updatedCollectionTagsArr = [...updatedCollectionTags];
+
         setAllTags(updateAllTagsArr);
+        setCollectionTags(updatedCollectionTagsArr);
+
+        if (collectionId) {
+            const collectionPostData: CollectionPostData = { name: collectionName, tags: updatedCollectionTagsArr };
+            handleApiRequest(dispatch, dispatch(updateCollection(collectionId, collectionPostData)));
+        }
+    };
+
+    const deleteTag = (deletedTag: string) => {
+        const updatedCollectionTags = new Set(collectionTags);
+        updatedCollectionTags.delete(deletedTag);
+        const updatedCollectionTagsArr = [...updatedCollectionTags];
+
+        setCollectionTags(updatedCollectionTagsArr);
+
+        if (collectionId) {
+            const collectionPostData: CollectionPostData = { name: collectionName, tags: updatedCollectionTagsArr };
+            handleApiRequest(dispatch, dispatch(updateCollection(collectionId, collectionPostData)));
+        }
     };
 
     return (
@@ -173,7 +203,8 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                         <CollectionTagSelector
                             activeTags={collectionTags}
                             allTags={allTags}
-                            createNewTag={createNewTag}
+                            addTag={addTag}
+                            deleteTag={deleteTag}
                         />
                     </Grid>
                 </Grid>

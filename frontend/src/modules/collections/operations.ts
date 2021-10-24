@@ -1,6 +1,6 @@
 import api from '../../api';
 import { ApiResponse } from '../../types';
-import { CollectionListData, CollectionMiniEntity, CollectionPostData, CollectionsImportPostData } from '../../types/collections';
+import { CollectionListData, CollectionMiniEntity, CollectionPostData, CollectionTagsData, CollectionsImportPostData } from '../../types/collections';
 import { CollectionOptions, EntityCollection, NormalizeOperation, Operation } from '../../types/store';
 import { batched, queryEntityCollection, withCachedEntity } from '../../utilities/store';
 
@@ -92,6 +92,13 @@ export function importCollections(collectionId: number, collectionsImport: Colle
 export function completeCollectionImportReview(collectionId: number, importId: number): Operation<ApiResponse<{}>> {
     return async (dispatch) => {
         const response = await api.collections.completeCollectionImportReview(collectionId, importId);
+        return response;
+    };
+}
+
+export function getAllCollectionTags(): Operation<ApiResponse<CollectionTagsData>> {
+    return async (dispatch) => {
+        const response = await api.collections.getAllCollectionTags();
         return response;
     };
 }
