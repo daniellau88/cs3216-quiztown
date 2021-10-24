@@ -6,7 +6,6 @@ import {
     Typography,
     makeStyles,
 } from '@material-ui/core';
-import { QuestionAnswerTwoTone } from '@material-ui/icons';
 import { fabric } from 'fabric';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
