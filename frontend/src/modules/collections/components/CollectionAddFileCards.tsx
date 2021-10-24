@@ -1,4 +1,5 @@
 import {
+    Box,
     Card,
     CardContent,
     CardMedia,
@@ -27,6 +28,8 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        height: '100%',
+        width: '100%',
     },
     addIcon: {
         fontSize: '10vh',
@@ -60,6 +63,12 @@ const useStyles = makeStyles((theme) => ({
         height: '30vh',
         width: '15vh',
         // margin: 0,
+    },
+    addFile: {
+        height: '100%',
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 }));
 
@@ -141,23 +150,23 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
             >
                 <Card className={`${classes.root} ${classes.center}`}
                 >
-                    <CardContent>
-                        <Grid container className={classes.center}>
-                            <label htmlFor='icon-button-file'>
-                                <input
-                                    type='file'
-                                    id='icon-button-file'
-                                    onChange={upload}
-                                    multiple
-                                    hidden
-                                />
+                    <label htmlFor='icon-button-file' style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                        <input
+                            type='file'
+                            id='icon-button-file'
+                            onChange={upload}
+                            multiple
+                            hidden
+                        />
+                        <Box className={classes.addFile}>
+                            <Grid container className={classes.center} direction='column'>
                                 <Add className={classes.addIcon} />
-                            </label>
-                        </Grid>
-                        <Typography className={classes.fileNameText}>
-                            Select png/jpg/pdf
-                        </Typography>
-                    </CardContent>
+                                <Typography align='center' className={classes.fileNameText}>
+                                    Upload .png/.jpg/.pdf
+                                </Typography>
+                            </Grid>
+                        </Box>
+                    </label>
                 </Card>
             </Grid>
             {fileCardInfo.map((file: File, index: number) => {
