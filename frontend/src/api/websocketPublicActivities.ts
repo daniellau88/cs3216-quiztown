@@ -6,7 +6,7 @@ import { PublicActivityListData } from '../types/publicActivities';
 import { Token, getCookie } from './helpers/server-context';
 import { URL_SUFFIX } from './helpers/url-suffix';
 
-const BaseWebsocketURL = 'ws://localhost:8000/ws';
+const BaseWebsocketURL = `${process.env.REACT_APP_WEBSOCKET_BASE_URL}/ws`;
 const RestartInterval = 3000;
 
 export class WebsocketPublicActivitiesAPI {
