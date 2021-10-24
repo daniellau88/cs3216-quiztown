@@ -52,7 +52,7 @@ const CollectionDiscoverPage: React.FC<{}> = () => {
 
                     <Grid item xs={12}>
                         <Grid container justifyContent="space-between" spacing={6} className={classes.table} >
-                            <CollectionTable isDiscoverCollections={true} />
+                            <CollectionTable />
                         </Grid>
                     </Grid>
                 </Grid>

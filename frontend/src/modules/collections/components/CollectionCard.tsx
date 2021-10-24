@@ -12,7 +12,7 @@ import {
 import { Add, ReorderOutlined } from '@material-ui/icons';
 import DeleteIcon from '@material-ui/icons/Delete';
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 import defaultCollectionImage from '../../../assets/images/logo512.png';
@@ -20,6 +20,7 @@ import QTButton from '../../../components/QTButton';
 import { CollectionMiniEntity } from '../../../types/collections';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
+import { getCurrentUser } from '../../auth/selectors';
 import { deleteCollection, duplicatePublicCollection } from '../operations';
 
 import CollectionTagSelector from './CollectionTagSelector';
@@ -75,19 +76,18 @@ const useStyles = makeStyles(() => ({
 interface OwnProps {
     data?: CollectionMiniEntity;
     isAddCollectionCard?: boolean;
-    canDuplicate?: boolean;
 }
 
 type Props = OwnProps;
 
-const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard, canDuplicate }: Props) => {
+const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) => {
     const classes = useStyles();
     const history = useHistory();
     const dispatch = useDispatch();
 
     const collectionId = data?.id;
-
-    const [isDiscoverCard, setDiscoverCard] = React.useState<boolean>(false);
+    const currentUser = useSelector(getCurrentUser);
+    const userId = currentUser ? currentUser.user_id : 0;
 
     const addNewCollection = () => {
         history.push('/collections/new');
@@ -124,11 +124,8 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard, canDuplica
         return null;
     }
 
-    if (canDuplicate) {
-        setDiscoverCard(true);
-    }
-
     const collectionName = data.name;
+    const isOwner = userId === data.owner_id;
 
     const openCollection = () => {
         history.push(`/collections/${collectionId}`);
@@ -187,21 +184,21 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard, canDuplica
             <CardActions>
                 <Grid container alignItems='center' style={{ paddingLeft: '0.5vw' }}>
                     <Box display='flex' height='100%' width='100%'>
-                        {!isDiscoverCard && (<Grid container item xs={3} alignItems='center'>
+                        {isOwner && <Grid container item xs={3} alignItems='center'>
                             <QTButton outlined height='95%' width='95%' onClick={startCollection}>
                                 Test Me!
                             </QTButton>
-                        </Grid>)}
+                        </Grid>}
                         <Grid container item xs={3} alignItems='center'>
                             <QTButton height='95%' width='95%' onClick={openCollection}>
                                 View
                             </QTButton>
                         </Grid>
-                        {isDiscoverCard && (<Grid container item xs={3} alignItems='center'>
+                        {!isOwner && <Grid container item xs={3} alignItems='center'>
                             <QTButton height='95%' width='95%' onClick={duplicateCollection}>
                                 Save to my collection
                             </QTButton>
-                        </Grid>)}
+                        </Grid>}
                         <Box flexGrow={1} />
                         {data.permissions.can_delete &&
                             <Box display='flex' minHeight='100%' style={{ paddingRight: '0.5vw' }} justifyContent='center' alignItems='center'>

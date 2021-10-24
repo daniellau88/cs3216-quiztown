@@ -111,17 +111,11 @@ export function loadAllPublicCollections(options: CollectionOptions): Operation<
             async (params) => {
                 const response = await api.collections.getCollectionList(params);
                 const data: CollectionListData[] = response.payload.items;
-                batched(dispatch, savePublicCollectionList(data));
+                batched(dispatch, saveCollectionList(data));
                 return response;
             },
             (delta) => dispatch(actions.updatePublicCollectionList(delta)),
         );
-    };
-}
-
-export function savePublicCollectionList(list: CollectionListData[]): NormalizeOperation {
-    return (dispatch) => {
-        dispatch(actions.savePublicCollectionList(list));
     };
 }
 

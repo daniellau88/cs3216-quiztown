@@ -51,8 +51,6 @@ interface OwnProps<P> {
     // Additional actions displayed on the table header.
     headerActions?: React.ReactElement | null;
     rowProps?: Record<string, P>;
-    // Whether the collection is public and supports duplication by another user.
-    canDuplicate?: boolean;
 }
 
 type Props = OwnProps<any>;
@@ -68,7 +66,6 @@ const CollectionMesh: React.FC<Props> = ({
     isSortable,
     orders,
     rowProps,
-    canDuplicate,
 }: Props) => {
     const classes = useStyles();
 
@@ -106,7 +103,6 @@ const CollectionMesh: React.FC<Props> = ({
                             <GridComponent
                                 key={id}
                                 id={id}
-                                canDuplicate={canDuplicate}
                                 {...rowProps}
                             />
                         </Grid>
