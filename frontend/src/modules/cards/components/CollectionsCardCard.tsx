@@ -12,7 +12,6 @@ import {
 } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
 import DeleteIcon from '@material-ui/icons/Delete';
-import LabelIcon from '@material-ui/icons/Label';
 import Star from '@material-ui/icons/Star';
 import StarOutline from '@material-ui/icons/StarOutline';
 import * as React from 'react';

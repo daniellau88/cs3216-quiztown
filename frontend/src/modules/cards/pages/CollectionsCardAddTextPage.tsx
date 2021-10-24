@@ -55,13 +55,6 @@ type InputText = {
     answer: string,
 };
 
-type ImportRequestBody = {
-    name: string,
-    type: string,
-    question: string,
-    answer: string,
-};
-
 type Props = RouteComponentProps;
 
 const CollectionsCardAddTextPage: React.FC<Props> = ({ match: { params } }: RouteComponentProps) => {
@@ -102,16 +95,14 @@ const CollectionsCardAddTextPage: React.FC<Props> = ({ match: { params } }: Rout
     };
 
     const submit = () => {
-        console.log(data);
         const dataCopy = [] as UploadTextData[];
         data.map((tuple, index) => dataCopy.push(
             {
-                name: index + tuple.question.split(' ')[0],
+                name: tuple.question.split(' ')[0] + `-${index}`,
                 question: tuple.question,
                 answer: tuple.answer,
             }));
         return handleApiRequest(dispatch, dispatch(importTextCards(collectionId, { imports: dataCopy }))).then((importResponse) => {
-            const payload = importResponse.payload;
             return handleApiRequest(dispatch, dispatch(loadCollectionCards(collectionId, {}))).finally(() => {
                 history.push(`/collections/${collectionId}`);
             });
@@ -131,7 +122,7 @@ const CollectionsCardAddTextPage: React.FC<Props> = ({ match: { params } }: Rout
                     <Grid container direction='column' className={classes.container}>
                         <Grid container className={classes.header}>
                             <Typography variant="h4" className="self-start mb-4">
-                                Adding Cards to Anatomy
+                                Adding Cards{` to ${collection && collection.name}`}
                             </Typography>
                         </Grid>
                         <TableContainer component={Paper} className="px-8 py-6">

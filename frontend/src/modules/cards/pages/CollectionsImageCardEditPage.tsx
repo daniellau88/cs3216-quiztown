@@ -6,6 +6,7 @@ import {
     Typography,
     makeStyles,
 } from '@material-ui/core';
+import { QuestionAnswerTwoTone } from '@material-ui/icons';
 import { fabric } from 'fabric';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,12 +16,13 @@ import { Dispatch } from 'redux';
 import LoadingIndicator from '../../../components/content/LoadingIndicator';
 import QTButton from '../../../components/QTButton';
 import Breadcrumbs from '../../../layouts/Breadcrumbs';
-import { AnswerData } from '../../../types/cards';
+import { AnswerData, CardType } from '../../../types/cards';
 import { AppState } from '../../../types/store';
 import routes from '../../../utilities/routes';
 import { handleApiRequest } from '../../../utilities/ui';
 import { getCollectionMiniEntity } from '../../collections/selectors';
 import CardImage from '../components/CardImage';
+import CollectionsTextCardEdit from '../components/CollectionsTextEdit';
 import { loadCard, updateCard } from '../operations';
 import { getCardEntity } from '../selectors';
 
@@ -77,6 +79,7 @@ const CollectionsImageCardEditPage: React.FC<Props> = ({ match: { params } }: Ro
     const collection = useSelector((state: AppState) => getCollectionMiniEntity(state, collectionId));
     const card = useSelector((state: AppState) => getCardEntity(state, cardId));
     const canvasRef = React.useRef<fabric.Canvas>();
+    const textEditRef = React.useRef<{question: string, answer: string}>();
 
     const [isLoading, setIsLoading] = React.useState(true);
 
@@ -88,7 +91,22 @@ const CollectionsImageCardEditPage: React.FC<Props> = ({ match: { params } }: Ro
         });
     };
 
-    const saveEditChanges = (isAutosave: boolean) => {
+    const saveTextEditChanges = () => {
+        if (!textEditRef) return;
+
+        const textCardDetails = textEditRef.current;
+
+        if (!textCardDetails) return;
+
+        handleApiRequest(dispatch, dispatch(updateCard(cardId, {
+            question: textCardDetails.question,
+            answer: textCardDetails.answer,
+        }))).finally(() => {
+            history.push(`/collections/${collectionId}`);
+        });
+    };
+
+    const saveImageEditChanges = (isAutosave: boolean) => {
         if (!canvasRef) return;
         const answerBoxes = canvasRef.current?.getObjects();
         if (!answerBoxes) return;
@@ -131,18 +149,29 @@ const CollectionsImageCardEditPage: React.FC<Props> = ({ match: { params } }: Ro
                         <Divider />
 
                         <Grid item>
-                            {!isLoading && card && (
-                                <CardImage
+                            {!isLoading && card &&
+                                card.type == CardType.IMAGE
+                                ? <CardImage
                                     card={card}
                                     isEditing={true}
                                     canvasRef={canvasRef}
-                                    saveEdits={saveEditChanges}
+                                    saveEdits={saveImageEditChanges}
                                 />
-                            )}
+                                : <CollectionsTextCardEdit
+                                    cardQuestion={card?.question}
+                                    cardAnswer={card?.answer}
+                                    textEditRef={textEditRef}
+                                />}
                         </Grid>
 
                         <Grid item className={classes.alignRight}>
-                            <QTButton onClick={() => saveEditChanges(false)} outlined>
+                            <QTButton
+                                onClick={() => card && card.type == CardType.IMAGE 
+                                    ? saveImageEditChanges(false)
+                                    : saveTextEditChanges()
+                                }
+                                outlined
+                            >
                                 Confirm
                             </QTButton>
                         </Grid>
