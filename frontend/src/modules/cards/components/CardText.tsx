@@ -152,7 +152,7 @@ const CardText: React.FC<CardTextProps> = ({
                         <Typography>
                             How confident did you feel?
                         </Typography>
-                        {getFeedbackSet(timeTaken, 0, 0, boxNumber).map((feedback: Feedback, index: number) => {
+                        {getFeedbackSet(timeTaken, 0, 0, 0, boxNumber).map((feedback: Feedback, index: number) => {
                             return <Button key={index} onClick={() => sendUpdate(feedback)}>
                                 <Grid container alignItems='center' justifyContent='center' direction='column'>
                                     {index == 0 ? <SentimentVeryDissatisfiedIcon /> : index == 1 ? <SentimentSatisfiedIcon /> : <SentimentVerySatisfiedIcon />}

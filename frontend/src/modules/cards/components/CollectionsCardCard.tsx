@@ -194,8 +194,6 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
         );
     }
 
-    console.log(data?.image_link);
-
     return (
         <Card className={classes.root}>
             <Box className={classes.imageContainer}>
