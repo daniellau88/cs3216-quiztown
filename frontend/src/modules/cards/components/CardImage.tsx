@@ -92,7 +92,8 @@ const CardImage: React.FC<CardImageProps> = ({
     const [canvas, setCanvas] = useState<fabric.Canvas>();
     const [stateManager, setStateManager] = useState<StateManager>();
     const [hasAnsweredAll, setHasAnsweredAll] = useState(false);
-    const [numGuesses, setNumGuesses] = useState(0); // TODO increment with user guess
+    const [numGuesses, setNumGuesses] = useState(0); // TODO increment with user guess (both correct + wrong)
+    const [numWrongGuesses, setNumWrongGuesses] = useState(0); // TODO increment with user guess (only wrong)
     const [timeTaken, setTimeTaken] = useState<number>(0);
 
     const { windowHeight, windowWidth } = useWindowDimensions();
@@ -285,7 +286,7 @@ const CardImage: React.FC<CardImageProps> = ({
                         </Typography>
                     </DialogContent>
                     <DialogActions style={{ justifyContent: 'center' }}>
-                        {getFeedbackSet(timeTaken, numOptions, numGuesses, boxNumber).map((feedback: Feedback, index: number) => {
+                        {getFeedbackSet(timeTaken, numOptions, numGuesses, numWrongGuesses, boxNumber).map((feedback: Feedback, index: number) => {
                             return <Button key={index} onClick={() => sendUpdate(feedback)}>
                                 <Grid container alignItems='center' justifyContent='center' direction='column'>
                                     {index == 0 ? <SentimentVeryDissatisfiedIcon /> : index == 1 ? <SentimentSatisfiedIcon /> : <SentimentVerySatisfiedIcon />}
