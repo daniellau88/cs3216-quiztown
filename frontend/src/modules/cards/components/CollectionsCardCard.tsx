@@ -12,7 +12,6 @@ import {
 } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
 import DeleteIcon from '@material-ui/icons/Delete';
-import LabelIcon from '@material-ui/icons/Label';
 import Star from '@material-ui/icons/Star';
 import StarOutline from '@material-ui/icons/StarOutline';
 import * as React from 'react';
@@ -70,7 +69,7 @@ const useStyles = makeStyles(() => ({
     },
     cardContent: {
         paddingTop: '1.5vh',
-        paddingBottom: '0vh',
+        paddingBottom: '3vh',
     },
     cardIcon: {
         fontSize: '2.5vh',

@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import LoadingIndicator from '../../../components/content/LoadingIndicator';
-import { CARD_TYPE } from '../../../components/utiltiies/constants';
+import { CardType } from '../../../types/cards';
 import { AppState } from '../../../types/store';
 import { handleApiRequest } from '../../../utilities/ui';
 import CardImage from '../../cards/components/CardImage';
@@ -38,7 +38,7 @@ const QuizCard: React.FC<Props> = (props: Props) => {
             {isLoading && (
                 <LoadingIndicator />
             )}
-            {!isLoading && card && (card.type == CARD_TYPE.TEXT ?
+            {!isLoading && card && (card.type == CardType.TEXT ?
                 <CardText
                     card={card}
                     isEditing={false}

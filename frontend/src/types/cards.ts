@@ -10,6 +10,8 @@ export interface CardPostData {
     answer_details: {
         results: AnswerData[]
     }
+    question: string;
+    answer: string;
 }
 
 type Coordinate = [number, number];
@@ -70,6 +72,11 @@ export interface CardMiniEntity {
     permissions: Permissions;
 }
 
+export enum CardType {
+    IMAGE = 0,
+    TEXT = 1,
+}
+
 export interface CardEntity {
     id: number;
     name: string;
@@ -83,7 +90,7 @@ export interface CardEntity {
     answer_details: {
         results: AnswerData[];
     }
-    type: number;
+    type: CardType;
     question: string;
     answer: string;
     is_reviewed: boolean;

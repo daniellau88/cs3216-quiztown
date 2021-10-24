@@ -5,8 +5,8 @@ import { RouteComponentProps, generatePath } from 'react-router-dom';
 import { Dispatch } from 'redux';
 
 import LoadingIndicator from '../../../components/content/LoadingIndicator';
-import { CARD_TYPE } from '../../../components/utiltiies/constants';
 import Breadcrumbs from '../../../layouts/Breadcrumbs';
+import { CardType } from '../../../types/cards';
 import { AppState } from '../../../types/store';
 import routes from '../../../utilities/routes';
 import { handleApiRequests } from '../../../utilities/ui';
@@ -62,7 +62,7 @@ const CollectionsCardShowPage: React.FC<Props> = ({ match: { params } }: RouteCo
                     {isLoading && (
                         <LoadingIndicator />
                     )}
-                    {!isLoading && card && (card.type == CARD_TYPE.TEXT ?
+                    {!isLoading && card && (card.type == CardType.TEXT ?
                         <CollectionsCardText
                             collectionId={collectionId}
                             cardId={cardId}
