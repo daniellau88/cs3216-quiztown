@@ -1,6 +1,10 @@
 import { ClickAwayListener, IconButton, Menu, Toolbar, makeStyles } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import * as React from 'react';
+import { useSelector } from 'react-redux';
+
+import { getIsAuthenticated } from '../../modules/auth/selectors';
+import PublicActivityPopup from '../../modules/publicActivities/components/PublicActivityPopup';
 
 import NavigationBarDropdownElements from './NavigationBarDropdownElements';
 
@@ -32,7 +36,6 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.background.default,
     },
     menuButton: {
-        marginLeft: theme.spacing(2),
     },
 }));
 
@@ -40,7 +43,7 @@ const NavigationBarDropdown: React.FC = () => {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [menuOpen, setMenuOpen] = React.useState(false);
-
+    const isAuthenticated = useSelector(getIsAuthenticated);
 
     const toggleMenuOpen = (event: any) => {
         setAnchorEl(event.currentTarget);
@@ -48,6 +51,9 @@ const NavigationBarDropdown: React.FC = () => {
     };
     return (
         <>
+            {isAuthenticated &&
+                <PublicActivityPopup />
+            }
             <ClickAwayListener onClickAway={() => setMenuOpen(false)}>
                 <Toolbar className={classes.toolbar}>
                     <IconButton

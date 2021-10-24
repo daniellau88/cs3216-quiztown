@@ -1,6 +1,8 @@
 from django.conf import settings
 from rest_framework import serializers
 
+from quiztown.common import serializers as commmon_serializers
+
 from .models import Card
 
 STATIC_CARD_URL = settings.STATIC_URL + "cards/"
@@ -11,6 +13,7 @@ class CardListFilterSerializer(serializers.Serializer):
     collection_id = serializers.IntegerField(required=False)
     is_reviewed = serializers.IntegerField(required=False)
     collection_import_id = serializers.IntegerField(required=False)
+    next_date = commmon_serializers.DateRangeSerializer(required=False)
 
 
 class CardListSerializer(serializers.ModelSerializer):

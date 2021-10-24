@@ -338,6 +338,7 @@ export function withCachedEntity<M, E extends M = M>(
             payload: cached as any,
             messages: [],
             errors: {},
+            metadata: {},
         });
     }
 
@@ -420,6 +421,7 @@ export function queryEntityCollection<D extends WithId>(
             payload: getter(),
             messages: [],
             errors: {},
+            metadata: {},
         });
     }
 
@@ -518,6 +520,7 @@ export function withCachedReport<D, P>(
             payload: cached.data as any,
             messages: [],
             errors: {},
+            metadata: {},
         });
     }
 

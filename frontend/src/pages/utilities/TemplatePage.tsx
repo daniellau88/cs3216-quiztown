@@ -104,23 +104,6 @@ const TemplatePage: React.FC<{}> = () => {
         setCurrentBox(feedback.nextBoxNumber);
     };
 
-    const onGoogleLoginSuccess = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
-        if ('tokenId' in response) {
-            const token = response.tokenId;
-            const loginPostData: GoogleLoginPostData = { token_id: token };
-            return handleApiRequest(dispatch, dispatch(googleLogin(loginPostData)))
-                .then((response) => {
-                    console.log(response);
-                })
-                .then(() => {
-                    return true;
-                })
-                .catch(() => {
-                    return false;
-                });
-        }
-    };
-
     return (
         <>
             <CssBaseline />
@@ -156,7 +139,7 @@ const TemplatePage: React.FC<{}> = () => {
                 })}
             </Box>
             <Box className={classes.root}>
-                <GoogleSignInButton onSuccess={onGoogleLoginSuccess} />
+                <GoogleSignInButton />
             </Box>
         </>
     );

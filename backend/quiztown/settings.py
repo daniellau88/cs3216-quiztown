@@ -58,6 +58,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "quiztown.common.middlewares.RequestMiddleware",
 ]
 
 ROOT_URLCONF = "quiztown.urls"
@@ -163,7 +164,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "quiztown.common.pagination.CustomPagination",
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticatedOrReadOnly",
-    ]
+    ],
 }
 
 AUTH_USER_MODEL = "user.User"

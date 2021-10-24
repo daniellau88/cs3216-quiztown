@@ -8,3 +8,8 @@ class ListRequestSerializer(serializers.Serializer):
     filters = serializers.JSONField(required=False)
     sort_by = serializers.CharField(required=False)
     order = serializers.ChoiceField(choices=["asc", "desc", ""], required=False)
+
+
+class DateRangeSerializer(serializers.Serializer):
+    start = serializers.DateField(required=False)
+    end = serializers.DateField(required=False)
