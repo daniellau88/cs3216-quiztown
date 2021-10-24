@@ -179,11 +179,13 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                             </QTButton>
                         </Grid>
                         <Box flexGrow={1} />
-                        <Box display='flex' minHeight='100%' style={{ paddingRight: '0.5vw' }} justifyContent='center' alignItems='center'>
-                            <Button onClick={handleDeleteCollection} >
-                                <DeleteIcon style={{ color: colours.DEEPRED }} />
-                            </Button>
-                        </Box>
+                        {data.permissions.can_delete &&
+                            <Box display='flex' minHeight='100%' style={{ paddingRight: '0.5vw' }} justifyContent='center' alignItems='center'>
+                                <Button onClick={handleDeleteCollection} >
+                                    <DeleteIcon style={{ color: colours.DEEPRED }} />
+                                </Button>
+                            </Box>
+                        }
                     </Box>
                 </Grid>
             </CardActions>

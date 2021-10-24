@@ -106,49 +106,8 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const cardName = data?.name;
     const cardId = data?.id;
-    const cardStarred = data?.flagged;
-    const collectionId = data?.collection_id || id;
-    // TODO: Update tags, or remove them if no tags are used in cards
-    const cardTags = ['Tag1', 'Tag2'];
-
     const cardEntity = useSelector((state: AppState) => getCardEntity(state, cardId));
-
-    const duplicateCard = () => {
-        if (!cardEntity) return;
-        const cardPostData: CardPostData = { ...cardEntity };
-        return handleApiRequest(dispatch, dispatch(addCard(cardPostData)));
-    };
-
-    const openCard = () => {
-        history.push(`/collections/${collectionId}/cards/${cardId}`);
-    };
-
-    const editCard = () => {
-        history.push(`/collections/${collectionId}/cards/${cardId}/edit`);
-    };
-
-    const toggleStarred = () => {
-        if (!data || !cardId) {
-            return false;
-        }
-        const cardPostData: Partial<CardPostData> = { ...data, flagged: data.flagged ^ 1 };
-        return handleApiRequest(dispatch, dispatch(updateCard(cardId, cardPostData)))
-            .then(() => {
-                return true;
-            });
-    };
-
-    const handleDeleteCard = () => {
-        if (!cardId) {
-            return false;
-        }
-        return handleApiRequest(dispatch, dispatch(deleteCard(cardId)))
-            .then(() => {
-                return true;
-            });
-    };
 
     const addNewTextCard = () => {
         console.log(beforeRedirect);
@@ -202,37 +161,76 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
         );
     }
 
+    if (!data) {
+        return null;
+    }
+
+    const cardName = data?.name;
+    const cardStarred = data?.flagged;
+    const collectionId = data?.collection_id || id;
+
+    const duplicateCard = () => {
+        if (!cardEntity) return;
+        const cardPostData: CardPostData = { ...cardEntity };
+        return handleApiRequest(dispatch, dispatch(addCard(cardPostData)));
+    };
+
+    const openCard = () => {
+        history.push(`/collections/${collectionId}/cards/${cardId}`);
+    };
+
+    const editCard = () => {
+        history.push(`/collections/${collectionId}/cards/${cardId}/edit`);
+    };
+
+    const toggleStarred = () => {
+        if (!data || !cardId) {
+            return false;
+        }
+        const cardPostData: Partial<CardPostData> = { ...data, flagged: data.flagged ^ 1 };
+        return handleApiRequest(dispatch, dispatch(updateCard(cardId, cardPostData)))
+            .then(() => {
+                return true;
+            });
+    };
+
+    const handleDeleteCard = () => {
+        if (!cardId) {
+            return false;
+        }
+        return handleApiRequest(dispatch, dispatch(deleteCard(cardId)))
+            .then(() => {
+                return true;
+            });
+    };
+
     return (
         <Card className={classes.root}>
             <Box className={classes.imageContainer}>
                 <CardMedia
                     component="img"
                     image={data?.image_link && data.image_link != (STATIC_URL + 'cards/') ? data?.image_link : defaultCollectionImage}
-                    style={ data ? { width: '100%' } : {} }
+                    style={data ? { width: '100%' } : {}}
                     className={classes.collectionImage}
                 />
             </Box>
 
             <CardContent className={classes.cardContent}>
-                <Typography className={classes.cardNameText} component="div" >
-                    {cardName}
-                </Typography>
                 <Grid container alignItems='center'>
                     <Box display='flex' height='100%' width='100%'>
-                        <Grid container alignItems='center'>
-                            <LabelIcon className={classes.cardIcon} />
-                            <Typography className={classes.cardText} style={{ marginLeft: 6 }}>
-                                {cardTags.join(', ')}
-                            </Typography>
-                        </Grid>
+                        <Typography className={classes.cardNameText} component="div" >
+                            {cardName ? cardName : 'Untitled Card'}
+                        </Typography>
                         <Box flexGrow={1} />
-                        <Button onClick={toggleStarred}>
-                            {cardStarred ?
-                                <Star className={classes.cardIcon} />
-                                :
-                                <StarOutline className={classes.cardIcon} />
-                            }
-                        </Button>
+                        {data.permissions.can_update &&
+                            <Button onClick={toggleStarred}>
+                                {cardStarred ?
+                                    <Star className={classes.cardIcon} />
+                                    :
+                                    <StarOutline className={classes.cardIcon} />
+                                }
+                            </Button>
+                        }
                     </Box>
                 </Grid>
             </CardContent>
@@ -242,25 +240,29 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
                     <Box display='flex' height='100%' width='100%'>
                         <Grid container item xs={3} alignItems='center'>
                             <QTButton outlined height='95%' width='95%' onClick={openCard}>
-                            Test Me!
+                                Test Me!
                             </QTButton>
                         </Grid>
-                        <Grid container item xs={3} alignItems='center'>
-                            <QTButton height='95%' width='95%' onClick={editCard}>
-                            Edit
-                            </QTButton>
-                        </Grid>
+                        {data.permissions.can_update &&
+                            <Grid container item xs={3} alignItems='center'>
+                                <QTButton height='95%' width='95%' onClick={editCard}>
+                                    Edit
+                                </QTButton>
+                            </Grid>
+                        }
                         <Grid container item xs={3} alignItems='center'>
                             <QTButton height='95%' width='95%' onClick={duplicateCard}>
-                            Duplicate
+                                Duplicate
                             </QTButton>
                         </Grid>
                         <Box flexGrow={1} />
-                        <Box display='flex' minHeight='100%' style={{ paddingRight: '0.5vw' }} justifyContent='center' alignItems='center'>
-                            <Button onClick={handleDeleteCard} >
-                                <DeleteIcon style={{ color: colours.DEEPRED }} />
-                            </Button>
-                        </Box>
+                        {data.permissions.can_delete &&
+                            <Box display='flex' minHeight='100%' style={{ paddingRight: '0.5vw' }} justifyContent='center' alignItems='center'>
+                                <Button onClick={handleDeleteCard} >
+                                    <DeleteIcon style={{ color: colours.DEEPRED }} />
+                                </Button>
+                            </Box>
+                        }
                     </Box>
                 </Grid>
             </CardActions>

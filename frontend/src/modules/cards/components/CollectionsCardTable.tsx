@@ -18,10 +18,11 @@ import CollectionsCardGridComponent from './CollectionsCardGridComponent';
 interface OwnProps {
     collectionId: number;
     beforeCreateCard?: () => Promise<number>;
+    showAddCard: boolean;
 }
 
 
-const CollectionsCardTable: React.FC<OwnProps> = ({ collectionId, beforeCreateCard }) => {
+const CollectionsCardTable: React.FC<OwnProps> = ({ collectionId, beforeCreateCard, showAddCard }) => {
     const dispatch = useDispatch();
     const collectionCards: EntityCollection = useSelector((state: AppState) => getCollectionCardList(state, collectionId));
 
@@ -75,7 +76,7 @@ const CollectionsCardTable: React.FC<OwnProps> = ({ collectionId, beforeCreateCa
 
     React.useEffect(() => {
         if (collectionId != 0) {
-            onUpdate({}, dispatch);
+            onUpdate(collectionCards.defaults, dispatch);
         } else {
             // Show all items
             setIsLoading(false);
@@ -88,7 +89,7 @@ const CollectionsCardTable: React.FC<OwnProps> = ({ collectionId, beforeCreateCa
             isLoading={isLoading}
             onUpdate={(options: CollectionOptions) => onUpdate(options, dispatch)}
             gridComponent={CollectionsCardGridComponent}
-            leadingComponent={isBrowser ? <CollectionsCardCard isAddCard={true} id={collectionId} beforeRedirect={beforeCreateCard} /> : undefined}
+            leadingComponent={isBrowser && showAddCard ? <CollectionsCardCard isAddCard={true} id={collectionId} beforeRedirect={beforeCreateCard} /> : undefined}
             filters={filters}
             orders={orders}
             isSearchable

@@ -1,6 +1,7 @@
 from django.conf import settings
 from rest_framework import serializers
 
+from collection import helpers as collection_helpers
 from quiztown.common import serializers as commmon_serializers
 
 from .models import Card
@@ -17,29 +18,52 @@ class CardListFilterSerializer(serializers.Serializer):
 
 
 class CardListSerializer(serializers.ModelSerializer):
+    permissions = serializers.SerializerMethodField()
+
     class Meta:
         model = Card
         fields = ["id", "name", "collection_id", "flagged", "image_file_key",
-                  "next_date", "box_number", "created_at",
-                  "type", "question", "answer", "is_reviewed"]
+                  "next_date", "box_number", "created_at", "type", "question",
+                  "answer", "is_reviewed", "permissions"]
 
     def to_representation(self, data):
         rep = super(CardListSerializer, self).to_representation(data)
         rep["image_link"] = STATIC_CARD_URL + rep["image_file_key"]
         return rep
 
+    def get_permissions(self, obj):
+        collection = list(collection_helpers.get_editable_collection_queryset_by_request(
+            self.context["request"]).filter(id=obj.collection_id))
+        has_permission = len(collection) > 0
+        return {
+            "can_update": has_permission,
+            "can_delete": has_permission,
+        }
+
 
 class CardSerializer(serializers.ModelSerializer):
+    permissions = serializers.SerializerMethodField()
+
     class Meta:
         model = Card
         fields = ["id", "name", "collection_id", "flagged", "image_file_key",
                   "next_date", "box_number", "image_metadata", "answer_details",
-                  "created_at", "type", "question", "answer", "is_reviewed"]
+                  "created_at", "type", "question", "answer", "is_reviewed",
+                  "permissions"]
 
     def to_representation(self, data):
         rep = super(CardSerializer, self).to_representation(data)
         rep["image_link"] = STATIC_CARD_URL + rep["image_file_key"]
         return rep
+
+    def get_permissions(self, obj):
+        collection = list(collection_helpers.get_editable_collection_queryset_by_request(
+            self.context["request"]).filter(id=obj.collection_id))
+        has_permission = len(collection) > 0
+        return {
+            "can_update": has_permission,
+            "can_delete": has_permission,
+        }
 
 
 class CardCreateSerializer(serializers.ModelSerializer):

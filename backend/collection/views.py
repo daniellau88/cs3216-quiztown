@@ -32,7 +32,8 @@ def list_collections_view(request):
 def create_collection_view(request, serializer):
     serializer.save(owner_id=request.user.user_id)
 
-    response_serializer = serializers.CollectionSerializer(serializer.instance)
+    response_serializer = serializers.CollectionSerializer(
+        serializer.instance, context={"request": request})
     return Response({"item": response_serializer.data})
 
 
@@ -48,7 +49,7 @@ def get_or_update_or_delete_collection_view(request, *args, **kwargs):
 
 @convert_keys_to_item({"pk": helpers.get_default_collection_queryset_by_request})
 def get_collection_view(request, pk_item):
-    serializer = serializers.CollectionSerializer(pk_item)
+    serializer = serializers.CollectionSerializer(pk_item, context={"request": request})
     return Response({"item": serializer.data})
 
 
@@ -60,7 +61,8 @@ def get_collection_view(request, pk_item):
 def update_collection_view(request, pk_item, serializer):
     serializer.save()
 
-    response_serializer = serializers.CollectionSerializer(serializer.instance)
+    response_serializer = serializers.CollectionSerializer(
+        serializer.instance, context={"request": request})
     return Response({"item": response_serializer.data})
 
 
