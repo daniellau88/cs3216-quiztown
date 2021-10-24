@@ -14,6 +14,7 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
 
+import { NAV_BAR_HEIGHT } from '../../../layouts/AppLayout';
 import { PublicActivityMiniEntity } from '../../../types/publicActivities';
 import { handleApiRequest } from '../../../utilities/ui';
 import { loadRecentPublicActivities, subscribePublicActivity } from '../operations';
@@ -23,10 +24,10 @@ import PublicActivityPopupItem from './PublicActivityPopupItem';
 
 const useStyles = makeStyles((theme) => ({
     root: {
+        height: NAV_BAR_HEIGHT,
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        margin: 3,
     },
     paper: {
         padding: theme.spacing(1),

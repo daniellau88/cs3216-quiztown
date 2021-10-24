@@ -2,6 +2,7 @@ import { Button, ClickAwayListener, Menu, makeStyles } from '@material-ui/core';
 import * as React from 'react';
 
 import { headerSize } from '../../../components/utiltiies/constants';
+import { NAV_BAR_HEIGHT } from '../../../layouts/AppLayout';
 
 import GoogleSignOutMenuItem from './GoogleSignOutMenuItem';
 import UserDetailComponent from './UserDetailComponent';
@@ -10,10 +11,10 @@ const drawerWidth = 200;
 
 const useStyles = makeStyles((theme) => ({
     root: {
+        height: NAV_BAR_HEIGHT,
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        margin: 3,
     },
     drawer: {
         width: drawerWidth,
