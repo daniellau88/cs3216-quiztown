@@ -107,6 +107,7 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
 
     const cardId = data?.id;
     const cardEntity = useSelector((state: AppState) => getCardEntity(state, cardId));
+    const collectionId = data?.collection_id || id;
 
     const addNewTextCard = () => {
         console.log(beforeRedirect);
@@ -166,7 +167,6 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
 
     const cardName = data?.name;
     const cardStarred = data?.flagged;
-    const collectionId = data?.collection_id || id;
 
     const duplicateCard = () => {
         if (!cardEntity) return;
