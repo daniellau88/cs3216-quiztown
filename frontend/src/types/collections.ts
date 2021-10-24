@@ -48,3 +48,12 @@ export interface UploadTextData {
 export interface CollectionsImportTextPostData {
     imports: UploadTextData[];
 }
+
+export interface TagData {
+    id: number;
+    name: string;
+}
+
+export interface CollectionTagsData {
+    items: TagData[];
+}

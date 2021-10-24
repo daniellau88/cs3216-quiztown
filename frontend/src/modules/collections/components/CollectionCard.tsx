@@ -11,21 +11,18 @@ import {
 } from '@material-ui/core';
 import { Add, ReorderOutlined } from '@material-ui/icons';
 import DeleteIcon from '@material-ui/icons/Delete';
-import LabelIcon from '@material-ui/icons/Label';
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 import defaultCollectionImage from '../../../assets/images/logo512.png';
-import LoadingIndicator from '../../../components/content/LoadingIndicator';
 import QTButton from '../../../components/QTButton';
 import { CollectionMiniEntity } from '../../../types/collections';
-import { AppState } from '../../../types/store';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
-import { loadCollectionCards } from '../../cards/operations';
-import { getCollectionCardList } from '../../cards/selectors';
 import { deleteCollection } from '../operations';
+
+import CollectionTagSelector from './CollectionTagSelector';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -69,6 +66,10 @@ const useStyles = makeStyles(() => ({
         width: 'auto',
         height: '100%',
     },
+    tagSelectorContainer: {
+        maxWidth: '100%',
+        overflow: 'hidden',
+    },
 }));
 
 interface OwnProps {
@@ -109,7 +110,6 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
     }
 
     const collectionName = data.name;
-    const collectionTags = data.tags;
 
     const openCollection = () => {
         history.push(`/collections/${collectionId}`);
@@ -137,7 +137,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                 <CardMedia
                     component="img"
                     image={data?.image_link || defaultCollectionImage}
-                    style={data ? { width: '100%' } : {}}
+                    style={data?.image_link ? { width: '100%' } : {}}
                     className={classes.collectionImage}
                 />
             </Box>
@@ -146,21 +146,22 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                 <Typography className={classes.collectionNameText} component="div" >
                     {collectionName}
                 </Typography>
-                <Grid container alignItems='center'>
-                    <ReorderOutlined className={classes.collectionIcon} />
-                    <Typography className={classes.collectionText} style={{ marginLeft: 6 }}>
-                        {data.num_cards}
-                        {data.num_cards > 1 || data.num_cards == 0 ? ' cards' : ' card'}
-                    </Typography>
-                    <Grid item style={{ width: '2vw' }} />
-                    {collectionTags.length > 0 &&
-                        <>
-                            <LabelIcon className={classes.collectionIcon} />
-                            <Typography className={classes.collectionText} style={{ marginLeft: 6 }}>
-                                {collectionTags.join(', ')}
+                <Grid container alignItems='center' wrap='nowrap' spacing={1}>
+                    <Grid item>
+                        <Grid container alignItems='center' wrap='nowrap'>
+                            <ReorderOutlined className={classes.collectionIcon} />
+                            <Typography className={classes.collectionText} style={{ marginLeft: 6 }} noWrap={true}>
+                                {data.num_cards}
+                                {data.num_cards > 1 || data.num_cards == 0 ? ' cards' : ' card'}
                             </Typography>
-                        </>
-                    }
+                        </Grid>
+                    </Grid>
+
+                    <Grid item className={classes.tagSelectorContainer}>
+                        <CollectionTagSelector
+                            collectionData={{ id: data.id, tags: data.tags }}
+                        />
+                    </Grid>
                 </Grid>
             </CardContent>
 

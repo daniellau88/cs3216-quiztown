@@ -1,6 +1,6 @@
 import { ApiPromise, CollectionData as CollectionDataType, CollectionQueryParams } from '../types';
 import { CardListData } from '../types/cards';
-import { CollectionListData, CollectionPostData, CollectionsImportPostData, CollectionsImportTextPostData } from '../types/collections';
+import { CollectionListData, CollectionPostData, CollectionTagsData, CollectionsImportPostData, CollectionsImportTextPostData } from '../types/collections';
 import { toQueryString } from '../utilities/url';
 
 import BaseAPI from './base';
@@ -23,7 +23,7 @@ export class CollectionsAPI extends BaseAPI {
         return this.post(`${this.getCollectionUrl()}` + URL_SUFFIX, data);
     }
 
-    public patchCollection(id: number, data: CollectionPostData): ApiPromise<{ item: CollectionListData }> {
+    public patchCollection(id: number, data: Partial<CollectionPostData>): ApiPromise<{ item: CollectionListData }> {
         return this.patch(`${this.getCollectionUrl()}/${id}` + URL_SUFFIX, data);
     }
 
@@ -45,6 +45,10 @@ export class CollectionsAPI extends BaseAPI {
 
     public completeCollectionImportReview(collectionId: number, importId: number): ApiPromise<{}> {
         return this.post(`${this.getCollectionUrl()}/${collectionId}/imports/${importId}/review` + URL_SUFFIX, {});
+    }
+
+    public getAllCollectionTags(): ApiPromise<CollectionTagsData> {
+        return this.get(`${this.getCollectionUrl()}/tags` + URL_SUFFIX);
     }
 }
 

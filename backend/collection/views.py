@@ -1,4 +1,3 @@
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -8,7 +7,7 @@ from quiztown.common import utils
 from quiztown.common.decorators import convert_keys_to_item, validate_request_data
 
 from . import helpers, jobs, serializers
-from .models import CollectionImport
+from .models import CollectionImport, Tag
 
 
 @api_view(["GET", "POST"])
@@ -175,3 +174,11 @@ def duplicate_collection(request, pk_item, serializer):
     # TODO: Fix this
     newcollection = jobs.duplicate_collection(pk_item, request.user.user_id)
     return Response({"items": newcollection})
+
+
+@api_view(["GET"])
+def list_tag_view(request):
+    tags = Tag.objects.all()
+    response_serializer = serializers.TagSerializer(tags, many=True)
+
+    return Response({"items": response_serializer.data})
