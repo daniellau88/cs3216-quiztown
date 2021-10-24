@@ -100,8 +100,9 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
             return false;
         }
         return handleApiRequest(dispatch, dispatch(duplicatePublicCollection(collectionId)))
-            .then(() => {
+            .then((newCollection) => {
                 console.log('successfully saved to my own collection...');
+                history.push(`/collections/${newCollection.payload.id}`);
                 return true;
             });
     };

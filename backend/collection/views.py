@@ -170,12 +170,13 @@ def review_collection_import_view(request, pk_item, pkImport_item):
 
 
 @api_view(["POST"])
-@convert_keys_to_item({"pk": helpers.get_editable_collection_queryset_by_request})
-@validate_request_data(serializers.CollectionSerializer)
-def duplicate_collection(request, pk_item, serializer):
+@convert_keys_to_item({"pk": helpers.get_default_collection_queryset_by_request})
+def duplicate_collection_view(request, pk_item):
     # TODO: Fix this
     newcollection = jobs.duplicate_collection(pk_item, request.user.user_id)
-    return Response({"items": newcollection})
+    response_serializer = serializers.CollectionSerializer(
+        newcollection, context={"request": request})
+    return Response({"item": response_serializer.data})
 
 
 @api_view(["GET"])
