@@ -17,6 +17,7 @@ const initialState: types.CollectionsState = {
         sortBy: 'updated_at',
         sortOrder: 'desc',
     }),
+    allTags: [],
 };
 
 const collectionsReducer = produce((draft: types.CollectionsState, action: types.CollectionsActionTypes) => {
@@ -59,6 +60,10 @@ const collectionsReducer = produce((draft: types.CollectionsState, action: types
         }
         case types.UPDATE_PUBLIC_COLLECTION_LIST: {
             saveDeltaToCollection(draft.allPublicCollections, action.delta);
+            return;
+        }
+        case types.EDIT_TAG: {
+            draft.allTags = action.data;
             return;
         }
     }

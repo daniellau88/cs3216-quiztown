@@ -6,9 +6,12 @@ import {
     makeStyles,
 } from '@material-ui/core';
 import * as React from 'react';
+import { useDispatch } from 'react-redux';
 
 import Breadcrumbs from '../../../layouts/Breadcrumbs';
+import { handleApiRequest } from '../../../utilities/ui';
 import CollectionTable from '../components/CollectionTable';
+import { getAllCollectionTags } from '../operations';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -32,6 +35,11 @@ const useStyles = makeStyles(() => ({
 
 const CollectionPage: React.FC<{}> = () => {
     const classes = useStyles();
+    const dispatch = useDispatch();
+
+    React.useEffect(() => {
+        handleApiRequest(dispatch, dispatch(getAllCollectionTags()));
+    }, [dispatch]);
 
     return (
         <>

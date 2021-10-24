@@ -50,3 +50,10 @@ export function updatePublicCollectionList(delta: CollectionDelta): types.Update
         delta,
     };
 }
+
+export function editTags(allTags: string[]): types.EditTagAction {
+    return {
+        type: types.EDIT_TAG,
+        data: allTags,
+    };
+}

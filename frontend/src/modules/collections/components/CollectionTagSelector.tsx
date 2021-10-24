@@ -11,12 +11,14 @@ import {
 import { Close } from '@material-ui/icons';
 import LabelIcon from '@material-ui/icons/Label';
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { CollectionPostData } from '../../../types/collections';
+import { AppState } from '../../../types/store';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
 import { getAllCollectionTags, updateCollection } from '../operations';
+import { getAllCollections, getAllTags } from '../selectors';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -65,10 +67,12 @@ const CollectionTagSelector: React.FC<Props> = ({ collectionData, tagSelectorRef
     const classes = useStyles();
     const dispatch = useDispatch();
 
+    const possibleTags = useSelector((state: AppState) => getAllTags(state));
+
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [currTags, setCurrTags] = React.useState(new Set(collectionData.tags));
-    const [availableTagOptions, setAvailableTagOptions] = React.useState<Set<string>>(new Set([]));
-    const [allPossibleTags, setAllPossibleTags] = React.useState<Set<string>>(new Set([]));
+    const [availableTagOptions, setAvailableTagOptions] = React.useState<Set<string>>(new Set(possibleTags));
+    const [allPossibleTags, setAllPossibleTags] = React.useState<Set<string>>(new Set(possibleTags));
     const [newTagName, setNewTagName] = React.useState('');
 
     const open = Boolean(anchorEl);
@@ -76,14 +80,9 @@ const CollectionTagSelector: React.FC<Props> = ({ collectionData, tagSelectorRef
     const noSelectedTags = currTags.size === 0;
 
     React.useEffect(() => {
-        handleApiRequest(dispatch, dispatch(getAllCollectionTags()))
-            .then(res => {
-                const allTags = res.payload.items;
-                const formattedTags = new Set(allTags.map(item => item.name));
-                setAvailableTagOptions(formattedTags);
-                setAllPossibleTags(formattedTags);
-            });
-    }, [dispatch]);
+        setAvailableTagOptions(new Set(possibleTags));
+        setAllPossibleTags(new Set(possibleTags));
+    }, [possibleTags.length]);
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);

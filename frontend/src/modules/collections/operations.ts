@@ -99,6 +99,9 @@ export function completeCollectionImportReview(collectionId: number, importId: n
 export function getAllCollectionTags(): Operation<ApiResponse<CollectionTagsData>> {
     return async (dispatch) => {
         const response = await api.collections.getAllCollectionTags();
+        const allTags = response.payload.items;
+        const formattedTags = allTags.map(item => item.name);
+        dispatch(actions.editTags(formattedTags));
         return response;
     };
 }

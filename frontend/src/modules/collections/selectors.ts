@@ -17,3 +17,7 @@ export function getCollectionMiniEntity(state: AppState, id: SelectionKey): Enti
 export function getAllPublicCollections(state: AppState): EntityCollection {
     return getLocalState(state).allPublicCollections;
 }
+
+export function getAllTags(state: AppState): string[] {
+    return getLocalState(state).allTags;
+}
