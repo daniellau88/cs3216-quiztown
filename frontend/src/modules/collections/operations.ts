@@ -55,7 +55,7 @@ export function saveCollection(data: CollectionListData): NormalizeOperation {
     };
 }
 
-export function updateCollection(id: number, collection: CollectionPostData): Operation<ApiResponse<CollectionMiniEntity>> {
+export function updateCollection(id: number, collection: Partial<CollectionPostData>): Operation<ApiResponse<CollectionMiniEntity>> {
     return async (dispatch, getState) => {
         const response = await api.collections.patchCollection(id, collection);
         const data = response.payload.item;

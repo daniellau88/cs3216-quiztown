@@ -160,7 +160,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
 
                     <Grid item className={classes.tagSelectorContainer}>
                         <CollectionTagSelector
-                            collectionData={data}
+                            collectionData={{ id: data.id, tags: data.tags }}
                         />
                     </Grid>
                 </Grid>

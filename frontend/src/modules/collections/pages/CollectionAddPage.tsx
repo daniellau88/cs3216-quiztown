@@ -18,6 +18,7 @@ import { UploadData } from '../../../types/uploads';
 import routes from '../../../utilities/routes';
 import { handleApiRequest } from '../../../utilities/ui';
 import CollectionAddFileCards from '../components/CollectionAddFileCards';
+import CollectionTagSelector from '../components/CollectionTagSelector';
 import { addCollection, importCollections } from '../operations';
 
 const useStyles = makeStyles((theme) => ({
@@ -59,6 +60,7 @@ const AddCollectionPage: React.FC<{}> = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
     const history = useHistory();
+    const tagSelectorRef = React.useRef<string[]>([]);
 
     const [collectionName, setCollectionName] = useState<string>('Untitled collection');
     const [uploadFiles, setUploadedResponse] = useState<Array<UploadData>>([]);
@@ -67,7 +69,14 @@ const AddCollectionPage: React.FC<{}> = () => {
         if (uploadFiles == undefined) {
             return;
         }
+
         const collectionPostDataCurrent: CollectionPostData = { name: collectionName };
+
+        if (tagSelectorRef && tagSelectorRef.current) {
+            console.log(tagSelectorRef.current);
+            collectionPostDataCurrent.tags = tagSelectorRef.current;
+        }
+
         return handleApiRequest(dispatch, dispatch(addCollection(collectionPostDataCurrent)))
             .then((response) => {
                 handleApiRequest(dispatch, dispatch(importCollections(response.payload.id, { imports: uploadFiles })));
@@ -91,14 +100,24 @@ const AddCollectionPage: React.FC<{}> = () => {
                         { path: routes.COLLECTIONS.INDEX, name: 'Collections' },
                         { path: null, name: 'Add Collection' },
                     ]} />
-                    <Grid container direction='row' className={classes.header}>
-                        <Typography className={classes.title} variant='h5' component="div">
-                            Adding files to
-                        </Typography>
-                        <Input className={classes.input}
-                            onChange={handleCollectionNameChange}
-                            value={collectionName}
-                            placeholder="Untitled Collection" />
+                    <Grid container direction='row' alignItems='center' className={classes.header}>
+                        <Grid item xs={9} wrap='nowrap'>
+                            <Grid container alignItems='center'>
+                                <Typography className={classes.title} variant='h5' component="div">
+                                    Adding files to
+                                </Typography>
+                                <Input className={classes.input}
+                                    onChange={handleCollectionNameChange}
+                                    value={collectionName}
+                                    placeholder="Untitled Collection" />
+                            </Grid>
+                        </Grid>
+                        <Grid item xs={3}>
+                            <CollectionTagSelector
+                                collectionData={{ tags: [] }}
+                                tagSelectorRef={tagSelectorRef}
+                            />
+                        </Grid>
                     </Grid>
                     <Typography variant='body1' component="div" className={classes.description}>
                         Upload files to automatically generate cards! We will notify you when they are ready for your review.

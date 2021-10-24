@@ -13,7 +13,7 @@ import LabelIcon from '@material-ui/icons/Label';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 
-import { CollectionMiniEntity, CollectionPostData } from '../../../types/collections';
+import { CollectionPostData } from '../../../types/collections';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
 import { getAllCollectionTags, updateCollection } from '../operations';
@@ -52,12 +52,16 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface OwnProps {
-    collectionData: CollectionMiniEntity;
+    collectionData: {
+        id?: number; // ID doesn't yet exist for new collection creation
+        tags: string[];
+    };
+    tagSelectorRef?: React.MutableRefObject<string[]>;
 }
 
 type Props = OwnProps;
 
-const CollectionTagSelector: React.FC<Props> = ({ collectionData }) => {
+const CollectionTagSelector: React.FC<Props> = ({ collectionData, tagSelectorRef }) => {
     const classes = useStyles();
     const dispatch = useDispatch();
 
@@ -110,8 +114,13 @@ const CollectionTagSelector: React.FC<Props> = ({ collectionData }) => {
 
         setCurrTags(new Set(updatedCurrTagsArr));
 
-        const collectionPostData: CollectionPostData = { name: collectionData.name , tags: updatedCurrTagsArr};
-        handleApiRequest(dispatch, dispatch(updateCollection(collectionData.id, collectionPostData)));
+        if (collectionData.id) {
+            const collectionPostData: Partial<CollectionPostData> = { tags: updatedCurrTagsArr};
+            handleApiRequest(dispatch, dispatch(updateCollection(collectionData.id, collectionPostData)));
+        }
+        if (tagSelectorRef) {
+            tagSelectorRef.current = [...updatedCurrTags];
+        }
     };
 
     const addTag = (newTag: string) => {
@@ -125,8 +134,13 @@ const CollectionTagSelector: React.FC<Props> = ({ collectionData }) => {
         setAllPossibleTags(new Set(updateAllTagsArr));
         setCurrTags(new Set(updatedCurrTagsArr));
 
-        const collectionPostData: CollectionPostData = { name: collectionData.name , tags: updatedCurrTagsArr};
-        handleApiRequest(dispatch, dispatch(updateCollection(collectionData.id, collectionPostData)));
+        if (collectionData.id) {
+            const collectionPostData: Partial<CollectionPostData> = { tags: updatedCurrTagsArr};
+            handleApiRequest(dispatch, dispatch(updateCollection(collectionData.id, collectionPostData)));
+        }
+        if (tagSelectorRef) {
+            tagSelectorRef.current = [...updatedCurrTags];
+        }
     };
 
     const onCreateNewTag = () => {

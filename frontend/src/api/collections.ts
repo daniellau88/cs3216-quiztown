@@ -23,7 +23,7 @@ export class CollectionsAPI extends BaseAPI {
         return this.post(`${this.getCollectionUrl()}` + URL_SUFFIX, data);
     }
 
-    public patchCollection(id: number, data: CollectionPostData): ApiPromise<{ item: CollectionListData }> {
+    public patchCollection(id: number, data: Partial<CollectionPostData>): ApiPromise<{ item: CollectionListData }> {
         return this.patch(`${this.getCollectionUrl()}/${id}` + URL_SUFFIX, data);
     }
 
