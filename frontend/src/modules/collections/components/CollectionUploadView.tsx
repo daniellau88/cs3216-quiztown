@@ -81,7 +81,7 @@ const CollectionUploadView: React.FC<Props> = ({ file }: Props) => {
         <Card className={classes.root}>
             < CardMedia
                 component="img"
-                alt="green iguana"
+                alt="uploaded image"
                 height="80"
                 image={previewImageSrc}
             />

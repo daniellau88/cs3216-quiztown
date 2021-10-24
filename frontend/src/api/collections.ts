@@ -20,7 +20,6 @@ export class CollectionsAPI extends BaseAPI {
     }
 
     public addCollection(data: CollectionPostData): ApiPromise<{ item: CollectionListData }> {
-        console.log('Adding collection. Data name: ' + data.name);
         return this.post(`${this.getCollectionUrl()}` + URL_SUFFIX, data);
     }
 
@@ -33,7 +32,6 @@ export class CollectionsAPI extends BaseAPI {
     }
 
     public importCollections(collectionId: number, data: CollectionsImportPostData): ApiPromise<{ item: CollectionListData }> {
-        // console.log('Import collection. Data name: ' + data[0].file_key);
         return this.post(`${this.getCollectionUrl()}/${collectionId}/import` + URL_SUFFIX, data);
     }
 
@@ -43,6 +41,10 @@ export class CollectionsAPI extends BaseAPI {
 
     public importTextCollectionCards(collectionId: number, data: CollectionsImportTextPostData): ApiPromise<CollectionDataType<CardListData>> {
         return this.post(`${this.getCollectionUrl()}/${collectionId}/importText` + URL_SUFFIX, data);
+    }
+
+    public completeCollectionImportReview(collectionId: number, importId: number): ApiPromise<{}> {
+        return this.post(`${this.getCollectionUrl()}/${collectionId}/imports/${importId}/review` + URL_SUFFIX, {});
     }
 }
 
