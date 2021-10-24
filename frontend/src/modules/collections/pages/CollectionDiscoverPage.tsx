@@ -43,7 +43,7 @@ const CollectionDiscoverPage: React.FC<{}> = () => {
                     ]} />
                     <Grid container direction='column' className={classes.header}>
                         <Typography align='center' className={classes.headerText}>
-                            See Other`&quot;`s Collections
+                            See Other &#39;s Collections
                         </Typography>
                         <Typography align='center' className={classes.subheaderText}>
                             Pick one, add to your own collection and start revising!

@@ -76,7 +76,7 @@ const CollectionTable: React.FC<Props> = ({ isDiscoverCollections }: Props) => {
             isLoading={isLoading}
             onUpdate={(options: CollectionOptions) => onUpdate(options, dispatch)}
             gridComponent={CollectionGridComponent}
-            leadingComponent={isBrowser ? <CollectionCard isAddCollectionCard={true} /> : undefined}
+            leadingComponent={isBrowser && !isDiscoverCollections ? <CollectionCard isAddCollectionCard={true} /> : undefined}
             filters={filters}
             orders={orders}
             isSearchable
