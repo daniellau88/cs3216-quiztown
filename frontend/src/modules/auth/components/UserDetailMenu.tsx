@@ -32,6 +32,9 @@ const useStyles = makeStyles((theme) => ({
         width: drawerWidth,
         backgroundColor: theme.palette.background.default,
     },
+    button: {
+        textTransform: 'none',
+    },
 }));
 
 interface OwnProps {
@@ -54,7 +57,7 @@ const UserDetailMenu: React.FC<OwnProps> = ({ size }: OwnProps) => {
     return (
         <div className={classes.root}>
             <ClickAwayListener onClickAway={handleClose}>
-                <Button type="button" onClick={handleClick}>
+                <Button type="button" onClick={handleClick} className={classes.button}>
                     <UserDetailComponent size={size} />
                 </Button>
             </ClickAwayListener>
