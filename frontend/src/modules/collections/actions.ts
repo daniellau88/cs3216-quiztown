@@ -43,3 +43,10 @@ export function deleteCollection(id: number): types.DeleteCollectionAction {
         id: id,
     };
 }
+
+export function updatePublicCollectionList(delta: CollectionDelta): types.UpdatePublicCollectionListAction {
+    return {
+        type: types.UPDATE_PUBLIC_COLLECTION_LIST,
+        delta,
+    };
+}

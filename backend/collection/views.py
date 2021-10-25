@@ -5,6 +5,7 @@ from card import serializers as card_serializers
 from card.models import Card
 from quiztown.common import utils
 from quiztown.common.decorators import convert_keys_to_item, validate_request_data
+from quiztown.common.errors import ApplicationError, ErrorCode
 
 from . import helpers, jobs, serializers
 from .models import CollectionImport, Tag
@@ -124,7 +125,7 @@ def import_text_collection_view(request, pk_item, serializer):
         card_instances.append(card.instance)
 
     response_serializer = card_serializers.CardListSerializer(
-        card_instances, many=True)
+        card_instances, many=True, context={"request": request})
 
     return Response({"items": response_serializer.data})
 
@@ -170,12 +171,18 @@ def review_collection_import_view(request, pk_item, pkImport_item):
 
 
 @api_view(["POST"])
-@convert_keys_to_item({"pk": helpers.get_editable_collection_queryset_by_request})
-@validate_request_data(serializers.CollectionSerializer)
-def duplicate_collection(request, pk_item, serializer):
-    # TODO: Fix this
+@convert_keys_to_item({"pk": helpers.get_default_collection_queryset_by_request})
+def duplicate_collection_view(request, pk_item):
+    # Check if already duplicated
+    duplicated_collection = list(
+        helpers.get_editable_collection_queryset_by_request(request).filter(origin=pk_item.id))
+    if len(duplicated_collection) > 0:
+        raise ApplicationError(ErrorCode.INVALID_REQUEST, [
+            "Collection already duplicated"])
     newcollection = jobs.duplicate_collection(pk_item, request.user.user_id)
-    return Response({"items": newcollection})
+    response_serializer = serializers.CollectionSerializer(
+        newcollection, context={"request": request})
+    return Response({"item": response_serializer.data})
 
 
 @api_view(["GET"])

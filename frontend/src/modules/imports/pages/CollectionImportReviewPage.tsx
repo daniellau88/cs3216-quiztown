@@ -129,7 +129,7 @@ const CollectionReviewPage: React.FC<Props> = ({ match: { params } }: RouteCompo
                     { path: generatePath(routes.COLLECTIONS.SHOW, { collectionId: collectionId }), name: collection ? collection.name : 'Untitled collection' },
                     { path: null, name: 'Review' },
                 ]} />
-                <Typography variant='h5' align='center'> 
+                <Typography variant='h5' align='center'>
                     It seems liks you have no cards to be reviewed for this import!
                 </Typography>
             </Grid>
@@ -148,7 +148,7 @@ const CollectionReviewPage: React.FC<Props> = ({ match: { params } }: RouteCompo
                 <Typography align='center' variant='h3'>
                     Reviewing Cards for {collection && collection.name}
                 </Typography>
-                <Divider/>
+                <Divider />
 
                 <Grid container justifyContent='center' alignItems='center'>
                     <Grid
@@ -159,14 +159,14 @@ const CollectionReviewPage: React.FC<Props> = ({ match: { params } }: RouteCompo
                         spacing={4}
                     >
                         <Grid item>
-                            <Grid 
+                            <Grid
                                 container
                                 direction='row'
                                 alignItems='center'
                                 className={classes.reviewSelectorContainer}
                             >
                                 <Grid item xs={10} className={classes.fullHeight}>
-                                    <CollectionReviewCardSelector 
+                                    <CollectionReviewCardSelector
                                         cardIds={importedCardIds || []}
                                         currCardId={currCardId}
                                         onSelect={selectCard}
@@ -184,7 +184,7 @@ const CollectionReviewPage: React.FC<Props> = ({ match: { params } }: RouteCompo
                         </Grid>
 
                         <Grid item>
-                            <CollectionReviewCard cardId={currCardId}/>
+                            <CollectionReviewCard cardId={currCardId} />
                         </Grid>
                     </Grid>
                 </Grid>

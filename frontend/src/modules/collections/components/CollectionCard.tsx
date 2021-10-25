@@ -12,7 +12,7 @@ import {
 import { Add, ReorderOutlined } from '@material-ui/icons';
 import DeleteIcon from '@material-ui/icons/Delete';
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 import defaultCollectionImage from '../../../assets/images/logo512.png';
@@ -20,8 +20,10 @@ import QTButton from '../../../components/QTButton';
 import { CollectionMiniEntity } from '../../../types/collections';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
-import { deleteCollection } from '../operations';
+import { getCurrentUser } from '../../auth/selectors';
+import { deleteCollection, duplicatePublicCollection } from '../operations';
 
+import CollectionTag from './CollectionTag';
 import CollectionTagSelector from './CollectionTagSelector';
 
 const useStyles = makeStyles(() => ({
@@ -85,9 +87,24 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
     const dispatch = useDispatch();
 
     const collectionId = data?.id;
+    const currentUser = useSelector(getCurrentUser);
+    const userId = currentUser ? currentUser.user_id : 0;
 
     const addNewCollection = () => {
         history.push('/collections/new');
+    };
+
+    const duplicateCollection = () => {
+        console.log('saving to my own collection...');
+        if (!collectionId) {
+            return false;
+        }
+        return handleApiRequest(dispatch, dispatch(duplicatePublicCollection(collectionId)))
+            .then((newCollection) => {
+                console.log('successfully saved to my own collection...');
+                history.push(`/collections/${newCollection.payload.id}`);
+                return true;
+            });
     };
 
     if (isAddCollectionCard) {
@@ -110,6 +127,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
     }
 
     const collectionName = data.name;
+    const isOwner = userId === data.owner_id;
 
     const openCollection = () => {
         history.push(`/collections/${collectionId}`);
@@ -129,6 +147,10 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
             .then(() => {
                 return true;
             });
+    };
+
+    const handleGoDuplicated = () => {
+        history.push(`/collections/${data.duplicate_collection_id}`);
     };
 
     return (
@@ -158,9 +180,9 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                     </Grid>
 
                     <Grid item className={classes.tagSelectorContainer}>
-                        <CollectionTagSelector
-                            collectionData={{ id: data.id, tags: data.tags }}
-                        />
+                        {data.permissions.can_update ?
+                            <CollectionTagSelector collectionData={{ id: data.id, tags: data.tags }} /> :
+                            <CollectionTag collectionData={{ tags: data.tags }} />}
                     </Grid>
                 </Grid>
             </CardContent>
@@ -168,16 +190,31 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
             <CardActions>
                 <Grid container alignItems='center' style={{ paddingLeft: '0.5vw' }}>
                     <Box display='flex' height='100%' width='100%'>
-                        <Grid container item xs={3} alignItems='center'>
+                        {isOwner && <Grid container item xs={3} alignItems='center'>
                             <QTButton outlined height='95%' width='95%' onClick={startCollection}>
                                 Test Me!
                             </QTButton>
-                        </Grid>
+                        </Grid>}
                         <Grid container item xs={3} alignItems='center'>
                             <QTButton height='95%' width='95%' onClick={openCollection}>
                                 View
                             </QTButton>
                         </Grid>
+                        {!isOwner &&
+                            (
+                                data.duplicate_collection_id ?
+                                    (<Grid container item xs={3} alignItems='center'>
+                                        <QTButton height='95%' width='95%' onClick={handleGoDuplicated}>
+                                            Go to duplicated copy
+                                        </QTButton>
+                                    </Grid>) :
+                                    (<Grid container item xs={3} alignItems='center'>
+                                        <QTButton height='95%' width='95%' onClick={duplicateCollection}>
+                                            Save to my collection
+                                        </QTButton>
+                                    </Grid>)
+                            )
+                        }
                         <Box flexGrow={1} />
                         {data.permissions.can_delete &&
                             <Box display='flex' minHeight='100%' style={{ paddingRight: '0.5vw' }} justifyContent='center' alignItems='center'>

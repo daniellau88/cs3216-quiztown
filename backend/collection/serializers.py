@@ -10,11 +10,13 @@ class CollectionSerializer(serializers.ModelSerializer):
     tags = serializers.SerializerMethodField()
     num_cards = serializers.SerializerMethodField()
     permissions = serializers.SerializerMethodField()
+    duplicate_collection_id = serializers.SerializerMethodField()
 
     class Meta:
         model = Collection
         fields = ["id", "name", "owner_id", "private", "created_at", "image_link",
-                  "origin", "tags", "num_cards", "permissions"]
+                  "origin", "tags", "num_cards", "permissions",
+                  "duplicate_collection_id"]
 
     def get_tags(self, obj):
         tag_ids = CollectionTag.objects.filter(
@@ -36,6 +38,13 @@ class CollectionSerializer(serializers.ModelSerializer):
             "can_delete": has_permission,
             "can_create_card": has_permission,
         }
+
+    def get_duplicate_collection_id(self, obj):
+        collection = list(helpers.get_editable_collection_queryset_by_request(
+            self.context["request"]).filter(origin=obj.id))
+        if len(collection) > 0:
+            return collection[0].pk
+        return 0
 
 
 class CollectionCreateSerializer(serializers.ModelSerializer):
@@ -111,6 +120,7 @@ class CollectionImportRequestSerializer(serializers.Serializer):
 
 class CollectionListFilterSerializer(serializers.Serializer):
     private = serializers.IntegerField(required=False)
+    owner_id = serializers.IntegerField(required=False)
 
 
 class TagSerializer(serializers.ModelSerializer):

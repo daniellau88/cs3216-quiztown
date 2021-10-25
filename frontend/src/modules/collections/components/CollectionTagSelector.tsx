@@ -115,7 +115,7 @@ const CollectionTagSelector: React.FC<Props> = ({ collectionData, tagSelectorRef
         setCurrTags(new Set(updatedCurrTagsArr));
 
         if (collectionData.id) {
-            const collectionPostData: Partial<CollectionPostData> = { tags: updatedCurrTagsArr};
+            const collectionPostData: Partial<CollectionPostData> = { tags: updatedCurrTagsArr };
             handleApiRequest(dispatch, dispatch(updateCollection(collectionData.id, collectionPostData)));
         }
         if (tagSelectorRef) {
@@ -135,7 +135,7 @@ const CollectionTagSelector: React.FC<Props> = ({ collectionData, tagSelectorRef
         setCurrTags(new Set(updatedCurrTagsArr));
 
         if (collectionData.id) {
-            const collectionPostData: Partial<CollectionPostData> = { tags: updatedCurrTagsArr};
+            const collectionPostData: Partial<CollectionPostData> = { tags: updatedCurrTagsArr };
             handleApiRequest(dispatch, dispatch(updateCollection(collectionData.id, collectionPostData)));
         }
         if (tagSelectorRef) {
@@ -164,8 +164,8 @@ const CollectionTagSelector: React.FC<Props> = ({ collectionData, tagSelectorRef
                 aria-expanded={open ? 'true' : undefined}
                 onClick={handleClick}
             >
-                <LabelIcon className={`${classes.tagIcon} ${noSelectedTags ? classes.greyColor : null}`}/>
-                <Typography 
+                <LabelIcon className={`${classes.tagIcon} ${noSelectedTags ? classes.greyColor : null}`} />
+                <Typography
                     className={`${classes.tagText} ${noSelectedTags ? classes.greyColor : null}`}
                     noWrap={true}
                 >
@@ -190,7 +190,7 @@ const CollectionTagSelector: React.FC<Props> = ({ collectionData, tagSelectorRef
                                         <Typography className={classes.tagText} noWrap={true}>
                                             {tag}
                                         </Typography>
-                                        <Close fontSize={'small'} onClick={() => deleteTag(tag)}/>
+                                        <Close fontSize={'small'} onClick={() => deleteTag(tag)} />
                                     </Box>
                                 </Grid>
                             ))
@@ -215,20 +215,20 @@ const CollectionTagSelector: React.FC<Props> = ({ collectionData, tagSelectorRef
                     </MenuItem>
                 ))}
                 {!shouldHideTagCreation() &&
-                <MenuItem onClick={onCreateNewTag}>
-                    <Grid container alignItems='center' spacing={1}>
-                        <Grid item>
-                            <Typography className={classes.tagText}>Create:</Typography>
+                    <MenuItem onClick={onCreateNewTag}>
+                        <Grid container alignItems='center' spacing={1}>
+                            <Grid item>
+                                <Typography className={classes.tagText}>Create:</Typography>
+                            </Grid>
+                            <Grid item>
+                                <Box className={classes.tagContainer}>
+                                    <Typography className={classes.newTagText} noWrap={true}>
+                                        {newTagName}
+                                    </Typography>
+                                </Box>
+                            </Grid>
                         </Grid>
-                        <Grid item>
-                            <Box className={classes.tagContainer}>
-                                <Typography className={classes.newTagText} noWrap={true}>
-                                    {newTagName}
-                                </Typography>
-                            </Box>
-                        </Grid>
-                    </Grid>
-                </MenuItem>
+                    </MenuItem>
                 }
             </Menu>
         </Box>

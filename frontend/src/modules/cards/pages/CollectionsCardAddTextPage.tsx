@@ -58,7 +58,7 @@ type InputText = {
 type Props = RouteComponentProps;
 
 const CollectionsCardAddTextPage: React.FC<Props> = ({ match: { params } }: RouteComponentProps) => {
-    const [data, saveData] = useState<InputText[]>([]);
+    const [data, saveData] = useState<InputText[]>([{ question: '', answer: '' }]);
     const classes = useStyles();
     const dispatch = useDispatch();
     const history = useHistory();
@@ -96,12 +96,17 @@ const CollectionsCardAddTextPage: React.FC<Props> = ({ match: { params } }: Rout
 
     const submit = () => {
         const dataCopy = [] as UploadTextData[];
-        data.map((tuple, index) => dataCopy.push(
-            {
-                name: tuple.question.split(' ')[0] + `-${index}`,
-                question: tuple.question,
-                answer: tuple.answer,
-            }));
+        data.map((tuple, index) => {
+            if (tuple.question !== '' && tuple.answer !== '') {
+                dataCopy.push(
+                    {
+                        name: tuple.question.split(' ')[0] + `-${index}`,
+                        question: tuple.question,
+                        answer: tuple.answer,
+                    },
+                );
+            }
+        });
         return handleApiRequest(dispatch, dispatch(importTextCards(collectionId, { imports: dataCopy }))).then((importResponse) => {
             return handleApiRequest(dispatch, dispatch(loadCollectionCards(collectionId, {}))).finally(() => {
                 history.push(`/collections/${collectionId}`);

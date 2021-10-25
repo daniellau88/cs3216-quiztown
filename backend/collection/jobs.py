@@ -20,6 +20,7 @@ FAILURE_MESSAGE = "The file %s failed to be processed, please try again."
 
 cv2.setNumThreads(0)
 
+
 @job
 def import_card_from_image(collection_import: CollectionImport):
     collection_import.status = CollectionImport.IN_PROGRESS
@@ -137,15 +138,17 @@ def extract_images_from_file(file_key: str) -> list[str]:
     return image_keys
 
 
-@job
+DUPLICATE_SUFFIX = " - Copy"
+
+
 def duplicate_collection(collection_to_duplicate: Collection, new_owner: int):
-    collection = Collection(name=collection_to_duplicate.name,
+    collection = Collection(name=collection_to_duplicate.name + DUPLICATE_SUFFIX,
                             owner_id=new_owner,
                             private=Collection.PRIVATE,
                             image_link=collection_to_duplicate.image_link,
                             origin=collection_to_duplicate.pk)
     collection.save()
 
-    card_jobs.duplicate_cards(collection.pk)
+    card_jobs.duplicate_cards(collection_to_duplicate.pk, collection.pk)
 
     return collection

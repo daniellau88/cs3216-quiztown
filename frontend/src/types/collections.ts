@@ -21,6 +21,7 @@ export interface CollectionListData {
     tags: string[];
     num_cards: number;
     permissions: CollectionPermissions;
+    duplicate_collection_id: number;
 }
 
 
@@ -34,6 +35,7 @@ export interface CollectionMiniEntity {
     tags: string[];
     num_cards: number;
     permissions: CollectionPermissions;
+    duplicate_collection_id: number;
 }
 
 export interface CollectionsCardImportPostData {

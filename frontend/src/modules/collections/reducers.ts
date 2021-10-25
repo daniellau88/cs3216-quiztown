@@ -1,12 +1,19 @@
 import produce from 'immer';
 
-import { createEntityCollection, createEntityStore, removeFromStore, resetCollectionCache, resetEntityCache, saveDeltaToCollection, saveDeltaToCollectionSet, saveEntityToStore, saveListToStore } from '../../utilities/store';
+import { createEntityCollection, createEntityStore, removeFromStore, resetCollectionCache, saveDeltaToCollection, saveEntityToStore, saveListToStore } from '../../utilities/store';
 
 import * as types from './types';
 
 const initialState: types.CollectionsState = {
     collections: createEntityStore(),
     allCollections: createEntityCollection({
+        sortBy: 'updated_at',
+        sortOrder: 'desc',
+    }),
+    allPublicCollections: createEntityCollection({
+        filters: {
+            private: 1,
+        },
         sortBy: 'updated_at',
         sortOrder: 'desc',
     }),
@@ -48,6 +55,10 @@ const collectionsReducer = produce((draft: types.CollectionsState, action: types
                 collections.ids = collections.ids.filter((id) => id !== action.id);
             }
             resetCollectionCache(draft.allCollections);
+            return;
+        }
+        case types.UPDATE_PUBLIC_COLLECTION_LIST: {
+            saveDeltaToCollection(draft.allPublicCollections, action.delta);
             return;
         }
     }

@@ -39,6 +39,7 @@ PADDING_PERCENTAGE = 0.1
 
 cv2.setNumThreads(0)
 
+
 @dataclass
 class PaddleOCRResult():
     # Top left and bottom right coordinate
@@ -153,10 +154,13 @@ def import_text(question: str, answer: str, collection_id: int):
     return card
 
 
-def duplicate_cards(collection_id: int):
-    for card_to_duplicate in Card.objects.filter(collection_id=collection_id):
+def duplicate_cards(old_collection_id: int, new_collection_id: int):
+    for card_to_duplicate in Card.objects.filter(collection_id=old_collection_id):
+        if not card_to_duplicate.is_reviewed:
+            continue
+
         card = Card(name=card_to_duplicate.name,
-                    collection_id=collection_id,
+                    collection_id=new_collection_id,
                     image_file_key=card_to_duplicate.image_file_key,
                     image_metadata=card_to_duplicate.image_metadata,
                     box_number=0,
@@ -164,7 +168,6 @@ def duplicate_cards(collection_id: int):
                     type=card_to_duplicate.type,
                     question=card_to_duplicate.question,
                     answer=card_to_duplicate.answer,
-                    collection_import_id=card_to_duplicate.collection_import_id,
-                    is_reviewed=False)
+                    collection_import_id=0,  # Remove import cards from duplication
+                    is_reviewed=True)
         card.save()
-

@@ -5,7 +5,7 @@ import { CollectionOptions, EntityCollection, NormalizeOperation, Operation } fr
 import { batched, queryEntityCollection, withCachedEntity } from '../../utilities/store';
 
 import * as actions from './actions';
-import { getAllCollections, getCollectionMiniEntity } from './selectors';
+import { getAllCollections, getAllPublicCollections, getCollectionMiniEntity } from './selectors';
 
 export function loadAllCollections(options: CollectionOptions): Operation<ApiResponse<EntityCollection>> {
     return (dispatch, getState) => {
@@ -100,5 +100,31 @@ export function getAllCollectionTags(): Operation<ApiResponse<CollectionTagsData
     return async (dispatch) => {
         const response = await api.collections.getAllCollectionTags();
         return response;
+    };
+}
+
+export function loadAllPublicCollections(options: CollectionOptions): Operation<ApiResponse<EntityCollection>> {
+    return (dispatch, getState) => {
+        return queryEntityCollection(
+            () => getAllPublicCollections(getState()),
+            options,
+            async (params) => {
+                const response = await api.collections.getCollectionList(params);
+                const data: CollectionListData[] = response.payload.items;
+                batched(dispatch, saveCollectionList(data));
+                return response;
+            },
+            (delta) => dispatch(actions.updatePublicCollectionList(delta)),
+        );
+    };
+}
+
+export function duplicatePublicCollection(collectionId: number): Operation<ApiResponse<CollectionMiniEntity>> {
+    return async (dispatch, getState) => {
+        const response = await api.collections.duplicatePublicCollection(collectionId);
+        const data = response.payload.item;
+        batched(dispatch, saveCollection(data), actions.editCollection());
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return { ...response, payload: getCollectionMiniEntity(getState(), data.id)! };
     };
 }
