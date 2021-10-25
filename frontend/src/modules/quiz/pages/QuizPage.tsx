@@ -78,7 +78,7 @@ const QuizPage: React.FC = () => {
                     ]} />
                     <Box display='flex' flexDirection='column' className={classes.root}>
                         <Box display='flex' height='100%' width='100%' flexDirection='row'>
-                            {done ? (
+                            {!done ? (
                                 <QuizCard cardId={cardIds[currentIndex]} onComplete={nextQuestion} />
                             ) :
                                 (
