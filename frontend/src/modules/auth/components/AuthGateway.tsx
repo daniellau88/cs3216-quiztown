@@ -4,20 +4,22 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import LoadingIndicator from '../../../components/content/LoadingIndicator';
 import { GoogleLoginPostData } from '../../../types/auth';
-import { googleLogin, loadCurrentUser, saveIsAuthenticated } from '../operations';
+import { googleLogin, loadCurrentUser, resetCurrentUser, saveIsAuthenticated } from '../operations';
 import { getCurrentUser, getIsAuthenticated } from '../selectors';
 
 interface GoogleLoginProps {
     clientId: string;
     onSuccess: (response: GoogleLoginResponse | GoogleLoginResponseOffline) => void;
+    onAutoLoadFinished: (isSignedIn: boolean) => void,
 }
 
-const GoogleLogin: React.FC<GoogleLoginProps> = ({ clientId, onSuccess }: GoogleLoginProps) => {
+const GoogleLogin: React.FC<GoogleLoginProps> = ({ clientId, onSuccess, onAutoLoadFinished }: GoogleLoginProps) => {
     // Attempt login
     useGoogleLogin({
         onSuccess,
         clientId: clientId ? clientId : '',
         isSignedIn: true,
+        onAutoLoadFinished: onAutoLoadFinished,
     });
 
     return null;
@@ -54,9 +56,15 @@ const AuthGateway: React.FC<{}> = (props: Props) => {
         if ('tokenId' in response) {
             const token = response.tokenId;
             const loginPostData: GoogleLoginPostData = { token_id: token };
-            return dispatch(googleLogin(loginPostData)).then(() => {
-                location.reload();
-            });
+            return dispatch(googleLogin(loginPostData));
+        }
+    };
+
+    const onAutoLoadFinished = (isSignedIn: boolean) => {
+        // If not signed in to google, reset all user data
+        if (!isSignedIn) {
+            dispatch(resetCurrentUser());
+            dispatch(saveIsAuthenticated(false));
         }
     };
 
@@ -67,7 +75,12 @@ const AuthGateway: React.FC<{}> = (props: Props) => {
     if (user && !isAuthenticated) {
         // Relogin when session timeout
         // When component is mounted, the login method will be called
-        return <GoogleLogin clientId={clientId ? clientId : ''} onSuccess={onSuccess} />;
+        return (
+            <>
+                <p>Please check connection status</p>
+                <GoogleLogin clientId={clientId ? clientId : ''} onSuccess={onSuccess} onAutoLoadFinished={onAutoLoadFinished} />
+            </>
+        );
     }
 
     return (
