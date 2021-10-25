@@ -100,9 +100,9 @@ const createAnswerRectangle = (box: AnswerData, xTranslation:number) => {
     });
 };
 
-export const initAnswerBoxes = (
+// Used in CardImageQuiz
+export const initAnswerRectangles = (
     canvas: fabric.Canvas,
-    isEditing: boolean,
     data: Array<AnswerData>,
     xTranslation: number,
 ): Map<string, fabric.Rect> => {
@@ -110,17 +110,22 @@ export const initAnswerBoxes = (
 
     data.forEach(box => {
         const rect = createAnswerRectangle(box, xTranslation);
-        const textbox = createAnswerTextBox(box, xTranslation);
-
         answersCoordsMap.set(box.text, rect);
-
-        if (!isEditing) {
-            canvas.add(rect);
-        } else {
-            canvas.add(textbox);
-        }
+        canvas.add(rect);
     });
     return answersCoordsMap;
+};
+
+// Used in CardImageEdit
+export const initAnswerTextboxes = (
+    canvas: fabric.Canvas,
+    data: Array<AnswerData>,
+    xTranslation: number,
+): void => {
+    data.forEach(box => {
+        const textbox = createAnswerTextBox(box, xTranslation);
+        canvas.add(textbox);
+    });
 };
 
 export const initCorrectAnswersIndicator = (

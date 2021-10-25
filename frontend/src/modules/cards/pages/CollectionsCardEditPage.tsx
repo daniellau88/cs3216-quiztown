@@ -20,7 +20,7 @@ import { AppState } from '../../../types/store';
 import routes from '../../../utilities/routes';
 import { handleApiRequest } from '../../../utilities/ui';
 import { getCollectionMiniEntity } from '../../collections/selectors';
-import CardImage from '../components/CardImage';
+import CardImageEdit from '../components/CardImageEdit';
 import CollectionsTextCardEdit from '../components/CollectionsTextEdit';
 import { loadCard, updateCard } from '../operations';
 import { getCardEntity } from '../selectors';
@@ -150,9 +150,8 @@ const CollectionsCardEditPage: React.FC<Props> = ({ match: { params } }: RouteCo
                         <Grid item>
                             {!isLoading && card &&
                                 card.type == CardType.IMAGE
-                                ? <CardImage
+                                ? <CardImageEdit
                                     card={card}
-                                    isEditing={true}
                                     canvasRef={canvasRef}
                                     saveEdits={saveImageEditChanges}
                                 />
