@@ -1,7 +1,5 @@
 import {
     Box,
-    Card,
-    CardContent,
     CssBaseline,
     Grid,
     Typography,
@@ -25,19 +23,6 @@ const useStyles = makeStyles(() => ({
         justifyContent: 'center',
         paddingBottom: '80px',
         width: '100%',
-    },
-    mainCard: {
-        display: 'flex',
-        borderRadius: '20px',
-        width: '100%',
-    },
-    cardContent: {
-        marginLeft: '2vw',
-        width: '100%',
-        padding: 0,
-        '&:last-child': {
-            paddingBottom: 0,
-        },
     },
     headerText: {
         fontSize: isBrowser ? '4vh' : '3vh',
@@ -83,20 +68,16 @@ const QuizPage: React.FC = () => {
                         { path: null, name: 'Quiz' },
                     ]} />
                     <Box display='flex' flexDirection='column' className={classes.root}>
-                        <Card className={classes.mainCard}>
-                            <CardContent className={classes.cardContent}>
-                                <Box display='flex' height='100%' width='100%' flexDirection='row'>
-                                    {!done ? (
-                                        <QuizCard cardId={cardIds[currentIndex]} onComplete={nextQuestion} />
-                                    ) :
-                                        (
-                                            <Typography align='center' variant='h4' style={{ width: '100%' }}>
+                        <Box display='flex' height='100%' width='100%' flexDirection='row'>
+                            {!done ? (
+                                <QuizCard cardId={cardIds[currentIndex]} onComplete={nextQuestion} />
+                            ) :
+                                (
+                                    <Typography align='center' variant='h4' style={{ width: '100%' }}>
                                                 You&apos;ve completed the quiz!
-                                            </Typography>
-                                        )}
-                                </Box>
-                            </CardContent>
-                        </Card>
+                                    </Typography>
+                                )}
+                        </Box>
                     </Box>
                 </Grid>
             </Box>
