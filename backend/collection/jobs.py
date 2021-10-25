@@ -9,7 +9,7 @@ from card import jobs as card_jobs
 from public_activity import utils as public_activity_utils
 from public_activity.models import PublicActivity
 
-from .models import Collection, CollectionImport
+from .models import Collection, CollectionImport, CollectionTag
 
 STATIC_CARD_DIRECTORY = "static/cards/"
 UPLOAD_DIRECTORY = "uploads/"
@@ -148,6 +148,13 @@ def duplicate_collection(collection_to_duplicate: Collection, new_owner: int):
                             image_link=collection_to_duplicate.image_link,
                             origin=collection_to_duplicate.pk)
     collection.save()
+
+    collection_tags = CollectionTag.objects.filter(
+        collection_id=collection_to_duplicate.pk)
+    for collection_tag in collection_tags:
+        new_collection_tag = CollectionTag(
+            collection_id=collection.pk, tag_id=collection_tag.tag_id)
+        new_collection_tag.save()
 
     card_jobs.duplicate_cards(collection_to_duplicate.pk, collection.pk)
 
