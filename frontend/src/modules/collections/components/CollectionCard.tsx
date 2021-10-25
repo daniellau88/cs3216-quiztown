@@ -12,6 +12,7 @@ import {
 import { Add, ReorderOutlined } from '@material-ui/icons';
 import DeleteIcon from '@material-ui/icons/Delete';
 import * as React from 'react';
+import LinesEllipsis from 'react-lines-ellipsis';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
@@ -166,7 +167,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
 
             <CardContent className={classes.cardContent}>
                 <Typography className={classes.collectionNameText} component="div" >
-                    {collectionName}
+                    <LinesEllipsis text={collectionName} maxLine={1} />
                 </Typography>
                 <Grid container alignItems='center' wrap='nowrap' spacing={1}>
                     <Grid item>

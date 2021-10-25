@@ -15,6 +15,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import Star from '@material-ui/icons/Star';
 import StarOutline from '@material-ui/icons/StarOutline';
 import * as React from 'react';
+import LinesEllipsis from 'react-lines-ellipsis';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
@@ -217,7 +218,7 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
                 <Grid container alignItems='center'>
                     <Box display='flex' height='100%' width='100%'>
                         <Typography className={classes.cardNameText} component="div" >
-                            {cardName ? cardName : 'Untitled Card'}
+                            <LinesEllipsis text={cardName ? cardName : 'Untitled Card'} maxLine={1} />
                         </Typography>
                         <Box flexGrow={1} />
                         {data.permissions.can_update &&

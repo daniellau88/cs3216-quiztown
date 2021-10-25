@@ -181,3 +181,8 @@ def filter_model_by_get_request(
 def get_extension_from_filename(filename: str):
     extension = os.path.splitext(filename)[1]
     return extension.lower()
+
+
+def get_name_from_filename(filename: str):
+    extension = os.path.splitext(filename)[0]
+    return extension

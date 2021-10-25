@@ -8,6 +8,7 @@ from django_rq import job
 from card import jobs as card_jobs
 from public_activity import utils as public_activity_utils
 from public_activity.models import PublicActivity
+from quiztown.common import utils as common_utils
 
 from .models import Collection, CollectionImport, CollectionTag
 
@@ -31,14 +32,15 @@ def import_card_from_image(collection_import: CollectionImport):
 
     params = {
         "collection_id": collection_import.collection_id,
-        "import_id": collection_import.id,
+        "import_id": collection_import.pk,
     }
 
     try:
         card_jobs.import_card_from_image(
             collection_import.file_key,
             collection_import.collection_id,
-            collection_import.id,
+            collection_import.pk,
+            name=common_utils.get_name_from_filename(collection_import.file_name),
         )
 
         collection_import.status = CollectionImport.COMPLETED
@@ -74,17 +76,19 @@ def import_cards_from_pdf(collection_import: CollectionImport):
 
     params = {
         "collection_id": collection_import.collection_id,
-        "import_id": collection_import.id,
+        "import_id": collection_import.pk,
     }
 
     try:
         image_keys = extract_images_from_file(collection_import.file_key)
+        name = common_utils.get_name_from_filename(collection_import.file_name)
 
-        for image_key in image_keys:
+        for i, image_key in enumerate(image_keys):
             card_jobs.import_card_from_image(
                 image_key,
                 collection_import.collection_id,
-                collection_import.id,
+                collection_import.pk,
+                name="%s-%d" % (name, i),
             )
 
         collection_import.status = CollectionImport.COMPLETED
