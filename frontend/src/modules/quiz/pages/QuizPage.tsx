@@ -1,21 +1,23 @@
 import {
     Box,
+    Button,
     CssBaseline,
     Grid,
     Typography,
     makeStyles,
 } from '@material-ui/core';
+import ConfettiExplosion from '@reonomy/react-confetti-explosion';
 import * as React from 'react';
 import { isBrowser } from 'react-device-detect';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
-import { generatePath } from 'react-router-dom';
+import { Link, generatePath } from 'react-router-dom';
 
 import Breadcrumbs from '../../../layouts/Breadcrumbs';
+import colours from '../../../utilities/colours';
 import routes from '../../../utilities/routes';
 import QuizCard from '../components/QuizCard';
 import { getAutomatedQuizEntity } from '../selectors';
-
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -34,6 +36,13 @@ const useStyles = makeStyles(() => ({
         fontSize: '2vh',
         paddingBottom: '2vh',
         paddingRight: '2vw',
+    },
+    link: {
+        color: colours.BLACK,
+        textDecoration: 'none',
+        '&:hover': {
+            color: colours.BLUE,
+        },
     },
 }));
 
@@ -69,13 +78,30 @@ const QuizPage: React.FC = () => {
                     ]} />
                     <Box display='flex' flexDirection='column' className={classes.root}>
                         <Box display='flex' height='100%' width='100%' flexDirection='row'>
-                            {!done ? (
+                            {done ? (
                                 <QuizCard cardId={cardIds[currentIndex]} onComplete={nextQuestion} />
                             ) :
                                 (
-                                    <Typography align='center' variant='h4' style={{ width: '100%' }}>
-                                                You&apos;ve completed the quiz!
-                                    </Typography>
+                                    <Grid container justifyContent='center' alignItems='center' direction='column' style={{ width: '100%' }}>
+                                        <ConfettiExplosion />
+                                        <Typography align='center' variant='h5' style={{ width: '100%' }}>
+                                            Well done, you&apos;ve completed your cards for today!
+                                        </Typography>
+                                        <Typography align='center' variant='h5' style={{ marginTop: '2vh', width: '100%' }}>
+                                            Time to take that well deserved break!
+                                        </Typography>
+                                        <Grid container justifyContent='center' alignItems='center' style={{ marginTop: '2vh', width: '100%' }}>
+                                            <Button>
+                                                <Link to={generatePath(routes.ROOT)} className={classes.link}>
+                                                    <Box display='flex' justifyContent='center' alignItems='center'>
+                                                        <Typography>
+                                                            Back Home
+                                                        </Typography>
+                                                    </Box>
+                                                </Link>
+                                            </Button>
+                                        </Grid>
+                                    </Grid>
                                 )}
                         </Box>
                     </Box>
