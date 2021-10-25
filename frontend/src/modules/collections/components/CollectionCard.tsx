@@ -149,6 +149,10 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
             });
     };
 
+    const handleGoDuplicated = () => {
+        history.push(`/collections/${data.duplicate_collection_id}`);
+    };
+
     return (
         <Card className={classes.root}>
             <Box className={classes.imageContainer}>
@@ -196,11 +200,21 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                                 View
                             </QTButton>
                         </Grid>
-                        {!isOwner && <Grid container item xs={3} alignItems='center'>
-                            <QTButton height='95%' width='95%' onClick={duplicateCollection}>
-                                Save to my collection
-                            </QTButton>
-                        </Grid>}
+                        {!isOwner &&
+                            (
+                                data.duplicate_collection_id ?
+                                    (<Grid container item xs={3} alignItems='center'>
+                                        <QTButton height='95%' width='95%' onClick={handleGoDuplicated}>
+                                            Go to duplicated copy
+                                        </QTButton>
+                                    </Grid>) :
+                                    (<Grid container item xs={3} alignItems='center'>
+                                        <QTButton height='95%' width='95%' onClick={duplicateCollection}>
+                                            Save to my collection
+                                        </QTButton>
+                                    </Grid>)
+                            )
+                        }
                         <Box flexGrow={1} />
                         {data.permissions.can_delete &&
                             <Box display='flex' minHeight='100%' style={{ paddingRight: '0.5vw' }} justifyContent='center' alignItems='center'>

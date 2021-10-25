@@ -23,8 +23,8 @@ class TimestampedModel(models.Model):
         request = get_request()
         if request:
             user = request.user
-            if user:
-                user_id = user.user_id
+            if user and user.is_authenticated:
+                user_id = user.pk
 
         if self._state.adding:
             self.created_at = get_default_current_timestamp()
