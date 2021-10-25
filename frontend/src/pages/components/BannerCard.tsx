@@ -17,16 +17,22 @@ import { CollectionMiniEntity } from '../../types/collections';
 import { QuizData } from '../../types/quiz';
 import colours from '../../utilities/colours';
 import routes from '../../utilities/routes';
-import { handleApiRequest } from '../../utilities/ui';
 import { UndoneCardsMap } from '../HomePage';
 
 import CollectionToggle from './CollectionToggle';
 
 const useStyles = makeStyles(() => ({
+    root: {
+        display: 'flex',
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     mainCard: {
         display: 'flex',
         borderRadius: '20px',
-        width: '100%',
+        height: 'auto',
+        width: '80%',
     },
     mainGrid: {
         height: '100%',
@@ -56,7 +62,6 @@ const useStyles = makeStyles(() => ({
         paddingRight: '2vw',
     },
     collectionCards: {
-        height: '6vh',
         width: '100%',
         marginBottom: '2vh',
     },
@@ -67,6 +72,9 @@ const useStyles = makeStyles(() => ({
         textTransform: 'none',
         '&:hover': {
             backgroundColor: colours.LIGHTBLUE,
+        },
+        '&:disabled': {
+            backgroundColor: colours.GREY,
         },
     },
     sideButtonText: {
@@ -106,7 +114,7 @@ const BannerCard: React.FC<Props> = (props: Props) => {
     };
 
     const startQuiz = () => {
-        const cardIds = undoneCardsMaps.flatMap(undoneCardsMap => undoneCardsMap.cards).map(cardMiniEntity => cardMiniEntity.id);
+        const cardIds = undoneCardsMaps.filter(map => !map.inactive).flatMap(undoneCardsMap => undoneCardsMap.cards).map(cardMiniEntity => cardMiniEntity.id);
         const quizData: QuizData = {
             cardIds: cardIds,
         };
@@ -124,7 +132,7 @@ const BannerCard: React.FC<Props> = (props: Props) => {
     }, [undoneCardsMaps]);
 
     return (
-        <>
+        <Box className={classes.root}>
             <Card className={classes.mainCard}>
                 <CardContent className={classes.cardContent}>
                     <Box display='flex' height='100%' width='100%' flexDirection='row'>
@@ -157,7 +165,7 @@ const BannerCard: React.FC<Props> = (props: Props) => {
                             </Grid>
                         </Grid>
                         <Grid className={classes.sideGrid}>
-                            <Button className={classes.sideGridButton} onClick={startQuiz}>
+                            <Button className={classes.sideGridButton} onClick={startQuiz} disabled={totalUndone <= 0}>
                                 <Typography className={classes.sideButtonText}>
                                     Start Learning
                                 </Typography>
@@ -166,7 +174,7 @@ const BannerCard: React.FC<Props> = (props: Props) => {
                     </Box>
                 </CardContent>
             </Card>
-        </>
+        </Box>
     );
 };
 

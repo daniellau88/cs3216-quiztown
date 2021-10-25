@@ -15,6 +15,8 @@ const useStyles = makeStyles(() => ({
         width: '10vw',
         borderRadius: '10px',
         border: '1px solid black',
+        marginRight: '1vw',
+        marginBottom: '1vh',
     },
     inactiveCollectionCard: {
         fontSize: '1.5vh',
@@ -22,6 +24,8 @@ const useStyles = makeStyles(() => ({
         width: '10vw',
         borderRadius: '10px',
         border: '1px solid black',
+        marginRight: '1vw',
+        marginBottom: '1vh',
         backgroundColor: colours.LIGHTGREY,
     },
 }));
