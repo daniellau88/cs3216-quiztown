@@ -62,7 +62,7 @@ const collectionsReducer = produce((draft: types.CollectionsState, action: types
             saveDeltaToCollection(draft.allPublicCollections, action.delta);
             return;
         }
-        case types.EDIT_TAG: {
+        case types.LOAD_TAGS: {
             draft.allTags = action.data;
             return;
         }

@@ -51,9 +51,9 @@ export function updatePublicCollectionList(delta: CollectionDelta): types.Update
     };
 }
 
-export function editTags(allTags: string[]): types.EditTagAction {
+export function loadTags(allTags: string[]): types.LoadTagsAction {
     return {
-        type: types.EDIT_TAG,
+        type: types.LOAD_TAGS,
         data: allTags,
     };
 }
