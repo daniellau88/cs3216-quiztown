@@ -156,6 +156,9 @@ def import_text(question: str, answer: str, collection_id: int):
 
 def duplicate_cards(old_collection_id: int, new_collection_id: int):
     for card_to_duplicate in Card.objects.filter(collection_id=old_collection_id):
+        if not card_to_duplicate.is_reviewed:
+            continue
+
         card = Card(name=card_to_duplicate.name,
                     collection_id=new_collection_id,
                     image_file_key=card_to_duplicate.image_file_key,
@@ -165,6 +168,6 @@ def duplicate_cards(old_collection_id: int, new_collection_id: int):
                     type=card_to_duplicate.type,
                     question=card_to_duplicate.question,
                     answer=card_to_duplicate.answer,
-                    collection_import_id=card_to_duplicate.collection_import_id,
+                    collection_import_id=0,  # Remove import cards from duplication
                     is_reviewed=True)
         card.save()
