@@ -5,9 +5,9 @@ import { Dispatch } from 'redux';
 import LoadingIndicator from '../../../components/content/LoadingIndicator';
 import { AppState } from '../../../types/store';
 import { handleApiRequest } from '../../../utilities/ui';
-import CardImage from '../../cards/components/CardImage';
+import CardImageEdit from '../../cards/components/CardImageEdit';
 import { loadCard, updateCard } from '../../cards/operations';
-import { formatCardData } from '../../cards/pages/CollectionsImageCardEditPage';
+import { formatCardData } from '../../cards/pages/CollectionsCardEditPage';
 import { getCardEntity } from '../../cards/selectors';
 
 interface OwnProps {
@@ -56,9 +56,8 @@ const CollectionReviewCard: React.FC<Props> = ({ cardId }) => {
     if (!card || !cardId) return null;
 
     return (
-        <CardImage
+        <CardImageEdit
             card={card}
-            isEditing={true}
             canvasRef={canvasRef}
             saveEdits={saveEditChanges}
         />

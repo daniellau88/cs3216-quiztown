@@ -8,7 +8,7 @@ import { CardEntity } from '../../../types/cards';
 import { CollectionMiniEntity } from '../../../types/collections';
 import { EntitySelection } from '../../../types/store';
 import { handleApiRequest } from '../../../utilities/ui';
-import CardImage from '../components/CardImage';
+import CardImageQuiz from '../components/CardImageQuiz';
 import { loadCard } from '../operations';
 
 interface OwnProps {
@@ -42,9 +42,8 @@ const CollectionsCardImage: React.FC<Props> = ({ collectionId, cardId, card }: P
                 <LoadingIndicator />
             )}
             {!isLoading && card && (
-                <CardImage
+                <CardImageQuiz
                     card={card}
-                    isEditing={false}
                 />
             )}
         </Grid>

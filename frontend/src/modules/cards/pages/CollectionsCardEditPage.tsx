@@ -20,7 +20,7 @@ import { AppState } from '../../../types/store';
 import routes from '../../../utilities/routes';
 import { handleApiRequest } from '../../../utilities/ui';
 import { getCollectionMiniEntity } from '../../collections/selectors';
-import CardImage from '../components/CardImage';
+import CardImageEdit from '../components/CardImageEdit';
 import CollectionsTextCardEdit from '../components/CollectionsTextEdit';
 import { loadCard, updateCard } from '../operations';
 import { getCardEntity } from '../selectors';
@@ -69,7 +69,7 @@ export const formatCardData = (answerBoxes: fabric.Object[]): AnswerData[] => {
 
 type Props = RouteComponentProps;
 
-const CollectionsImageCardEditPage: React.FC<Props> = ({ match: { params } }: RouteComponentProps) => {
+const CollectionsCardEditPage: React.FC<Props> = ({ match: { params } }: RouteComponentProps) => {
     const history = useHistory();
     const classes = useStyles();
     const dispatch = useDispatch();
@@ -150,9 +150,8 @@ const CollectionsImageCardEditPage: React.FC<Props> = ({ match: { params } }: Ro
                         <Grid item>
                             {!isLoading && card &&
                                 card.type == CardType.IMAGE
-                                ? <CardImage
+                                ? <CardImageEdit
                                     card={card}
-                                    isEditing={true}
                                     canvasRef={canvasRef}
                                     saveEdits={saveImageEditChanges}
                                 />
@@ -182,4 +181,4 @@ const CollectionsImageCardEditPage: React.FC<Props> = ({ match: { params } }: Ro
 
 };
 
-export default CollectionsImageCardEditPage;
+export default CollectionsCardEditPage;

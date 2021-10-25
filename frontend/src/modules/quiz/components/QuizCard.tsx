@@ -5,7 +5,7 @@ import LoadingIndicator from '../../../components/content/LoadingIndicator';
 import { CardType } from '../../../types/cards';
 import { AppState } from '../../../types/store';
 import { handleApiRequest } from '../../../utilities/ui';
-import CardImage from '../../cards/components/CardImage';
+import CardImageQuiz from '../../cards/components/CardImageQuiz';
 import CardText from '../../cards/components/CardText';
 import { loadCard } from '../../cards/operations';
 import { getCardEntity } from '../../cards/selectors';
@@ -20,8 +20,6 @@ type Props = OwnProps;
 const QuizCard: React.FC<Props> = (props: Props) => {
     const dispatch = useDispatch();
     const card = useSelector((state: AppState) => getCardEntity(state, props.cardId));
-
-    console.log(card);
 
     const [isLoading, setIsLoading] = React.useState(true);
 
@@ -45,9 +43,8 @@ const QuizCard: React.FC<Props> = (props: Props) => {
                     onComplete={props.onComplete}
                 />
                 :
-                <CardImage
+                <CardImageQuiz
                     card={card}
-                    isEditing={false}
                     onComplete={props.onComplete}
                 />
             )}

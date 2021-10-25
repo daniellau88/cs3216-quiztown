@@ -11,32 +11,25 @@ import SentimentVeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissa
 import SentimentVerySatisfiedIcon from '@material-ui/icons/SentimentVerySatisfied';
 import { fabric } from 'fabric';
 import Moment from 'moment';
-import React, { MutableRefObject, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 
-import StateManager from '../../../components/fabric/CanvasStateManager';
-import QTTextbox from '../../../components/fabric/QTTextbox';
 import { CardEntity, CardPostData } from '../../../types/cards';
-import colours from '../../../utilities/colours';
 import { useWindowDimensions } from '../../../utilities/customHooks';
 import { addDays, roundDownDay } from '../../../utilities/datetime';
 import { Feedback, getFeedbackSet } from '../../../utilities/leitner';
 import { handleApiRequest } from '../../../utilities/ui';
 import { updateCard } from '../operations';
 import {
-    FONT_SIZE,
-    initAnswerBoxes,
     initAnswerOptions,
+    initAnswerRectangles,
     initCorrectAnswersIndicator,
-    mergeTextboxes,
     resetToOriginalPosition,
     revealAnswer,
     updateCorrectAnswersIndicator,
     validateAnswer,
 } from '../utils';
-
-import CollectionsImageCardEditControls from './CollectionsImageCardEditControls';
 
 const MAX_CANVAS_WIDTH = 1280;
 const SCREEN_PADDING = 40;
@@ -64,19 +57,15 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-interface CardImageProps {
-    isEditing: boolean
+interface OwnProps {
     card: CardEntity
-    canvasRef?: MutableRefObject<fabric.Canvas | undefined>
-    saveEdits?: (isAutosave: boolean) => void
     onComplete?: () => void
 }
 
-const CardImage: React.FC<CardImageProps> = ({
-    isEditing,
+type Props = OwnProps
+
+const CardImageQuiz: React.FC<Props> = ({
     card,
-    canvasRef,
-    saveEdits,
     onComplete = () => { return; },
 }) => {
     const classes = useStyles();
@@ -92,7 +81,6 @@ const CardImage: React.FC<CardImageProps> = ({
     const CANVAS_ID = 'quiztown-canvas-' + id;
 
     const [canvas, setCanvas] = useState<fabric.Canvas>();
-    const [stateManager, setStateManager] = useState<StateManager>();
     const [hasAnsweredAll, setHasAnsweredAll] = useState(false);
     const [numGuesses, setNumGuesses] = useState(0); // TODO increment with user guess (both correct + wrong)
     const [numWrongGuesses, setNumWrongGuesses] = useState(0); // TODO increment with user guess (only wrong)
@@ -100,11 +88,9 @@ const CardImage: React.FC<CardImageProps> = ({
 
     const { windowHeight, windowWidth } = useWindowDimensions();
 
-    const canvasMaxWidth = isEditing
-        ? imageMetadata.width
-        : windowWidth - SCREEN_PADDING > MAX_CANVAS_WIDTH
-            ? MAX_CANVAS_WIDTH
-            : windowWidth;
+    const canvasMaxWidth = windowWidth - SCREEN_PADDING > MAX_CANVAS_WIDTH
+        ? MAX_CANVAS_WIDTH
+        : windowWidth;
     const canvasMaxHeight = imageMetadata.height;
     const imageXTranslation = Math.max(canvasMaxWidth - imageMetadata.width, 0) / 2;
 
@@ -115,20 +101,14 @@ const CardImage: React.FC<CardImageProps> = ({
             hoverCursor: 'pointer',
             targetFindTolerance: 2,
             backgroundColor: 'transparent',
-            selection: isEditing,
+            selection: false,
         });
-        return canvas;
-    };
-
-    const initEditingCanvas = () => {
-        const canvas = initCanvasWithBg();
-        initAnswerBoxes(canvas, isEditing, result, imageXTranslation);
         return canvas;
     };
 
     const initQuizingCanvas = () => {
         const canvas = initCanvasWithBg();
-        const answersCoordsMap = initAnswerBoxes(canvas, isEditing, result, imageXTranslation);
+        const answersCoordsMap = initAnswerRectangles(canvas, result, imageXTranslation);
         const optionsCoordsMap = initAnswerOptions(canvas, result);
         const answersIndicator = initCorrectAnswersIndicator(canvas, result);
         canvas.on('object:moving', (e) => {
@@ -156,17 +136,8 @@ const CardImage: React.FC<CardImageProps> = ({
     };
 
     useEffect(() => {
-        const canvas = isEditing ? initEditingCanvas() : initQuizingCanvas();
-        if (canvasRef) {
-            canvasRef.current = canvas;
-        }
-        const stateManager = new StateManager(canvas);
-        canvas.on('object:modified', () => {
-            stateManager.saveState();
-            saveEdits && saveEdits(true);
-        });
+        const canvas = initQuizingCanvas();
         setCanvas(canvas);
-        setStateManager(stateManager);
     }, []);
 
     useEffect(() => {
@@ -180,36 +151,6 @@ const CardImage: React.FC<CardImageProps> = ({
     const stopTime = async () => {
         const endTime = Moment();
         setTimeTaken(Moment.duration(endTime.diff(startTime)).seconds());
-    };
-
-    const addAnswerOption = () => {
-        if (!canvas) return;
-        canvas.add(new QTTextbox('Answer Option', {
-            hasBorders: false,
-            borderColor: colours.BLACK,
-            backgroundColor: colours.WHITE,
-            stroke: colours.BLACK,
-            fontSize: FONT_SIZE,
-        }));
-        stateManager?.saveState();
-        saveEdits && saveEdits(true);
-    };
-
-    const deleteAnswerOption = () => {
-        if (!canvas) return;
-        const activeObjects = canvas.getActiveObjects();
-        activeObjects.forEach(object => canvas.remove(object));
-        canvas.discardActiveObject();
-        stateManager?.saveState();
-        saveEdits && saveEdits(true);
-    };
-
-    const mergeAnswerOption = () => {
-        if (!canvas) return;
-        const activeObjects = canvas.getActiveObjects();
-        mergeTextboxes(canvas, activeObjects);
-        stateManager?.saveState();
-        saveEdits && saveEdits(true);
     };
 
     const revealAllAnswers = () => {
@@ -238,15 +179,6 @@ const CardImage: React.FC<CardImageProps> = ({
         <>
             <CssBaseline />
             <Grid container direction='column' className={classes.root}>
-                {isEditing &&
-                    <CollectionsImageCardEditControls
-                        undo={() => stateManager?.undo()}
-                        redo={() => stateManager?.redo()}
-                        addOption={addAnswerOption}
-                        deleteOption={deleteAnswerOption}
-                        mergeOption={mergeAnswerOption}
-                    />
-                }
                 <Box display="flex" justifyContent='center' width='100%'>
                     <Box
                         className={classes.imageContainer}
@@ -264,7 +196,7 @@ const CardImage: React.FC<CardImageProps> = ({
                     />
                 </Box>
                 <Grid item className={classes.showAnswerContainer}>
-                    {!isEditing && !hasAnsweredAll && (
+                    {!hasAnsweredAll && (
                         <Button
                             className={classes.showAnswer}
                             onClick={revealAllAnswers}
@@ -297,4 +229,4 @@ const CardImage: React.FC<CardImageProps> = ({
     );
 };
 
-export default CardImage;
+export default CardImageQuiz;
