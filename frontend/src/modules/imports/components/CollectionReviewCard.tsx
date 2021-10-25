@@ -7,7 +7,7 @@ import { AppState } from '../../../types/store';
 import { handleApiRequest } from '../../../utilities/ui';
 import CardImage from '../../cards/components/CardImage';
 import { loadCard, updateCard } from '../../cards/operations';
-import { formatCardData } from '../../cards/pages/CollectionsImageCardEditPage';
+import { formatCardData } from '../../cards/pages/CollectionsCardEditPage';
 import { getCardEntity } from '../../cards/selectors';
 
 interface OwnProps {

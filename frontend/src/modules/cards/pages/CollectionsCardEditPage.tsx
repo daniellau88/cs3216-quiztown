@@ -69,7 +69,7 @@ export const formatCardData = (answerBoxes: fabric.Object[]): AnswerData[] => {
 
 type Props = RouteComponentProps;
 
-const CollectionsImageCardEditPage: React.FC<Props> = ({ match: { params } }: RouteComponentProps) => {
+const CollectionsCardEditPage: React.FC<Props> = ({ match: { params } }: RouteComponentProps) => {
     const history = useHistory();
     const classes = useStyles();
     const dispatch = useDispatch();
@@ -182,4 +182,4 @@ const CollectionsImageCardEditPage: React.FC<Props> = ({ match: { params } }: Ro
 
 };
 
-export default CollectionsImageCardEditPage;
+export default CollectionsCardEditPage;
