@@ -1,9 +1,32 @@
 from rest_framework import serializers
 
-from .models import User
+from .models import User, UserSettings
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["email", "name", "profile_picture_link", "user_id"]
+
+
+class UserSettingsCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserSettings
+        fields = ["settings_key", "settings_value"]
+
+
+class UserSettingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserSettings
+        fields = ["id", "user_id", "settings_key",
+                  "settings_value", "created_at"]
+
+
+class UserSettingsRequestSerializer(serializers.Serializer):
+    imports = UserSettingsCreateSerializer(many=True)
+
+
+class UserSettingsUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserSettings
+        fields = ["settings_value"]
