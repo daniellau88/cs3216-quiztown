@@ -4,9 +4,16 @@ from .models import User, UserSettings
 
 
 class UserSerializer(serializers.ModelSerializer):
+    settings = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ["email", "name", "profile_picture_link", "user_id"]
+        fields = ["email", "name", "profile_picture_link", "user_id", "settings"]
+
+    def get_settings(self, obj):
+        settings = UserSettings.objects.filter(
+            user_id=obj.id)
+        return settings
 
 
 class UserSettingsCreateSerializer(serializers.ModelSerializer):

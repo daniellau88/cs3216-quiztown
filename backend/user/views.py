@@ -26,8 +26,9 @@ def add_user_settings_view(request, serializer):
     user_setting_instances = []
 
     for user_setting_data in serializer.data["settings"]:
-        settings = UserSettings.objects.filter(user_id=request.user.user_id,
-                                               file_key=user_setting_data.file_key)
+        settings = UserSettings.objects.filter(
+            user_id=request.user.user_id,
+            settings_key=user_setting_data.settings_key)
         if settings:
             updateSerializer = serializers.UserSettingsUpdateSerializer(
                 settings,
