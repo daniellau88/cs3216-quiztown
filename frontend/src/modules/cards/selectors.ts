@@ -21,3 +21,7 @@ export function getCardEntity(state: AppState, id: SelectionKey): EntitySelectio
 export function getCollectionCardList(state: AppState, id: SelectionKey): EntityCollection {
     return selectCollectionFromSet(getLocalState(state).collectionCards, id);
 }
+
+export function getUndoneCardList(state: AppState): EntityCollection {
+    return getLocalState(state).undoneCards;
+}

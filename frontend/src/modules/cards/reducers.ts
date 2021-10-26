@@ -23,6 +23,11 @@ const initialState: types.CardsState = {
             'is_reviewed': 0,
         },
     }),
+    undoneCards: createEntityCollection({
+        filters: {
+            'is_reviewed': 1,
+        },
+    }),
 };
 
 const cardsReducer = produce((draft: types.CardsState, action: types.CardsActionTypes) => {
@@ -82,6 +87,10 @@ const cardsReducer = produce((draft: types.CardsState, action: types.CardsAction
         }
         case types.UPDATE_COLLECTION_IMPORT_CARD_LIST: {
             saveDeltaToCollectionSet(draft.importCards, action.collectionImportId, action.delta);
+            return;
+        }
+        case types.UPDATE_UNDONE_CARD_LIST: {
+            saveDeltaToCollection(draft.undoneCards, action.delta);
             return;
         }
         case types.RESET_COLLECTION_CARD_LIST: {

@@ -9,7 +9,7 @@ import {
 import ConfettiExplosion from '@reonomy/react-confetti-explosion';
 import * as React from 'react';
 import { isBrowser } from 'react-device-detect';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import { Link, generatePath } from 'react-router-dom';
 
@@ -17,7 +17,8 @@ import Breadcrumbs from '../../../layouts/Breadcrumbs';
 import colours from '../../../utilities/colours';
 import routes from '../../../utilities/routes';
 import QuizCard from '../components/QuizCard';
-import { getAutomatedQuizEntity } from '../selectors';
+import { incrementCurrentIndex, resetAutomatedQuiz } from '../operations';
+import { getAutomatedQuizEntity, getCurrentIndex } from '../selectors';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -49,7 +50,8 @@ const useStyles = makeStyles(() => ({
 const QuizPage: React.FC = () => {
     const classes = useStyles();
     const history = useHistory();
-    const [currentIndex, setCurrentIndex] = React.useState<number>(0);
+    const dispatch = useDispatch();
+    const currentIndex = useSelector(getCurrentIndex);
     const [done, setDone] = React.useState<boolean>(false);
 
     const quizEntity = useSelector(getAutomatedQuizEntity);
@@ -62,9 +64,10 @@ const QuizPage: React.FC = () => {
 
     const nextQuestion = () => {
         if (currentIndex + 1 < totalCards) {
-            setCurrentIndex(currentIndex + 1);
+            dispatch(incrementCurrentIndex());
         } else {
             setDone(true);
+            dispatch(resetAutomatedQuiz());
         }
     };
 

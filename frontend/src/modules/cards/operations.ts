@@ -5,6 +5,7 @@ import { CardData, CardEntity, CardListData, CardPostData } from '../../types/ca
 import { CollectionsImportTextPostData } from '../../types/collections';
 import { CollectionOptions, EntityCollection, NormalizeOperation, Operation } from '../../types/store';
 import { batched, queryEntityCollection, queryEntityCollectionSet, withCachedEntity } from '../../utilities/store';
+import { getCurrentUser } from '../auth/selectors';
 
 import * as actions from './actions';
 import { getAllCards, getCardEntity, getCardMiniEntity, getCollectionCardList } from './selectors';
@@ -133,6 +134,35 @@ export function loadCollectionImportCards(collectionImportId: number, options: C
                 return response;
             },
             (delta) => dispatch(actions.updateCollectionImportCardList(collectionImportId, delta)),
+        );
+    };
+}
+
+export function loadUndoneCards(options: CollectionOptions): Operation<ApiResponse<EntityCollection>> {
+    return (dispatch, getState) => {
+        return queryEntityCollection(
+            () => getState().cards.undoneCards,
+            options,
+            async (params) => {
+                const newParams = {
+                    ...params,
+                    filters: {
+                        ...params.filters,
+                    },
+                };
+
+                // Add owner id to query
+                const user = getCurrentUser(getState());
+                if (user) {
+                    newParams.filters.owner_id = user.user_id;
+                }
+
+                const response = await api.cards.getCardList(newParams);
+                const data = response.payload.items;
+                batched(dispatch, saveCardList(data));
+                return response;
+            },
+            (delta) => dispatch(actions.updateUndoneCardList(delta)),
         );
     };
 }

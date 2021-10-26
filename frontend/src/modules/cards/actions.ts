@@ -62,6 +62,13 @@ export function updateCollectionImportCardList(collectionImportId: number, delta
     };
 }
 
+export function updateUndoneCardList(delta: CollectionDelta): types.UpdateUndoneCardListAction {
+    return {
+        type: types.UPDATE_UNDONE_CARD_LIST,
+        delta,
+    };
+}
+
 export function resetCollectionCardList(collectionId: number): types.ResetCollectionCardListAction {
     return {
         type: types.RESET_COLLECTION_CARD_LIST,

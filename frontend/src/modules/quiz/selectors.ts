@@ -9,3 +9,7 @@ function getLocalState(state: AppState) {
 export function getAutomatedQuizEntity(state: AppState): EntitySelection<QuizEntity> {
     return selectEntity(getLocalState(state).quiz, QuizType.AUTOMATED);
 }
+
+export function getCurrentIndex(state: AppState): number {
+    return getLocalState(state).currentIndex;
+}

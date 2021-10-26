@@ -2,6 +2,7 @@ from django.conf import settings
 from rest_framework import serializers
 
 from collection import helpers as collection_helpers
+from collection.models import Collection
 from quiztown.common import serializers as commmon_serializers
 
 from .models import Card
@@ -15,6 +16,10 @@ class CardListFilterSerializer(serializers.Serializer):
     is_reviewed = serializers.IntegerField(required=False)
     collection_import_id = serializers.IntegerField(required=False)
     next_date = commmon_serializers.DateRangeSerializer(required=False)
+    owner_id = serializers.IntegerField(required=False)
+
+    def get_owner_id_filter(self, value):
+        return ("collection_id__in", Collection.objects.filter(owner_id=value).values_list('id', flat=True))
 
 
 class CardListSerializer(serializers.ModelSerializer):

@@ -11,6 +11,7 @@ export const EDIT_CARD = 'cards/EDIT_CARD';
 export const DELETE_CARD = 'cards/DELETE_CARD';
 export const UPDATE_COLLECTION_CARD_LIST = 'cards/UPDATE_COLLECTION_CARD_LIST';
 export const UPDATE_COLLECTION_IMPORT_CARD_LIST = 'cards/UPDATE_COLLECTION_IMPORT_CARD_LIST';
+export const UPDATE_UNDONE_CARD_LIST = 'cards/UPDATE_UNDONE_CARD_LIST';
 export const RESET_COLLECTION_CARD_LIST = 'cards/RESET_COLLECTION_CARD_LIST';
 
 // Action Types
@@ -58,6 +59,11 @@ export interface UpdateCollectionImportCardListAction {
     delta: CollectionDelta;
 }
 
+export interface UpdateUndoneCardListAction {
+    type: typeof UPDATE_UNDONE_CARD_LIST;
+    delta: CollectionDelta;
+}
+
 export interface ResetCollectionCardListAction {
     type: typeof RESET_COLLECTION_CARD_LIST;
     collectionId: number;
@@ -72,6 +78,7 @@ export type CardsActionTypes =
     DeleteCardAction |
     UpdateCollectionCardListAction |
     UpdateCollectionImportCardListAction |
+    UpdateUndoneCardListAction |
     ResetCollectionCardListAction;
 
 // State Types
@@ -80,4 +87,5 @@ export interface CardsState {
     cards: EntityStore<CardMiniEntity, CardEntity>;
     collectionCards: EntityCollectionSet;
     importCards: EntityCollectionSet;
+    undoneCards: EntityCollection;
 }
