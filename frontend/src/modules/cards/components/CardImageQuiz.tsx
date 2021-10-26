@@ -30,6 +30,7 @@ import {
     initImageBoundingBox,
     resetToOriginalPosition,
     revealAnswer,
+    shiftAnswerOptionsUp,
     updateCorrectAnswersIndicator,
     validateAnswer,
 } from '../utils'; 
@@ -109,14 +110,14 @@ const CardImageQuiz: React.FC<Props> = ({
             selection: false,
         });
 
-        const answersIndicator = initCorrectAnswersIndicator(canvas, result);
         const optionsCoordsMap = initAnswerOptions(canvas, result);
         initAnswerOptionsBoundingBox(canvas, answerOptionsContainerWidth);
         initImageBoundingBox(canvas, answerOptionsContainerWidth, imageContainerWidth);
         fabric.Image.fromURL(imageUrl, function (img) {
             canvas.add(img);
             // We need this to have the answer options at a lower z-index, and the covering rectangles at a higher z-index
-            for (let i = 0; i < result.length; i++) {
+            // The +1 in `results.length + 1` is for the correctAnswersIndicator object
+            for (let i = 0; i < result.length + 1; i++) {
                 img.sendBackwards();
             }
         }, {
@@ -126,6 +127,7 @@ const CardImageQuiz: React.FC<Props> = ({
             selectable: false,
         });
         const answersCoordsMap = initAnswerRectangles(canvas, result, imageXTranslation, imageScaleX, imageScaleY);
+        const answersIndicator = initCorrectAnswersIndicator(canvas, result);
 
         canvas.on('object:moving', (e) => {
             if (e.target) {
@@ -142,6 +144,7 @@ const CardImageQuiz: React.FC<Props> = ({
             if (isAnswerCorrect) {
                 canvas.remove(e.target);
                 revealAnswer(answersCoordsMap, text, canvas);
+                shiftAnswerOptionsUp(canvas, optionsCoordsMap, text);
                 stopTime().then(() => setHasAnsweredAll(updateCorrectAnswersIndicator(answersIndicator)));
             } else {
                 e.target.opacity = 1;

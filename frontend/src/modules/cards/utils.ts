@@ -173,6 +173,7 @@ export const initCorrectAnswersIndicator = (
         fontSize: FONT_SIZE,
     });
     canvas.add(correctAnswersIndicator);
+    correctAnswersIndicator.bringToFront();
     return correctAnswersIndicator;
 };
 
@@ -214,6 +215,42 @@ export const revealAnswer = (
     if (!answerData) return;
 
     canvas.remove(answerData);
+};
+
+export const shiftAnswerOptionsUp = (
+    canvas: fabric.Canvas,
+    optionsCoordsMap: Map<string, fabric.Point>,
+    text: fabric.Text,
+): void => {
+    const textContent = text.get('text');
+    const heightTreshold = canvas.getHeight();
+    if (!textContent) return;
+
+    const coordToReplace = optionsCoordsMap.get(textContent);
+    if (!coordToReplace) return;
+
+    optionsCoordsMap.delete(textContent);
+    const allObjects = canvas.getObjects();
+
+    for (let idx = 0; idx < allObjects.length; idx++) {
+        const object = allObjects[idx];
+        if (object.type == 'QTText') {
+            const top = object.top;
+            if (!top) continue;
+            const isTextOutOfBounds = top > heightTreshold;
+
+            if (!isTextOutOfBounds) continue;
+
+            const movedTextbox = object as fabric.Text;
+            const movedTextboxText = movedTextbox.get('text');
+            if (!movedTextboxText) continue;
+
+            object.top = coordToReplace.y;
+            object.setCoords();
+            optionsCoordsMap.set(movedTextboxText, coordToReplace);
+            break;
+        }
+    }
 };
 
 export const resetToOriginalPosition = (
