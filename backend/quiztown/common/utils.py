@@ -139,7 +139,7 @@ def filter_model_by_get_request(
                                    get_error_messages_from_serializer(filter_serializer))
 
         for field, value in filter_serializer.data.items():
-            get_filter_method_name = 'get_%s_filter' % field
+            get_filter_method_name = "get_%s_filter" % field
             if hasattr(filter_serializer, get_filter_method_name):
                 get_filter_method = getattr(filter_serializer, get_filter_method_name)
                 field, value = get_filter_method(value)

@@ -1,4 +1,4 @@
-import { CollectionMiniEntity } from '../../types/collections';
+import { CollectionMiniEntity, TagData } from '../../types/collections';
 import { AppState, EntityCollection, EntitySelection, SelectionKey } from '../../types/store';
 import { selectMiniEntity } from '../../utilities/store';
 
@@ -18,6 +18,6 @@ export function getAllPublicCollections(state: AppState): EntityCollection {
     return getLocalState(state).allPublicCollections;
 }
 
-export function getAllTags(state: AppState): string[] {
+export function getAllTags(state: AppState): TagData[] {
     return getLocalState(state).allTags;
 }

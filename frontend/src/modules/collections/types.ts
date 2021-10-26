@@ -1,4 +1,4 @@
-import { CollectionListData, CollectionMiniEntity } from '../../types/collections';
+import { CollectionListData, CollectionMiniEntity, TagData } from '../../types/collections';
 import { CollectionDelta, EntityCollection, EntityStore } from '../../types/store';
 
 // Action Names
@@ -51,7 +51,7 @@ export interface UpdatePublicCollectionListAction {
 
 export interface LoadTagsAction {
     type: typeof LOAD_TAGS;
-    data: string[];
+    data: TagData[];
 }
 
 export interface ResetCollectionAction {
@@ -75,5 +75,5 @@ export interface CollectionsState {
     allCollections: EntityCollection;
     collections: EntityStore<CollectionMiniEntity, CollectionMiniEntity>;
     allPublicCollections: EntityCollection;
-    allTags: string[];
+    allTags: TagData[];
 }

@@ -121,6 +121,12 @@ class CollectionImportRequestSerializer(serializers.Serializer):
 class CollectionListFilterSerializer(serializers.Serializer):
     private = serializers.IntegerField(required=False)
     owner_id = serializers.IntegerField(required=False)
+    tags = serializers.ListField(required=False, child=serializers.IntegerField())
+
+    def get_tags_filter(self, value):
+        collection_ids = CollectionTag.objects.filter(
+            tag_id__in=value).values_list("collection_id", flat=True)
+        return ("id__in", collection_ids)
 
 
 class TagSerializer(serializers.ModelSerializer):

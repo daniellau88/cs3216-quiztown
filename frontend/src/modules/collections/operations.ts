@@ -102,8 +102,7 @@ export function getAllCollectionTags(): Operation<ApiResponse<CollectionTagsData
     return async (dispatch) => {
         const response = await api.collections.getAllCollectionTags();
         const allTags = response.payload.items;
-        const formattedTags = allTags.map(item => item.name);
-        dispatch(actions.loadTags(formattedTags));
+        dispatch(actions.loadTags(allTags));
         return response;
     };
 }
