@@ -1,15 +1,24 @@
 import {
     Box,
+    Card,
+    CardContent,
     CssBaseline,
+    Grid,
     Typography,
     makeStyles,
 } from '@material-ui/core';
-import moment from 'moment';
+import HelpIcon from '@material-ui/icons/Help';
+import SearchIcon from '@material-ui/icons/Search';
+import Moment from 'moment';
 import * as React from 'react';
+import { isBrowser } from 'react-device-detect';
+import HorizontalTimeline from 'react-horizontal-timeline';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, generatePath } from 'react-router-dom';
+import { Link, generatePath, useHistory } from 'react-router-dom';
 
 import LoadingIndicator from '../components/content/LoadingIndicator';
+import GoogleSignInButton from '../modules/auth/components/GoogleSignInButton';
+import { getIsAuthenticated } from '../modules/auth/selectors';
 import { loadAllCards } from '../modules/cards/operations';
 import { getAllCards, getCardMiniEntity } from '../modules/cards/selectors';
 import { loadAllCollections } from '../modules/collections/operations';
@@ -18,27 +27,41 @@ import { CardMiniEntity } from '../types/cards';
 import { CollectionMiniEntity } from '../types/collections';
 import { AppState, EntityCollection } from '../types/store';
 import colours from '../utilities/colours';
-import { dateToISOFormat } from '../utilities/datetime';
+import { addDays, dateToISOFormat, roundDownDay } from '../utilities/datetime';
 import { multiselect } from '../utilities/multiselect';
 import routes from '../utilities/routes';
 import { handleApiRequests } from '../utilities/ui';
 
 import BannerCard from './components/BannerCard';
-import WeekOutlook from './components/WeekOutlook';
+import '../assets/css/timeline.css';
 
 const useStyles = makeStyles(() => ({
     root: {
         display: 'flex',
         justifyContent: 'center',
+        alignItems: 'center',
         paddingBottom: '80px',
+    },
+    mainGrid: {
+        height: '100%',
+        width: '90%',
     },
     mainCard: {
         display: 'flex',
-        borderRadius: '20px',
+        borderRadius: '40px',
         width: '100%',
     },
     cardContent: {
-        paddingLeft: '2vw',
+        paddingTop: '2vh',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+        width: '100%',
+    },
+    iconStyle: {
+        height: '16vw',
+        width: '100%',
+        color: colours.BLUE,
     },
     headerText: {
         fontSize: '4vh',
@@ -49,6 +72,23 @@ const useStyles = makeStyles(() => ({
         '&:hover': {
             textDecoration: 'underline',
         },
+    },
+    loginCard: {
+        height: '100%',
+        width: '95%',
+        borderRadius: '2vw',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    promptCard: {
+        height: '100%',
+        width: '90%',
+        borderRadius: '2vw',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    promptCardText: {
+        fontSize: isBrowser ? '3.2vh' : '3.6vw',
     },
 }));
 
@@ -61,8 +101,11 @@ export interface UndoneCardsMap {
 const HomePage: React.FC<{}> = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
+    const history = useHistory();
+    const [days, setDays] = React.useState<number>(0);
 
     const allCollections: EntityCollection = useSelector(getAllCollections);
+    const authenticated: boolean = useSelector(getIsAuthenticated);
     const collectionIds = allCollections.ids;
 
     const collectionsHash: any = useSelector((state: AppState) =>
@@ -97,7 +140,7 @@ const HomePage: React.FC<{}> = () => {
         setIsLoading(true);
         const undoneCardFilter = {
             next_date: {
-                end: dateToISOFormat(moment().add(7, 'days').toDate()),
+                end: dateToISOFormat(Moment().add(7, 'days').toDate()),
             },
         };
         handleApiRequests(
@@ -107,26 +150,83 @@ const HomePage: React.FC<{}> = () => {
         ).finally(() => setIsLoading(false));
     }, [dispatch]);
 
-    // TODO remove debug tool once workflow (to start quiz) is complete
-    const onUpdate = () => {
-        console.log(undoneCardsMaps);
-    };
+    const TIMELINE_VALUES = [0, 1, 2, 3, 4, 5, 6].map(days => Moment().add(days, 'days').format());
+
+    const undoneCardsPerDayMaps: UndoneCardsMap[][] = [];
+    for (let i = 0; i < 8; i++) {
+        const undoneCardsMaps: UndoneCardsMap[] = [];
+        const day = roundDownDay(addDays(new Date(), i));
+        for (const c of collections.map(c => c.id)) {
+            undoneCardsMaps.push({ collectionId: c, cards: cards.filter(card => card.collection_id == c).filter(card => Moment(card.next_date).diff(Moment(day)) < 0) });
+        }
+        undoneCardsPerDayMaps.push(undoneCardsMaps);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    React.useEffect(() => {
+    }, [days]);
 
     if (isLoading) {
         return <LoadingIndicator></LoadingIndicator>;
     }
+
+    // Not logged in - login, discover, info
+    // Logged in - discover, info
 
     if (collections.length == 0) {
         return (
             <>
                 <CssBaseline />
                 <Box className={classes.root}>
-                    <Typography className={classes.headerText}>
-                        You have no collections at the moment! Click&nbsp;
-                        <Link to={generatePath(routes.COLLECTIONS.NEW)} className={classes.link}>
-                            here
-                        </Link> to add one.
-                    </Typography>
+                    <Grid container className={classes.mainGrid}>
+                        {!authenticated ? (
+                            <Grid container item xs={12} justifyContent='center' alignItems='center' style={{ marginBottom: '5vh' }}>
+                                <Card className={classes.loginCard}>
+                                    <CardContent className={classes.cardContent}>
+                                        <Typography align='center' className={classes.promptCardText} >
+                                            Login to create your own collections and start your learning!
+                                        </Typography>
+                                        <GoogleSignInButton />
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                        ) : (
+                            <Grid container item xs={12} justifyContent='center' alignItems='center' style={{ marginBottom: '5vh' }}>
+                                <Card className={classes.loginCard}>
+                                    <CardContent className={classes.cardContent}>
+                                        <Typography align='center' className={classes.promptCardText} >
+                                            Create your own collection&nbsp;
+                                            <Link to={generatePath(routes.COLLECTIONS.NEW)} className={classes.link}>
+                                                here
+                                            </Link>!
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                        )}
+                        <Grid container item xs={6} justifyContent='center' alignItems='center'>
+                            <Card className={classes.promptCard} onClick={() => history.push(generatePath(routes.COLLECTIONS.DISCOVER))}>
+                                <CardContent className={classes.cardContent}>
+                                    <Typography align='center' className={classes.promptCardText} style={{ marginBottom: '1vh' }}>
+                                        Find collections to try out!
+                                    </Typography>
+                                    <Grid item justifyContent='center' alignItems='center' style={{ width: '100%' }}>
+                                        <SearchIcon className={classes.iconStyle} />
+                                    </Grid>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        <Grid container item xs={6} justifyContent='center' alignItems='center'>
+                            <Card className={classes.promptCard} onClick={() => history.push(generatePath(routes.INFO))}>
+                                <CardContent className={classes.cardContent}>
+                                    <Typography align='center' className={classes.promptCardText} style={{ marginBottom: '1vh' }}>
+                                        Learn more about QuizTown!
+                                    </Typography>
+                                    <HelpIcon className={classes.iconStyle} />
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    </Grid>
                 </Box>
             </>
         );
@@ -136,8 +236,21 @@ const HomePage: React.FC<{}> = () => {
         <>
             <CssBaseline />
             <Box display='flex' flexDirection='column' className={classes.root}>
-                <BannerCard undoneCardsMaps={undoneCardsMaps} collections={collections} onChange={onUpdate} />
-                <WeekOutlook collections={collections} cards={cards} onChange={onUpdate} />
+                <Box style={{ height: '10vh', width: '80%', margin: '0 auto' }}>
+                    <HorizontalTimeline
+                        index={days}
+                        linePadding={60}
+                        maxEventPadding={isBrowser ? 80 : 20}
+                        indexClick={(index: number) => {
+                            setDays(index);
+                        }}
+                        values={TIMELINE_VALUES} />
+                </Box>
+                <BannerCard
+                    undoneCardsMaps={undoneCardsPerDayMaps[days]}
+                    collections={collections}
+                    onChange={() => { return; }}
+                />
             </Box>
         </>
     );

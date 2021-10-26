@@ -67,6 +67,15 @@ const useStyles = makeStyles(() => ({
     cardContent: {
         width: '100%',
     },
+    green: {
+        color: colours.GREEN,
+    },
+    yellow: {
+        color: colours.YELLOW,
+    },
+    red: {
+        color: colours.RED,
+    },
 }));
 
 interface CardTextProps {
@@ -161,11 +170,11 @@ const CardText: React.FC<CardTextProps> = ({
                                 </Typography>
                                 <Box display='flex' alignItems='center' justifyContent='center' style={{ width: '95%' }}>
                                     {getFeedbackSet(timeTaken, 0, 0, 0, boxNumber).map((feedback: Feedback, index: number) => {
-                                        return <Button key={index} onClick={() => sendUpdate(feedback)}>
+                                        return <Button key={index} onClick={() => sendUpdate(feedback)} className={index == 0 ? classes.red : index == 1 ? classes.yellow : classes.green}>
                                             <Grid container alignItems='center' justifyContent='center' direction='column'>
                                                 {index == 0 ? <SentimentVeryDissatisfiedIcon /> : index == 1 ? <SentimentSatisfiedIcon /> : <SentimentVerySatisfiedIcon />}
                                                 <Typography align='center'>
-                                                    Interval: {feedback.intervalLength}
+                                                    You&apos;ll see this card<br /> again in {feedback.intervalLength} day{feedback.intervalLength == 1 ? '' : 's'}.
                                                 </Typography>
                                             </Grid>
                                         </Button>;

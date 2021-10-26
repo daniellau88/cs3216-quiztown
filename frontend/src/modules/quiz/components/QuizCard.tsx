@@ -1,3 +1,5 @@
+import { CssBaseline, Grid, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -9,7 +11,18 @@ import CardImageQuiz from '../../cards/components/CardImageQuiz';
 import CardText from '../../cards/components/CardText';
 import { loadCard } from '../../cards/operations';
 import { getCardEntity } from '../../cards/selectors';
+import { loadCollection } from '../../collections/operations';
+import { getCollectionMiniEntity } from '../../collections/selectors';
 
+const useStyles = makeStyles(() => ({
+    root: {
+        display: 'flex',
+        paddingTop: '20px',
+    },
+    fullWidth: {
+        width: '100%',
+    },
+}));
 interface OwnProps {
     cardId: number
     onComplete: () => void
@@ -18,8 +31,10 @@ interface OwnProps {
 type Props = OwnProps;
 
 const QuizCard: React.FC<Props> = (props: Props) => {
+    const classes = useStyles();
     const dispatch = useDispatch();
     const card = useSelector((state: AppState) => getCardEntity(state, props.cardId));
+    const collection = useSelector((state: AppState) => getCollectionMiniEntity(state, card?.collection_id));
 
     const [isLoading, setIsLoading] = React.useState(true);
 
@@ -31,23 +46,41 @@ const QuizCard: React.FC<Props> = (props: Props) => {
         ).finally(() => setIsLoading(false));
     }, [dispatch, props.cardId]);
 
+    React.useEffect(() => {
+        if (card) {
+            setIsLoading(true);
+            handleApiRequest(
+                dispatch,
+                dispatch(loadCollection(card?.collection_id)),
+            ).finally(() => setIsLoading(false));
+        }
+    }, [dispatch, card]);
+
     return (
         <>
+            <CssBaseline />
             {isLoading && (
                 <LoadingIndicator />
             )}
-            {!isLoading && card && (card.type == CardType.TEXT ?
-                <CardText
-                    card={card}
-                    isEditing={false}
-                    onComplete={props.onComplete}
-                />
-                :
-                <CardImageQuiz
-                    card={card}
-                    onComplete={props.onComplete}
-                />
-            )}
+            <Grid container direction='column' className={classes.root}>
+                <Grid container item alignItems='center' className={classes.fullWidth}>
+                    <Typography align='center' variant='h5' style={{ width: '100%' }}>
+                        {collection?.name ? collection?.name : 'Untitled Collection'}: {card?.name ? card?.name : 'Untitled Card'}
+                    </Typography>
+                </Grid>
+                {!isLoading && card && (card.type == CardType.TEXT ?
+                    <CardText
+                        card={card}
+                        isEditing={false}
+                        onComplete={props.onComplete}
+                    />
+                    :
+                    <CardImageQuiz
+                        card={card}
+                        onComplete={props.onComplete}
+                    />
+                )}
+            </Grid>
         </>
     );
 

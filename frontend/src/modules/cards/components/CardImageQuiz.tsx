@@ -16,6 +16,7 @@ import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 
 import { CardEntity, CardPostData } from '../../../types/cards';
+import colours from '../../../utilities/colours';
 import { useWindowDimensions } from '../../../utilities/customHooks';
 import { addDays, roundDownDay } from '../../../utilities/datetime';
 import { Feedback, getFeedbackSet } from '../../../utilities/leitner';
@@ -54,6 +55,15 @@ const useStyles = makeStyles(() => ({
         width: '10vw',
         borderRadius: '10px',
         border: '1px solid black',
+    },
+    green: {
+        color: colours.GREEN,
+    },
+    yellow: {
+        color: colours.YELLOW,
+    },
+    red: {
+        color: colours.RED,
     },
 }));
 
@@ -195,7 +205,7 @@ const CardImageQuiz: React.FC<Props> = ({
                         height={canvasMaxHeight}
                     />
                 </Box>
-                <Grid item className={classes.showAnswerContainer}>
+                <Grid container className={classes.showAnswerContainer}>
                     {!hasAnsweredAll && (
                         <Button
                             className={classes.showAnswer}
@@ -211,11 +221,11 @@ const CardImageQuiz: React.FC<Props> = ({
                             </Typography>
                             <Box display='flex' alignItems='center' justifyContent='center' style={{ width: '95%' }}>
                                 {getFeedbackSet(timeTaken, numOptions, numGuesses, numWrongGuesses, boxNumber).map((feedback: Feedback, index: number) => {
-                                    return <Button key={index} onClick={() => sendUpdate(feedback)}>
+                                    return <Button key={index} onClick={() => sendUpdate(feedback)} className={index == 0 ? classes.red : index == 1 ? classes.yellow : classes.green}>
                                         <Grid container alignItems='center' justifyContent='center' direction='column'>
                                             {index == 0 ? <SentimentVeryDissatisfiedIcon /> : index == 1 ? <SentimentSatisfiedIcon /> : <SentimentVerySatisfiedIcon />}
                                             <Typography align='center'>
-                                                Interval: {feedback.intervalLength}
+                                                You&apos;ll see this card<br /> again in {feedback.intervalLength} day{feedback.intervalLength == 1 ? '' : 's'}.
                                             </Typography>
                                         </Grid>
                                     </Button>;

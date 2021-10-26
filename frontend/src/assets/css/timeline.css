@@ -1,0 +1,13 @@
+/* Yes, this is very hacky. But no choice if we don't want to make our own npm library. */
+
+ul > li {
+    display: none;
+}
+
+.button-back {
+    display: block !important;
+}
+
+.button-forward {
+    display: block !important;
+}

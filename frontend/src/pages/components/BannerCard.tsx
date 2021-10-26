@@ -17,16 +17,22 @@ import { CollectionMiniEntity } from '../../types/collections';
 import { QuizData } from '../../types/quiz';
 import colours from '../../utilities/colours';
 import routes from '../../utilities/routes';
-import { handleApiRequest } from '../../utilities/ui';
 import { UndoneCardsMap } from '../HomePage';
 
 import CollectionToggle from './CollectionToggle';
 
 const useStyles = makeStyles(() => ({
+    root: {
+        display: 'flex',
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     mainCard: {
         display: 'flex',
         borderRadius: '20px',
-        width: '100%',
+        height: 'auto',
+        width: isBrowser ? '80%' : '95%',
     },
     mainGrid: {
         height: '100%',
@@ -56,7 +62,6 @@ const useStyles = makeStyles(() => ({
         paddingRight: '2vw',
     },
     collectionCards: {
-        height: '6vh',
         width: '100%',
         marginBottom: '2vh',
     },
@@ -67,6 +72,9 @@ const useStyles = makeStyles(() => ({
         textTransform: 'none',
         '&:hover': {
             backgroundColor: colours.LIGHTBLUE,
+        },
+        '&:disabled': {
+            backgroundColor: colours.GREY,
         },
     },
     sideButtonText: {
@@ -86,7 +94,6 @@ interface OwnProps {
     undoneCardsMaps: UndoneCardsMap[];
     collections: CollectionMiniEntity[];
     onChange: () => void;
-    isMiniBanner?: boolean;
 }
 
 type Props = OwnProps;
@@ -106,7 +113,7 @@ const BannerCard: React.FC<Props> = (props: Props) => {
     };
 
     const startQuiz = () => {
-        const cardIds = undoneCardsMaps.flatMap(undoneCardsMap => undoneCardsMap.cards).map(cardMiniEntity => cardMiniEntity.id);
+        const cardIds = undoneCardsMaps.filter(map => !map.inactive).flatMap(undoneCardsMap => undoneCardsMap.cards).map(cardMiniEntity => cardMiniEntity.id);
         const quizData: QuizData = {
             cardIds: cardIds,
         };
@@ -124,27 +131,17 @@ const BannerCard: React.FC<Props> = (props: Props) => {
     }, [undoneCardsMaps]);
 
     return (
-        <>
+        <Box className={classes.root}>
             <Card className={classes.mainCard}>
                 <CardContent className={classes.cardContent}>
                     <Box display='flex' height='100%' width='100%' flexDirection='row'>
                         <Grid className={classes.mainGrid}>
-                            {!props.isMiniBanner ? (
-                                <>
-                                    <Typography className={classes.headerText}>
-                                        You have {totalUndone} card{totalUndone == 1 ? '' : 's'} from {collectionCount} collection{collectionCount == 1 ? '' : 's'} to revisit today!
-                                    </Typography>
-                                    <Typography className={classes.subheaderText}>
-                                        Click to activate or deactivate collections to customise your learning!
-                                    </Typography>
-                                </>
-                            ) : (
-                                <Box display='flex' width='100%' justifyContent='center' alignItems='center' paddingTop='1vh'>
-                                    <Typography className={classes.subheaderText} align='center'>
-                                        You have {totalUndone} card{totalUndone == 1 ? '' : 's'} from {collectionCount} collection{collectionCount == 1 ? '' : 's'} to revisit for this day!
-                                    </Typography>
-                                </Box>
-                            )}
+                            <Typography className={classes.headerText}>
+                                You have {totalUndone} card{totalUndone == 1 ? '' : 's'} from {collectionCount} collection{collectionCount == 1 ? '' : 's'} to revisit!
+                            </Typography>
+                            <Typography className={classes.subheaderText}>
+                                Click to activate or deactivate collections to customise your learning!
+                            </Typography>
                             <Grid container className={classes.collectionCards}>
                                 {props.undoneCardsMaps.map((undoneCardsMap) => {
                                     return <CollectionToggle
@@ -157,7 +154,7 @@ const BannerCard: React.FC<Props> = (props: Props) => {
                             </Grid>
                         </Grid>
                         <Grid className={classes.sideGrid}>
-                            <Button className={classes.sideGridButton} onClick={startQuiz}>
+                            <Button className={classes.sideGridButton} onClick={startQuiz} disabled={totalUndone <= 0}>
                                 <Typography className={classes.sideButtonText}>
                                     Start Learning
                                 </Typography>
@@ -166,7 +163,7 @@ const BannerCard: React.FC<Props> = (props: Props) => {
                     </Box>
                 </CardContent>
             </Card>
-        </>
+        </Box>
     );
 };
 

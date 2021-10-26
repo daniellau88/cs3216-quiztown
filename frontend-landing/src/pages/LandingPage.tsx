@@ -8,12 +8,11 @@ import {
     makeStyles,
 } from '@material-ui/core';
 import * as React from 'react';
-import { BrowserView, MobileView, isBrowser } from 'react-device-detect';
-import { HashLink as Link } from 'react-router-hash-link';
+import { isBrowser } from 'react-device-detect';
 
 import bg from '../assets/images/bg.png';
 import colours from '../utilities/colours';
-import routes from '../utilities/routes';
+import { QUIZTOWN_URL } from '../utilities/constants';
 
 
 const useStyles = makeStyles(() => ({
@@ -51,7 +50,7 @@ const useStyles = makeStyles(() => ({
     },
     button: {
         height: isBrowser ? '8vh' : '6vh',
-        width: isBrowser ? '200px' : '160px',
+        width: isBrowser ? '240px' : '160px',
         borderRadius: 20,
         backgroundColor: colours.OFFBLACK,
         '&:hover': {
@@ -122,13 +121,11 @@ const TemplatePage: React.FC<{}> = () => {
                         </Box>
                         <Box className={classes.headbox} style={{ marginTop: '7vh' }} justifyContent='right' alignItems='right'>
                             <Grid container justifyContent={isBrowser ? 'flex-end' : 'flex-start'}>
-                                <Link smooth to={routes.SIGNUP} className={classes.titleLink}>
-                                    <Button className={classes.button}>
-                                        <Typography align='right' style={{ fontSize: bodyTextFontSize, marginTop: '0vh', color: colours.WHITE }}>
-                                            Sign up
-                                        </Typography>
-                                    </Button>
-                                </Link>
+                                <Button className={classes.button} onClick={() => window.location.replace(QUIZTOWN_URL)}>
+                                    <Typography align='right' style={{ fontSize: bodyTextFontSize, marginTop: '0vh', color: colours.WHITE }}>
+                                        Try Out Now!
+                                    </Typography>
+                                </Button>
                             </Grid>
                         </Box>
                     </Box>
@@ -201,48 +198,6 @@ const TemplatePage: React.FC<{}> = () => {
                         </Box>
                     </Box>
                 </Box>
-            </Paper>
-            <Paper className={classes.heroContainerWhite}>
-                <BrowserView>
-                    <Box className={classes.root}>
-                        <Box display='flex' height='100vh' width='100vw' flexDirection='row' justifyContent='center' style={{ marginTop: '10vh' }}>
-                            <Box display='flex' height='100vh' width='40vw' flexDirection='column' justifyContent='center' alignItems='left'>
-                                <Box id='signup' />
-                                <Typography align='left' style={{ fontSize: bodyHeaderFontSize, marginTop: '10vh', color: colours.BLUE }}>
-                                    Interested to use QuizTown?
-                                </Typography>
-                                <Typography align='left' style={{ fontSize: bodyTextFontSize, marginTop: '2vh', color: colours.BLACK }}>
-                                    Join our mailing list and we&apos;ll keep you posted.<br />
-                                    You&apos;ll also get the chance to be part of our development by trying out our beta release!
-                                </Typography>
-                            </Box>
-                            <Box display='flex' height='100vh' width='40vw' flexDirection='column' justifyContent='center' alignItems='left' style={{ marginTop: '10vh' }}>
-                                <iframe src='https://docs.google.com/forms/d/e/1FAIpQLSfPbCU0kmo9L6mLBH89dKUhHS55QWtRjf1_90YXjLJoRO1Ugw/viewform?embedded=true'
-                                    width='640' height='610' frameBorder='0' marginHeight={0} marginWidth={0}>Loading…</iframe>
-                            </Box>
-                        </Box>
-                    </Box>
-                </BrowserView>
-                <MobileView>
-                    <Box className={classes.root}>
-                        <Box display='flex' height='100vh' flexDirection='column' alignItems='center'>
-                            <Box className={classes.box}>
-                                <Box id='signup' />
-                                <Typography align='center' style={{ fontSize: bodyHeaderFontSize, marginTop: '7vh', color: colours.BLUE }}>
-                                    Interested to use QuizTown?
-                                </Typography>
-                                <Typography align='center' style={{ fontSize: bodyTextFontSize, marginTop: '2vh', color: colours.BLACK }}>
-                                    Join our mailing list and we&apos;ll keep you posted.<br />
-                                    You&apos;ll also get the chance to be part of our development by trying out our beta release!
-                                </Typography>
-                            </Box>
-                            <Box width='95%' style={{ marginTop: '2vh' }}>
-                                <iframe src='https://docs.google.com/forms/d/e/1FAIpQLSfPbCU0kmo9L6mLBH89dKUhHS55QWtRjf1_90YXjLJoRO1Ugw/viewform?embedded=true'
-                                    width='100%' height='610' frameBorder='0' marginHeight={0} marginWidth={0}>Loading…</iframe>
-                            </Box>
-                        </Box>
-                    </Box>
-                </MobileView>
             </Paper>
         </>
     );
