@@ -32,7 +32,7 @@ const useStyles = makeStyles(() => ({
         display: 'flex',
         borderRadius: '20px',
         height: 'auto',
-        width: '80%',
+        width: isBrowser ? '80%' : '95%',
     },
     mainGrid: {
         height: '100%',

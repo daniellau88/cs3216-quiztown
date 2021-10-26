@@ -11,6 +11,7 @@ import HelpIcon from '@material-ui/icons/Help';
 import SearchIcon from '@material-ui/icons/Search';
 import Moment from 'moment';
 import * as React from 'react';
+import { isBrowser } from 'react-device-detect';
 import HorizontalTimeline from 'react-horizontal-timeline';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, generatePath, useHistory } from 'react-router-dom';
@@ -52,7 +53,6 @@ const useStyles = makeStyles(() => ({
     },
     cardContent: {
         paddingTop: '2vh',
-        paddingLeft: '2vw',
         justifyContent: 'center',
         alignItems: 'center',
         height: '100%',
@@ -77,14 +77,18 @@ const useStyles = makeStyles(() => ({
         height: '100%',
         width: '95%',
         borderRadius: '2vw',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     promptCard: {
         height: '100%',
         width: '90%',
         borderRadius: '2vw',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     promptCardText: {
-        fontSize: '3.2vh',
+        fontSize: isBrowser ? '3.2vh' : '3.6vw',
     },
 }));
 
@@ -169,7 +173,7 @@ const HomePage: React.FC<{}> = () => {
     // Not logged in - login, discover, info
     // Logged in - discover, info
 
-    if (collections.length) {// == 0) {
+    if (collections.length == 0) {
         return (
             <>
                 <CssBaseline />
@@ -204,7 +208,7 @@ const HomePage: React.FC<{}> = () => {
                             <Card className={classes.promptCard} onClick={() => history.push(generatePath(routes.COLLECTIONS.DISCOVER))}>
                                 <CardContent className={classes.cardContent}>
                                     <Typography align='center' className={classes.promptCardText} style={{ marginBottom: '1vh' }}>
-                                        Find collections other users have shared!
+                                        Find collections to try out!
                                     </Typography>
                                     <Grid item justifyContent='center' alignItems='center' style={{ width: '100%' }}>
                                         <SearchIcon className={classes.iconStyle} />
@@ -236,7 +240,7 @@ const HomePage: React.FC<{}> = () => {
                     <HorizontalTimeline
                         index={days}
                         linePadding={60}
-                        maxEventPadding={80}
+                        maxEventPadding={isBrowser ? 80 : 20}
                         indexClick={(index: number) => {
                             setDays(index);
                         }}
