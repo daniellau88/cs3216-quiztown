@@ -1,16 +1,23 @@
 import {
     Box,
+    Card,
+    CardContent,
     CssBaseline,
+    Grid,
     Typography,
     makeStyles,
 } from '@material-ui/core';
+import HelpIcon from '@material-ui/icons/Help';
+import SearchIcon from '@material-ui/icons/Search';
 import Moment from 'moment';
 import * as React from 'react';
 import HorizontalTimeline from 'react-horizontal-timeline';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, generatePath } from 'react-router-dom';
+import { Link, generatePath, useHistory } from 'react-router-dom';
 
 import LoadingIndicator from '../components/content/LoadingIndicator';
+import GoogleSignInButton from '../modules/auth/components/GoogleSignInButton';
+import { getIsAuthenticated } from '../modules/auth/selectors';
 import { loadAllCards } from '../modules/cards/operations';
 import { getAllCards, getCardMiniEntity } from '../modules/cards/selectors';
 import { loadAllCollections } from '../modules/collections/operations';
@@ -34,13 +41,27 @@ const useStyles = makeStyles(() => ({
         alignItems: 'center',
         paddingBottom: '80px',
     },
+    mainGrid: {
+        height: '100%',
+        width: '90%',
+    },
     mainCard: {
         display: 'flex',
-        borderRadius: '20px',
+        borderRadius: '40px',
         width: '100%',
     },
     cardContent: {
+        paddingTop: '2vh',
         paddingLeft: '2vw',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+        width: '100%',
+    },
+    iconStyle: {
+        height: '16vw',
+        width: '100%',
+        color: colours.BLUE,
     },
     headerText: {
         fontSize: '4vh',
@@ -51,6 +72,19 @@ const useStyles = makeStyles(() => ({
         '&:hover': {
             textDecoration: 'underline',
         },
+    },
+    loginCard: {
+        height: '100%',
+        width: '95%',
+        borderRadius: '2vw',
+    },
+    promptCard: {
+        height: '100%',
+        width: '90%',
+        borderRadius: '2vw',
+    },
+    promptCardText: {
+        fontSize: '3.2vh',
     },
 }));
 
@@ -63,9 +97,11 @@ export interface UndoneCardsMap {
 const HomePage: React.FC<{}> = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
+    const history = useHistory();
     const [days, setDays] = React.useState<number>(0);
 
     const allCollections: EntityCollection = useSelector(getAllCollections);
+    const authenticated: boolean = useSelector(getIsAuthenticated);
     const collectionIds = allCollections.ids;
 
     const collectionsHash: any = useSelector((state: AppState) =>
@@ -110,10 +146,6 @@ const HomePage: React.FC<{}> = () => {
         ).finally(() => setIsLoading(false));
     }, [dispatch]);
 
-    // TODO remove debug tool once workflow (to start quiz) is complete
-    const onUpdate = () => {
-        console.log(undoneCardsMaps);
-    };
     const TIMELINE_VALUES = [0, 1, 2, 3, 4, 5, 6].map(days => Moment().add(days, 'days').format());
 
     const undoneCardsPerDayMaps: UndoneCardsMap[][] = [];
@@ -134,17 +166,63 @@ const HomePage: React.FC<{}> = () => {
         return <LoadingIndicator></LoadingIndicator>;
     }
 
-    if (collections.length == 0) {
+    // Not logged in - login, discover, info
+    // Logged in - discover, info
+
+    if (collections.length) {// == 0) {
         return (
             <>
                 <CssBaseline />
                 <Box className={classes.root}>
-                    <Typography className={classes.headerText}>
-                        You have no collections at the moment! Click&nbsp;
-                        <Link to={generatePath(routes.COLLECTIONS.NEW)} className={classes.link}>
-                            here
-                        </Link> to add one.
-                    </Typography>
+                    <Grid container className={classes.mainGrid}>
+                        {!authenticated ? (
+                            <Grid container item xs={12} justifyContent='center' alignItems='center' style={{ marginBottom: '5vh' }}>
+                                <Card className={classes.loginCard}>
+                                    <CardContent className={classes.cardContent}>
+                                        <Typography align='center' className={classes.promptCardText} >
+                                            Login to create your own collections and start your learning!
+                                        </Typography>
+                                        <GoogleSignInButton />
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                        ) : (
+                            <Grid container item xs={12} justifyContent='center' alignItems='center' style={{ marginBottom: '5vh' }}>
+                                <Card className={classes.loginCard}>
+                                    <CardContent className={classes.cardContent}>
+                                        <Typography align='center' className={classes.promptCardText} >
+                                            Create your own collection&nbsp;
+                                            <Link to={generatePath(routes.COLLECTIONS.NEW)} className={classes.link}>
+                                                here
+                                            </Link>!
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                        )}
+                        <Grid container item xs={6} justifyContent='center' alignItems='center'>
+                            <Card className={classes.promptCard} onClick={() => history.push(generatePath(routes.COLLECTIONS.DISCOVER))}>
+                                <CardContent className={classes.cardContent}>
+                                    <Typography align='center' className={classes.promptCardText} style={{ marginBottom: '1vh' }}>
+                                        Find collections other users have shared!
+                                    </Typography>
+                                    <Grid item justifyContent='center' alignItems='center' style={{ width: '100%' }}>
+                                        <SearchIcon className={classes.iconStyle} />
+                                    </Grid>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        <Grid container item xs={6} justifyContent='center' alignItems='center'>
+                            <Card className={classes.promptCard} onClick={() => history.push(generatePath(routes.INFO))}>
+                                <CardContent className={classes.cardContent}>
+                                    <Typography align='center' className={classes.promptCardText} style={{ marginBottom: '1vh' }}>
+                                        Learn more about QuizTown!
+                                    </Typography>
+                                    <HelpIcon className={classes.iconStyle} />
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    </Grid>
                 </Box>
             </>
         );
