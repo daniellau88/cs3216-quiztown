@@ -11,6 +11,7 @@ export const EDIT_COLLECTION = 'collections/EDIT_COLLECTION';
 export const DELETE_COLLECTION = 'collections/DELETE_COLLECTION';
 export const UPDATE_PUBLIC_COLLECTION_LIST = 'collections/UPDATE_PUBLIC_COLLECTION_LIST';
 export const LOAD_TAGS = 'collections/LOAD_TAGS';
+export const RESET_COLLECTION = 'collections/RESET_COLLECTION';
 
 // Action Types
 
@@ -53,6 +54,11 @@ export interface LoadTagsAction {
     data: string[];
 }
 
+export interface ResetCollectionAction {
+    type: typeof RESET_COLLECTION;
+    id: number;
+}
+
 export type CollectionsActionTypes =
     SaveCollectionListAction |
     SaveCollectionAction |
@@ -61,7 +67,8 @@ export type CollectionsActionTypes =
     EditCollectionAction |
     DeleteCollectionAction |
     UpdatePublicCollectionListAction |
-    LoadTagsAction;
+    LoadTagsAction |
+    ResetCollectionAction;
 
 // State Types
 export interface CollectionsState {

@@ -61,3 +61,10 @@ export function updateCollectionImportCardList(collectionImportId: number, delta
         delta,
     };
 }
+
+export function resetCollectionCardList(collectionId: number): types.ResetCollectionCardListAction {
+    return {
+        type: types.RESET_COLLECTION_CARD_LIST,
+        collectionId,
+    };
+}

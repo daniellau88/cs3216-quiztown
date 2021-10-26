@@ -48,6 +48,10 @@ const cardsReducer = produce((draft: types.CardsState, action: types.CardsAction
         }
         case types.ADD_CARD: {
             draft.allCards.ids.push(action.id);
+            if (draft.collectionCards && draft.collectionCards.byId[action.collection_id]) {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                draft.collectionCards.byId[action.collection_id]!.ids.push(action.id);
+            }
             resetCollectionCache(draft.allCards);
             resetCollectionSetCache(draft.collectionCards, action.collection_id);
             return;
@@ -69,7 +73,6 @@ const cardsReducer = produce((draft: types.CardsState, action: types.CardsAction
             resetCollectionCache(draft.allCards);
             if (collectionId) {
                 resetCollectionSetCache(draft.collectionCards, collectionId);
-                resetCollectionSetCache(draft.importCards, collectionId);
             }
             return;
         }
@@ -79,6 +82,10 @@ const cardsReducer = produce((draft: types.CardsState, action: types.CardsAction
         }
         case types.UPDATE_COLLECTION_IMPORT_CARD_LIST: {
             saveDeltaToCollectionSet(draft.importCards, action.collectionImportId, action.delta);
+            return;
+        }
+        case types.RESET_COLLECTION_CARD_LIST: {
+            resetCollectionSetCache(draft.collectionCards, action.collectionId);
             return;
         }
     }

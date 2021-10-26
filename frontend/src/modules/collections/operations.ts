@@ -1,4 +1,5 @@
 import api from '../../api';
+import * as cards from '../../modules/cards';
 import { ApiResponse } from '../../types';
 import { CollectionListData, CollectionMiniEntity, CollectionPostData, CollectionTagsData, CollectionsImportPostData } from '../../types/collections';
 import { CollectionOptions, EntityCollection, NormalizeOperation, Operation } from '../../types/store';
@@ -92,6 +93,7 @@ export function importCollections(collectionId: number, collectionsImport: Colle
 export function completeCollectionImportReview(collectionId: number, importId: number): Operation<ApiResponse<{}>> {
     return async (dispatch) => {
         const response = await api.collections.completeCollectionImportReview(collectionId, importId);
+        batched(dispatch, actions.resetCollection(collectionId), cards.operations.resetCollectionCards(collectionId));
         return response;
     };
 }
@@ -126,8 +128,14 @@ export function duplicatePublicCollection(collectionId: number): Operation<ApiRe
     return async (dispatch, getState) => {
         const response = await api.collections.duplicatePublicCollection(collectionId);
         const data = response.payload.item;
-        batched(dispatch, saveCollection(data), actions.editCollection());
+        batched(dispatch, saveCollection(data), actions.addCollection(data.id));
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return { ...response, payload: getCollectionMiniEntity(getState(), data.id)! };
+    };
+}
+
+export function resetCollection(collectionId: number): Operation<void> {
+    return async (dispatch, getState) => {
+        batched(dispatch, actions.resetCollection(collectionId));
     };
 }

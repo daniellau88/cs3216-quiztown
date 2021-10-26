@@ -1,4 +1,5 @@
 import api from '../../api';
+import * as collections from '../../modules/collections';
 import { ApiResponse } from '../../types';
 import { CardData, CardEntity, CardListData, CardPostData } from '../../types/cards';
 import { CollectionsImportTextPostData } from '../../types/collections';
@@ -6,7 +7,7 @@ import { CollectionOptions, EntityCollection, NormalizeOperation, Operation } fr
 import { batched, queryEntityCollection, queryEntityCollectionSet, withCachedEntity } from '../../utilities/store';
 
 import * as actions from './actions';
-import { getAllCards, getCardEntity, getCollectionCardList } from './selectors';
+import { getAllCards, getCardEntity, getCardMiniEntity, getCollectionCardList } from './selectors';
 
 export function loadAllCards(options: CollectionOptions): Operation<ApiResponse<EntityCollection>> {
     return (dispatch, getState) => {
@@ -45,7 +46,7 @@ export function addCard(card: CardPostData): Operation<ApiResponse<CardEntity>> 
     return async (dispatch, getState) => {
         const response = await api.cards.addCard(card);
         const data = response.payload.item;
-        batched(dispatch, saveCard(data), actions.addCard(data.id, data.collection_id));
+        batched(dispatch, saveCard(data), actions.addCard(data.id, data.collection_id), collections.operations.resetCollection(card.collection_id));
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return { ...response, payload: getCardEntity(getState(), data.id)! };
     };
@@ -68,10 +69,14 @@ export function updateCard(cardId: number, card: Partial<CardPostData>): Operati
 }
 
 export function deleteCard(cardId: number): Operation<ApiResponse<{}>> {
-    return async (dispatch) => {
+    return async (dispatch, getState) => {
         const response = await api.cards.deleteCard(cardId);
-        // TODO: delete from cards list
-        batched(dispatch, discardCard(cardId));
+        const card = getCardMiniEntity(getState(), cardId);
+        const resetCollectionAction = [];
+        if (card != null) {
+            resetCollectionAction.push(collections.operations.resetCollection(card.collection_id));
+        }
+        batched(dispatch, discardCard(cardId), ...resetCollectionAction);
         return response;
     };
 }
@@ -137,7 +142,13 @@ export function importTextCards(collectionId: number, cardTextImport: Collection
         const response = await api.collections.importTextCollectionCards(collectionId, cardTextImport);
         const data = response.payload.items;
         const batchedAdd = data.map(x => actions.addCard(x.id, x.collection_id));
-        batched(dispatch, saveCardList(data), ...batchedAdd);
+        batched(dispatch, saveCardList(data), ...batchedAdd, collections.operations.resetCollection(collectionId));
         return { ...response, payload: getCollectionCardList(getState(), collectionId) };
+    };
+}
+
+export function resetCollectionCards(collectionId: number): Operation<void> {
+    return async (dispatch, getState) => {
+        batched(dispatch, actions.resetCollectionCardList(collectionId));
     };
 }

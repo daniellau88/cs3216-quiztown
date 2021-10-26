@@ -57,3 +57,10 @@ export function loadTags(allTags: string[]): types.LoadTagsAction {
         data: allTags,
     };
 }
+
+export function resetCollection(id: number): types.ResetCollectionAction {
+    return {
+        type: types.RESET_COLLECTION,
+        id,
+    };
+}
