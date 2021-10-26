@@ -21,12 +21,7 @@ export const initAnswerOptions = (
     data: Array<AnswerData>,
 ): Map<string, fabric.Point> => {
     const optionsCoordsMap = new Map();
-    const canvasWidth = canvas.getWidth();
-    const canvasHeight = canvas.getHeight();
-
-    const origin = new fabric.Point(CANVAS_PADDING, canvasHeight + CANVAS_PADDING);
-    canvas.setHeight(canvasHeight + 2*CANVAS_PADDING);
-
+    const origin = new fabric.Point(CANVAS_PADDING, CANVAS_PADDING);
     data.forEach(option => {
         const text = new QTText(option.text, {
             perPixelTargetFind: true,
@@ -38,27 +33,51 @@ export const initAnswerOptions = (
             padding: TEXT_PADDING,
         });
         text.setPositionByOrigin(origin, 'left', 'top');
-        const textWidth = text.getBoundingRect().width;
         const textHeight = text.getBoundingRect().height;
 
-        if (origin.x + textWidth > canvasWidth) {
-            origin.setX(CANVAS_PADDING);
-            origin.setY(origin.y + TEXT_MARGIN);
-
-            optionsCoordsMap.set(option.text, new fabric.Point(origin.x, origin.y));
-            text.setPositionByOrigin(origin, 'left', 'top');
-            origin.setX(origin.x + textWidth + TEXT_MARGIN);
-            // Dynamically resize canvas as more answer options are added
-            canvas.setHeight(canvas.getHeight() + TEXT_MARGIN + textHeight);
-
-        } else {
-            optionsCoordsMap.set(option.text, new fabric.Point(origin.x, origin.y));
-            origin.setX(origin.x + textWidth + TEXT_MARGIN);
-        }
+        optionsCoordsMap.set(option.text, new fabric.Point(origin.x, origin.y));
+        origin.setY(origin.y + textHeight + TEXT_MARGIN);
         canvas.add(text);
     });
     return optionsCoordsMap;
 };
+
+export const initAnswerOptionsBoundingBox = (
+    canvas: fabric.Canvas,
+    containerWidth: number,
+): void => {
+    const boundingBox = new fabric.Rect({
+        top: 0,
+        left: 0,
+        width: containerWidth - CANVAS_PADDING,
+        height: canvas.getHeight(),
+        rx: BORDER_RADIUS,
+        ry: BORDER_RADIUS,
+        selectable: false,
+        borderColor: colours.BLACK,
+        fill: 'transparent',
+        stroke: colours.BLACK,
+    });
+    canvas.add(boundingBox);
+    boundingBox.sendToBack();
+};
+
+export const initImageBoundingBox = (
+    canvas: fabric.Canvas,
+    left: number,
+    containerWidth: number,
+): void => {
+    const boundingBox = new fabric.Rect({
+        top: 0,
+        left: left - CANVAS_PADDING,
+        width: containerWidth + CANVAS_PADDING,
+        height: canvas.getHeight(),
+        selectable: false,
+        fill: colours.WHITE,
+    });
+    canvas.add(boundingBox);
+};
+
 
 const createAnswerTextBox = (box: AnswerData, xTranslation:number) => {
     const top = box.bounding_box[0][1];
@@ -81,22 +100,27 @@ const createAnswerTextBox = (box: AnswerData, xTranslation:number) => {
     });
 };
 
-const createAnswerRectangle = (box: AnswerData, xTranslation:number) => {
+const createAnswerRectangle = (
+    box: AnswerData, 
+    xTranslation:number,
+    scaleX: number,
+    scaleY: number,
+) => {
     const top = box.bounding_box[0][1];
     const left = box.bounding_box[0][0];
     return new fabric.Rect({
-        top: top,
-        left: left + xTranslation,
+        top: (top * scaleY),
+        left: (left * scaleX) + xTranslation,
         width: box.bounding_box[1][0] - box.bounding_box[0][0],
         height: box.bounding_box[1][1] - box.bounding_box[0][1],
-        hasControls: false,
-        lockMovementX: true,
-        lockMovementY: true,
+        selectable: false,
         rx: BORDER_RADIUS,
         ry: BORDER_RADIUS,
         borderColor: colours.BLACK,
         fill: colours.WHITE,
         stroke: colours.BLACK,
+        scaleX: scaleX,
+        scaleY: scaleY,
     });
 };
 
@@ -105,13 +129,16 @@ export const initAnswerRectangles = (
     canvas: fabric.Canvas,
     data: Array<AnswerData>,
     xTranslation: number,
+    scaleX: number,
+    scaleY: number,
 ): Map<string, fabric.Rect> => {
     const answersCoordsMap = new Map();
 
     data.forEach(box => {
-        const rect = createAnswerRectangle(box, xTranslation);
+        const rect = createAnswerRectangle(box, xTranslation, scaleX, scaleY);
         answersCoordsMap.set(box.text, rect);
         canvas.add(rect);
+        rect.bringToFront();
     });
     return answersCoordsMap;
 };
