@@ -1,13 +1,13 @@
 import {
     Box,
     Card,
-    CardContent,
     CardMedia,
     Grid,
     Typography,
     makeStyles,
 } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
+import DeleteIcon from '@material-ui/icons/Delete';
 import * as React from 'react';
 import { useState } from 'react';
 import { Document, Page } from 'react-pdf';
@@ -18,7 +18,7 @@ import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
 import { addUpload } from '../../uploads/operations';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
     root: {
         width: '95%',
         height: '95%',
@@ -56,19 +56,20 @@ const useStyles = makeStyles((theme) => ({
     image: {
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100vh',
-        width: '30vh',
     },
     pdf: {
         height: '30vh',
         width: '15vh',
-        // margin: 0,
     },
     addFile: {
         height: '100%',
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    imageContainer: {
+        height: '25vh',
+        overflow: 'hidden',
     },
 }));
 
@@ -91,9 +92,7 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
 
     const upload = async (e: React.ChangeEvent<any>) => {
         const fileInfo = [...fileCardInfo];
-        console.log(e.target.files.name);
         fileInfo.push(...e.target.files);
-        console.log(fileInfo);
         saveFileCardInfo(fileInfo);
         const fileImage = [...fileImageLink];
         const filePDF = [...filePDFLink];
@@ -114,7 +113,6 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
             return handleApiRequest(dispatch, dispatch(addUpload(file)))
                 .then((response) => {
                     const upload = response.payload;
-                    console.log(upload);
                     const copy = [...uploadFilesChild];
                     copy.push(upload);
                     setUploadedResponse(copy);
@@ -129,6 +127,24 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
         });
     };
 
+    const deleteFile = (file: File, index: number) => {
+        const fileInfo = [...fileCardInfo];
+        const fileImage = [...fileImageLink];
+        const filePDF = [...filePDFLink];
+
+        const fileType = fileInfo[index].name.slice(-3);
+        if (fileType === 'pdf') {
+            filePDF.splice(index, 1);
+            saveFilePDFLink(filePDF);
+        } 
+        fileImage.splice(index, 1);
+        fileInfo.splice(index, 1);
+        saveFileImageLink(fileImage);
+        saveFileCardInfo(fileInfo);
+        const copy = [...uploadFilesChild].splice(index, 1);
+        setUploadedResponse(copy);
+    };
+
     const onDocumentLoadSuccess = ({ numPages }: any) => {
         setNumPages(numPages);
     };
@@ -136,12 +152,11 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
     const measuredRef = React.useCallback(node => {
         if (node !== null) {
             setHeight(node.getBoundingClientRect().height);
-            console.log(node.getBoundingClientRect().height);
         }
     }, []);
 
     return (
-        <Grid container>
+        <Grid container spacing={4}>
             <Grid container item
                 xs={12} sm={6} md={4} lg={3}
                 justifyContent='center'
@@ -169,17 +184,23 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
                     </label>
                 </Card>
             </Grid>
-            {fileCardInfo.map((file: File, index: number) => {
-                return (
-                    <Grid container item
-                        key={index}
-                        xs={12} sm={6} md={4} lg={3}
-                        justifyContent='center'
-                        alignItems='center'
-                        className={classes.card}
-                    >
-                        <Card className={`${classes.root} ${classes.center}`} key={index}>
-                            <Grid container ref={measuredRef}>
+            {fileCardInfo.map((file: File, index: number) => (
+                <Grid container item
+                    key={index}
+                    xs={12} sm={6} md={4} lg={3}
+                    justifyContent='center'
+                    alignItems='center'
+                    className={`${classes.card}`}
+                >
+                    <Card className={`${classes.root} ${classes.center}`}>
+                        <Grid container direction='column' alignItems='center' justifyContent='flex-start'>
+                            <Grid item container justifyContent='center'>
+                                <Typography component="div" noWrap>
+                                    {file.name}
+                                </Typography>
+                            </Grid>
+
+                            <Grid item ref={measuredRef} className={classes.imageContainer}>
                                 {fileImageLink[index] === 'pdf' ?
                                     (
                                         <Document
@@ -196,22 +217,19 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
                                     (<CardMedia
                                         component="img"
                                         alt="uploaded image"
-                                        height="30%"
-                                        width="auto"
+                                        height="auto"
+                                        width="100%"
                                         image={fileImageLink[index]}
                                         className={classes.image}
                                     />)}
                             </Grid>
-                            <CardContent className={classes.pdfNameText}>
-                                <Typography component="div">
-                                    {file.name}
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                );
-            })
-            }
+                            <Grid item>
+                                <DeleteIcon onClick={() => deleteFile(file, index)}/>
+                            </Grid>
+                        </Grid>
+                    </Card>
+                </Grid>
+            ))}
         </Grid>
     );
 };

@@ -10,6 +10,7 @@ export const ADD_COLLECTION = 'collections/ADD_COLLECTION';
 export const EDIT_COLLECTION = 'collections/EDIT_COLLECTION';
 export const DELETE_COLLECTION = 'collections/DELETE_COLLECTION';
 export const UPDATE_PUBLIC_COLLECTION_LIST = 'collections/UPDATE_PUBLIC_COLLECTION_LIST';
+export const LOAD_TAGS = 'collections/LOAD_TAGS';
 
 // Action Types
 
@@ -47,6 +48,11 @@ export interface UpdatePublicCollectionListAction {
     delta: CollectionDelta;
 }
 
+export interface LoadTagsAction {
+    type: typeof LOAD_TAGS;
+    data: string[];
+}
+
 export type CollectionsActionTypes =
     SaveCollectionListAction |
     SaveCollectionAction |
@@ -54,11 +60,13 @@ export type CollectionsActionTypes =
     AddCollectionAction |
     EditCollectionAction |
     DeleteCollectionAction |
-    UpdatePublicCollectionListAction;
+    UpdatePublicCollectionListAction |
+    LoadTagsAction;
 
 // State Types
 export interface CollectionsState {
     allCollections: EntityCollection;
     collections: EntityStore<CollectionMiniEntity, CollectionMiniEntity>;
     allPublicCollections: EntityCollection;
+    allTags: string[];
 }
