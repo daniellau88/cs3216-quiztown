@@ -50,7 +50,7 @@ export const initAnswerOptionsBoundingBox = (
         top: 0,
         left: 0,
         width: containerWidth - CANVAS_PADDING,
-        height: canvas.getHeight(),
+        height: canvas.getHeight() - CANVAS_PADDING,
         rx: BORDER_RADIUS,
         ry: BORDER_RADIUS,
         selectable: false,
@@ -58,7 +58,15 @@ export const initAnswerOptionsBoundingBox = (
         fill: 'transparent',
         stroke: colours.BLACK,
     });
-    canvas.add(boundingBox);
+    const whitePadding = new fabric.Rect({
+        top: canvas.getHeight() - CANVAS_PADDING + 5,
+        left: 0,
+        width: containerWidth - CANVAS_PADDING,
+        height: CANVAS_PADDING,
+        selectable: false,
+        fill: colours.WHITE,
+    });
+    canvas.add(boundingBox, whitePadding);
     boundingBox.sendToBack();
 };
 

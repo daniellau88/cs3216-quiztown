@@ -174,7 +174,13 @@ const CardImageQuiz: React.FC<Props> = ({
 
     const revealAllAnswers = () => {
         if (!canvas) return;
-        canvas.getObjects().forEach(object => canvas.remove(object));
+        canvas.getObjects().forEach(object => {
+            const objectType = object.type;
+            const shouldRemoveObject = objectType == 'QTText' || objectType == 'rect' || objectType == 'text';
+            if (shouldRemoveObject) {
+                canvas.remove(object);
+            }
+        });
         stopTime().then(() => setHasAnsweredAll(true));
     };
 
