@@ -94,7 +94,6 @@ interface OwnProps {
     undoneCardsMaps: UndoneCardsMap[];
     collections: CollectionMiniEntity[];
     onChange: () => void;
-    isMiniBanner?: boolean;
 }
 
 type Props = OwnProps;
@@ -137,22 +136,12 @@ const BannerCard: React.FC<Props> = (props: Props) => {
                 <CardContent className={classes.cardContent}>
                     <Box display='flex' height='100%' width='100%' flexDirection='row'>
                         <Grid className={classes.mainGrid}>
-                            {!props.isMiniBanner ? (
-                                <>
-                                    <Typography className={classes.headerText}>
-                                        You have {totalUndone} card{totalUndone == 1 ? '' : 's'} from {collectionCount} collection{collectionCount == 1 ? '' : 's'} to revisit today!
-                                    </Typography>
-                                    <Typography className={classes.subheaderText}>
-                                        Click to activate or deactivate collections to customise your learning!
-                                    </Typography>
-                                </>
-                            ) : (
-                                <Box display='flex' width='100%' justifyContent='center' alignItems='center' paddingTop='1vh'>
-                                    <Typography className={classes.subheaderText} align='center'>
-                                        You have {totalUndone} card{totalUndone == 1 ? '' : 's'} from {collectionCount} collection{collectionCount == 1 ? '' : 's'} to revisit for this day!
-                                    </Typography>
-                                </Box>
-                            )}
+                            <Typography className={classes.headerText}>
+                                You have {totalUndone} card{totalUndone == 1 ? '' : 's'} from {collectionCount} collection{collectionCount == 1 ? '' : 's'} to revisit!
+                            </Typography>
+                            <Typography className={classes.subheaderText}>
+                                Click to activate or deactivate collections to customise your learning!
+                            </Typography>
                             <Grid container className={classes.collectionCards}>
                                 {props.undoneCardsMaps.map((undoneCardsMap) => {
                                     return <CollectionToggle

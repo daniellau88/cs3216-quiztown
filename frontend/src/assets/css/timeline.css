@@ -1,0 +1,12 @@
+ul > li {
+    display: none;
+}
+
+.button-back {
+    display: block !important;
+}
+
+.button-forward {
+    display: block !important;
+}
+
