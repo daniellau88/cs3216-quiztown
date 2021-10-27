@@ -18,6 +18,7 @@ import { useHistory } from 'react-router-dom';
 
 import defaultCollectionImage from '../../../assets/images/logo512.png';
 import QTButton from '../../../components/QTButton';
+import QTDeleteButton from '../../../components/utiltiies/QTDeleteButton';
 import { CollectionMiniEntity, CollectionPostData } from '../../../types/collections';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
@@ -98,6 +99,9 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
             setIsPrivate(data.private);
         }
     }, [data]);
+
+    const deleteMessage = 'Deleting this card will delete it forever. '
+        + 'This action is irreversible. Do you want to confirm your deletion?';
 
     const addNewCollection = () => {
         history.push('/collections/new');
@@ -256,9 +260,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                         <Box flexGrow={1} />
                         {data.permissions.can_delete &&
                             <Box display='flex' minHeight='100%' style={{ paddingRight: '0.5vw' }} justifyContent='center' alignItems='center'>
-                                <Button onClick={handleDeleteCollection} >
-                                    <DeleteIcon style={{ color: colours.DEEPRED }} />
-                                </Button>
+                                <QTDeleteButton onConfirm={handleDeleteCollection} message={deleteMessage} />
                             </Box>
                         }
                     </Box>

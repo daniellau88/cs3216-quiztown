@@ -2,6 +2,8 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import { Delete } from '@material-ui/icons';
 import * as React from 'react';
 
+import colours from '../../utilities/colours';
+
 interface OwnProps {
     onConfirm: () => any;
     message: string;
@@ -11,7 +13,7 @@ type Props = OwnProps;
 
 const useStyles = makeStyles((theme) => ({
     deleteButton: {
-        // color: 'firebrick',
+        color: colours.DEEPRED,
         '&:hover': {
             // backgroundColor: '#fff5f5',
             backgroundColor: 'transparent',
