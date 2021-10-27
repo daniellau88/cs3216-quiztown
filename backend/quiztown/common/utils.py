@@ -139,7 +139,12 @@ def filter_model_by_get_request(
                                    get_error_messages_from_serializer(filter_serializer))
 
         for field, value in filter_serializer.data.items():
-            if isinstance(value, OrderedDict):
+            get_filter_method_name = "get_%s_filter" % field
+            if hasattr(filter_serializer, get_filter_method_name):
+                get_filter_method = getattr(filter_serializer, get_filter_method_name)
+                field, value = get_filter_method(value)
+                model_queryset = _add_filter_to_queryset(model_queryset, field, value)
+            elif isinstance(value, OrderedDict):
                 start = value.get("start", "")
                 if start:
                     model_queryset = _add_filter_to_queryset(
@@ -181,3 +186,8 @@ def filter_model_by_get_request(
 def get_extension_from_filename(filename: str):
     extension = os.path.splitext(filename)[1]
     return extension.lower()
+
+
+def get_name_from_filename(filename: str):
+    extension = os.path.splitext(filename)[0]
+    return extension

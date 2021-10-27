@@ -6,7 +6,19 @@ import * as actions from './actions';
 
 export function setAutomatedQuiz(quiz: QuizData): Operation<void> {
     return async (dispatch) => {
-        batched(dispatch, saveAutomatedQuiz(quiz));
+        batched(dispatch, saveAutomatedQuiz(quiz), actions.resetCurrentIndex());
+    };
+}
+
+export function resetAutomatedQuiz(): Operation<void> {
+    return async (dispatch) => {
+        batched(dispatch, actions.resetAutomatedQuiz(), actions.resetCurrentIndex());
+    };
+}
+
+export function incrementCurrentIndex(): Operation<void> {
+    return async (dispatch) => {
+        batched(dispatch, actions.incrementCurrentIndex());
     };
 }
 

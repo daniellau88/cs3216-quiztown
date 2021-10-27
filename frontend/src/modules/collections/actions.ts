@@ -1,4 +1,4 @@
-import { CollectionListData } from '../../types/collections';
+import { CollectionListData, TagData } from '../../types/collections';
 import { CollectionDelta } from '../../types/store';
 
 import * as types from './types';
@@ -51,9 +51,16 @@ export function updatePublicCollectionList(delta: CollectionDelta): types.Update
     };
 }
 
-export function loadTags(allTags: string[]): types.LoadTagsAction {
+export function loadTags(allTags: TagData[]): types.LoadTagsAction {
     return {
         type: types.LOAD_TAGS,
         data: allTags,
+    };
+}
+
+export function resetCollection(id: number): types.ResetCollectionAction {
+    return {
+        type: types.RESET_COLLECTION,
+        id,
     };
 }

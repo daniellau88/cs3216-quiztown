@@ -36,7 +36,7 @@ export function loadCurrentUser(): Operation<ApiResponse<{}>> {
 export function logout(): Operation<ApiResponse<{}>> {
     return async (dispatch, getState) => {
         const response = await api.auth.logout();
-        batched(dispatch, actions.deleteCurrentUser());
+        batched(dispatch, resetCurrentUser());
         return { ...response };
     };
 }
@@ -44,6 +44,12 @@ export function logout(): Operation<ApiResponse<{}>> {
 export function saveIsAuthenticated(isAuthenticated: boolean): Operation<void> {
     return async (dispatch, getState) => {
         batched(dispatch, actions.saveIsAuthenticated(isAuthenticated));
+    };
+}
+
+export function resetCurrentUser(): Operation<void> {
+    return async (dispatch, getState) => {
+        batched(dispatch, actions.deleteCurrentUser());
     };
 }
 

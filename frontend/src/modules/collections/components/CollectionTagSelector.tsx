@@ -17,8 +17,8 @@ import { CollectionPostData } from '../../../types/collections';
 import { AppState } from '../../../types/store';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
-import { getAllCollectionTags, updateCollection } from '../operations';
-import { getAllCollections, getAllTags } from '../selectors';
+import { updateCollection } from '../operations';
+import { getAllTags } from '../selectors';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -67,7 +67,8 @@ const CollectionTagSelector: React.FC<Props> = ({ collectionData, tagSelectorRef
     const classes = useStyles();
     const dispatch = useDispatch();
 
-    const possibleTags = useSelector((state: AppState) => getAllTags(state));
+    const possibleTagDataList = useSelector((state: AppState) => getAllTags(state));
+    const possibleTags = possibleTagDataList.map(tag => tag.name);
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [currTags, setCurrTags] = React.useState(new Set(collectionData.tags));

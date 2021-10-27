@@ -1,4 +1,4 @@
-import { CollectionListData, CollectionMiniEntity } from '../../types/collections';
+import { CollectionListData, CollectionMiniEntity, TagData } from '../../types/collections';
 import { CollectionDelta, EntityCollection, EntityStore } from '../../types/store';
 
 // Action Names
@@ -11,6 +11,7 @@ export const EDIT_COLLECTION = 'collections/EDIT_COLLECTION';
 export const DELETE_COLLECTION = 'collections/DELETE_COLLECTION';
 export const UPDATE_PUBLIC_COLLECTION_LIST = 'collections/UPDATE_PUBLIC_COLLECTION_LIST';
 export const LOAD_TAGS = 'collections/LOAD_TAGS';
+export const RESET_COLLECTION = 'collections/RESET_COLLECTION';
 
 // Action Types
 
@@ -50,7 +51,12 @@ export interface UpdatePublicCollectionListAction {
 
 export interface LoadTagsAction {
     type: typeof LOAD_TAGS;
-    data: string[];
+    data: TagData[];
+}
+
+export interface ResetCollectionAction {
+    type: typeof RESET_COLLECTION;
+    id: number;
 }
 
 export type CollectionsActionTypes =
@@ -61,12 +67,13 @@ export type CollectionsActionTypes =
     EditCollectionAction |
     DeleteCollectionAction |
     UpdatePublicCollectionListAction |
-    LoadTagsAction;
+    LoadTagsAction |
+    ResetCollectionAction;
 
 // State Types
 export interface CollectionsState {
     allCollections: EntityCollection;
     collections: EntityStore<CollectionMiniEntity, CollectionMiniEntity>;
     allPublicCollections: EntityCollection;
-    allTags: string[];
+    allTags: TagData[];
 }

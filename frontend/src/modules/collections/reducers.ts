@@ -1,6 +1,6 @@
 import produce from 'immer';
 
-import { createEntityCollection, createEntityStore, removeFromStore, resetCollectionCache, saveDeltaToCollection, saveEntityToStore, saveListToStore } from '../../utilities/store';
+import { createEntityCollection, createEntityStore, removeFromStore, resetCollectionCache, resetEntityCache, saveDeltaToCollection, saveEntityToStore, saveListToStore } from '../../utilities/store';
 
 import * as types from './types';
 
@@ -26,7 +26,10 @@ const collectionsReducer = produce((draft: types.CollectionsState, action: types
             const list = action.list.map((data) => ({
                 ...data,
             }));
-            saveListToStore(draft.collections, list);
+            // Collection has no simplified entity
+            list.forEach(item => {
+                saveEntityToStore(draft.collections, item);
+            });
             return;
         }
         case types.SAVE_COLLECTION: {
@@ -43,6 +46,7 @@ const collectionsReducer = produce((draft: types.CollectionsState, action: types
         }
         case types.ADD_COLLECTION: {
             draft.allCollections.ids.push(action.id);
+            resetCollectionCache(draft.allCollections);
             return;
         }
         case types.EDIT_COLLECTION: {
@@ -64,6 +68,12 @@ const collectionsReducer = produce((draft: types.CollectionsState, action: types
         }
         case types.LOAD_TAGS: {
             draft.allTags = action.data;
+            return;
+        }
+        case types.RESET_COLLECTION: {
+            resetEntityCache(draft.collections, action.id);
+            // Needed for card count, mot very efficient, can remove if too frequent refreshing
+            resetCollectionCache(draft.allCollections);
             return;
         }
     }

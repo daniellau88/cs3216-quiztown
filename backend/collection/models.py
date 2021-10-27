@@ -10,7 +10,7 @@ class Collection(TimestampedModel):
     name = models.CharField(max_length=50)
     owner_id = models.IntegerField()
     private = models.IntegerField(default=PRIVATE)
-    image_link = models.CharField(max_length=1024, default="")
+    image_file_key = models.CharField(max_length=1024, default="")
     origin = models.IntegerField(default=0, blank=True)
 
     def create(self, validated_data):
@@ -21,6 +21,8 @@ class Collection(TimestampedModel):
         instance.owner_id = validated_data.get("owner_id", instance.owner_id)
         instance.private = validated_data.get("private", instance.private)
         instance.origin = validated_data.get("origin", instance.origin)
+        instance.image_file_key = validated_data.get(
+            "image_file_key", instance.image_file_key)
         instance.save()
         return instance
 

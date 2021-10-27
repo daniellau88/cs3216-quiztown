@@ -12,6 +12,7 @@ import {
 import { Add, ReorderOutlined } from '@material-ui/icons';
 import DeleteIcon from '@material-ui/icons/Delete';
 import * as React from 'react';
+import LinesEllipsis from 'react-lines-ellipsis';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
@@ -20,7 +21,7 @@ import QTButton from '../../../components/QTButton';
 import { CollectionMiniEntity } from '../../../types/collections';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
-import { getCurrentUser } from '../../auth/selectors';
+import { getCurrentUser, getIsAuthenticated } from '../../auth/selectors';
 import { deleteCollection, duplicatePublicCollection } from '../operations';
 
 import CollectionTag from './CollectionTag';
@@ -88,6 +89,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
 
     const collectionId = data?.id;
     const currentUser = useSelector(getCurrentUser);
+    const isAuthenticated = useSelector(getIsAuthenticated);
     const userId = currentUser ? currentUser.user_id : 0;
 
     const addNewCollection = () => {
@@ -166,7 +168,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
 
             <CardContent className={classes.cardContent}>
                 <Typography className={classes.collectionNameText} component="div" >
-                    {collectionName}
+                    <LinesEllipsis text={collectionName} maxLine={1} />
                 </Typography>
                 <Grid container alignItems='center' wrap='nowrap' spacing={1}>
                     <Grid item>
@@ -200,7 +202,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                                 View
                             </QTButton>
                         </Grid>
-                        {!isOwner &&
+                        {isAuthenticated && !isOwner &&
                             (
                                 data.duplicate_collection_id ?
                                     (<Grid container item xs={3} alignItems='center'>

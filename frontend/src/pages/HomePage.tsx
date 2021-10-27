@@ -19,8 +19,8 @@ import { Link, generatePath, useHistory } from 'react-router-dom';
 import LoadingIndicator from '../components/content/LoadingIndicator';
 import GoogleSignInButton from '../modules/auth/components/GoogleSignInButton';
 import { getIsAuthenticated } from '../modules/auth/selectors';
-import { loadAllCards } from '../modules/cards/operations';
-import { getAllCards, getCardMiniEntity } from '../modules/cards/selectors';
+import { loadUndoneCards } from '../modules/cards/operations';
+import { getCardMiniEntity, getUndoneCardList } from '../modules/cards/selectors';
 import { loadAllCollections } from '../modules/collections/operations';
 import { getAllCollections, getCollectionMiniEntity } from '../modules/collections/selectors';
 import { CardMiniEntity } from '../types/cards';
@@ -117,7 +117,7 @@ const HomePage: React.FC<{}> = () => {
         collections.push(collectionsHash[c]);
     }
 
-    const allCards: EntityCollection = useSelector(getAllCards);
+    const allCards: EntityCollection = useSelector(getUndoneCardList);
     const cardIds = allCards.ids;
 
     const cardsHash: any = useSelector((state: AppState) =>
@@ -146,7 +146,7 @@ const HomePage: React.FC<{}> = () => {
         handleApiRequests(
             dispatch,
             dispatch(loadAllCollections({})),
-            dispatch(loadAllCards({ filters: undoneCardFilter })),
+            dispatch(loadUndoneCards({ filters: undoneCardFilter })),
         ).finally(() => setIsLoading(false));
     }, [dispatch]);
 
@@ -173,7 +173,7 @@ const HomePage: React.FC<{}> = () => {
     // Not logged in - login, discover, info
     // Logged in - discover, info
 
-    if (collections.length == 0) {
+    if (!authenticated || collections.length == 0) {
         return (
             <>
                 <CssBaseline />

@@ -8,8 +8,9 @@ from django_rq import job
 from card import jobs as card_jobs
 from public_activity import utils as public_activity_utils
 from public_activity.models import PublicActivity
+from quiztown.common import utils as common_utils
 
-from .models import Collection, CollectionImport
+from .models import Collection, CollectionImport, CollectionTag
 
 STATIC_CARD_DIRECTORY = "static/cards/"
 UPLOAD_DIRECTORY = "uploads/"
@@ -31,14 +32,15 @@ def import_card_from_image(collection_import: CollectionImport):
 
     params = {
         "collection_id": collection_import.collection_id,
-        "import_id": collection_import.id,
+        "import_id": collection_import.pk,
     }
 
     try:
         card_jobs.import_card_from_image(
             collection_import.file_key,
             collection_import.collection_id,
-            collection_import.id,
+            collection_import.pk,
+            name=common_utils.get_name_from_filename(collection_import.file_name),
         )
 
         collection_import.status = CollectionImport.COMPLETED
@@ -74,17 +76,19 @@ def import_cards_from_pdf(collection_import: CollectionImport):
 
     params = {
         "collection_id": collection_import.collection_id,
-        "import_id": collection_import.id,
+        "import_id": collection_import.pk,
     }
 
     try:
         image_keys = extract_images_from_file(collection_import.file_key)
+        name = common_utils.get_name_from_filename(collection_import.file_name)
 
-        for image_key in image_keys:
+        for i, image_key in enumerate(image_keys):
             card_jobs.import_card_from_image(
                 image_key,
                 collection_import.collection_id,
-                collection_import.id,
+                collection_import.pk,
+                name="%s-%d" % (name, i),
             )
 
         collection_import.status = CollectionImport.COMPLETED
@@ -148,6 +152,13 @@ def duplicate_collection(collection_to_duplicate: Collection, new_owner: int):
                             image_link=collection_to_duplicate.image_link,
                             origin=collection_to_duplicate.pk)
     collection.save()
+
+    collection_tags = CollectionTag.objects.filter(
+        collection_id=collection_to_duplicate.pk)
+    for collection_tag in collection_tags:
+        new_collection_tag = CollectionTag(
+            collection_id=collection.pk, tag_id=collection_tag.tag_id)
+        new_collection_tag.save()
 
     card_jobs.duplicate_cards(collection_to_duplicate.pk, collection.pk)
 
