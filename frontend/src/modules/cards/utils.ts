@@ -19,9 +19,10 @@ const DEFAULT_TEXTBOX_HEIGHT = 24;
 export const initAnswerOptions = (
     canvas: fabric.Canvas,
     data: Array<AnswerData>,
+    xTranslation: number,
 ): Map<string, fabric.Point> => {
     const optionsCoordsMap = new Map();
-    const origin = new fabric.Point(CANVAS_PADDING, CANVAS_PADDING);
+    const origin = new fabric.Point(CANVAS_PADDING + xTranslation, CANVAS_PADDING);
     data.forEach(option => {
         const text = new QTText(option.text, {
             perPixelTargetFind: true,
@@ -45,10 +46,11 @@ export const initAnswerOptions = (
 export const initAnswerOptionsBoundingBox = (
     canvas: fabric.Canvas,
     containerWidth: number,
+    xTranslation: number,
 ): void => {
     const boundingBox = new fabric.Rect({
         top: 0,
-        left: 0,
+        left: xTranslation,
         width: containerWidth - CANVAS_PADDING,
         height: canvas.getHeight() - CANVAS_PADDING,
         rx: BORDER_RADIUS,
@@ -60,7 +62,7 @@ export const initAnswerOptionsBoundingBox = (
     });
     const whitePadding = new fabric.Rect({
         top: canvas.getHeight() - CANVAS_PADDING + 5,
-        left: 0,
+        left: xTranslation,
         width: containerWidth - CANVAS_PADDING,
         height: CANVAS_PADDING,
         selectable: false,

@@ -97,12 +97,20 @@ const CardImageQuiz: React.FC<Props> = ({
     const canvasMaxHeight = windowHeight * 0.7;
     const answerOptionsContainerWidth = canvasMaxWidth * 0.3;
     const imageContainerWidth = canvasMaxWidth * 0.7;
-    const imageXTranslation = answerOptionsContainerWidth;
     const imageScaleX = imageContainerWidth / imageMetadata.width;
     const imageScaleY = canvasMaxHeight / imageMetadata.height;
     const imageScale = Math.min(imageScaleX, imageScaleY); // Maintains aspect ratio, object-fit == 'contain'
 
     const startTime = Moment();
+
+    const getCanvasTranslationToCenter = () => {
+        const scaledImageWidth = imageMetadata.width * imageScale;
+        const isImageSmallerThanContainerWidth = scaledImageWidth < imageContainerWidth;
+        if (!isImageSmallerThanContainerWidth) return 0;
+
+        const remainingWidth = imageContainerWidth - scaledImageWidth;
+        return remainingWidth / 2;
+    };
 
     const initQuizingCanvas = (canvasId: string) => {
         const canvas = new fabric.Canvas(canvasId, {
@@ -110,10 +118,12 @@ const CardImageQuiz: React.FC<Props> = ({
             targetFindTolerance: 2,
             selection: false,
         });
+        const canvasTranslationToCenter = getCanvasTranslationToCenter();
+        const imageXTranslation = answerOptionsContainerWidth + canvasTranslationToCenter;
 
-        const optionsCoordsMap = initAnswerOptions(canvas, result);
-        initAnswerOptionsBoundingBox(canvas, answerOptionsContainerWidth);
-        initImageBoundingBox(canvas, answerOptionsContainerWidth, imageContainerWidth);
+        const optionsCoordsMap = initAnswerOptions(canvas, result, canvasTranslationToCenter);
+        initAnswerOptionsBoundingBox(canvas, answerOptionsContainerWidth, canvasTranslationToCenter);
+        initImageBoundingBox(canvas, imageXTranslation, imageContainerWidth);
         fabric.Image.fromURL(imageUrl, function (img) {
             canvas.add(img);
             // We need this to have the answer options at a lower z-index, and the covering rectangles at a higher z-index
@@ -124,7 +134,7 @@ const CardImageQuiz: React.FC<Props> = ({
         }, {
             scaleX: imageScale,
             scaleY: imageScale,
-            left: answerOptionsContainerWidth,
+            left: imageXTranslation,
             selectable: false,
         });
         const answersCoordsMap = initAnswerRectangles(canvas, result, imageXTranslation, imageScale);
