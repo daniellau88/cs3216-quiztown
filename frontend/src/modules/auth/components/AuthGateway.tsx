@@ -77,7 +77,7 @@ const AuthGateway: React.FC<{}> = (props: Props) => {
         // When component is mounted, the login method will be called
         return (
             <>
-                <p>Please check connection status</p>
+                <p>Please check your connection status</p>
                 <GoogleLogin clientId={clientId ? clientId : ''} onSuccess={onSuccess} onAutoLoadFinished={onAutoLoadFinished} />
             </>
         );

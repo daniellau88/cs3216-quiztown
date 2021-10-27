@@ -4,7 +4,7 @@ export interface CardPostData {
     name: string;
     collection_id: number;
     flagged: number;
-    image_link: string;
+    image_file_key: string;
     box_number: number;
     next_date: string;
     answer_details: {
