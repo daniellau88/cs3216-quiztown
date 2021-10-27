@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_settings(self, obj):
         settings = UserSettings.objects.filter(
-            user_id=obj.id)
+            user_id=obj.user_id)
         return settings
 
 
