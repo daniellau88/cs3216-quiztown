@@ -5,7 +5,7 @@ from card import serializers as card_serializers
 from card.models import Card
 from quiztown.common import utils
 from quiztown.common.decorators import convert_keys_to_item, validate_request_data
-from quiztown.common.errors import ApplicationError, ErrorCode
+from quiztown.common.errors import ApplicationError, ErrorCode, add_message_on_context
 
 from . import helpers, jobs, serializers
 from .models import CollectionImport, Tag
@@ -32,6 +32,11 @@ def list_collections_view(request):
 @validate_request_data(serializers.CollectionCreateSerializer)
 def create_collection_view(request, serializer):
     serializer.save(owner_id=request.user.user_id)
+
+    add_message_on_context(
+        request,
+        "The collection %s has been created." % (serializer.instance.name),
+    )
 
     response_serializer = serializers.CollectionSerializer(
         serializer.instance, context={"request": request})
@@ -62,6 +67,11 @@ def get_collection_view(request, pk_item):
 def update_collection_view(request, pk_item, serializer):
     serializer.save()
 
+    add_message_on_context(
+        request,
+        "The collection %s has been updated." % (pk_item.name),
+    )
+
     response_serializer = serializers.CollectionSerializer(
         serializer.instance, context={"request": request})
     return Response({"item": response_serializer.data})
@@ -70,6 +80,12 @@ def update_collection_view(request, pk_item, serializer):
 @convert_keys_to_item({"pk": helpers.get_editable_collection_queryset_by_request})
 def delete_collection_view(request, pk_item):
     pk_item.delete()
+
+    add_message_on_context(
+        request,
+        "The collection %s has been deleted." % (pk_item.name),
+    )
+
     return Response({})
 
 
@@ -102,6 +118,11 @@ def import_file_collection_view(request, pk_item, serializer):
     response_serializer = serializers.CollectionImportSerializer(
         collection_import_instances, many=True)
 
+    add_message_on_context(
+        request,
+        "Your file is being processed. You will be notified once the file is done processing.",
+    )
+
     return Response({"items": response_serializer.data})
 
 
@@ -126,6 +147,11 @@ def import_text_collection_view(request, pk_item, serializer):
 
     response_serializer = card_serializers.CardListSerializer(
         card_instances, many=True, context={"request": request})
+
+    add_message_on_context(
+        request,
+        "The text card has been added to collection %s." % (pk_item.name),
+    )
 
     return Response({"items": response_serializer.data})
 
@@ -167,6 +193,11 @@ def review_collection_import_view(request, pk_item, pkImport_item):
 
     response_serializer = serializers.CollectionImportSerializer(pkImport_item)
 
+    add_message_on_context(
+        request,
+        "The reviewed cards has been added to collection %s." % (pk_item.name),
+    )
+
     return Response({"item": response_serializer.data})
 
 
@@ -180,8 +211,15 @@ def duplicate_collection_view(request, pk_item):
         raise ApplicationError(ErrorCode.INVALID_REQUEST, [
             "Collection already duplicated"])
     newcollection = jobs.duplicate_collection(pk_item, request.user.user_id)
+
     response_serializer = serializers.CollectionSerializer(
         newcollection, context={"request": request})
+
+    add_message_on_context(
+        request,
+        "The collection %s been been duplicated." % (pk_item.name),
+    )
+
     return Response({"item": response_serializer.data})
 
 

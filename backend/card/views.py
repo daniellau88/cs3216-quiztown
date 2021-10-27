@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from collection import helpers as collection_helpers
 from quiztown.common import utils
 from quiztown.common.decorators import convert_keys_to_item, validate_request_data
-from quiztown.common.errors import ApplicationError, ErrorCode
+from quiztown.common.errors import ApplicationError, ErrorCode, add_message_on_context
 
 from . import helpers, serializers
 
@@ -42,6 +42,12 @@ def create_card_view(request, serializer):
 
     response_serializer = serializers.CardSerializer(
         serializer.instance, context={"request": request})
+
+    add_message_on_context(
+        request,
+        "The card %s has been created." % (serializer.instance.name),
+    )
+
     return Response({"item": response_serializer.data})
 
 
@@ -71,10 +77,19 @@ def update_card_view(request, pk_item, serializer, *args, **kwargs):
 
     response_serializer = serializers.CardSerializer(
         serializer.instance, context={"request": request})
+
+    # Currently not showing message because of autosave
+
     return Response({"item": response_serializer.data})
 
 
 @convert_keys_to_item({"pk": helpers.get_editable_card_queryset_by_request})
 def delete_card_view(request, pk_item, *args, **kwargs):
     pk_item.delete()
+
+    add_message_on_context(
+        request,
+        "The card %s has been deleted." % (pk_item.name),
+    )
+
     return Response({})
