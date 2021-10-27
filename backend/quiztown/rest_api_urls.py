@@ -6,4 +6,5 @@ urlpatterns = [
     path("cards/", include("card.urls")),
     path("uploads/", include("upload.urls")),
     path("publicActivities/", include("public_activity.urls")),
+    path("user/", include("user.urls")),
 ]

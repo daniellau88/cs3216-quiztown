@@ -1,7 +1,14 @@
 import {
     Button,
+    Checkbox,
     CssBaseline,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
     Divider,
+    FormControlLabel,
     Grid,
     Typography,
     makeStyles,
@@ -63,10 +70,38 @@ const CollectionReviewPage: React.FC<Props> = ({ match: { params } }: RouteCompo
     const [isLoading, setIsLoading] = React.useState(true);
     const [importedCardIds, setImportedCardIds] = React.useState<number[]>();
     const [currCardId, setCurrCardId] = React.useState<number>();
+    const [open, setOpen] = React.useState(false);
+    const [checked, setChecked] = React.useState(true);
 
     const collectionId: number = parseInt((params as { collectionId: string }).collectionId);
     const importId: number = parseInt((params as { importId: string }).importId);
     const collection = useSelector((state: AppState) => getCollectionMiniEntity(state, collectionId));
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setChecked(event.target.checked);
+    };
+
+    const handleDialogOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    React.useEffect(() => {
+        // TODO: set this to if setting is the default setting, set open
+        // probably need to have a selector and use [user]
+        console.log('dislog displayed');
+        handleDialogOpen();
+    }, []);
+
+    React.useEffect(() => {
+        if (checked) {
+            // TODO: update settings here
+            console.log('checked');
+        }
+    }, [checked]);
 
     React.useEffect(() => {
         setCurrCardId(undefined);
@@ -176,7 +211,7 @@ const CollectionReviewPage: React.FC<Props> = ({ match: { params } }: RouteCompo
                                 <Grid item xs={2} className={classes.fullHeight}>
                                     <Button className={classes.sideGridButton} onClick={completeReview}>
                                         <Typography className={classes.sideButtonText}>
-                                            Confirm all
+                                            Complete review
                                         </Typography>
                                     </Button>
                                 </Grid>
@@ -188,6 +223,28 @@ const CollectionReviewPage: React.FC<Props> = ({ match: { params } }: RouteCompo
                         </Grid>
                     </Grid>
                 </Grid>
+                <Dialog open={open} onClose={handleClose}>
+                    <DialogTitle>Welcome!</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            In this page, you can review the cards that you imported to your collection.
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <FormControlLabel
+                            style={{ marginRight: 'auto' }}
+                            control={
+                                <Checkbox
+                                    checked={checked}
+                                    onChange={handleChange}
+                                    inputProps={{ 'aria-label': 'controlled' }}
+                                />
+                            }
+                            label="Do not show this again"
+                        />
+                        <Button onClick={handleClose}>Done</Button>
+                    </DialogActions>
+                </Dialog>
             </Grid>
         </>
     );
