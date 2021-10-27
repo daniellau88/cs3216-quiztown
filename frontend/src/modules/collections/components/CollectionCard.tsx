@@ -100,8 +100,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
         }
     }, [data]);
 
-    const deleteMessage = 'Deleting this card will delete it forever. '
-        + 'This action is irreversible. Do you want to confirm your deletion?';
+    const deleteMessage = 'This action is irreversible. Are you sure you want to delete?';
 
     const addNewCollection = () => {
         history.push('/collections/new');
