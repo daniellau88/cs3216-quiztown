@@ -5,10 +5,10 @@ import { CollectionDelta, EntityCollection, EntityStore } from '../../types/stor
 
 export const SAVE_COLLECTION_LIST = 'collections/SAVE_COLLECTION_LIST';
 export const SAVE_COLLECTION = 'collections/SAVE_COLLECTION';
-export const UPDATE_COLLECTION_LIST = 'collections/UPDATE_COLLECTION_LIST';
 export const ADD_COLLECTION = 'collections/ADD_COLLECTION';
 export const EDIT_COLLECTION = 'collections/EDIT_COLLECTION';
 export const DELETE_COLLECTION = 'collections/DELETE_COLLECTION';
+export const UPDATE_PERSONAL_COLLECTION_LIST = 'collections/UPDATE_PERSONAL_COLLECTION_LIST';
 export const UPDATE_PUBLIC_COLLECTION_LIST = 'collections/UPDATE_PUBLIC_COLLECTION_LIST';
 export const LOAD_TAGS = 'collections/LOAD_TAGS';
 export const RESET_COLLECTION = 'collections/RESET_COLLECTION';
@@ -25,11 +25,6 @@ export interface SaveCollectionAction {
     data: CollectionListData;
 }
 
-export interface UpdateCollectionListAction {
-    type: typeof UPDATE_COLLECTION_LIST;
-    delta: CollectionDelta;
-}
-
 export interface AddCollectionAction {
     type: typeof ADD_COLLECTION;
     id: number;
@@ -42,6 +37,11 @@ export interface EditCollectionAction {
 export interface DeleteCollectionAction {
     type: typeof DELETE_COLLECTION;
     id: number;
+}
+
+export interface UpdatePersonalCollectionListAction {
+    type: typeof UPDATE_PERSONAL_COLLECTION_LIST;
+    delta: CollectionDelta;
 }
 
 export interface UpdatePublicCollectionListAction {
@@ -62,17 +62,18 @@ export interface ResetCollectionAction {
 export type CollectionsActionTypes =
     SaveCollectionListAction |
     SaveCollectionAction |
-    UpdateCollectionListAction |
     AddCollectionAction |
     EditCollectionAction |
     DeleteCollectionAction |
+    UpdatePersonalCollectionListAction |
     UpdatePublicCollectionListAction |
     LoadTagsAction |
     ResetCollectionAction;
 
 // State Types
 export interface CollectionsState {
-    allCollections: EntityCollection;
+    // Note: allCollections will store all personal collections
+    allPersonalCollections: EntityCollection;
     collections: EntityStore<CollectionMiniEntity, CollectionMiniEntity>;
     allPublicCollections: EntityCollection;
     allTags: TagData[];

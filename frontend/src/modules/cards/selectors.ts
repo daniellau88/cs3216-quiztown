@@ -6,8 +6,8 @@ function getLocalState(state: AppState) {
     return state.cards;
 }
 
-export function getAllCards(state: AppState): EntityCollection {
-    return getLocalState(state).allCards;
+export function getStarredCards(state: AppState): EntityCollection {
+    return getLocalState(state).starredCards;
 }
 
 export function getCardMiniEntity(state: AppState, id: SelectionKey): EntitySelection<CardMiniEntity> {

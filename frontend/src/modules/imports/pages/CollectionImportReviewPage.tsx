@@ -110,7 +110,7 @@ const CollectionReviewPage: React.FC<Props> = ({ match: { params } }: RouteCompo
             .catch(() => {
                 history.replace('/collections');
             });
-        handleApiRequest(dispatch, dispatch(loadCollectionImportCards(importId, {})))
+        handleApiRequest(dispatch, dispatch(loadCollectionImportCards(importId)))
             .then(res => {
                 const cardIds = res.payload.ids;
                 setImportedCardIds(cardIds);

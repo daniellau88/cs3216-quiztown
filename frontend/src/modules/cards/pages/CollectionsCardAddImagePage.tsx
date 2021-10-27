@@ -19,7 +19,6 @@ import { handleApiRequest } from '../../../utilities/ui';
 import CollectionAddFileCards from '../../collections/components/CollectionAddFileCards';
 import { importCollections } from '../../collections/operations';
 import { getCollectionMiniEntity } from '../../collections/selectors';
-import { loadCollectionCards } from '../operations';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -75,15 +74,7 @@ const CollectionsCardAddImagePage: React.FC<Props> = ({ match: { params } }: Rou
             return;
         }
         return handleApiRequest(dispatch, dispatch(importCollections(collectionId, { imports: uploadFiles }))).then((importResponse) => {
-            const payload = importResponse.payload;
-            console.log(payload);
-            // TODO: Redirect to preview page
-            // history.push(`/collections/${payload.collection_id}/cards/${payload.id}`);
-
-            // currently it directs back to card list page for that collection
-            return handleApiRequest(dispatch, dispatch(loadCollectionCards(collectionId, {}))).finally(() => {
-                history.push(`/collections/${collectionId}`);
-            });
+            history.push(`/collections/${collectionId}`);
         });
     };
 

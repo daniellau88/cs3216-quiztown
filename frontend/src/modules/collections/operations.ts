@@ -4,22 +4,30 @@ import { ApiResponse } from '../../types';
 import { CollectionListData, CollectionMiniEntity, CollectionPostData, CollectionTagsData, CollectionsImportPostData } from '../../types/collections';
 import { CollectionOptions, EntityCollection, NormalizeOperation, Operation } from '../../types/store';
 import { batched, queryEntityCollection, withCachedEntity } from '../../utilities/store';
+import { getCurrentUser } from '../auth/selectors';
 
 import * as actions from './actions';
-import { getAllCollections, getAllPublicCollections, getCollectionMiniEntity } from './selectors';
+import { getAllPersonalCollections, getAllPublicCollections, getCollectionMiniEntity } from './selectors';
 
-export function loadAllCollections(options: CollectionOptions): Operation<ApiResponse<EntityCollection>> {
+export function loadAllPersonalCollections(options: CollectionOptions): Operation<ApiResponse<EntityCollection>> {
     return (dispatch, getState) => {
+        const personalCollectionFilter: any = {};
+        // Add owner id to query
+        const user = getCurrentUser(getState());
+        if (user) {
+            personalCollectionFilter.owner_id = user.user_id;
+        }
+
         return queryEntityCollection(
-            () => getAllCollections(getState()),
-            options,
+            () => getAllPersonalCollections(getState()),
+            { ...options, filters: { ...options.filters, ...personalCollectionFilter } },
             async (params) => {
                 const response = await api.collections.getCollectionList(params);
                 const data: CollectionListData[] = response.payload.items;
                 batched(dispatch, saveCollectionList(data));
                 return response;
             },
-            (delta) => dispatch(actions.updateCollectionList(delta)),
+            (delta) => dispatch(actions.updatePersonalCollectionList(delta)),
         );
     };
 }
@@ -109,9 +117,13 @@ export function getAllCollectionTags(): Operation<ApiResponse<CollectionTagsData
 
 export function loadAllPublicCollections(options: CollectionOptions): Operation<ApiResponse<EntityCollection>> {
     return (dispatch, getState) => {
+        const publicCollectionFilter: any = {
+            private: 1,
+        };
+
         return queryEntityCollection(
             () => getAllPublicCollections(getState()),
-            options,
+            { ...options, filters: { ...options.filters, ...publicCollectionFilter } },
             async (params) => {
                 const response = await api.collections.getCollectionList(params);
                 const data: CollectionListData[] = response.payload.items;

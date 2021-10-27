@@ -10,13 +10,6 @@ export function saveCardList(list: CardListData[]): types.SaveCardListAction {
     };
 }
 
-export function updateCardList(delta: CollectionDelta): types.UpdateCardListAction {
-    return {
-        type: types.UPDATE_CARD_LIST,
-        delta,
-    };
-}
-
 export function saveCard(data: CardData): types.SaveCardAction {
     return {
         type: types.SAVE_CARD,
@@ -43,6 +36,13 @@ export function deleteCard(id: number): types.DeleteCardAction {
     return {
         type: types.DELETE_CARD,
         id,
+    };
+}
+
+export function updateStarredCardList(delta: CollectionDelta): types.UpdateStarredCardListAction {
+    return {
+        type: types.UPDATE_STARRED_CARD_LIST,
+        delta,
     };
 }
 

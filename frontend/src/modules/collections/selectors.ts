@@ -6,12 +6,12 @@ function getLocalState(state: AppState) {
     return state.collections;
 }
 
-export function getAllCollections(state: AppState): EntityCollection {
-    return getLocalState(state).allCollections;
-}
-
 export function getCollectionMiniEntity(state: AppState, id: SelectionKey): EntitySelection<CollectionMiniEntity> {
     return selectMiniEntity(getLocalState(state).collections, id);
+}
+
+export function getAllPersonalCollections(state: AppState): EntityCollection {
+    return getLocalState(state).allPersonalCollections;
 }
 
 export function getAllPublicCollections(state: AppState): EntityCollection {

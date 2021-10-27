@@ -6,14 +6,11 @@ import * as types from './types';
 
 const initialState: types.CollectionsState = {
     collections: createEntityStore(),
-    allCollections: createEntityCollection({
+    allPersonalCollections: createEntityCollection({
         sortBy: 'updated_at',
         sortOrder: 'desc',
     }),
     allPublicCollections: createEntityCollection({
-        filters: {
-            private: 1,
-        },
         sortBy: 'updated_at',
         sortOrder: 'desc',
     }),
@@ -40,26 +37,26 @@ const collectionsReducer = produce((draft: types.CollectionsState, action: types
             saveEntityToStore(draft.collections, entity);
             return;
         }
-        case types.UPDATE_COLLECTION_LIST: {
-            saveDeltaToCollection(draft.allCollections, action.delta);
+        case types.UPDATE_PERSONAL_COLLECTION_LIST: {
+            saveDeltaToCollection(draft.allPersonalCollections, action.delta);
             return;
         }
         case types.ADD_COLLECTION: {
-            draft.allCollections.ids.push(action.id);
-            resetCollectionCache(draft.allCollections);
+            draft.allPersonalCollections.ids.push(action.id);
+            resetCollectionCache(draft.allPersonalCollections);
             return;
         }
         case types.EDIT_COLLECTION: {
-            resetCollectionCache(draft.allCollections);
+            resetCollectionCache(draft.allPersonalCollections);
             return;
         }
         case types.DELETE_COLLECTION: {
             removeFromStore(draft.collections, action.id);
-            const collections = draft.allCollections;
+            const collections = draft.allPersonalCollections;
             if (collections) {
                 collections.ids = collections.ids.filter((id) => id !== action.id);
             }
-            resetCollectionCache(draft.allCollections);
+            resetCollectionCache(draft.allPersonalCollections);
             return;
         }
         case types.UPDATE_PUBLIC_COLLECTION_LIST: {
@@ -73,7 +70,7 @@ const collectionsReducer = produce((draft: types.CollectionsState, action: types
         case types.RESET_COLLECTION: {
             resetEntityCache(draft.collections, action.id);
             // Needed for card count, mot very efficient, can remove if too frequent refreshing
-            resetCollectionCache(draft.allCollections);
+            resetCollectionCache(draft.allPersonalCollections);
             return;
         }
     }
