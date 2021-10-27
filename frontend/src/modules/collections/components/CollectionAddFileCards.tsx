@@ -91,6 +91,8 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
     const [numPages, setNumPages] = useState<number>(1);
     const [height, setHeight] = useState(0);
 
+    const deleteMessage = 'This action is irreversible. Do you want to confirm your deletion?';
+
     const upload = async (e: React.ChangeEvent<any>) => {
         const fileInfo = [...fileCardInfo];
         fileInfo.push(...e.target.files);
