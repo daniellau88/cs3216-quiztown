@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from card.models import Card
+from card.serializers import STATIC_CARD_URL
 
 from . import helpers
 from .models import Collection, CollectionImport, CollectionTag, Tag
@@ -14,7 +15,7 @@ class CollectionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Collection
-        fields = ["id", "name", "owner_id", "private", "created_at", "image_link",
+        fields = ["id", "name", "owner_id", "private", "created_at", "image_file_key",
                   "origin", "tags", "num_cards", "permissions",
                   "duplicate_collection_id"]
 
@@ -45,6 +46,15 @@ class CollectionSerializer(serializers.ModelSerializer):
         if len(collection) > 0:
             return collection[0].pk
         return 0
+
+    def to_representation(self, data):
+        rep = super().to_representation(data)
+        if rep["image_file_key"]:
+            rep["image_link"] = STATIC_CARD_URL + rep["image_file_key"]
+        else:
+            rep["image_link"] = ""
+        del rep["image_file_key"]
+        return rep
 
 
 class CollectionCreateSerializer(serializers.ModelSerializer):

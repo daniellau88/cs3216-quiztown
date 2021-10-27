@@ -5,6 +5,7 @@ import numpy
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 
+from collection.models import Collection
 from quiztown.common.models import TimestampedModel
 
 
@@ -58,3 +59,12 @@ class Card(TimestampedModel):
         instance.answer = validated_data.get("answer", instance.answer)
         instance.save()
         return instance
+
+    def save(self, *args, **kwargs):
+        if self.type == Card.IMAGE and self.image_file_key != "" and \
+                self.collection_id != 0 and self.is_reviewed:
+            collection = Collection.objects.get(pk=self.collection_id)
+            if collection.image_file_key == "":
+                collection.image_file_key = self.image_file_key
+                collection.save()
+        return super().save(*args, **kwargs)

@@ -33,7 +33,11 @@ class CardListSerializer(serializers.ModelSerializer):
 
     def to_representation(self, data):
         rep = super(CardListSerializer, self).to_representation(data)
-        rep["image_link"] = STATIC_CARD_URL + rep["image_file_key"]
+        if rep["image_file_key"]:
+            rep["image_link"] = STATIC_CARD_URL + rep["image_file_key"]
+        else:
+            rep["image_link"] = ""
+        del rep["image_file_key"]
         return rep
 
     def get_permissions(self, obj):
@@ -58,7 +62,11 @@ class CardSerializer(serializers.ModelSerializer):
 
     def to_representation(self, data):
         rep = super(CardSerializer, self).to_representation(data)
-        rep["image_link"] = STATIC_CARD_URL + rep["image_file_key"]
+        if rep["image_file_key"]:
+            rep["image_link"] = STATIC_CARD_URL + rep["image_file_key"]
+        else:
+            rep["image_link"] = ""
+        del rep["image_file_key"]
         return rep
 
     def get_permissions(self, obj):
