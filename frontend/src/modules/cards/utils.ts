@@ -111,14 +111,13 @@ const createAnswerTextBox = (box: AnswerData, xTranslation:number) => {
 const createAnswerRectangle = (
     box: AnswerData, 
     xTranslation:number,
-    scaleX: number,
-    scaleY: number,
+    scale: number,
 ) => {
     const top = box.bounding_box[0][1];
     const left = box.bounding_box[0][0];
     return new fabric.Rect({
-        top: (top * scaleY),
-        left: (left * scaleX) + xTranslation,
+        top: (top * scale),
+        left: (left * scale) + xTranslation,
         width: box.bounding_box[1][0] - box.bounding_box[0][0],
         height: box.bounding_box[1][1] - box.bounding_box[0][1],
         selectable: false,
@@ -127,8 +126,8 @@ const createAnswerRectangle = (
         borderColor: colours.BLACK,
         fill: colours.WHITE,
         stroke: colours.BLACK,
-        scaleX: scaleX,
-        scaleY: scaleY,
+        scaleX: scale,
+        scaleY: scale,
     });
 };
 
@@ -137,13 +136,12 @@ export const initAnswerRectangles = (
     canvas: fabric.Canvas,
     data: Array<AnswerData>,
     xTranslation: number,
-    scaleX: number,
-    scaleY: number,
+    scale: number,
 ): Map<string, fabric.Rect> => {
     const answersCoordsMap = new Map();
 
     data.forEach(box => {
-        const rect = createAnswerRectangle(box, xTranslation, scaleX, scaleY);
+        const rect = createAnswerRectangle(box, xTranslation, scale);
         answersCoordsMap.set(box.text, rect);
         canvas.add(rect);
         rect.bringToFront();

@@ -37,7 +37,6 @@ import {
 
 const useStyles = makeStyles(() => ({
     root: {
-        display: 'flex',
         paddingTop: '20px',
     },
     showAnswerContainer: {
@@ -50,6 +49,7 @@ const useStyles = makeStyles(() => ({
         width: '10vw',
         borderRadius: '10px',
         border: '1px solid black',
+        alignSelf: 'center',
     },
     green: {
         color: colours.GREEN,
@@ -100,6 +100,7 @@ const CardImageQuiz: React.FC<Props> = ({
     const imageXTranslation = answerOptionsContainerWidth;
     const imageScaleX = imageContainerWidth / imageMetadata.width;
     const imageScaleY = canvasMaxHeight / imageMetadata.height;
+    const imageScale = Math.min(imageScaleX, imageScaleY); // Maintains aspect ratio, object-fit == 'contain'
 
     const startTime = Moment();
 
@@ -121,12 +122,12 @@ const CardImageQuiz: React.FC<Props> = ({
                 img.sendBackwards();
             }
         }, {
-            scaleX: imageScaleX,
-            scaleY: imageScaleY,
+            scaleX: imageScale,
+            scaleY: imageScale,
             left: answerOptionsContainerWidth,
             selectable: false,
         });
-        const answersCoordsMap = initAnswerRectangles(canvas, result, imageXTranslation, imageScaleX, imageScaleY);
+        const answersCoordsMap = initAnswerRectangles(canvas, result, imageXTranslation, imageScale);
         const answersIndicator = initCorrectAnswersIndicator(canvas, result);
 
         canvas.on('object:moving', (e) => {
@@ -213,12 +214,14 @@ const CardImageQuiz: React.FC<Props> = ({
                 </Box>
                 <Grid container className={classes.showAnswerContainer}>
                     {!hasAnsweredAll && (
-                        <Button
-                            className={classes.showAnswer}
-                            onClick={revealAllAnswers}
-                        >
-                            Show Answer
-                        </Button>
+                        <Box display='flex' flexDirection='column' alignItems='center' justifyContent='center' style={{ width: '95%' }}>
+                            <Button
+                                className={classes.showAnswer}
+                                onClick={revealAllAnswers}
+                            >
+                                Show Answer
+                            </Button>
+                        </Box>
                     )}
                     {hasAnsweredAll && (
                         <Box display='flex' flexDirection='column' alignItems='center' justifyContent='center' style={{ width: '95%' }}>
