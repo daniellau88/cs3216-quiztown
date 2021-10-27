@@ -69,23 +69,24 @@ const CardImageEdit: React.FC<Props> = ({
 
     const { windowHeight, windowWidth } = useWindowDimensions();
 
-    const canvasMaxWidth = imageMetadata.width;
-    const canvasMaxHeight = imageMetadata.height;
-    const imageXTranslation = Math.max(canvasMaxWidth - imageMetadata.width, 0) / 2;
+    const canvasMaxWidth = windowWidth * 0.9;
+    const canvasMaxHeight = windowHeight * 0.8;
+    const imageContainerWidth = canvasMaxWidth;
+    const imageScaleX = imageContainerWidth / imageMetadata.width;
+    const imageScaleY = canvasMaxHeight / imageMetadata.height;
+    const imageScale = Math.min(imageScaleX, imageScaleY); // Maintains aspect ratio, object-fit == 'contain'
+    const scaledImageWidth = imageMetadata.width * imageScale;
+    const scaledImageHeight = imageMetadata.height * imageScale;
+    const imageXTranslation = Math.max(canvasMaxWidth- scaledImageWidth, 0) / 2;
 
-    const initCanvasWithBg = () => {
+    const initEditingCanvas = () => {
         const canvas = new fabric.Canvas(CANVAS_ID, {
             hoverCursor: 'pointer',
             targetFindTolerance: 2,
             backgroundColor: 'transparent',
             selection: true,
         });
-        return canvas;
-    };
-
-    const initEditingCanvas = () => {
-        const canvas = initCanvasWithBg();
-        initAnswerTextboxes(canvas, result, imageXTranslation);
+        initAnswerTextboxes(canvas, result, imageXTranslation, imageScale);
         return canvas;
     };
 
@@ -153,15 +154,14 @@ const CardImageEdit: React.FC<Props> = ({
                     mergeOption={mergeAnswerOption}
                 />
                 <Box display="flex" justifyContent='center' width='100%'>
-                    <Box
-                        className={classes.imageContainer}
-                        style={{ height: canvasMaxHeight, width: canvasMaxWidth }}
-                    >
-                        <img
-                            src={imageUrl}
-                            style={{ position: 'absolute', left: (canvasMaxWidth - imageMetadata.width) / 2 }}
-                        />
-                    </Box>
+                    <img
+                        src={imageUrl}
+                        style={{
+                            position: 'absolute',
+                            width: scaledImageWidth,
+                            height: scaledImageHeight,
+                        }}
+                    />
                     <canvas
                         id={CANVAS_ID}
                         width={canvasMaxWidth}
