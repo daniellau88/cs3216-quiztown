@@ -14,6 +14,7 @@ import { useState } from 'react';
 import { Document, Page } from 'react-pdf';
 import { useDispatch } from 'react-redux';
 
+import QTDeleteButton from '../../../components/utiltiies/QTDeleteButton';
 import { UploadData } from '../../../types/uploads';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
