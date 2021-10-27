@@ -21,7 +21,11 @@ def list_public_activities_view(request):
 @convert_keys_to_item({
     "pk": helpers.get_default_public_activity_queryset_by_request,
 })
-@validate_request_data(serializers.PublicActivityUpdateSerializer, is_update=True)
+@validate_request_data(
+    serializers.PublicActivityUpdateSerializer,
+    is_update=True,
+    partial=True,
+)
 def update_public_activities_view(request, pk_item, serializer):
     serializer.save()
     response_serializer = serializers.PublicActivitySerializer(serializer.instance)

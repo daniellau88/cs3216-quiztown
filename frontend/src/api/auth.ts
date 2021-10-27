@@ -1,5 +1,5 @@
 import { ApiPromise } from '../types';
-import { GoogleLoginPostData, LoginPostData, UserData } from '../types/auth';
+import { GoogleLoginPostData, LoginPostData, SettingsData, SettingsPostData, UserData } from '../types/auth';
 
 import BaseAPI from './base';
 import { Token } from './helpers/server-context';
@@ -42,6 +42,10 @@ export class AuthAPI extends BaseAPI {
 
     public getUser(): ApiPromise<{ item: UserData }> {
         return this.get(`${this.getAuthUrl()}/user` + URL_SUFFIX);
+    }
+
+    public updateUserSettings(data: SettingsPostData): ApiPromise<{ item: SettingsData }> {
+        return this.post(`${this.getAuthUrl()}/updateSettings` + URL_SUFFIX, data);
     }
 }
 

@@ -7,8 +7,8 @@ from rest_framework.response import Response
 
 from quiztown.common.decorators import validate_request_data
 from quiztown.common.errors import ApplicationError, ErrorCode
-from user.models import User
-from user.serializers import UserSerializer
+from user import serializers as user_serializers
+from user.models import User, UserSettings
 
 from . import serializers
 from .models import GoogleAuthentication
@@ -29,7 +29,7 @@ def login_view(request, serializer, *args, **kwargs):
     user = authenticate(request, username=username, password=password)
     if user is not None:
         login(request, user)
-        serializer = UserSerializer(user)
+        serializer = user_serializers.UserSerializer(user)
         return Response({"item": serializer.data})
 
     raise ApplicationError(ErrorCode.UNAUTHENTICATED, [
@@ -69,7 +69,7 @@ def google_login_view(request, serializer):
     user = authenticate(request, google_sub=sub)
     if user is not None:
         login(request, user)
-        serializer = UserSerializer(user)
+        serializer = user_serializers.UserSerializer(user)
         return Response({"item": serializer.data})
 
     # User does not exist
@@ -81,7 +81,7 @@ def google_login_view(request, serializer):
     user = authenticate(request, google_sub=sub)
     if user is not None:
         login(request, user)
-        serializer = UserSerializer(user)
+        serializer = user_serializers.UserSerializer(user)
         return Response({"item": serializer.data})
 
     raise ApplicationError(ErrorCode.UNAUTHENTICATED, [
@@ -99,5 +99,19 @@ def logout_view(request):
 @permission_classes([IsAuthenticated])
 def user_view(request, *args, **kwargs):
     user = request.user
-    serializer = UserSerializer(user)
+    serializer = user_serializers.UserSerializer(user)
     return Response({"item": serializer.data})
+
+
+@api_view(["POST"])
+@validate_request_data(user_serializers.UserSettingsCreateSerializer, partial=True)
+def update_user_settings_view(request, serializer):
+    UserSettings.objects.update_or_create(
+        user_id=request.user.user_id,
+        settings_key=serializer.validated_data["settings_key"],
+        defaults=serializer.validated_data,
+    )
+
+    settings = UserSettings.objects.filter(
+        user_id=request.user.user_id).values_list("settings_key", "settings_value")
+    return Response({"item": dict(settings)})

@@ -58,6 +58,7 @@ def get_collection_view(request, pk_item):
 @validate_request_data(
     serializers.CollectionUpdateSerializer,
     is_update=True,
+    partial=True,
 )
 def update_collection_view(request, pk_item, serializer):
     serializer.save()

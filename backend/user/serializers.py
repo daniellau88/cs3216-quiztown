@@ -10,30 +10,13 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ["email", "name", "profile_picture_link", "user_id", "settings"]
 
-    def get_settings(self, obj):
+    def get_settings(self, obj: User):
         settings = UserSettings.objects.filter(
-            user_id=obj.user_id)
-        return settings
+            user_id=obj.user_id).values_list("settings_key", "settings_value")
+        return dict(settings)
 
 
 class UserSettingsCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserSettings
         fields = ["settings_key", "settings_value"]
-
-
-class UserSettingsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserSettings
-        fields = ["id", "user_id", "settings_key",
-                  "settings_value", "created_at"]
-
-
-class UserSettingsRequestSerializer(serializers.Serializer):
-    imports = UserSettingsCreateSerializer(many=True)
-
-
-class UserSettingsUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserSettings
-        fields = ["settings_value"]

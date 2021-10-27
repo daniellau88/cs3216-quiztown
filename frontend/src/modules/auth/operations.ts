@@ -1,6 +1,6 @@
 import api from '../../api';
 import { ApiResponse } from '../../types';
-import { GoogleLoginPostData, LoginPostData, UserData } from '../../types/auth';
+import { GoogleLoginPostData, LoginPostData, SettingsPostData, UserData } from '../../types/auth';
 import { NormalizeOperation, Operation } from '../../types/store';
 import { batched } from '../../utilities/store';
 
@@ -50,6 +50,15 @@ export function saveIsAuthenticated(isAuthenticated: boolean): Operation<void> {
 export function resetCurrentUser(): Operation<void> {
     return async (dispatch, getState) => {
         batched(dispatch, actions.deleteCurrentUser());
+    };
+}
+
+export function updateUserSettings(data: SettingsPostData): Operation<ApiResponse<{}>> {
+    return async (dispatch, getState) => {
+        const response = await api.auth.updateUserSettings(data);
+        const item = response.payload.item;
+        batched(dispatch, actions.saveUserSettings(item));
+        return { ...response };
     };
 }
 
