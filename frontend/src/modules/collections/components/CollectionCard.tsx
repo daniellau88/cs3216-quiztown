@@ -21,7 +21,7 @@ import QTButton from '../../../components/QTButton';
 import { CollectionMiniEntity } from '../../../types/collections';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
-import { getCurrentUser } from '../../auth/selectors';
+import { getCurrentUser, getIsAuthenticated } from '../../auth/selectors';
 import { deleteCollection, duplicatePublicCollection } from '../operations';
 
 import CollectionTag from './CollectionTag';
@@ -89,6 +89,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
 
     const collectionId = data?.id;
     const currentUser = useSelector(getCurrentUser);
+    const isAuthenticated = useSelector(getIsAuthenticated);
     const userId = currentUser ? currentUser.user_id : 0;
 
     const addNewCollection = () => {
@@ -201,7 +202,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                                 View
                             </QTButton>
                         </Grid>
-                        {!isOwner &&
+                        {isAuthenticated && !isOwner &&
                             (
                                 data.duplicate_collection_id ?
                                     (<Grid container item xs={3} alignItems='center'>

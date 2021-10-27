@@ -79,13 +79,13 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface CardTextProps {
-    isEditing: boolean
-    card: CardEntity
-    onComplete?: () => void
+    isOwner: boolean;
+    card: CardEntity;
+    onComplete?: () => void;
 }
 
 const CardText: React.FC<CardTextProps> = ({
-    isEditing,
+    isOwner,
     card,
     onComplete = () => { return; },
 }) => {
@@ -164,23 +164,27 @@ const CardText: React.FC<CardTextProps> = ({
                             </Button>
                         )}
                         {hasAnsweredAll && (
-                            <Box display='flex' flexDirection='column' alignItems='center' justifyContent='center' style={{ width: '95%' }}>
+                            isOwner ? (
+                                <Box display='flex' flexDirection='column' alignItems='center' justifyContent='center' style={{ width: '95%' }}>
+                                    <Typography>
+                                        How confident did you feel?
+                                    </Typography>
+                                    <Box display='flex' alignItems='center' justifyContent='center' style={{ width: '95%' }}>
+                                        {getFeedbackSet(timeTaken, 0, 0, 0, boxNumber).map((feedback: Feedback, index: number) => {
+                                            return <Button key={index} onClick={() => sendUpdate(feedback)} className={index == 0 ? classes.red : index == 1 ? classes.yellow : classes.green}>
+                                                <Grid container alignItems='center' justifyContent='center' direction='column'>
+                                                    {index == 0 ? <SentimentVeryDissatisfiedIcon /> : index == 1 ? <SentimentSatisfiedIcon /> : <SentimentVerySatisfiedIcon />}
+                                                    <Typography align='center'>
+                                                        You&apos;ll see this card<br /> again in {feedback.intervalLength} day{feedback.intervalLength == 1 ? '' : 's'}.
+                                                    </Typography>
+                                                </Grid>
+                                            </Button>;
+                                        })}
+                                    </Box>
+                                </Box>) :
                                 <Typography>
-                                    How confident did you feel?
+                                    Duplicate card to your collection now to start keeping track of your progress
                                 </Typography>
-                                <Box display='flex' alignItems='center' justifyContent='center' style={{ width: '95%' }}>
-                                    {getFeedbackSet(timeTaken, 0, 0, 0, boxNumber).map((feedback: Feedback, index: number) => {
-                                        return <Button key={index} onClick={() => sendUpdate(feedback)} className={index == 0 ? classes.red : index == 1 ? classes.yellow : classes.green}>
-                                            <Grid container alignItems='center' justifyContent='center' direction='column'>
-                                                {index == 0 ? <SentimentVeryDissatisfiedIcon /> : index == 1 ? <SentimentSatisfiedIcon /> : <SentimentVerySatisfiedIcon />}
-                                                <Typography align='center'>
-                                                    You&apos;ll see this card<br /> again in {feedback.intervalLength} day{feedback.intervalLength == 1 ? '' : 's'}.
-                                                </Typography>
-                                            </Grid>
-                                        </Button>;
-                                    })}
-                                </Box>
-                            </Box>
                         )}
                     </Grid>
                 </Grid >

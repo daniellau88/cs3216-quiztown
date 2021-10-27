@@ -1,6 +1,6 @@
 import { Grid } from '@material-ui/core';
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import LoadingIndicator from '../../../components/content/LoadingIndicator';
@@ -8,6 +8,7 @@ import { CardEntity } from '../../../types/cards';
 import { CollectionMiniEntity } from '../../../types/collections';
 import { EntitySelection } from '../../../types/store';
 import { handleApiRequest } from '../../../utilities/ui';
+import { getCurrentUser } from '../../auth/selectors';
 import { loadCard } from '../operations';
 
 import CardText from './CardText';
@@ -16,15 +17,17 @@ interface OwnProps {
     collectionId: number;
     cardId: number;
     card: EntitySelection<CardEntity>;
-    collection?: EntitySelection<CollectionMiniEntity>
+    collection: EntitySelection<CollectionMiniEntity>;
 }
 
 type Props = OwnProps;
 
-const CollectionsCardText: React.FC<Props> = ({ collectionId, cardId, card }: Props) => {
+const CollectionsCardText: React.FC<Props> = ({ collection, collectionId, cardId, card }: Props) => {
     const dispatch = useDispatch();
 
     const [isLoading, setIsLoading] = React.useState(true);
+    const user = useSelector(getCurrentUser);
+    const isOwner = user && collection ? user.user_id == collection.id : false;
 
     const onUpdate = (cardId: number, dispatch: Dispatch<any>) => {
         setIsLoading(true);
@@ -45,7 +48,7 @@ const CollectionsCardText: React.FC<Props> = ({ collectionId, cardId, card }: Pr
             {!isLoading && card && (
                 <CardText
                     card={card}
-                    isEditing={false}
+                    isOwner={isOwner}
                 />
             )}
         </Grid>

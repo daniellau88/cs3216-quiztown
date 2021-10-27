@@ -173,7 +173,7 @@ const HomePage: React.FC<{}> = () => {
     // Not logged in - login, discover, info
     // Logged in - discover, info
 
-    if (collections.length == 0) {
+    if (!authenticated || collections.length == 0) {
         return (
             <>
                 <CssBaseline />

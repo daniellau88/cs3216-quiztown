@@ -7,6 +7,7 @@ import LoadingIndicator from '../../../components/content/LoadingIndicator';
 import { CardType } from '../../../types/cards';
 import { AppState } from '../../../types/store';
 import { handleApiRequest } from '../../../utilities/ui';
+import { getCurrentUser } from '../../auth/selectors';
 import CardImageQuiz from '../../cards/components/CardImageQuiz';
 import CardText from '../../cards/components/CardText';
 import { loadCard } from '../../cards/operations';
@@ -35,6 +36,8 @@ const QuizCard: React.FC<Props> = (props: Props) => {
     const dispatch = useDispatch();
     const card = useSelector((state: AppState) => getCardEntity(state, props.cardId));
     const collection = useSelector((state: AppState) => getCollectionMiniEntity(state, card?.collection_id));
+    const currentUser = useSelector(getCurrentUser);
+    const isOwner = currentUser && collection ? currentUser.user_id == collection.id : false;
 
     const [isLoading, setIsLoading] = React.useState(true);
 
@@ -71,12 +74,13 @@ const QuizCard: React.FC<Props> = (props: Props) => {
                 {!isLoading && card && (card.type == CardType.TEXT ?
                     <CardText
                         card={card}
-                        isEditing={false}
+                        isOwner={isOwner}
                         onComplete={props.onComplete}
                     />
                     :
                     <CardImageQuiz
                         card={card}
+                        isOwner={isOwner}
                         onComplete={props.onComplete}
                     />
                 )}
