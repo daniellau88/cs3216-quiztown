@@ -18,11 +18,11 @@ import { useHistory } from 'react-router-dom';
 
 import defaultCollectionImage from '../../../assets/images/logo512.png';
 import QTButton from '../../../components/QTButton';
-import { CollectionMiniEntity } from '../../../types/collections';
+import { CollectionMiniEntity, CollectionPostData } from '../../../types/collections';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
 import { getCurrentUser, getIsAuthenticated } from '../../auth/selectors';
-import { deleteCollection, duplicatePublicCollection } from '../operations';
+import { deleteCollection, duplicatePublicCollection, updateCollection } from '../operations';
 
 import CollectionTag from './CollectionTag';
 import CollectionTagSelector from './CollectionTagSelector';
@@ -91,6 +91,13 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
     const currentUser = useSelector(getCurrentUser);
     const isAuthenticated = useSelector(getIsAuthenticated);
     const userId = currentUser ? currentUser.user_id : 0;
+    const [isPrivate, setIsPrivate] = React.useState<boolean>(true);
+
+    React.useEffect(() => {
+        if (data) {
+            setIsPrivate(data.private);
+        }
+    }, [data]);
 
     const addNewCollection = () => {
         history.push('/collections/new');
@@ -139,6 +146,18 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
     const startCollection = () => {
         console.log('Start');
 
+    };
+
+    const onCollectionNameChange = () => {
+        const privateStatus = !isPrivate;
+        const collectionPostData: Partial<CollectionPostData> = { private: privateStatus };
+        if (collectionId) {
+            return handleApiRequest(dispatch, dispatch(updateCollection(collectionId, collectionPostData)))
+                .then(() => {
+                    setIsPrivate(privateStatus);
+                    return true;
+                });
+        }
     };
 
     const handleDeleteCollection = () => {
@@ -216,6 +235,19 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                                         </QTButton>
                                     </Grid>)
                             )
+                        }
+                        {
+                            isPrivate ?
+                                (<Grid container item xs={3} alignItems='center'>
+                                    <QTButton outlined height='95%' width='95%' onClick={onCollectionNameChange}>
+                                        Make public
+                                    </QTButton>
+                                </Grid>) :
+                                (<Grid container item xs={3} alignItems='center'>
+                                    <QTButton outlined height='95%' width='95%' onClick={onCollectionNameChange}>
+                                        Make private
+                                    </QTButton>
+                                </Grid>)
                         }
                         <Box flexGrow={1} />
                         {data.permissions.can_delete &&
