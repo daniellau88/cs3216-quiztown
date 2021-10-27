@@ -24,26 +24,20 @@ import { handleApiRequest } from '../../../utilities/ui';
 import { updateCard } from '../operations';
 import {
     initAnswerOptions,
+    initAnswerOptionsBoundingBox,
     initAnswerRectangles,
     initCorrectAnswersIndicator,
+    initImageBoundingBox,
     resetToOriginalPosition,
     revealAnswer,
+    shiftAnswerOptionsUp,
     updateCorrectAnswersIndicator,
     validateAnswer,
-} from '../utils';
-
-const MAX_CANVAS_WIDTH = 1280;
-const SCREEN_PADDING = 40;
+} from '../utils'; 
 
 const useStyles = makeStyles(() => ({
     root: {
-        display: 'flex',
         paddingTop: '20px',
-    },
-    imageContainer: {
-        position: 'absolute',
-        alignItems: 'center',
-        justifyContent: 'center',
     },
     showAnswerContainer: {
         alignSelf: 'center',
@@ -55,6 +49,7 @@ const useStyles = makeStyles(() => ({
         width: '10vw',
         borderRadius: '10px',
         border: '1px solid black',
+        alignSelf: 'center',
     },
     green: {
         color: colours.GREEN,
@@ -98,29 +93,53 @@ const CardImageQuiz: React.FC<Props> = ({
 
     const { windowHeight, windowWidth } = useWindowDimensions();
 
-    const canvasMaxWidth = windowWidth - SCREEN_PADDING > MAX_CANVAS_WIDTH
-        ? MAX_CANVAS_WIDTH
-        : windowWidth;
-    const canvasMaxHeight = imageMetadata.height;
-    const imageXTranslation = Math.max(canvasMaxWidth - imageMetadata.width, 0) / 2;
+    const canvasMaxWidth = windowWidth * 0.9;
+    const canvasMaxHeight = windowHeight * 0.7;
+    const answerOptionsContainerWidth = canvasMaxWidth * 0.3;
+    const imageContainerWidth = canvasMaxWidth * 0.7;
+    const imageScaleX = imageContainerWidth / imageMetadata.width;
+    const imageScaleY = canvasMaxHeight / imageMetadata.height;
+    const imageScale = Math.min(imageScaleX, imageScaleY); // Maintains aspect ratio, object-fit == 'contain'
 
     const startTime = Moment();
 
-    const initCanvasWithBg = () => {
-        const canvas = new fabric.Canvas(CANVAS_ID, {
-            hoverCursor: 'pointer',
-            targetFindTolerance: 2,
-            backgroundColor: 'transparent',
-            selection: false,
-        });
-        return canvas;
+    const getCanvasTranslationToCenter = () => {
+        const scaledImageWidth = imageMetadata.width * imageScale;
+        const isImageSmallerThanContainerWidth = scaledImageWidth < imageContainerWidth;
+        if (!isImageSmallerThanContainerWidth) return 0;
+
+        const remainingWidth = imageContainerWidth - scaledImageWidth;
+        return remainingWidth / 2;
     };
 
-    const initQuizingCanvas = () => {
-        const canvas = initCanvasWithBg();
-        const answersCoordsMap = initAnswerRectangles(canvas, result, imageXTranslation);
-        const optionsCoordsMap = initAnswerOptions(canvas, result);
+    const initQuizingCanvas = (canvasId: string) => {
+        const canvas = new fabric.Canvas(canvasId, {
+            hoverCursor: 'pointer',
+            targetFindTolerance: 2,
+            selection: false,
+        });
+        const canvasTranslationToCenter = getCanvasTranslationToCenter();
+        const imageXTranslation = answerOptionsContainerWidth + canvasTranslationToCenter;
+
+        const optionsCoordsMap = initAnswerOptions(canvas, result, canvasTranslationToCenter);
+        initAnswerOptionsBoundingBox(canvas, answerOptionsContainerWidth, canvasTranslationToCenter);
+        initImageBoundingBox(canvas, imageXTranslation, imageContainerWidth);
+        fabric.Image.fromURL(imageUrl, function (img) {
+            canvas.add(img);
+            // We need this to have the answer options at a lower z-index, and the covering rectangles at a higher z-index
+            // The +1 in `results.length + 1` is for the correctAnswersIndicator object
+            for (let i = 0; i < result.length + 1; i++) {
+                img.sendBackwards();
+            }
+        }, {
+            scaleX: imageScale,
+            scaleY: imageScale,
+            left: imageXTranslation,
+            selectable: false,
+        });
+        const answersCoordsMap = initAnswerRectangles(canvas, result, imageXTranslation, imageScale);
         const answersIndicator = initCorrectAnswersIndicator(canvas, result);
+
         canvas.on('object:moving', (e) => {
             if (e.target) {
                 e.target.opacity = 0.5;
@@ -136,6 +155,7 @@ const CardImageQuiz: React.FC<Props> = ({
             if (isAnswerCorrect) {
                 canvas.remove(e.target);
                 revealAnswer(answersCoordsMap, text, canvas);
+                shiftAnswerOptionsUp(canvas, optionsCoordsMap, text);
                 stopTime().then(() => setHasAnsweredAll(updateCorrectAnswersIndicator(answersIndicator)));
             } else {
                 e.target.opacity = 1;
@@ -146,7 +166,7 @@ const CardImageQuiz: React.FC<Props> = ({
     };
 
     useEffect(() => {
-        const canvas = initQuizingCanvas();
+        const canvas = initQuizingCanvas(CANVAS_ID);
         setCanvas(canvas);
     }, []);
 
@@ -165,7 +185,13 @@ const CardImageQuiz: React.FC<Props> = ({
 
     const revealAllAnswers = () => {
         if (!canvas) return;
-        canvas.getObjects().forEach(object => canvas.remove(object));
+        canvas.getObjects().forEach(object => {
+            const objectType = object.type;
+            const shouldRemoveObject = objectType == 'QTText' || objectType == 'rect' || objectType == 'text';
+            if (shouldRemoveObject) {
+                canvas.remove(object);
+            }
+        });
         stopTime().then(() => setHasAnsweredAll(true));
     };
 
@@ -190,15 +216,6 @@ const CardImageQuiz: React.FC<Props> = ({
             <CssBaseline />
             <Grid container direction='column' className={classes.root}>
                 <Box display="flex" justifyContent='center' width='100%'>
-                    <Box
-                        className={classes.imageContainer}
-                        style={{ height: canvasMaxHeight, width: canvasMaxWidth }}
-                    >
-                        <img
-                            src={imageUrl}
-                            style={{ position: 'absolute', left: (canvasMaxWidth - imageMetadata.width) / 2 }}
-                        />
-                    </Box>
                     <canvas
                         id={CANVAS_ID}
                         width={canvasMaxWidth}
@@ -207,12 +224,14 @@ const CardImageQuiz: React.FC<Props> = ({
                 </Box>
                 <Grid container className={classes.showAnswerContainer}>
                     {!hasAnsweredAll && (
-                        <Button
-                            className={classes.showAnswer}
-                            onClick={revealAllAnswers}
-                        >
-                            Show Answer
-                        </Button>
+                        <Box display='flex' flexDirection='column' alignItems='center' justifyContent='center' style={{ width: '95%' }}>
+                            <Button
+                                className={classes.showAnswer}
+                                onClick={revealAllAnswers}
+                            >
+                                Show Answer
+                            </Button>
+                        </Box>
                     )}
                     {hasAnsweredAll && (
                         <Box display='flex' flexDirection='column' alignItems='center' justifyContent='center' style={{ width: '95%' }}>

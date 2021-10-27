@@ -19,14 +19,10 @@ const DEFAULT_TEXTBOX_HEIGHT = 24;
 export const initAnswerOptions = (
     canvas: fabric.Canvas,
     data: Array<AnswerData>,
+    xTranslation: number,
 ): Map<string, fabric.Point> => {
     const optionsCoordsMap = new Map();
-    const canvasWidth = canvas.getWidth();
-    const canvasHeight = canvas.getHeight();
-
-    const origin = new fabric.Point(CANVAS_PADDING, canvasHeight + CANVAS_PADDING);
-    canvas.setHeight(canvasHeight + 2*CANVAS_PADDING);
-
+    const origin = new fabric.Point(CANVAS_PADDING + xTranslation, CANVAS_PADDING);
     data.forEach(option => {
         const text = new QTText(option.text, {
             perPixelTargetFind: true,
@@ -38,27 +34,60 @@ export const initAnswerOptions = (
             padding: TEXT_PADDING,
         });
         text.setPositionByOrigin(origin, 'left', 'top');
-        const textWidth = text.getBoundingRect().width;
         const textHeight = text.getBoundingRect().height;
 
-        if (origin.x + textWidth > canvasWidth) {
-            origin.setX(CANVAS_PADDING);
-            origin.setY(origin.y + TEXT_MARGIN);
-
-            optionsCoordsMap.set(option.text, new fabric.Point(origin.x, origin.y));
-            text.setPositionByOrigin(origin, 'left', 'top');
-            origin.setX(origin.x + textWidth + TEXT_MARGIN);
-            // Dynamically resize canvas as more answer options are added
-            canvas.setHeight(canvas.getHeight() + TEXT_MARGIN + textHeight);
-
-        } else {
-            optionsCoordsMap.set(option.text, new fabric.Point(origin.x, origin.y));
-            origin.setX(origin.x + textWidth + TEXT_MARGIN);
-        }
+        optionsCoordsMap.set(option.text, new fabric.Point(origin.x, origin.y));
+        origin.setY(origin.y + textHeight + TEXT_MARGIN);
         canvas.add(text);
     });
     return optionsCoordsMap;
 };
+
+export const initAnswerOptionsBoundingBox = (
+    canvas: fabric.Canvas,
+    containerWidth: number,
+    xTranslation: number,
+): void => {
+    const boundingBox = new fabric.Rect({
+        top: 0,
+        left: xTranslation,
+        width: containerWidth - CANVAS_PADDING,
+        height: canvas.getHeight() - CANVAS_PADDING,
+        rx: BORDER_RADIUS,
+        ry: BORDER_RADIUS,
+        selectable: false,
+        borderColor: colours.BLACK,
+        fill: 'transparent',
+        stroke: colours.BLACK,
+    });
+    const whitePadding = new fabric.Rect({
+        top: canvas.getHeight() - CANVAS_PADDING + 5,
+        left: xTranslation,
+        width: containerWidth - CANVAS_PADDING,
+        height: CANVAS_PADDING,
+        selectable: false,
+        fill: colours.WHITE,
+    });
+    canvas.add(boundingBox, whitePadding);
+    boundingBox.sendToBack();
+};
+
+export const initImageBoundingBox = (
+    canvas: fabric.Canvas,
+    left: number,
+    containerWidth: number,
+): void => {
+    const boundingBox = new fabric.Rect({
+        top: 0,
+        left: left - CANVAS_PADDING,
+        width: containerWidth + CANVAS_PADDING,
+        height: canvas.getHeight(),
+        selectable: false,
+        fill: colours.WHITE,
+    });
+    canvas.add(boundingBox);
+};
+
 
 const createAnswerTextBox = (box: AnswerData, xTranslation:number) => {
     const top = box.bounding_box[0][1];
@@ -81,22 +110,26 @@ const createAnswerTextBox = (box: AnswerData, xTranslation:number) => {
     });
 };
 
-const createAnswerRectangle = (box: AnswerData, xTranslation:number) => {
+const createAnswerRectangle = (
+    box: AnswerData, 
+    xTranslation:number,
+    scale: number,
+) => {
     const top = box.bounding_box[0][1];
     const left = box.bounding_box[0][0];
     return new fabric.Rect({
-        top: top,
-        left: left + xTranslation,
+        top: (top * scale),
+        left: (left * scale) + xTranslation,
         width: box.bounding_box[1][0] - box.bounding_box[0][0],
         height: box.bounding_box[1][1] - box.bounding_box[0][1],
-        hasControls: false,
-        lockMovementX: true,
-        lockMovementY: true,
+        selectable: false,
         rx: BORDER_RADIUS,
         ry: BORDER_RADIUS,
         borderColor: colours.BLACK,
         fill: colours.WHITE,
         stroke: colours.BLACK,
+        scaleX: scale,
+        scaleY: scale,
     });
 };
 
@@ -105,13 +138,15 @@ export const initAnswerRectangles = (
     canvas: fabric.Canvas,
     data: Array<AnswerData>,
     xTranslation: number,
+    scale: number,
 ): Map<string, fabric.Rect> => {
     const answersCoordsMap = new Map();
 
     data.forEach(box => {
-        const rect = createAnswerRectangle(box, xTranslation);
+        const rect = createAnswerRectangle(box, xTranslation, scale);
         answersCoordsMap.set(box.text, rect);
         canvas.add(rect);
+        rect.bringToFront();
     });
     return answersCoordsMap;
 };
@@ -146,6 +181,7 @@ export const initCorrectAnswersIndicator = (
         fontSize: FONT_SIZE,
     });
     canvas.add(correctAnswersIndicator);
+    correctAnswersIndicator.bringToFront();
     return correctAnswersIndicator;
 };
 
@@ -187,6 +223,42 @@ export const revealAnswer = (
     if (!answerData) return;
 
     canvas.remove(answerData);
+};
+
+export const shiftAnswerOptionsUp = (
+    canvas: fabric.Canvas,
+    optionsCoordsMap: Map<string, fabric.Point>,
+    text: fabric.Text,
+): void => {
+    const textContent = text.get('text');
+    const heightTreshold = canvas.getHeight();
+    if (!textContent) return;
+
+    const coordToReplace = optionsCoordsMap.get(textContent);
+    if (!coordToReplace) return;
+
+    optionsCoordsMap.delete(textContent);
+    const allObjects = canvas.getObjects();
+
+    for (let idx = 0; idx < allObjects.length; idx++) {
+        const object = allObjects[idx];
+        if (object.type == 'QTText') {
+            const top = object.top;
+            if (!top) continue;
+            const isTextOutOfBounds = top > heightTreshold;
+
+            if (!isTextOutOfBounds) continue;
+
+            const movedTextbox = object as fabric.Text;
+            const movedTextboxText = movedTextbox.get('text');
+            if (!movedTextboxText) continue;
+
+            object.top = coordToReplace.y;
+            object.setCoords();
+            optionsCoordsMap.set(movedTextboxText, coordToReplace);
+            break;
+        }
+    }
 };
 
 export const resetToOriginalPosition = (
