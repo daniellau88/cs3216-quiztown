@@ -87,7 +87,7 @@ interface CardTextProps {
 const CardText: React.FC<CardTextProps> = ({
     isOwner,
     card,
-    onComplete = () => { return; },
+    onComplete,
 }) => {
     const classes = useStyles();
     const dispatch = useDispatch();

@@ -36,8 +36,6 @@ const CollectionsCardShowPage: React.FC<Props> = ({ match: { params } }: RouteCo
 
     const [isLoading, setIsLoading] = React.useState(true);
 
-    console.log(card);
-
     const onUpdate = (cardId: number, dispatch: Dispatch<any>) => {
         setIsLoading(true);
         handleApiRequests(dispatch, dispatch(loadCard(cardId)), dispatch(loadCollection(collectionId))).finally(() => {
