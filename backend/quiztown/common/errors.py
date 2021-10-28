@@ -82,7 +82,10 @@ def get_code_from_context(context: ContextType) -> int:
     return kwargs[CODE_KEY]
 
 
-def add_message_on_context(context: ContextType, message_content: str, message_type: int):
+def add_message_on_context(
+        context: ContextType,
+        message_content: str,
+        message_type: int = MessageType.SUCCESS):
     kwargs = _get_kwargs_from_context(context)
     if MESSAGES_KEY not in kwargs:
         kwargs[MESSAGES_KEY] = []
