@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 
 import CollectionsCardAddImagePage from '../modules/cards/pages/CollectionsCardAddImagePage';
 import CollectionsCardAddPage from '../modules/cards/pages/CollectionsCardAddPage';
@@ -18,25 +18,28 @@ import InfoPage from '../pages/InfoPage';
 import TemplatePage from '../pages/utilities/TemplatePage';
 import routes from '../utilities/routes';
 
+import RouteBounded from './RouteBounded';
+
 const MainAuthenticatedRouter = (): JSX.Element => {
     return (
         <>
             <Switch>
-                <Route exact path={'/'} component={HomePage} />
-                <Route exact path={routes.INFO} component={InfoPage} />
-                <Route exact path={routes.COLLECTIONS.INDEX} component={CollectionPage} />
-                <Route exact path={routes.COLLECTIONS.NEW} component={CollectionAddPage} />
-                <Route exact path={routes.COLLECTIONS.DISCOVER} component={CollectionDiscoverPage} />
-                <Route exact path={routes.COLLECTIONS.SHOW} component={CollectionsCardPage} />
-                <Route exact path={routes.COLLECTIONS.IMPORT.SHOW} component={CollectionImportReviewPage} />
-                <Route exact path={routes.COLLECTIONS.CARD.NEWTEXT} component={CollectionsCardAddTextPage} />
-                <Route exact path={routes.COLLECTIONS.CARD.NEWIMAGE} component={CollectionsCardAddImagePage} />
-                <Route exact path={routes.COLLECTIONS.CARD.NEW} component={CollectionsCardAddPage} />
-                <Route exact path={routes.COLLECTIONS.CARD.SHOW} component={CollectionsCardShowPage} />
-                <Route exact path={routes.CARDS.SHOW_STARRED} component={CollectionsCardStarredPage} />
-                <Route exact path={routes.COLLECTIONS.CARD.EDIT} component={CollectionsCardEditPage} />
-                <Route exact path={routes.QUIZ} component={QuizPage} />
-                <Route exact path={routes.TEST} component={TemplatePage} />
+                <RouteBounded exact path={'/'} component={HomePage} />
+                <RouteBounded exact path={routes.INFO} component={InfoPage} />
+                <RouteBounded exact path={routes.COLLECTIONS.INDEX} component={CollectionPage} />
+                <RouteBounded exact path={routes.COLLECTIONS.NEW} component={CollectionAddPage} />
+                <RouteBounded exact path={routes.COLLECTIONS.DISCOVER} component={CollectionDiscoverPage} />
+                <RouteBounded exact path={routes.COLLECTIONS.SHOW} component={CollectionsCardPage} />
+                <RouteBounded exact path={routes.COLLECTIONS.IMPORT.SHOW} component={CollectionImportReviewPage} />
+                <RouteBounded exact path={routes.COLLECTIONS.CARD.NEWTEXT} component={CollectionsCardAddTextPage} />
+                <RouteBounded exact path={routes.COLLECTIONS.CARD.NEWIMAGE} component={CollectionsCardAddImagePage} />
+                <RouteBounded exact path={routes.COLLECTIONS.CARD.NEW} component={CollectionsCardAddPage} />
+                <RouteBounded exact path={routes.COLLECTIONS.CARD.SHOW} component={CollectionsCardShowPage} />
+                <RouteBounded exact path={routes.CARDS.SHOW_STARRED} component={CollectionsCardStarredPage} />
+                <RouteBounded exact path={routes.COLLECTIONS.CARD.EDIT} component={CollectionsCardEditPage} />
+                <RouteBounded exact path={routes.QUIZ} component={QuizPage} />
+                <RouteBounded exact path={routes.TEST} component={TemplatePage} />
+                <Route render={() => <Redirect to={routes.ROOT} />} />
             </Switch>
         </>
     );
