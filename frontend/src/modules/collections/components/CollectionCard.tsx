@@ -137,6 +137,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
 
     const collectionName = data.name;
     const isOwner = userId === data.owner_id;
+    const canUpdate = data.permissions.can_update;
 
     const openCollection = () => {
         history.push(`/collections/${collectionId}`);
@@ -237,17 +238,20 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                             )
                         }
                         {
-                            isPrivate ?
-                                (<Grid container item xs={3} alignItems='center'>
-                                    <QTButton outlined height='95%' width='95%' onClick={onCollectionNameChange}>
-                                        Make public
-                                    </QTButton>
-                                </Grid>) :
-                                (<Grid container item xs={3} alignItems='center'>
-                                    <QTButton outlined height='95%' width='95%' onClick={onCollectionNameChange}>
-                                        Make private
-                                    </QTButton>
-                                </Grid>)
+                            canUpdate &&
+                            (
+                                isPrivate ?
+                                    (<Grid container item xs={3} alignItems='center'>
+                                        <QTButton outlined height='95%' width='95%' onClick={onCollectionNameChange}>
+                                            Make public
+                                        </QTButton>
+                                    </Grid>) :
+                                    (<Grid container item xs={3} alignItems='center'>
+                                        <QTButton outlined height='95%' width='95%' onClick={onCollectionNameChange}>
+                                            Make private
+                                        </QTButton>
+                                    </Grid>)
+                            )
                         }
                         <Box flexGrow={1} />
                         {data.permissions.can_delete &&
