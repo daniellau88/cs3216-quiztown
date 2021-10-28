@@ -78,7 +78,7 @@ const CollectionsCardEditPage: React.FC<Props> = ({ match: { params } }: RouteCo
     const collection = useSelector((state: AppState) => getCollectionMiniEntity(state, collectionId));
     const card = useSelector((state: AppState) => getCardEntity(state, cardId));
     const canvasRef = React.useRef<fabric.Canvas>();
-    const textEditRef = React.useRef<{question: string, answer: string}>();
+    const textEditRef = React.useRef<{ question: string, answer: string }>();
 
     const [isLoading, setIsLoading] = React.useState(true);
 
@@ -149,22 +149,22 @@ const CollectionsCardEditPage: React.FC<Props> = ({ match: { params } }: RouteCo
 
                         <Grid item>
                             {!isLoading && card &&
-                                card.type == CardType.IMAGE
-                                ? <CardImageEdit
-                                    card={card}
-                                    canvasRef={canvasRef}
-                                    saveEdits={saveImageEditChanges}
-                                />
-                                : <CollectionsTextCardEdit
-                                    cardQuestion={card?.question}
-                                    cardAnswer={card?.answer}
-                                    textEditRef={textEditRef}
-                                />}
+                                (card.type == CardType.IMAGE
+                                    ? <CardImageEdit
+                                        card={card}
+                                        canvasRef={canvasRef}
+                                        saveEdits={saveImageEditChanges}
+                                    />
+                                    : <CollectionsTextCardEdit
+                                        cardQuestion={card.question}
+                                        cardAnswer={card.answer}
+                                        textEditRef={textEditRef}
+                                    />)}
                         </Grid>
 
                         <Grid item className={classes.alignRight}>
                             <QTButton
-                                onClick={() => card && card.type == CardType.IMAGE 
+                                onClick={() => card && card.type == CardType.IMAGE
                                     ? saveImageEditChanges(false)
                                     : saveTextEditChanges()
                                 }

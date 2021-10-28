@@ -37,7 +37,7 @@ const QuizCard: React.FC<Props> = (props: Props) => {
     const card = useSelector((state: AppState) => getCardEntity(state, props.cardId));
     const collection = useSelector((state: AppState) => getCollectionMiniEntity(state, card?.collection_id));
     const currentUser = useSelector(getCurrentUser);
-    const isOwner = currentUser && collection ? currentUser.user_id == collection.id : false;
+    const isOwner = currentUser && collection ? currentUser.user_id == collection.owner_id : false;
 
     const [isLoading, setIsLoading] = React.useState(true);
 

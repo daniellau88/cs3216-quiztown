@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import LoadingIndicator from '../../../components/content/LoadingIndicator';
-import { CardEntity } from '../../../types/cards';
+import { CardImageEntity } from '../../../types/cards';
 import { CollectionMiniEntity } from '../../../types/collections';
 import { EntitySelection } from '../../../types/store';
 import { handleApiRequest } from '../../../utilities/ui';
@@ -15,7 +15,7 @@ import { loadCard } from '../operations';
 interface OwnProps {
     collectionId: number;
     cardId: number;
-    card: EntitySelection<CardEntity>;
+    card: EntitySelection<CardImageEntity>;
     collection: EntitySelection<CollectionMiniEntity>;
 }
 
@@ -26,7 +26,7 @@ const CollectionsCardImage: React.FC<Props> = ({ collectionId, cardId, card, col
 
     const [isLoading, setIsLoading] = React.useState(true);
     const user = useSelector(getCurrentUser);
-    const isOwner = user && collection ? user.user_id == collection.id : false;
+    const isOwner = user && collection ? user.user_id == collection.owner_id : false;
 
     const onUpdate = (cardId: number, dispatch: Dispatch<any>) => {
         setIsLoading(true);

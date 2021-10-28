@@ -1,7 +1,7 @@
 import api from '../../api';
 import * as cards from '../../modules/cards';
 import { ApiResponse } from '../../types';
-import { CollectionListData, CollectionMiniEntity, CollectionPostData, CollectionTagsData, CollectionsImportPostData } from '../../types/collections';
+import { CollectionListData, CollectionMiniEntity, CollectionPostData, CollectionPrivate, CollectionTagsData, CollectionsImportPostData } from '../../types/collections';
 import { CollectionOptions, EntityCollection, NormalizeOperation, Operation } from '../../types/store';
 import { batched, queryEntityCollection, withCachedEntity } from '../../utilities/store';
 import { getCurrentUser } from '../auth/selectors';
@@ -11,12 +11,11 @@ import { getAllPersonalCollections, getAllPublicCollections, getCollectionMiniEn
 
 export function loadAllPersonalCollections(options: CollectionOptions): Operation<ApiResponse<EntityCollection>> {
     return (dispatch, getState) => {
-        const personalCollectionFilter: any = {};
         // Add owner id to query
         const user = getCurrentUser(getState());
-        if (user) {
-            personalCollectionFilter.owner_id = user.user_id;
-        }
+        const personalCollectionFilter: any = {
+            owner_id: user ? user.user_id : -1,
+        };
 
         return queryEntityCollection(
             () => getAllPersonalCollections(getState()),
@@ -118,7 +117,7 @@ export function getAllCollectionTags(): Operation<ApiResponse<CollectionTagsData
 export function loadAllPublicCollections(options: CollectionOptions): Operation<ApiResponse<EntityCollection>> {
     return (dispatch, getState) => {
         const publicCollectionFilter: any = {
-            private: 1,
+            private: CollectionPrivate.PUBLIC,
         };
 
         return queryEntityCollection(

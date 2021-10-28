@@ -52,24 +52,31 @@ const QuizPage: React.FC = () => {
     const history = useHistory();
     const dispatch = useDispatch();
     const currentIndex = useSelector(getCurrentIndex);
-    const [done, setDone] = React.useState<boolean>(false);
 
     const quizEntity = useSelector(getAutomatedQuizEntity);
     const cardIds = quizEntity ? quizEntity.cardIds : [];
     const totalCards = cardIds.length;
+
+    const [done, setDone] = React.useState<boolean>(currentIndex >= totalCards);
 
     if (cardIds.length < 1) {
         history.push(generatePath(routes.ROOT));
     }
 
     const nextQuestion = () => {
-        if (currentIndex + 1 < totalCards) {
-            dispatch(incrementCurrentIndex());
-        } else {
+        if (currentIndex + 1 >= totalCards) {
             setDone(true);
-            dispatch(resetAutomatedQuiz());
         }
+        dispatch(incrementCurrentIndex());
     };
+
+    React.useEffect(() => {
+        return () => {
+            if (done) {
+                dispatch(resetAutomatedQuiz());
+            }
+        };
+    }, [done]);
 
     return (
         <>

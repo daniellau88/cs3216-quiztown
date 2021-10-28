@@ -182,7 +182,6 @@ const HomePage: React.FC<{}> = () => {
                                         <Typography align='center' className={classes.promptCardText} >
                                             Login <GoogleSignInLink className={classes.link}>here</GoogleSignInLink> to create your own collections and start your learning!
                                         </Typography>
-                                        <GoogleSignInButton />
                                     </CardContent>
                                 </Card>
                             </Grid>
