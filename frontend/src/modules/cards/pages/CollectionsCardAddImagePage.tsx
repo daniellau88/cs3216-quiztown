@@ -50,6 +50,11 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    description: {
+        marginLeft: theme.spacing(0),
+        marginRight: theme.spacing(0),
+        paddingTop: '2vh',
+    },
 }));
 
 type Props = RouteComponentProps;
@@ -97,9 +102,12 @@ const CollectionsCardAddImagePage: React.FC<Props> = ({ match: { params } }: Rou
                         { path: generatePath(routes.COLLECTIONS.SHOW, { collectionId: collectionId }), name: collection ? collection.name : 'Untitled collection' },
                         { path: null, name: 'Add Image Card' },
                     ]} />
-                    <Grid container direction='row' className={classes.header}>
+                    <Grid container direction='column' className={classes.header}>
                         <Typography className={classes.title} variant='h5' component="div">
                             Import cards to {collection?.name}
+                        </Typography>
+                        <Typography variant='body1' component="div" className={classes.description}>
+                            Upload files to automatically generate cards! We will notify you when they are ready for your review.
                         </Typography>
                     </Grid>
                     <CollectionAddFileCards setUploadedResponse={setUploadedResponse} />

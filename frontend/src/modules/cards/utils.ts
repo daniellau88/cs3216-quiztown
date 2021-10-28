@@ -89,16 +89,19 @@ export const initImageBoundingBox = (
 };
 
 
-const createAnswerTextBox = (box: AnswerData, xTranslation:number) => {
+const createAnswerTextBox = (
+    box: AnswerData,
+    xTranslation: number,
+    scale: number,
+) => {
     const top = box.bounding_box[0][1];
     const left = box.bounding_box[0][0];
     const width = box.bounding_box[1][0] - box.bounding_box[0][0];
     const height = box.bounding_box[1][1] - box.bounding_box[0][1];
-    const scaleY = height / DEFAULT_TEXTBOX_HEIGHT;
 
     return new QTTextbox(box.text, {
-        top: top,
-        left: left + xTranslation,
+        top: (top * scale),
+        left: (left * scale) + xTranslation,
         width: width,
         height: height,
         hasBorders: false,
@@ -106,7 +109,8 @@ const createAnswerTextBox = (box: AnswerData, xTranslation:number) => {
         backgroundColor: colours.WHITE,
         stroke: colours.BLACK,
         fontSize: FONT_SIZE,
-        scaleY: scaleY,
+        scaleX: scale,
+        scaleY: scale,
     });
 };
 
@@ -156,9 +160,10 @@ export const initAnswerTextboxes = (
     canvas: fabric.Canvas,
     data: Array<AnswerData>,
     xTranslation: number,
+    scale: number,
 ): void => {
     data.forEach(box => {
-        const textbox = createAnswerTextBox(box, xTranslation);
+        const textbox = createAnswerTextBox(box, xTranslation, scale);
         canvas.add(textbox);
     });
 };
