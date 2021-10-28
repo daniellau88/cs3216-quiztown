@@ -73,7 +73,7 @@ type Props = OwnProps
 const CardImageQuiz: React.FC<Props> = ({
     isOwner,
     card,
-    onComplete = () => { return; },
+    onComplete,
 }) => {
     const classes = useStyles();
     const dispatch = useDispatch();
