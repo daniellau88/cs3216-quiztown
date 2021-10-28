@@ -18,6 +18,7 @@ import { Link, generatePath, useHistory } from 'react-router-dom';
 
 import LoadingIndicator from '../components/content/LoadingIndicator';
 import GoogleSignInButton from '../modules/auth/components/GoogleSignInButton';
+import GoogleSignInLink from '../modules/auth/components/GoogleSignInLink';
 import { getIsAuthenticated } from '../modules/auth/selectors';
 import { loadUndoneCards } from '../modules/cards/operations';
 import { getCardMiniEntity, getUndoneCardList } from '../modules/cards/selectors';
@@ -184,7 +185,7 @@ const HomePage: React.FC<{}> = () => {
                                 <Card className={classes.loginCard}>
                                     <CardContent className={classes.cardContent}>
                                         <Typography align='center' className={classes.promptCardText} >
-                                            Login to create your own collections and start your learning!
+                                            Login <GoogleSignInLink className={classes.link}>here</GoogleSignInLink> to create your own collections and start your learning!
                                         </Typography>
                                         <GoogleSignInButton />
                                     </CardContent>
