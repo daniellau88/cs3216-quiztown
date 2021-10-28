@@ -28,7 +28,7 @@ import colours from '../../../utilities/colours';
 import routes from '../../../utilities/routes';
 import { handleApiRequest } from '../../../utilities/ui';
 import { getCollectionMiniEntity } from '../../collections/selectors';
-import { importTextCards, loadCollectionCards } from '../operations';
+import { importTextCards } from '../operations';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -107,10 +107,8 @@ const CollectionsCardAddTextPage: React.FC<Props> = ({ match: { params } }: Rout
                 );
             }
         });
-        return handleApiRequest(dispatch, dispatch(importTextCards(collectionId, { imports: dataCopy }))).then((importResponse) => {
-            return handleApiRequest(dispatch, dispatch(loadCollectionCards(collectionId, {}))).finally(() => {
-                history.push(`/collections/${collectionId}`);
-            });
+        return handleApiRequest(dispatch, dispatch(importTextCards(collectionId, { imports: dataCopy }))).then(() => {
+            history.push(`/collections/${collectionId}`);
         });
     };
 

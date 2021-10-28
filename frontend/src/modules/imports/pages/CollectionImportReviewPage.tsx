@@ -20,10 +20,13 @@ import { RouteComponentProps, generatePath, useHistory } from 'react-router-dom'
 
 import LoadingIndicator from '../../../components/content/LoadingIndicator';
 import Breadcrumbs from '../../../layouts/Breadcrumbs';
+import { SettingsPostData } from '../../../types/auth';
 import { AppState } from '../../../types/store';
 import colours from '../../../utilities/colours';
 import routes from '../../../utilities/routes';
 import { handleApiRequest } from '../../../utilities/ui';
+import { updateUserSettings } from '../../auth/operations';
+import { getCurrentUser } from '../../auth/selectors';
 import { deleteCard, loadCollectionImportCards } from '../../cards/operations';
 import { completeCollectionImportReview, loadCollection } from '../../collections/operations';
 import { getCollectionMiniEntity } from '../../collections/selectors';
@@ -71,37 +74,36 @@ const CollectionReviewPage: React.FC<Props> = ({ match: { params } }: RouteCompo
     const [importedCardIds, setImportedCardIds] = React.useState<number[]>();
     const [currCardId, setCurrCardId] = React.useState<number>();
     const [open, setOpen] = React.useState(false);
-    const [checked, setChecked] = React.useState(true);
+    const [checked, setChecked] = React.useState(false);
 
     const collectionId: number = parseInt((params as { collectionId: string }).collectionId);
     const importId: number = parseInt((params as { importId: string }).importId);
     const collection = useSelector((state: AppState) => getCollectionMiniEntity(state, collectionId));
+    const currentUser = useSelector(getCurrentUser);
+    const hidePromptSettings = currentUser && currentUser.settings['collection_import_review.hide_prompt'] ? currentUser.settings['collection_import_review.hide_prompt'] : 0;
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setChecked(event.target.checked);
     };
 
-    const handleDialogOpen = () => {
-        setOpen(true);
-    };
-
     const handleClose = () => {
+        if (checked) {
+            const data: SettingsPostData = {
+                settings_key: 'collection_import_review.hide_prompt',
+                settings_value: 1,
+            };
+            handleApiRequest(dispatch, dispatch(updateUserSettings(data)));
+        }
         setOpen(false);
     };
 
     React.useEffect(() => {
-        // TODO: set this to if setting is the default setting, set open
-        // probably need to have a selector and use [user]
-        console.log('dislog displayed');
-        handleDialogOpen();
-    }, []);
-
-    React.useEffect(() => {
-        if (checked) {
-            // TODO: update settings here
-            console.log('checked');
+        if (hidePromptSettings) {
+            setOpen(false);
+        } else {
+            setOpen(true);
         }
-    }, [checked]);
+    }, [hidePromptSettings]);
 
     React.useEffect(() => {
         setCurrCardId(undefined);
@@ -110,7 +112,7 @@ const CollectionReviewPage: React.FC<Props> = ({ match: { params } }: RouteCompo
             .catch(() => {
                 history.replace('/collections');
             });
-        handleApiRequest(dispatch, dispatch(loadCollectionImportCards(importId, {})))
+        handleApiRequest(dispatch, dispatch(loadCollectionImportCards(importId)))
             .then(res => {
                 const cardIds = res.payload.ids;
                 setImportedCardIds(cardIds);

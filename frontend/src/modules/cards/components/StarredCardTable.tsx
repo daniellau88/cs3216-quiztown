@@ -7,14 +7,14 @@ import CollectionMesh from '../../../components/tables/CollectionMesh';
 import { TableFilter } from '../../../components/tables/TableFilters';
 import { AppState, CollectionOptions, EntityCollection } from '../../../types/store';
 import { handleApiRequest } from '../../../utilities/ui';
-import { loadAllCards } from '../operations';
-import { getAllCards } from '../selectors';
+import { loadStarredCards } from '../operations';
+import { getStarredCards } from '../selectors';
 
 import CollectionsCardGridComponent from './CollectionsCardGridComponent';
 
 const StarredCardTable: React.FC = () => {
     const dispatch = useDispatch();
-    const starredCards: EntityCollection = useSelector((state: AppState) => getAllCards(state));
+    const starredCards: EntityCollection = useSelector((state: AppState) => getStarredCards(state));
 
     const [isLoading, setIsLoading] = React.useState(true);
 
@@ -23,14 +23,7 @@ const StarredCardTable: React.FC = () => {
 
     const onUpdate = (options: CollectionOptions, dispatch: Dispatch<any>) => {
         setIsLoading(true);
-        const queryOptions: CollectionOptions = {
-            ...options,
-            filters: {
-                ...options.filters,
-                flagged: 1,
-            },
-        };
-        return handleApiRequest(dispatch, dispatch(loadAllCards(queryOptions))).finally(() => {
+        return handleApiRequest(dispatch, dispatch(loadStarredCards(options))).finally(() => {
             setIsLoading(false);
         });
     };

@@ -149,7 +149,7 @@ def duplicate_collection(collection_to_duplicate: Collection, new_owner: int):
     collection = Collection(name=collection_to_duplicate.name + DUPLICATE_SUFFIX,
                             owner_id=new_owner,
                             private=Collection.PRIVATE,
-                            image_link=collection_to_duplicate.image_link,
+                            image_file_key=collection_to_duplicate.image_file_key,
                             origin=collection_to_duplicate.pk)
     collection.save()
 

@@ -19,7 +19,7 @@ class CardListFilterSerializer(serializers.Serializer):
     owner_id = serializers.IntegerField(required=False)
 
     def get_owner_id_filter(self, value):
-        return ("collection_id__in", Collection.objects.filter(owner_id=value).values_list('id', flat=True))
+        return ("collection_id__in", Collection.objects.filter(owner_id=value).values_list("id", flat=True))
 
 
 class CardListSerializer(serializers.ModelSerializer):

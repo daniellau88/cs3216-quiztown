@@ -3,6 +3,7 @@ import {
     Card,
     CardMedia,
     Grid,
+    IconButton,
     Typography,
     makeStyles,
 } from '@material-ui/core';
@@ -136,7 +137,7 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
         if (fileType === 'pdf') {
             filePDF.splice(index, 1);
             saveFilePDFLink(filePDF);
-        } 
+        }
         fileImage.splice(index, 1);
         fileInfo.splice(index, 1);
         saveFileImageLink(fileImage);
@@ -224,7 +225,9 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
                                     />)}
                             </Grid>
                             <Grid item>
-                                <DeleteIcon onClick={() => deleteFile(file, index)}/>
+                                <IconButton onClick={() => deleteFile(file, index)}>
+                                    <DeleteIcon />
+                                </IconButton>
                             </Grid>
                         </Grid>
                     </Card>

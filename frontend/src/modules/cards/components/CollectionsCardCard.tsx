@@ -170,8 +170,8 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
 
     const duplicateCard = () => {
         if (!cardEntity) return;
-        const cardPostData: CardPostData = { ...cardEntity };
-        return handleApiRequest(dispatch, dispatch(addCard(cardPostData)));
+        // const cardPostData: CardPostData = { ...cardEntity };
+        // return handleApiRequest(dispatch, dispatch(addCard(cardPostData)));
     };
 
     const openCard = () => {

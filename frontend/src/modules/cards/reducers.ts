@@ -6,7 +6,7 @@ import * as types from './types';
 
 const initialState: types.CardsState = {
     cards: createEntityStore(),
-    allCards: createEntityCollection({
+    starredCards: createEntityCollection({
         filters: {
             'is_reviewed': 1,
         },
@@ -18,16 +18,8 @@ const initialState: types.CardsState = {
         sortBy: 'updated_at',
         sortOrder: 'desc',
     }),
-    importCards: createEntityCollectionSet({
-        filters: {
-            'is_reviewed': 0,
-        },
-    }),
-    undoneCards: createEntityCollection({
-        filters: {
-            'is_reviewed': 1,
-        },
-    }),
+    importCards: createEntityCollectionSet(),
+    undoneCards: createEntityCollection(),
 };
 
 const cardsReducer = produce((draft: types.CardsState, action: types.CardsActionTypes) => {
@@ -39,10 +31,6 @@ const cardsReducer = produce((draft: types.CardsState, action: types.CardsAction
             saveListToStore(draft.cards, list);
             return;
         }
-        case types.UPDATE_CARD_LIST: {
-            saveDeltaToCollection(draft.allCards, action.delta);
-            return;
-        }
         case types.SAVE_CARD: {
             const data = action.data;
             const entity = {
@@ -52,33 +40,30 @@ const cardsReducer = produce((draft: types.CardsState, action: types.CardsAction
             return;
         }
         case types.ADD_CARD: {
-            draft.allCards.ids.push(action.id);
             if (draft.collectionCards && draft.collectionCards.byId[action.collection_id]) {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 draft.collectionCards.byId[action.collection_id]!.ids.push(action.id);
             }
-            resetCollectionCache(draft.allCards);
             resetCollectionSetCache(draft.collectionCards, action.collection_id);
             return;
         }
         case types.EDIT_CARD: {
-            resetCollectionCache(draft.allCards);
             return;
         }
         case types.DELETE_CARD: {
             const collectionId = draft.cards.byId[action.id]?.collection_id;
             removeFromStore(draft.cards, action.id);
-            if (draft.allCards) {
-                draft.allCards.ids = draft.allCards.ids.filter((id) => id !== action.id);
-            }
             if (collectionId && draft.collectionCards && draft.collectionCards.byId[collectionId]) {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 draft.collectionCards.byId[collectionId]!.ids = draft.collectionCards.byId[collectionId]!.ids.filter((id) => id !== action.id);
             }
-            resetCollectionCache(draft.allCards);
             if (collectionId) {
                 resetCollectionSetCache(draft.collectionCards, collectionId);
             }
+            return;
+        }
+        case types.UPDATE_STARRED_CARD_LIST: {
+            saveDeltaToCollection(draft.starredCards, action.delta);
             return;
         }
         case types.UPDATE_COLLECTION_CARD_LIST: {

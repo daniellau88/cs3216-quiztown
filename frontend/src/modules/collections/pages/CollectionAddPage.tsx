@@ -100,8 +100,8 @@ const AddCollectionPage: React.FC<{}> = () => {
                         { path: routes.COLLECTIONS.INDEX, name: 'Collections' },
                         { path: null, name: 'Add Collection' },
                     ]} />
-                    <Grid container direction='row' alignItems='center' className={classes.header}>
-                        <Grid item xs={9} wrap='nowrap'>
+                    <Grid container item direction='row' alignItems='center' className={classes.header}>
+                        <Grid container item xs={9} wrap='nowrap'>
                             <Grid container alignItems='center'>
                                 <Typography className={classes.title} variant='h5' component="div">
                                     Adding files to

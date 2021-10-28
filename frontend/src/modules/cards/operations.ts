@@ -1,27 +1,40 @@
+import Moment from 'moment';
+
 import api from '../../api';
 import * as collections from '../../modules/collections';
 import { ApiResponse } from '../../types';
 import { CardData, CardEntity, CardListData, CardPostData } from '../../types/cards';
 import { CollectionsImportTextPostData } from '../../types/collections';
 import { CollectionOptions, EntityCollection, NormalizeOperation, Operation } from '../../types/store';
+import { dateToISOFormat } from '../../utilities/datetime';
 import { batched, queryEntityCollection, queryEntityCollectionSet, withCachedEntity } from '../../utilities/store';
 import { getCurrentUser } from '../auth/selectors';
 
 import * as actions from './actions';
-import { getAllCards, getCardEntity, getCardMiniEntity, getCollectionCardList } from './selectors';
+import { getCardEntity, getCardMiniEntity, getCollectionCardList, getStarredCards } from './selectors';
 
-export function loadAllCards(options: CollectionOptions): Operation<ApiResponse<EntityCollection>> {
+export function loadStarredCards(options: CollectionOptions): Operation<ApiResponse<EntityCollection>> {
     return (dispatch, getState) => {
+        const starredCardFilter: any = {
+            flagged: 1,
+            is_reviewed: 1,
+        };
+        // Add owner id to query
+        const user = getCurrentUser(getState());
+        if (user) {
+            starredCardFilter.owner_id = user.user_id;
+        }
+
         return queryEntityCollection(
-            () => getAllCards(getState()),
-            options,
+            () => getStarredCards(getState()),
+            { ...options, filters: { ...options.filters, ...starredCardFilter } },
             async (params) => {
                 const response = await api.cards.getCardList(params);
                 const data = response.payload.items;
                 batched(dispatch, saveCardList(data));
                 return response;
             },
-            (delta) => dispatch(actions.updateCardList(delta)),
+            (delta) => dispatch(actions.updateStarredCardList(delta)),
         );
     };
 }
@@ -90,20 +103,17 @@ export function discardCard(cardId: number): NormalizeOperation {
 
 export function loadCollectionCards(collectionId: number, options: CollectionOptions): Operation<ApiResponse<EntityCollection>> {
     return (dispatch, getState) => {
+        const collectionCardFilter: any = {
+            private: 1,
+            collection_id: collectionId,
+        };
+
         return queryEntityCollectionSet(
             () => getState().cards.collectionCards,
             collectionId,
-            options,
+            { ...options, filters: { ...options.filters, ...collectionCardFilter } },
             async (params) => {
-                const newParams = {
-                    ...params,
-                    filters: {
-                        ...params.filters,
-                        collection_id: collectionId,
-                    },
-                };
-
-                const response = await api.cards.getCardList(newParams);
+                const response = await api.cards.getCardList(params);
                 const data = response.payload.items;
                 batched(dispatch, saveCardList(data));
                 return response;
@@ -113,22 +123,18 @@ export function loadCollectionCards(collectionId: number, options: CollectionOpt
     };
 }
 
-export function loadCollectionImportCards(collectionImportId: number, options: CollectionOptions): Operation<ApiResponse<EntityCollection>> {
+export function loadCollectionImportCards(collectionImportId: number): Operation<ApiResponse<EntityCollection>> {
     return (dispatch, getState) => {
+        const importCardsFilter: any = {
+            collection_import_id: collectionImportId,
+        };
+
         return queryEntityCollectionSet(
             () => getState().cards.importCards,
             collectionImportId,
-            options,
+            { filters: importCardsFilter },
             async (params) => {
-                const newParams = {
-                    ...params,
-                    filters: {
-                        ...params.filters,
-                        collection_import_id: collectionImportId,
-                    },
-                };
-
-                const response = await api.cards.getCardList(newParams);
+                const response = await api.cards.getCardList(params);
                 const data = response.payload.items;
                 batched(dispatch, saveCardList(data));
                 return response;
@@ -138,26 +144,25 @@ export function loadCollectionImportCards(collectionImportId: number, options: C
     };
 }
 
-export function loadUndoneCards(options: CollectionOptions): Operation<ApiResponse<EntityCollection>> {
+export function loadUndoneCards(): Operation<ApiResponse<EntityCollection>> {
     return (dispatch, getState) => {
+        const undoneCardFilter: any = {
+            next_date: {
+                end: dateToISOFormat(Moment().add(7, 'days').toDate()),
+            },
+            is_reviewed: 1,
+        };
+        // Add owner id to query
+        const user = getCurrentUser(getState());
+        if (user) {
+            undoneCardFilter.owner_id = user.user_id;
+        }
+
         return queryEntityCollection(
             () => getState().cards.undoneCards,
-            options,
+            { filters: undoneCardFilter },
             async (params) => {
-                const newParams = {
-                    ...params,
-                    filters: {
-                        ...params.filters,
-                    },
-                };
-
-                // Add owner id to query
-                const user = getCurrentUser(getState());
-                if (user) {
-                    newParams.filters.owner_id = user.user_id;
-                }
-
-                const response = await api.cards.getCardList(newParams);
+                const response = await api.cards.getCardList(params);
                 const data = response.payload.items;
                 batched(dispatch, saveCardList(data));
                 return response;

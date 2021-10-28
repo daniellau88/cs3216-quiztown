@@ -58,7 +58,8 @@ def convert_keys_to_item(model_classes: dict[str, QuerySetType]):
 def validate_request_data(
         serializer_class: typing.Type[serializers.Serializer],
         item_key: str = "pk_item",
-        is_update: bool = False):
+        is_update: bool = False,
+        partial: bool = False):
     def validate_request_data_decorator(view):
         def wrapper_validate_request_data(request, *args, **kwargs):
             serializer = None
@@ -69,9 +70,9 @@ def validate_request_data(
                                            "Internal server error"])
 
                 item = kwargs[item_key]
-                serializer = serializer_class(item, data=request.data, partial=True)
+                serializer = serializer_class(item, data=request.data, partial=partial)
             else:
-                serializer = serializer_class(data=request.data)
+                serializer = serializer_class(data=request.data, partial=partial)
 
             if serializer.is_valid():
                 return view(request, serializer=serializer, *args, **kwargs)

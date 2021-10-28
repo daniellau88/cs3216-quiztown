@@ -21,13 +21,13 @@ import GoogleSignInButton from '../modules/auth/components/GoogleSignInButton';
 import { getIsAuthenticated } from '../modules/auth/selectors';
 import { loadUndoneCards } from '../modules/cards/operations';
 import { getCardMiniEntity, getUndoneCardList } from '../modules/cards/selectors';
-import { loadAllCollections } from '../modules/collections/operations';
-import { getAllCollections, getCollectionMiniEntity } from '../modules/collections/selectors';
+import { loadAllPersonalCollections } from '../modules/collections/operations';
+import { getAllPersonalCollections, getCollectionMiniEntity } from '../modules/collections/selectors';
 import { CardMiniEntity } from '../types/cards';
 import { CollectionMiniEntity } from '../types/collections';
 import { AppState, EntityCollection } from '../types/store';
 import colours from '../utilities/colours';
-import { addDays, dateToISOFormat, roundDownDay } from '../utilities/datetime';
+import { addDays, roundDownDay } from '../utilities/datetime';
 import { multiselect } from '../utilities/multiselect';
 import routes from '../utilities/routes';
 import { handleApiRequests } from '../utilities/ui';
@@ -104,7 +104,7 @@ const HomePage: React.FC<{}> = () => {
     const history = useHistory();
     const [days, setDays] = React.useState<number>(0);
 
-    const allCollections: EntityCollection = useSelector(getAllCollections);
+    const allCollections: EntityCollection = useSelector(getAllPersonalCollections);
     const authenticated: boolean = useSelector(getIsAuthenticated);
     const collectionIds = allCollections.ids;
 
@@ -138,15 +138,10 @@ const HomePage: React.FC<{}> = () => {
 
     React.useEffect(() => {
         setIsLoading(true);
-        const undoneCardFilter = {
-            next_date: {
-                end: dateToISOFormat(Moment().add(7, 'days').toDate()),
-            },
-        };
         handleApiRequests(
             dispatch,
-            dispatch(loadAllCollections({})),
-            dispatch(loadUndoneCards({ filters: undoneCardFilter })),
+            dispatch(loadAllPersonalCollections({})),
+            dispatch(loadUndoneCards()),
         ).finally(() => setIsLoading(false));
     }, [dispatch]);
 
@@ -173,7 +168,7 @@ const HomePage: React.FC<{}> = () => {
     // Not logged in - login, discover, info
     // Logged in - discover, info
 
-    if (!authenticated || collections.length == 0) {
+    if (collections.length == 0) {
         return (
             <>
                 <CssBaseline />
@@ -210,7 +205,7 @@ const HomePage: React.FC<{}> = () => {
                                     <Typography align='center' className={classes.promptCardText} style={{ marginBottom: '1vh' }}>
                                         Find collections to try out!
                                     </Typography>
-                                    <Grid item justifyContent='center' alignItems='center' style={{ width: '100%' }}>
+                                    <Grid container item justifyContent='center' alignItems='center' style={{ width: '100%' }}>
                                         <SearchIcon className={classes.iconStyle} />
                                     </Grid>
                                 </CardContent>

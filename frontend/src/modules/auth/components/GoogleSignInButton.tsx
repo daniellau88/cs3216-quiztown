@@ -47,6 +47,7 @@ const GoogleSignInButton: React.FC<{}> = () => {
                 clientId={clientId}
                 buttonText="Login"
                 onSuccess={onSuccess}
+                onFailure={(err) => console.error(err)}
                 cookiePolicy={'single_host_origin'}
             />
         </div>

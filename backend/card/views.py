@@ -65,6 +65,7 @@ def get_card_view(request, pk_item, *args, **kwargs):
 @validate_request_data(
     serializers.CardUpdateSerializer,
     is_update=True,
+    partial=True,
 )
 def update_card_view(request, pk_item, serializer, *args, **kwargs):
     serializer.save()

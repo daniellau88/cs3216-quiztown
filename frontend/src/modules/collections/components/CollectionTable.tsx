@@ -9,8 +9,8 @@ import { TableFilter } from '../../../components/tables/TableFilters';
 import { CollectionOptions, EntityCollection } from '../../../types/store';
 import { handleApiRequest } from '../../../utilities/ui';
 import { getCurrentUser } from '../../auth/selectors';
-import { loadAllCollections } from '../operations';
-import { getAllCollections } from '../selectors';
+import { loadAllPersonalCollections } from '../operations';
+import { getAllPersonalCollections } from '../selectors';
 
 import CollectionCard from './CollectionCard';
 import CollectionGridComponent from './CollectionGridComponent';
@@ -18,7 +18,7 @@ import CollectionGridComponent from './CollectionGridComponent';
 
 const CollectionTable: React.FC<{}> = () => {
     const dispatch = useDispatch();
-    const allCollections: EntityCollection = useSelector(getAllCollections);
+    const allCollections: EntityCollection = useSelector(getAllPersonalCollections);
     const currentUser = useSelector(getCurrentUser);
 
     const [isLoading, setIsLoading] = React.useState(true);
@@ -43,14 +43,7 @@ const CollectionTable: React.FC<{}> = () => {
 
     const onUpdate = (options: CollectionOptions, dispatch: Dispatch<any>) => {
         setIsLoading(true);
-        const newOptions = {
-            ...options,
-            filters: {
-                ...options.filters,
-                owner_id: currentUser!.user_id,
-            },
-        };
-        return handleApiRequest(dispatch, dispatch(loadAllCollections(newOptions))).finally(() => {
+        return handleApiRequest(dispatch, dispatch(loadAllPersonalCollections(options))).finally(() => {
             setIsLoading(false);
         });
     };

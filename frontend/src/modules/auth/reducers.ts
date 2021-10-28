@@ -22,6 +22,12 @@ const authReducer = produce((draft: types.AuthState, action: types.AuthActionTyp
             draft.isAuthenticated = action.isAuthenticated;
             return;
         }
+        case types.SAVE_USER_SETTINGS: {
+            if (draft.currentUser) {
+                draft.currentUser.settings = action.data;
+            }
+            return;
+        }
     }
 }, initialState);
 

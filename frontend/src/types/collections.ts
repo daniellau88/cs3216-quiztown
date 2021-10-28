@@ -7,7 +7,7 @@ type CollectionPermissions = Permissions<'can_update' | 'can_delete' | 'can_crea
 export interface CollectionPostData {
     name: string;
     private?: boolean;
-    image_link?: string;
+    image_file_key?: string;
     tags?: string[];
 }
 

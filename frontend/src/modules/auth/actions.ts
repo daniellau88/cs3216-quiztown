@@ -1,4 +1,4 @@
-import { UserData } from '../../types/auth';
+import { SettingsData, UserData } from '../../types/auth';
 
 import * as types from './types';
 
@@ -19,5 +19,12 @@ export function saveIsAuthenticated(isAuthenticated: boolean): types.SaveIsAuthe
     return {
         type: types.SAVE_IS_AUTHENTICATED,
         isAuthenticated,
+    };
+}
+
+export function saveUserSettings(data: SettingsData): types.SaveUserSettingsAction {
+    return {
+        type: types.SAVE_USER_SETTINGS,
+        data,
     };
 }

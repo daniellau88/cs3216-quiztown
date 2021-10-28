@@ -25,6 +25,9 @@ class UserSettings(TimestampedModel):
     settings_key = models.CharField(max_length=50, null=False)
     settings_value = models.PositiveIntegerField(default=0, null=False)
 
+    class Meta:
+        unique_together = ("user_id", "settings_key")
+
     def create(self, validated_data):
         return UserSettings.objects.create(validated_data)
 

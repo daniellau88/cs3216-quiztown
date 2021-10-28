@@ -62,7 +62,7 @@ class CollectionCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Collection
-        fields = ["name", "private", "image_link", "tags"]
+        fields = ["name", "private", "image_file_key", "tags"]
 
     def create(self, validated_data):
         tags = validated_data.pop("tags")
@@ -84,7 +84,7 @@ class CollectionUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Collection
-        fields = ["name", "private", "image_link", "tags"]
+        fields = ["name", "private", "image_file_key", "tags"]
 
     def update(self, instance, validated_data):
         if "tags" in validated_data:

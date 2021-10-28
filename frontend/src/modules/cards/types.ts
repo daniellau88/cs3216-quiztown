@@ -5,10 +5,10 @@ import { CollectionDelta, EntityCollection, EntityCollectionSet, EntityStore } f
 
 export const SAVE_CARD_LIST = 'cards/SAVE_CARD_LIST';
 export const SAVE_CARD = 'cards/SAVE_CARD';
-export const UPDATE_CARD_LIST = 'cards/UPDATE_CARD_LIST';
 export const ADD_CARD = 'cards/ADD_CARD';
 export const EDIT_CARD = 'cards/EDIT_CARD';
 export const DELETE_CARD = 'cards/DELETE_CARD';
+export const UPDATE_STARRED_CARD_LIST = 'cards/UPDATE_STARRED_CARD_LIST';
 export const UPDATE_COLLECTION_CARD_LIST = 'cards/UPDATE_COLLECTION_CARD_LIST';
 export const UPDATE_COLLECTION_IMPORT_CARD_LIST = 'cards/UPDATE_COLLECTION_IMPORT_CARD_LIST';
 export const UPDATE_UNDONE_CARD_LIST = 'cards/UPDATE_UNDONE_CARD_LIST';
@@ -26,11 +26,6 @@ export interface SaveCardAction {
     data: CardData;
 }
 
-export interface UpdateCardListAction {
-    type: typeof UPDATE_CARD_LIST;
-    delta: CollectionDelta;
-}
-
 export interface AddCardAction {
     type: typeof ADD_CARD;
     id: number;
@@ -45,6 +40,11 @@ export interface EditCardAction {
 export interface DeleteCardAction {
     type: typeof DELETE_CARD;
     id: number;
+}
+
+export interface UpdateStarredCardListAction {
+    type: typeof UPDATE_STARRED_CARD_LIST;
+    delta: CollectionDelta;
 }
 
 export interface UpdateCollectionCardListAction {
@@ -72,10 +72,10 @@ export interface ResetCollectionCardListAction {
 export type CardsActionTypes =
     SaveCardListAction |
     SaveCardAction |
-    UpdateCardListAction |
     AddCardAction |
     EditCardAction |
     DeleteCardAction |
+    UpdateStarredCardListAction |
     UpdateCollectionCardListAction |
     UpdateCollectionImportCardListAction |
     UpdateUndoneCardListAction |
@@ -83,8 +83,8 @@ export type CardsActionTypes =
 
 // State Types
 export interface CardsState {
-    allCards: EntityCollection;
     cards: EntityStore<CardMiniEntity, CardEntity>;
+    starredCards: EntityCollection;
     collectionCards: EntityCollectionSet;
     importCards: EntityCollectionSet;
     undoneCards: EntityCollection;

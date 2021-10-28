@@ -17,9 +17,9 @@ export function saveCollection(data: CollectionListData): types.SaveCollectionAc
     };
 }
 
-export function updateCollectionList(delta: CollectionDelta): types.UpdateCollectionListAction {
+export function updatePersonalCollectionList(delta: CollectionDelta): types.UpdatePersonalCollectionListAction {
     return {
-        type: types.UPDATE_COLLECTION_LIST,
+        type: types.UPDATE_PERSONAL_COLLECTION_LIST,
         delta,
     };
 }
