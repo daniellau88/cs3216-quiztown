@@ -4,6 +4,7 @@
   "private": true,
   "proxy": "http://localhost:8000",
   "dependencies": {
+    "@hookform/resolvers": "^2.8.2",
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.60",
@@ -19,6 +20,7 @@
     "react-dom": "^17.0.2",
     "react-ga": "^3.3.0",
     "react-google-login": "^5.2.2",
+    "react-hook-form": "^7.18.0",
     "react-horizontal-timeline": "^1.5.3",
     "react-lines-ellipsis": "^0.15.0",
     "react-material-ui-carousel": "^2.3.5",
@@ -37,7 +39,8 @@
     "workbox-expiration": "^6.3.0",
     "workbox-precaching": "^6.3.0",
     "workbox-routing": "^6.3.0",
-    "workbox-strategies": "^6.3.0"
+    "workbox-strategies": "^6.3.0",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@types/fabric": "^4.5.3",

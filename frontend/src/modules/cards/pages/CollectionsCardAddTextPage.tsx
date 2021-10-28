@@ -1,9 +1,9 @@
+import { yupResolver } from '@hookform/resolvers/yup';
 import {
     Box,
     Button,
     CssBaseline,
     Grid,
-    IconButton,
     Paper,
     Table,
     TableBody,
@@ -17,9 +17,11 @@ import {
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
-import React, { useState } from 'react';
+import React from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps, generatePath, useHistory } from 'react-router-dom';
+import * as yup from 'yup';
 
 import Breadcrumbs from '../../../layouts/Breadcrumbs';
 import { UploadTextData } from '../../../types/collections';
@@ -47,18 +49,14 @@ const useStyles = makeStyles(() => ({
     button: {
         color: colours.BLUE,
     },
+    error: {
+        color: colours.RED,
+    },
 }));
-
-type InputText = {
-    name?: string,
-    question: string,
-    answer: string,
-};
 
 type Props = RouteComponentProps;
 
 const CollectionsCardAddTextPage: React.FC<Props> = ({ match: { params } }: RouteComponentProps) => {
-    const [data, saveData] = useState<InputText[]>([{ question: '', answer: '' }]);
     const classes = useStyles();
     const dispatch = useDispatch();
     const history = useHistory();
@@ -67,47 +65,35 @@ const CollectionsCardAddTextPage: React.FC<Props> = ({ match: { params } }: Rout
 
     const collection = useSelector((state: AppState) => getCollectionMiniEntity(state, collectionId));
 
-    const addRow = () => {
-        saveData([
-            ...data,
-            { question: '', answer: '' },
-        ]);
-    };
+    const schema = yup.object().shape({
+        questions: yup.array().of(
+            yup.object().shape({
+                question: yup.string().required('Question is required.'),
+                answer: yup.string().required('Answer is required.'),
+            }),
+        ),
+    });
 
-    const saveQuestion = (index: number, value: string) => {
-        saveData([
-            ...data.slice(0, index),
-            { ...data[index], question: value },
-            ...data.slice(index + 1),
-        ]);
-    };
+    const { control, register, handleSubmit, formState: { errors } } = useForm({
+        defaultValues: { questions: [{ question: '', answer: '' } as Partial<UploadTextData>] },
+        resolver: yupResolver(schema),
+    });
 
-    const saveAnswer = (index: number, value: string) => {
-        saveData([
-            ...data.slice(0, index),
-            { ...data[index], answer: value },
-            ...data.slice(index + 1),
-        ]);
-    };
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: 'questions',
+    });
 
-    const deleteRow = (index: number) => {
-        saveData([...data.slice(0, index), ...data.slice(index + 1)]);
-    };
-
-    const submit = () => {
-        const dataCopy = [] as UploadTextData[];
-        data.map((tuple, index) => {
-            if (tuple.question !== '' && tuple.answer !== '') {
-                dataCopy.push(
-                    {
-                        name: tuple.question.split(' ')[0] + `-${index}`,
-                        question: tuple.question,
-                        answer: tuple.answer,
-                    },
-                );
-            }
-        });
-        return handleApiRequest(dispatch, dispatch(importTextCards(collectionId, { imports: dataCopy }))).then(() => {
+    const onSubmitHandler = (data: any) => {
+        const payload: UploadTextData[] = [];
+        for (const [index, question] of data.questions.entries()) {
+            payload.push({
+                name: question.question.split(' ')[0] + `-${index}`,
+                question: question.question,
+                answer: question.answer,
+            });
+        }
+        return handleApiRequest(dispatch, dispatch(importTextCards(collectionId, { imports: payload }))).then(() => {
             history.push(`/collections/${collectionId}`);
         });
     };
@@ -129,99 +115,92 @@ const CollectionsCardAddTextPage: React.FC<Props> = ({ match: { params } }: Rout
                             </Typography>
                         </Grid>
                         <TableContainer component={Paper} className="px-8 py-6">
-                            <Table aria-label="table">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Card Number</TableCell>
-                                        <TableCell>Question</TableCell>
-                                        <TableCell>Answer</TableCell>
-                                        <TableCell>      </TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {data.map((row, index: number) => (
-                                        <TableRow key={row.name}>
-                                            <TableCell component="th" scope="row">
-                                                {index + 1}
+                            <form onSubmit={handleSubmit(onSubmitHandler)}>
+                                <Table aria-label="table">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>
+                                                <Typography align='center' variant={'h6'} >
+                                                    Card Number
+                                                </Typography>
                                             </TableCell>
                                             <TableCell>
-                                                <TextField
-                                                    id="outlined-basic"
-                                                    label="Question"
-                                                    variant="outlined"
-                                                    multiline
-                                                    rows={2}
-                                                    value={row.question}
-                                                    onChange={(e) => {
-                                                        e.preventDefault();
-                                                        saveQuestion(index,
-                                                            e.target.value);
-                                                    }}
-                                                />
+                                                <Typography align='center' variant={'h6'} >
+                                                    Question
+                                                </Typography>
                                             </TableCell>
                                             <TableCell>
-                                                <TextField
-                                                    id="outlined-basic"
-                                                    label="Answer"
-                                                    variant="outlined"
-                                                    multiline
-                                                    rows={2}
-                                                    value={row.answer}
-                                                    onChange={(e) => {
-                                                        e.preventDefault();
-                                                        saveAnswer(index,
-                                                            e.target.value);
-                                                    }}
-                                                />
+                                                <Typography align='center' variant={'h6'} >
+                                                    Answer
+                                                </Typography>
                                             </TableCell>
-                                            <TableCell>
-                                                <IconButton
-                                                    aria-label="delete"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        e.preventDefault();
-                                                        deleteRow(index);
-                                                    }}
-                                                >
-                                                    <DeleteIcon
-                                                        fontSize="small"
-
-                                                    />
-                                                </IconButton>
-                                            </TableCell>
+                                            <TableCell></TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                            <Box display='flex'>
-                                <Box>
-                                    <Button
-                                        startIcon={<AddIcon />}
-                                        className={classes.button}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            e.preventDefault();
-                                            addRow();
-                                        }}
-                                    >
-                                        Add Card
-                                    </Button>
+                                    </TableHead>
+                                    <TableBody>
+                                        {fields.map((question, questionIndex) => (
+                                            <TableRow key={questionIndex}>
+                                                <TableCell>
+                                                    <Typography align='center' variant={'h6'} >
+                                                        {questionIndex + 1}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TextField {...register(`questions.${questionIndex}.question`)}
+                                                        name={`questions.${questionIndex}.question`}
+                                                        type="text"
+                                                        variant="outlined"
+                                                        multiline
+                                                        rows={2}
+                                                        fullWidth
+                                                    />
+                                                    <Box className={classes.error}>{errors.questions?.[questionIndex]?.question?.message}</Box>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TextField {...register(`questions.${questionIndex}.answer`)}
+                                                        name={`questions.${questionIndex}.answer`}
+                                                        type="text"
+                                                        variant="outlined"
+                                                        multiline
+                                                        rows={2}
+                                                        fullWidth
+                                                    />
+                                                    <Box className={classes.error}> {errors.questions?.[questionIndex]?.answer?.message}</Box>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Button onClick={() => remove(questionIndex)}>
+                                                        <DeleteIcon />
+                                                    </Button>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                                <Box display='flex'>
+                                    <Box>
+                                        <Button
+                                            startIcon={<AddIcon />}
+                                            className={classes.button}
+                                            onClick={() => {
+                                                append({ question: '', answer: '' });
+                                            }}
+                                            style={{ marginLeft: '2vw' }}
+                                        >
+                                            Add Card
+                                        </Button>
+                                    </Box>
+                                    <Box flexGrow={1} />
+                                    <Box>
+                                        <Button
+                                            type="submit"
+                                            className={classes.button}
+                                            style={{ paddingLeft: '2vw', paddingRight: '2vw' }}
+                                        >
+                                            Done
+                                        </Button>
+                                    </Box>
                                 </Box>
-                                <Box flexGrow={1} />
-                                <Box>
-                                    <Button
-                                        variant="outlined"
-                                        className={classes.button}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            e.preventDefault();
-                                            submit();
-                                        }}
-                                    >
-                                        Done
-                                    </Button>
-                                </Box>
-                            </Box>
+                            </form>
                         </TableContainer >
                     </Grid>
                 </Grid>
