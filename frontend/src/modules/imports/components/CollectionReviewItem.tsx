@@ -4,10 +4,10 @@ import {
     Grid,
     makeStyles,
 } from '@material-ui/core';
-import { Delete } from '@material-ui/icons';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 
+import QTDeleteButton from '../../../components/utiltiies/QTDeleteButton';
 import { AppState } from '../../../types/store';
 import colours from '../../../utilities/colours';
 import { getCardMiniEntity } from '../../cards/selectors';
@@ -48,6 +48,9 @@ const CollectionReviewItem: React.FC<Props> = ({ cardId, onSelect, isSelected, o
     const classes = useStyles();
 
     const card = useSelector((state: AppState) => getCardMiniEntity(state, cardId));
+    const cardName = card?.name;
+
+    const deleteMessage = `This action is irreversible. Are you sure you want to delete ${cardName}?`;
 
     if (!card) return null;
 
@@ -72,9 +75,7 @@ const CollectionReviewItem: React.FC<Props> = ({ cardId, onSelect, isSelected, o
                 </Button>
             </Grid>
             <Grid item xs={4}>
-                <Button onClick={() => onDelete(cardId)} className={classes.button}>
-                    <Delete />
-                </Button>
+                <QTDeleteButton onConfirm={() => onDelete(cardId)} message={deleteMessage}/>
             </Grid>
         </Grid>
     );

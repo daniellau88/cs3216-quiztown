@@ -22,6 +22,7 @@ import { useHistory } from 'react-router-dom';
 import defaultCollectionImage from '../../../assets/images/defaultCardImage.jpg';
 import QTButton from '../../../components/QTButton';
 import { STATIC_URL } from '../../../components/utiltiies/constants';
+import QTDeleteButton from '../../../components/utiltiies/QTDeleteButton';
 import { CardMiniEntity, CardPostData } from '../../../types/cards';
 import { AppState } from '../../../types/store';
 import colours from '../../../utilities/colours';
@@ -112,8 +113,9 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
     const collectionId = data?.collection_id || id;
     const cardEntity = useSelector((state: AppState) => getCardEntity(state, cardId));
 
+    const deleteMessage = `This action is irreversible. Are you sure you want to delete ${cardName}?`;
+
     const addNewTextCard = () => {
-        console.log(beforeRedirect);
         if (beforeRedirect) {
             return beforeRedirect().then((newId) => {
                 if (newId) {
@@ -257,9 +259,7 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
                         <Box flexGrow={1} />
                         {data.permissions.can_delete &&
                             <Box display='flex' minHeight='100%' style={{ paddingRight: '0.5vw' }} justifyContent='center' alignItems='center'>
-                                <Button onClick={handleDeleteCard} >
-                                    <DeleteIcon style={{ color: colours.DEEPRED }} />
-                                </Button>
+                                <QTDeleteButton onConfirm={handleDeleteCard} message={deleteMessage} />
                             </Box>
                         }
                     </Box>

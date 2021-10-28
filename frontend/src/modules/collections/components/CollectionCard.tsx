@@ -18,6 +18,7 @@ import { useHistory } from 'react-router-dom';
 
 import defaultCollectionImage from '../../../assets/images/logo512.png';
 import QTButton from '../../../components/QTButton';
+import QTDeleteButton from '../../../components/utiltiies/QTDeleteButton';
 import { CollectionMiniEntity, CollectionPostData } from '../../../types/collections';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
@@ -88,6 +89,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
     const dispatch = useDispatch();
 
     const collectionId = data?.id;
+    const collectionName = data?.name;
     const currentUser = useSelector(getCurrentUser);
     const isAuthenticated = useSelector(getIsAuthenticated);
     const userId = currentUser ? currentUser.user_id : 0;
@@ -98,6 +100,8 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
             setIsPrivate(data.private);
         }
     }, [data]);
+
+    const deleteMessage = `This action is irreversible. Are you sure you want to delete ${collectionName}?`;
 
     const addNewCollection = () => {
         history.push('/collections/new');
@@ -135,7 +139,6 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
         return null;
     }
 
-    const collectionName = data.name;
     const isOwner = userId === data.owner_id;
     const canUpdate = data.permissions.can_update;
 
@@ -256,9 +259,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                         <Box flexGrow={1} />
                         {data.permissions.can_delete &&
                             <Box display='flex' minHeight='100%' style={{ paddingRight: '0.5vw' }} justifyContent='center' alignItems='center'>
-                                <Button onClick={handleDeleteCollection} >
-                                    <DeleteIcon style={{ color: colours.DEEPRED }} />
-                                </Button>
+                                <QTDeleteButton onConfirm={handleDeleteCollection} message={deleteMessage} />
                             </Box>
                         }
                     </Box>
