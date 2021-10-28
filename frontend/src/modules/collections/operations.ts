@@ -11,12 +11,11 @@ import { getAllPersonalCollections, getAllPublicCollections, getCollectionMiniEn
 
 export function loadAllPersonalCollections(options: CollectionOptions): Operation<ApiResponse<EntityCollection>> {
     return (dispatch, getState) => {
-        const personalCollectionFilter: any = {};
         // Add owner id to query
         const user = getCurrentUser(getState());
-        if (user) {
-            personalCollectionFilter.owner_id = user.user_id;
-        }
+        const personalCollectionFilter: any = {
+            owner_id: user ? user.user_id : -1,
+        };
 
         return queryEntityCollection(
             () => getAllPersonalCollections(getState()),

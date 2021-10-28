@@ -15,15 +15,12 @@ import { getCardEntity, getCardMiniEntity, getCollectionCardList, getStarredCard
 
 export function loadStarredCards(options: CollectionOptions): Operation<ApiResponse<EntityCollection>> {
     return (dispatch, getState) => {
+        const user = getCurrentUser(getState());
         const starredCardFilter: any = {
             flagged: 1,
             is_reviewed: 1,
+            owner_id: user ? user.user_id : -1,
         };
-        // Add owner id to query
-        const user = getCurrentUser(getState());
-        if (user) {
-            starredCardFilter.owner_id = user.user_id;
-        }
 
         return queryEntityCollection(
             () => getStarredCards(getState()),
@@ -146,17 +143,14 @@ export function loadCollectionImportCards(collectionImportId: number): Operation
 
 export function loadUndoneCards(): Operation<ApiResponse<EntityCollection>> {
     return (dispatch, getState) => {
+        const user = getCurrentUser(getState());
         const undoneCardFilter: any = {
             next_date: {
                 end: dateToISOFormat(Moment().add(7, 'days').toDate()),
             },
             is_reviewed: 1,
+            owner_id: user ? user.user_id : -1,
         };
-        // Add owner id to query
-        const user = getCurrentUser(getState());
-        if (user) {
-            undoneCardFilter.owner_id = user.user_id;
-        }
 
         return queryEntityCollection(
             () => getState().cards.undoneCards,
