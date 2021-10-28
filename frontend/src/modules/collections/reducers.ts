@@ -48,6 +48,7 @@ const collectionsReducer = produce((draft: types.CollectionsState, action: types
         }
         case types.EDIT_COLLECTION: {
             resetCollectionCache(draft.allPersonalCollections);
+            resetCollectionCache(draft.allPublicCollections);
             return;
         }
         case types.DELETE_COLLECTION: {
