@@ -50,7 +50,7 @@ const useStyles = makeStyles(() => ({
     },
     button: {
         height: isBrowser ? '8vh' : '6vh',
-        width: isBrowser ? '240px' : '160px',
+        width: isBrowser ? '272px' : '160px',
         borderRadius: 20,
         backgroundColor: colours.OFFBLACK,
         '&:hover': {
@@ -121,7 +121,7 @@ const TemplatePage: React.FC<{}> = () => {
                         </Box>
                         <Box className={classes.headbox} style={{ marginTop: '7vh' }} justifyContent='right' alignItems='right'>
                             <Grid container justifyContent={isBrowser ? 'flex-end' : 'flex-start'}>
-                                <Button className={classes.button} onClick={() => window.location.replace(QUIZTOWN_URL)}>
+                                <Button className={classes.button} onClick={() => window.location.assign(QUIZTOWN_URL)}>
                                     <Typography align='right' style={{ fontSize: bodyTextFontSize, marginTop: '0vh', color: colours.WHITE }}>
                                         Try Out Now!
                                     </Typography>
