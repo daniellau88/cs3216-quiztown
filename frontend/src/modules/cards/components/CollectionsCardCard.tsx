@@ -113,11 +113,9 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
     const collectionId = data?.collection_id || id;
     const cardEntity = useSelector((state: AppState) => getCardEntity(state, cardId));
 
-    const deleteMessage = 'Deleting this card will delete it forever. '
-    + 'This action is irreversible. Do you want to confirm your deletion?';
+    const deleteMessage = 'This action is irreversible. Are you sure you want to delete?';
 
     const addNewTextCard = () => {
-        console.log(beforeRedirect);
         if (beforeRedirect) {
             return beforeRedirect().then((newId) => {
                 if (newId) {

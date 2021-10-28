@@ -49,8 +49,7 @@ const CollectionReviewItem: React.FC<Props> = ({ cardId, onSelect, isSelected, o
 
     const card = useSelector((state: AppState) => getCardMiniEntity(state, cardId));
 
-    const deleteMessage = 'By deleting this card, you will need to import it again for review. '
-    + 'This action is irreversible. Do you want to confirm your deletion?';
+    const deleteMessage = 'This action is irreversible. Are you sure you want to delete?';
 
     if (!card) return null;
 

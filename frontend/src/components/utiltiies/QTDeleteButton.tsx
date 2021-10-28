@@ -15,7 +15,6 @@ const useStyles = makeStyles((theme) => ({
     deleteButton: {
         color: colours.DEEPRED,
         '&:hover': {
-            // backgroundColor: '#fff5f5',
             backgroundColor: 'transparent',
         },
     },
@@ -45,7 +44,7 @@ const DeleteButton: React.FC<Props> = ({ onConfirm, message }: Props) => {
             </IconButton>
 
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Are you sure you want to delete?</DialogTitle>
+                <DialogTitle>Delete confirmation</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         {message}
