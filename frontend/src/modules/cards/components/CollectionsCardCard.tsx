@@ -113,7 +113,7 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
     const collectionId = data?.collection_id || id;
     const cardEntity = useSelector((state: AppState) => getCardEntity(state, cardId));
 
-    const deleteMessage = 'This action is irreversible. Are you sure you want to delete?';
+    const deleteMessage = `This action is irreversible. Are you sure you want to delete ${cardName}?`;
 
     const addNewTextCard = () => {
         if (beforeRedirect) {

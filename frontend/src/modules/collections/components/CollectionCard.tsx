@@ -89,6 +89,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
     const dispatch = useDispatch();
 
     const collectionId = data?.id;
+    const collectionName = data?.name;
     const currentUser = useSelector(getCurrentUser);
     const isAuthenticated = useSelector(getIsAuthenticated);
     const userId = currentUser ? currentUser.user_id : 0;
@@ -100,7 +101,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
         }
     }, [data]);
 
-    const deleteMessage = 'This action is irreversible. Are you sure you want to delete?';
+    const deleteMessage = `This action is irreversible. Are you sure you want to delete ${collectionName}?`;
 
     const addNewCollection = () => {
         history.push('/collections/new');
@@ -138,7 +139,6 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
         return null;
     }
 
-    const collectionName = data.name;
     const isOwner = userId === data.owner_id;
     const canUpdate = data.permissions.can_update;
 
