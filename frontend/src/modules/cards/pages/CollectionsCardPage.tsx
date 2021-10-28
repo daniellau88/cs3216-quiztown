@@ -39,6 +39,10 @@ const useStyles = makeStyles(() => ({
     subheaderText: {
         fontSize: '2vh',
     },
+    collectionName: {
+        textAlign: 'center',
+        fontSize: '5vh',
+    },
 }));
 
 type Props = RouteComponentProps;
@@ -127,12 +131,17 @@ const CollectionsCardPage: React.FC<Props> = ({ match: { params } }: RouteCompon
                     ]} />
                     <Grid container direction='column' className={classes.header}>
                         <Grid item className={classes.headerTextContainer}>
-                            <TextField
-                                id="name"
-                                inputProps={{ style: { textAlign: 'center', fontSize: '5vh' } }}
-                                value={collectionName}
-                                onChange={onCollectionNameChange}
-                            />
+                            {collection.permissions.can_update
+                                ? <TextField
+                                    id="name"
+                                    inputProps={{ style: { textAlign: 'center', fontSize: '5vh' } }}
+                                    value={collectionName}
+                                    onChange={onCollectionNameChange}
+                                />
+                                : <Typography className={classes.collectionName}>
+                                    {collectionName}
+                                </Typography>
+                            }
                         </Grid>
 
                         <Typography align='center' className={classes.subheaderText}>
