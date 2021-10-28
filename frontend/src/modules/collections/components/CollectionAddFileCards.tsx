@@ -14,7 +14,6 @@ import { useState } from 'react';
 import { Document, Page } from 'react-pdf';
 import { useDispatch } from 'react-redux';
 
-import QTDeleteButton from '../../../components/utiltiies/QTDeleteButton';
 import { UploadData } from '../../../types/uploads';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
@@ -91,8 +90,6 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
     const [uploadFilesChild, setUploadedResponseChild] = useState<Array<UploadData>>([]);
     const [numPages, setNumPages] = useState<number>(1);
     const [height, setHeight] = useState(0);
-
-    const deleteMessage = 'This action is irreversible. Do you want to confirm your deletion?';
 
     const upload = async (e: React.ChangeEvent<any>) => {
         const fileInfo = [...fileCardInfo];
