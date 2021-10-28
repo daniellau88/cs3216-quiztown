@@ -101,7 +101,6 @@ export function discardCard(cardId: number): NormalizeOperation {
 export function loadCollectionCards(collectionId: number, options: CollectionOptions): Operation<ApiResponse<EntityCollection>> {
     return (dispatch, getState) => {
         const collectionCardFilter: any = {
-            private: 1,
             collection_id: collectionId,
         };
 

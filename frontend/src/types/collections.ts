@@ -4,9 +4,15 @@ import { Permissions } from './index';
 
 type CollectionPermissions = Permissions<'can_update' | 'can_delete' | 'can_create_card'>;
 
+// TODO: Change to boolean
+export enum CollectionPrivate {
+    PRIVATE = 0,
+    PUBLIC = 1,
+}
+
 export interface CollectionPostData {
     name: string;
-    private?: boolean;
+    private?: CollectionPrivate;
     image_file_key?: string;
     tags?: string[];
 }
@@ -14,7 +20,7 @@ export interface CollectionPostData {
 export interface CollectionListData {
     id: number;
     name: string;
-    private: boolean;
+    private: CollectionPrivate;
     created_at: number;
     owner_id: number; // TODO: change to owner object
     image_link: string;
@@ -28,7 +34,7 @@ export interface CollectionListData {
 export interface CollectionMiniEntity {
     id: number;
     name: string;
-    private: boolean;
+    private: CollectionPrivate;
     created_at: number;
     owner_id: number;
     image_link: string;
