@@ -15,7 +15,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 
-import { CardEntity, CardPostData } from '../../../types/cards';
+import { CardImageEntity, CardPostData } from '../../../types/cards';
 import colours from '../../../utilities/colours';
 import { useWindowDimensions } from '../../../utilities/customHooks';
 import { addDays, roundDownDay } from '../../../utilities/datetime';
@@ -33,7 +33,7 @@ import {
     shiftAnswerOptionsUp,
     updateCorrectAnswersIndicator,
     validateAnswer,
-} from '../utils'; 
+} from '../utils';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -64,7 +64,7 @@ const useStyles = makeStyles(() => ({
 
 interface OwnProps {
     isOwner: boolean;
-    card: CardEntity;
+    card: CardImageEntity;
     onComplete?: () => void;
 }
 
@@ -236,27 +236,31 @@ const CardImageQuiz: React.FC<Props> = ({
                         </Box>
                     )}
                     {hasAnsweredAll && (
-                        isOwner ? (
-                            <Box display='flex' flexDirection='column' alignItems='center' justifyContent='center' style={{ width: '95%' }}>
+                        <Box display='flex' flexDirection='column' alignItems='center' justifyContent='center' style={{ width: '95%' }}>
+                            {isOwner ? (
+                                <>
+                                    <Typography>
+                                        How confident did you feel?
+                                    </Typography>
+                                    <Box display='flex' alignItems='center' justifyContent='center' style={{ width: '95%' }}>
+                                        {getFeedbackSet(timeTaken, numOptions, numGuesses, numWrongGuesses, boxNumber).map((feedback: Feedback, index: number) => {
+                                            return <Button key={index} onClick={() => sendUpdate(feedback)} className={index == 0 ? classes.red : index == 1 ? classes.yellow : classes.green}>
+                                                <Grid container alignItems='center' justifyContent='center' direction='column'>
+                                                    {index == 0 ? <SentimentVeryDissatisfiedIcon /> : index == 1 ? <SentimentSatisfiedIcon /> : <SentimentVerySatisfiedIcon />}
+                                                    <Typography align='center'>
+                                                        You&apos;ll see this card<br /> again in {feedback.intervalLength} day{feedback.intervalLength == 1 ? '' : 's'}.
+                                                    </Typography>
+                                                </Grid>
+                                            </Button>;
+                                        })}
+                                    </Box>
+                                </>
+                            ) : (
                                 <Typography>
-                                    How confident did you feel?
+                                    Duplicate card to your collection now to start keeping track of your progress
                                 </Typography>
-                                <Box display='flex' alignItems='center' justifyContent='center' style={{ width: '95%' }}>
-                                    {getFeedbackSet(timeTaken, numOptions, numGuesses, numWrongGuesses, boxNumber).map((feedback: Feedback, index: number) => {
-                                        return <Button key={index} onClick={() => sendUpdate(feedback)} className={index == 0 ? classes.red : index == 1 ? classes.yellow : classes.green}>
-                                            <Grid container alignItems='center' justifyContent='center' direction='column'>
-                                                {index == 0 ? <SentimentVeryDissatisfiedIcon /> : index == 1 ? <SentimentSatisfiedIcon /> : <SentimentVerySatisfiedIcon />}
-                                                <Typography align='center'>
-                                                    You&apos;ll see this card<br /> again in {feedback.intervalLength} day{feedback.intervalLength == 1 ? '' : 's'}.
-                                                </Typography>
-                                            </Grid>
-                                        </Button>;
-                                    })}
-                                </Box>
-                            </Box>) :
-                            <Typography>
-                                Duplicate card to your collection now to start keeping track of your progress
-                            </Typography>
+                            )}
+                        </Box>
                     )}
                 </Grid>
             </Grid>

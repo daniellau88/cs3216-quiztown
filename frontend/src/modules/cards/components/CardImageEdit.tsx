@@ -9,7 +9,7 @@ import React, { MutableRefObject, useEffect, useState } from 'react';
 
 import StateManager from '../../../components/fabric/CanvasStateManager';
 import QTTextbox from '../../../components/fabric/QTTextbox';
-import { CardEntity } from '../../../types/cards';
+import { CardImageEntity } from '../../../types/cards';
 import colours from '../../../utilities/colours';
 import { useWindowDimensions } from '../../../utilities/customHooks';
 import {
@@ -44,7 +44,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface OwnProps {
-    card: CardEntity
+    card: CardImageEntity
     canvasRef: MutableRefObject<fabric.Canvas | undefined>
     saveEdits: (isAutosave: boolean) => void
 }
@@ -77,7 +77,7 @@ const CardImageEdit: React.FC<Props> = ({
     const imageScale = Math.min(imageScaleX, imageScaleY); // Maintains aspect ratio, object-fit == 'contain'
     const scaledImageWidth = imageMetadata.width * imageScale;
     const scaledImageHeight = imageMetadata.height * imageScale;
-    const imageXTranslation = Math.max(canvasMaxWidth- scaledImageWidth, 0) / 2;
+    const imageXTranslation = Math.max(canvasMaxWidth - scaledImageWidth, 0) / 2;
 
     const initEditingCanvas = () => {
         const canvas = new fabric.Canvas(CANVAS_ID, {

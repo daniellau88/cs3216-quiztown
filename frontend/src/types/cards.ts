@@ -14,6 +14,11 @@ export interface CardPostData {
     answer: string;
 }
 
+export enum CardType {
+    IMAGE = 0,
+    TEXT = 1,
+}
+
 type Coordinate = [number, number];
 export interface AnswerData {
     bounding_box: [Coordinate, Coordinate];
@@ -39,7 +44,7 @@ export interface CardListData {
     permissions: Permissions;
 }
 
-export interface CardData {
+interface CardBaseData {
     id: number;
     name: string;
     collection_id: number;
@@ -48,16 +53,26 @@ export interface CardData {
     box_number: number;
     next_date: string;
     created_at: number;
+    type: CardType;
+    is_reviewed: boolean;
+    permissions: Permissions;
+}
+
+interface CardImageData extends CardBaseData {
+    type: CardType.IMAGE;
     image_metadata: ImageMetadata;
     answer_details: {
         results: AnswerData[];
     }
-    type: number;
+}
+
+interface CardTextData extends CardBaseData {
+    type: CardType.TEXT;
     question: string;
     answer: string;
-    is_reviewed: boolean;
-    permissions: Permissions;
 }
+
+export type CardData = CardImageData | CardTextData;
 
 export interface CardMiniEntity {
     id: number;
@@ -72,12 +87,7 @@ export interface CardMiniEntity {
     permissions: Permissions;
 }
 
-export enum CardType {
-    IMAGE = 0,
-    TEXT = 1,
-}
-
-export interface CardEntity {
+interface CardBaseEntity {
     id: number;
     name: string;
     collection_id: number;
@@ -86,13 +96,23 @@ export interface CardEntity {
     box_number: number;
     next_date: string;
     created_at: number;
+    type: CardType;
+    is_reviewed: boolean;
+    permissions: Permissions;
+}
+
+export interface CardImageEntity extends CardBaseEntity {
+    type: CardType.IMAGE;
     image_metadata: ImageMetadata;
     answer_details: {
         results: AnswerData[];
     }
-    type: CardType;
+}
+
+export interface CardTextEntity extends CardBaseEntity {
+    type: CardType.TEXT;
     question: string;
     answer: string;
-    is_reviewed: boolean;
-    permissions: Permissions;
 }
+
+export type CardEntity = CardImageEntity | CardTextEntity;

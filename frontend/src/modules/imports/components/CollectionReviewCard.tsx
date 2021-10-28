@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import LoadingIndicator from '../../../components/content/LoadingIndicator';
+import { CardType } from '../../../types/cards';
 import { AppState } from '../../../types/store';
 import { handleApiRequest } from '../../../utilities/ui';
 import CardImageEdit from '../../cards/components/CardImageEdit';
@@ -51,9 +52,17 @@ const CollectionReviewCard: React.FC<Props> = ({ cardId }) => {
         }
     };
 
-    if (isLoading) return <LoadingIndicator/>;
+    if (isLoading) return <LoadingIndicator />;
 
     if (!card || !cardId) return null;
+
+    if (card.type !== CardType.IMAGE) {
+        return (
+            <>
+                Invalid card type
+            </>
+        );
+    }
 
     return (
         <CardImageEdit
