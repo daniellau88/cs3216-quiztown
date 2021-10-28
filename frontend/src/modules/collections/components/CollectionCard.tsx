@@ -216,7 +216,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
             <CardActions>
                 <Grid container alignItems='center' style={{ paddingLeft: '0.5vw' }}>
                     <Box display='flex' height='100%' width='100%'>
-                        {isOwner && <Grid container item xs={3} alignItems='center'>
+                        {isAuthenticated && isOwner && <Grid container item xs={3} alignItems='center'>
                             <QTButton outlined height='95%' width='95%' onClick={startCollection}>
                                 Test Me!
                             </QTButton>
