@@ -38,11 +38,11 @@ const CollectionReviewCard: React.FC<Props> = ({ cardId }) => {
         onUpdate(cardId, dispatch);
     }, [dispatch, cardId]);
 
-    const saveEditChanges = (isAutosave: boolean) => {
+    const saveEditChanges = (imageXTranslation: number) => {
         if (!canvasRef || !cardId) return;
         const answerBoxes = canvasRef.current?.getObjects();
         if (!answerBoxes) return;
-        const cardAnswerDetails = formatCardData(answerBoxes);
+        const cardAnswerDetails = formatCardData(answerBoxes, imageXTranslation);
         if (cardAnswerDetails) {
             handleApiRequest(dispatch, dispatch(updateCard(cardId, {
                 answer_details: {

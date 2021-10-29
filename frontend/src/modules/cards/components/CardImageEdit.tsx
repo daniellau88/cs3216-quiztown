@@ -46,7 +46,7 @@ const useStyles = makeStyles(() => ({
 interface OwnProps {
     card: CardImageEntity
     canvasRef: MutableRefObject<fabric.Canvas | undefined>
-    saveEdits: (isAutosave: boolean) => void
+    saveEdits: (imageXTranslation: number) => void
 }
 
 type Props = OwnProps
@@ -69,15 +69,15 @@ const CardImageEdit: React.FC<Props> = ({
 
     const { windowHeight, windowWidth } = useWindowDimensions();
 
-    const canvasMaxWidth = windowWidth * 0.9;
-    const canvasMaxHeight = windowHeight * 0.8;
+    const canvasMaxWidth = Math.floor(windowWidth * 0.9);
+    const canvasMaxHeight = Math.floor(windowHeight * 0.8);
     const imageContainerWidth = canvasMaxWidth;
-    const imageScaleX = imageContainerWidth / imageMetadata.width;
-    const imageScaleY = canvasMaxHeight / imageMetadata.height;
+    const imageScaleX = Math.floor(imageContainerWidth / imageMetadata.width);
+    const imageScaleY = Math.floor(canvasMaxHeight / imageMetadata.height);
     const imageScale = Math.min(imageScaleX, imageScaleY); // Maintains aspect ratio, object-fit == 'contain'
-    const scaledImageWidth = imageMetadata.width * imageScale;
-    const scaledImageHeight = imageMetadata.height * imageScale;
-    const imageXTranslation = Math.max(canvasMaxWidth - scaledImageWidth, 0) / 2;
+    const scaledImageWidth = Math.floor(imageMetadata.width * imageScale);
+    const scaledImageHeight = Math.floor(imageMetadata.height * imageScale);
+    const imageXTranslation = Math.floor(Math.max(canvasMaxWidth - scaledImageWidth, 0) / 2);
 
     const initEditingCanvas = () => {
         const canvas = new fabric.Canvas(CANVAS_ID, {
@@ -98,7 +98,7 @@ const CardImageEdit: React.FC<Props> = ({
         const stateManager = new StateManager(canvas);
         canvas.on('object:modified', () => {
             stateManager.saveState();
-            saveEdits(true);
+            saveCanvasEdits();
         });
         setCanvas(canvas);
         setStateManager(stateManager);
@@ -112,6 +112,10 @@ const CardImageEdit: React.FC<Props> = ({
         }
     }, [windowHeight, windowWidth]);
 
+    const saveCanvasEdits = () => {
+        saveEdits(imageXTranslation);
+    };
+
     const addAnswerOption = () => {
         if (!canvas) return;
         canvas.add(new QTTextbox('Answer Option', {
@@ -122,7 +126,7 @@ const CardImageEdit: React.FC<Props> = ({
             fontSize: FONT_SIZE,
         }));
         stateManager?.saveState();
-        saveEdits(true);
+        saveCanvasEdits();
     };
 
     const deleteAnswerOption = () => {
@@ -131,7 +135,7 @@ const CardImageEdit: React.FC<Props> = ({
         activeObjects.forEach(object => canvas.remove(object));
         canvas.discardActiveObject();
         stateManager?.saveState();
-        saveEdits(true);
+        saveCanvasEdits();
     };
 
     const mergeAnswerOption = () => {
@@ -139,7 +143,7 @@ const CardImageEdit: React.FC<Props> = ({
         const activeObjects = canvas.getActiveObjects();
         mergeTextboxes(canvas, activeObjects);
         stateManager?.saveState();
-        saveEdits(true);
+        saveCanvasEdits();
     };
 
     return (

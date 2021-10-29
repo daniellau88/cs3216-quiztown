@@ -39,7 +39,7 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-export const formatCardData = (answerBoxes: fabric.Object[]): AnswerData[] => {
+export const formatCardData = (answerBoxes: fabric.Object[], imageXTranslation: number): AnswerData[] => {
     const FULL_CONFIDENCE = 1;
     const answerData: AnswerData[] = [];
 
@@ -55,8 +55,11 @@ export const formatCardData = (answerBoxes: fabric.Object[]): AnswerData[] => {
 
         if (!text || !top || !width || !height || !left) return;
 
+        // Reverses translation to canvas object done in CardImageEdit
+        const translatedLeft = left - imageXTranslation;
+
         answerData.push({
-            bounding_box: [[left, top], [left + width, top + height]],
+            bounding_box: [[translatedLeft, top], [translatedLeft + width, top + height]],
             text: text,
             confidence: FULL_CONFIDENCE,
         });
@@ -89,21 +92,17 @@ const CollectionsCardEditPage: React.FC<Props> = ({ match: { params } }: RouteCo
         });
     };
 
-    const saveImageEditChanges = (isAutosave: boolean) => {
+    const saveImageEditChanges = (imageXTranslation: number) => {
         if (!canvasRef) return;
         const answerBoxes = canvasRef.current?.getObjects();
         if (!answerBoxes) return;
-        const cardAnswerDetails = formatCardData(answerBoxes);
+        const cardAnswerDetails = formatCardData(answerBoxes, imageXTranslation);
         if (cardAnswerDetails) {
             handleApiRequest(dispatch, dispatch(updateCard(cardId, {
                 answer_details: {
                     results: cardAnswerDetails,
                 },
-            }))).finally(() => {
-                if (!isAutosave) {
-                    history.push(`/collections/${collectionId}`);
-                }
-            });
+            })));
         }
     };
 
@@ -144,7 +143,7 @@ const CollectionsCardEditPage: React.FC<Props> = ({ match: { params } }: RouteCo
                         {card && card.type == CardType.IMAGE && (
                             <Grid item className={classes.alignRight}>
                                 <QTButton
-                                    onClick={() => saveImageEditChanges(false)}
+                                    onClick={() => history.push(`/collections/${collectionId}`)}
                                     outlined
                                 >
                                     Confirm
