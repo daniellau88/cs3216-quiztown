@@ -231,7 +231,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                                 data.duplicate_collection_id ?
                                     (<Grid container item xs={3} alignItems='center'>
                                         <QTButton height='95%' width='95%' onClick={handleGoDuplicated}>
-                                            Go to duplicated copy
+                                            View copy
                                         </QTButton>
                                     </Grid>) :
                                     (<Grid container item xs={3} alignItems='center'>
