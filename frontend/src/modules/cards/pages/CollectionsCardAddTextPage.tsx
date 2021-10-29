@@ -98,6 +98,8 @@ const CollectionsCardAddTextPage: React.FC<Props> = ({ match: { params } }: Rout
         });
     };
 
+    type RegisterType = 'questions' | `questions.${number}` | `questions.${number}.question` | `questions.${number}.answer` | `questions.${number}.name`;
+
     return (
         <>
             <CssBaseline />
@@ -146,7 +148,7 @@ const CollectionsCardAddTextPage: React.FC<Props> = ({ match: { params } }: Rout
                                                     </Typography>
                                                 </TableCell>
                                                 <TableCell>
-                                                    <TextField {...register(`questions.${questionIndex}.question`)}
+                                                    <TextField {...register(`questions.${questionIndex}.question`.toString() as RegisterType)}
                                                         name={`questions.${questionIndex}.question`}
                                                         type="text"
                                                         variant="outlined"
@@ -157,7 +159,7 @@ const CollectionsCardAddTextPage: React.FC<Props> = ({ match: { params } }: Rout
                                                     <Box className={classes.error}>{errors.questions?.[questionIndex]?.question?.message}</Box>
                                                 </TableCell>
                                                 <TableCell>
-                                                    <TextField {...register(`questions.${questionIndex}.answer`)}
+                                                    <TextField {...register(`questions.${questionIndex}.answer`.toString() as RegisterType)}
                                                         name={`questions.${questionIndex}.answer`}
                                                         type="text"
                                                         variant="outlined"
