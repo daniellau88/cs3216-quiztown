@@ -4,6 +4,7 @@ import {
     CardContent,
     CssBaseline,
     Grid,
+    Link as MUILink,
     Typography,
     makeStyles,
 } from '@material-ui/core';
@@ -17,7 +18,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, generatePath, useHistory } from 'react-router-dom';
 
 import LoadingIndicator from '../components/content/LoadingIndicator';
-import GoogleSignInButton from '../modules/auth/components/GoogleSignInButton';
 import GoogleSignInLink from '../modules/auth/components/GoogleSignInLink';
 import { getIsAuthenticated } from '../modules/auth/selectors';
 import { loadUndoneCards } from '../modules/cards/operations';
@@ -90,6 +90,10 @@ const useStyles = makeStyles(() => ({
     },
     promptCardText: {
         fontSize: isBrowser ? '3.2vh' : '3.6vw',
+    },
+    text: {
+        paddingTop: '6vh',
+        fontSize: '2vh',
     },
 }));
 
@@ -221,6 +225,15 @@ const HomePage: React.FC<{}> = () => {
                                 </CardContent>
                             </Card>
                         </Grid>
+                        <Grid container item justifyContent='center' alignItems='center'>
+                            <Typography className={classes.text}>
+                                We&apos;re in early development! We&apos;d really appreciate if you&apos;d&nbsp;
+                                <MUILink href='https://forms.gle/yGPnuMRR8fAxu7Dj7' target='_blank' className={classes.link}>
+                                    report any bugs
+                                </MUILink>
+                                &nbsp;you find.
+                            </Typography>
+                        </Grid>
                     </Grid>
                 </Box>
             </>
@@ -230,23 +243,37 @@ const HomePage: React.FC<{}> = () => {
     return (
         <>
             <CssBaseline />
-            <Box display='flex' flexDirection='column' className={classes.root}>
-                <Box style={{ height: '10vh', width: '80%', margin: '0 auto' }}>
-                    <HorizontalTimeline
-                        index={days}
-                        linePadding={60}
-                        maxEventPadding={isBrowser ? 80 : 20}
-                        indexClick={(index: number) => {
-                            setDays(index);
-                        }}
-                        values={TIMELINE_VALUES} />
-                </Box>
-                <BannerCard
-                    undoneCardsMaps={undoneCardsPerDayMaps[days]}
-                    collections={collections}
-                    onChange={() => { return; }}
-                />
-            </Box>
+            <Grid container direction='column'>
+                <Grid item>
+                    <Box display='flex' flexDirection='column' className={classes.root}>
+                        <Box style={{ height: '10vh', width: '80%', margin: '0 auto' }}>
+                            <HorizontalTimeline
+                                index={days}
+                                linePadding={60}
+                                maxEventPadding={isBrowser ? 80 : 20}
+                                indexClick={(index: number) => {
+                                    setDays(index);
+                                }}
+                                values={TIMELINE_VALUES} />
+                        </Box>
+                        <BannerCard
+                            undoneCardsMaps={undoneCardsPerDayMaps[days]}
+                            collections={collections}
+                            onChange={() => { return; }}
+                        />
+                        <Typography className={classes.text}>
+                            We&apos;re in early development! We&apos;d really appreciate if you&apos;d&nbsp;
+                            <MUILink href='https://forms.gle/yGPnuMRR8fAxu7Dj7' target='_blank' className={classes.link}>
+                                report any bugs
+                            </MUILink>
+                            &nbsp;you find.
+                        </Typography>
+                    </Box>
+                </Grid>
+                <Grid item>
+
+                </Grid>
+            </Grid>
         </>
     );
 };

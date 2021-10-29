@@ -2,7 +2,6 @@ import {
     Box,
     CssBaseline,
     Grid,
-    Link as MUILink,
     Typography,
     makeStyles,
 } from '@material-ui/core';
@@ -97,18 +96,6 @@ const InfoPage: React.FC<{}> = () => {
                             you are with a card&apos;s content. Of course, we aren&apos;t always right, so we still offer 4 confidence
                             levels for you to choose from! The more confident you are with a card, the larger the interval before you see the
                             card again. If you&apos;re consistently confident in a card, this interval will continue increasing up to a maximum of 30 days.
-                        </Typography>
-                        <Typography className={classes.subheaderText}>
-                            Any other queries?
-                        </Typography>
-                        <Typography className={classes.text}>
-                            We are always open to feedback, and we would love to hear from you! Should you have any other questions that
-                            are not answered, suggestions that you&apos;d like to provide, or issues you want to report,
-                            you can do so&nbsp;
-                            <MUILink href='https://forms.gle/yGPnuMRR8fAxu7Dj7' target='_blank' className={classes.link}>
-                                here
-                            </MUILink>
-                            .
                         </Typography>
                     </Box>
                 </Grid>
