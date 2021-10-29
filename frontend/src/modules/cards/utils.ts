@@ -363,7 +363,7 @@ export const mergeTextboxes = (canvas: fabric.Canvas, objects: fabric.Object[]):
         if (!firstTextContent || !secondTextContent) {
             continue;
         }
-        const combinedTextContent = firstTextContent.concat(secondTextContent);
+        const combinedTextContent = firstTextContent.concat(` ${secondTextContent}`);
         const height = bottomRightPoint[1] - topLeftPoint[1];
         const scaleY = height / DEFAULT_TEXTBOX_HEIGHT;
         mainTextbox = new QTTextbox(combinedTextContent, {
