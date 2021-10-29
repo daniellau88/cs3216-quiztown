@@ -226,7 +226,7 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
                             </Grid>
                             <Grid item>
                                 <IconButton onClick={() => deleteFile(file, index)}>
-                                    <DeleteIcon />
+                                    <DeleteIcon style={{ color: colours.DEEPRED }}/>
                                 </IconButton>
                             </Grid>
                         </Grid>
