@@ -58,6 +58,7 @@ const collectionsReducer = produce((draft: types.CollectionsState, action: types
                 collections.ids = collections.ids.filter((id) => id !== action.id);
             }
             resetCollectionCache(draft.allPersonalCollections);
+            resetCollectionCache(draft.allPublicCollections);
             return;
         }
         case types.UPDATE_PUBLIC_COLLECTION_LIST: {

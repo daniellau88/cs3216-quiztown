@@ -13,6 +13,7 @@ export const UPDATE_COLLECTION_CARD_LIST = 'cards/UPDATE_COLLECTION_CARD_LIST';
 export const UPDATE_COLLECTION_IMPORT_CARD_LIST = 'cards/UPDATE_COLLECTION_IMPORT_CARD_LIST';
 export const UPDATE_UNDONE_CARD_LIST = 'cards/UPDATE_UNDONE_CARD_LIST';
 export const RESET_COLLECTION_CARD_LIST = 'cards/RESET_COLLECTION_CARD_LIST';
+export const RESET_UNDONE_CARD_LIST = 'cards/RESET_UNDONE_CARD_LIST';
 
 // Action Types
 
@@ -69,6 +70,10 @@ export interface ResetCollectionCardListAction {
     collectionId: number;
 }
 
+export interface ResetUndoneCardListAction {
+    type: typeof RESET_UNDONE_CARD_LIST;
+}
+
 export type CardsActionTypes =
     SaveCardListAction |
     SaveCardAction |
@@ -79,7 +84,8 @@ export type CardsActionTypes =
     UpdateCollectionCardListAction |
     UpdateCollectionImportCardListAction |
     UpdateUndoneCardListAction |
-    ResetCollectionCardListAction;
+    ResetCollectionCardListAction |
+    ResetUndoneCardListAction;
 
 // State Types
 export interface CardsState {

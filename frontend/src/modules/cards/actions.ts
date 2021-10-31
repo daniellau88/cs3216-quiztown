@@ -75,3 +75,9 @@ export function resetCollectionCardList(collectionId: number): types.ResetCollec
         collectionId,
     };
 }
+
+export function resetUndoneCardList(): types.ResetUndoneCardListAction {
+    return {
+        type: types.RESET_UNDONE_CARD_LIST,
+    };
+}

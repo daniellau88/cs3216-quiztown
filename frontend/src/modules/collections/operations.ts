@@ -138,7 +138,7 @@ export function duplicatePublicCollection(collectionId: number): Operation<ApiRe
     return async (dispatch, getState) => {
         const response = await api.collections.duplicatePublicCollection(collectionId);
         const data = response.payload.item;
-        batched(dispatch, saveCollection(data), actions.addCollection(data.id));
+        batched(dispatch, saveCollection(data), actions.addCollection(data.id), cards.operations.resetUndoneCards());
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return { ...response, payload: getCollectionMiniEntity(getState(), data.id)! };
     };
