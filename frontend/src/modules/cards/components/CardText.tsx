@@ -46,6 +46,7 @@ const useStyles = makeStyles(() => ({
     },
     text: {
         fontSize: '5vh',
+        width: '100%',
     },
     mainGrid: {
         rowGap: '20px',
@@ -55,6 +56,7 @@ const useStyles = makeStyles(() => ({
     },
     textAnswer: {
         fontSize: '5vh',
+        width: '100%',
         color: colours.WHITE + '00',
     },
     fullWidth: {
