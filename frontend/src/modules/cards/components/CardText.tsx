@@ -137,7 +137,14 @@ const CardText: React.FC<CardTextProps> = ({
                                     Question
                                 </Grid>
                                 <Typography align='center' className={classes.text}>
-                                    {card?.question}
+                                    {card?.question.split('\n').map((ques, i) => {
+                                        return (
+                                            <>
+                                                {i !== 0 && <br />}
+                                                {ques}
+                                            </>
+                                        );
+                                    })}
                                 </Typography>
                             </Grid>
                         </CardContent>
@@ -149,7 +156,14 @@ const CardText: React.FC<CardTextProps> = ({
                                     Answer
                                 </Grid>
                                 <Typography align='center' className={hasAnsweredAll ? classes.text : classes.textAnswer}>
-                                    {card?.answer}
+                                    {card?.answer.split('\n').map((ques, i) => {
+                                        return (
+                                            <>
+                                                {i !== 0 && <br />}
+                                                {ques}
+                                            </>
+                                        );
+                                    })}
                                 </Typography>
                             </Grid>
                         </CardContent>

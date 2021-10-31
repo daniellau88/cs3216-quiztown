@@ -5,6 +5,7 @@ import string
 
 from dataclasses import asdict, dataclass
 from shutil import copyfile
+from typing import List, Tuple
 
 import cv2
 import pytesseract
@@ -39,13 +40,31 @@ PADDING_PERCENTAGE = 0.1
 
 cv2.setNumThreads(0)
 
+Coordinate = Tuple[int, int]
+
 
 @dataclass
 class PaddleOCRResult():
+    original_bounding_box: Tuple[Coordinate, Coordinate, Coordinate, Coordinate]
+    text_options: List[str]
     # Top left and bottom right coordinate
-    bounding_box: tuple[tuple[int, int], tuple[int, int]]
+    bounding_box: Tuple[Coordinate, Coordinate]
     text: str
     confidence: float
+
+    def __init__(self, original_bounding_box: Tuple[Coordinate, Coordinate, Coordinate, Coordinate], text: str, confidence: float):
+        self.original_bounding_box = original_bounding_box
+        self.text_options = [text]
+        self.text = text
+        self.confidence = confidence
+
+        all_x = [coord[0] for coord in original_bounding_box]
+        min_x = min(all_x)
+        max_x = max(all_x)
+        all_y = [coord[1] for coord in original_bounding_box]
+        min_y = min(all_y)
+        max_y = max(all_y)
+        self.bounding_box = ((min_x, min_y), (max_x, max_y))
 
     def __repr__(self):
         return "%s, text: %s, confidence: %f" % (
@@ -90,7 +109,7 @@ def import_card_from_image(image_key: str, collection_id: int, collection_import
         # Apply OCR on the cropped image
         text = pytesseract.image_to_string(cropped, config="--psm 7")
 
-        result.text = trim_ocr_text(str(text))
+        result.text_options += trim_ocr_text(str(text))
 
     width, height = image.size
     image_metadata = {
@@ -114,18 +133,13 @@ def import_card_from_image(image_key: str, collection_id: int, collection_import
 def get_paddle_ocr_text_bounding_boxes_from_image(image_file_path: str) -> list[PaddleOCRResult]:
     result = ocr.ocr(image_file_path)
 
-    def convert_box_coordinate_to_top_left_bottom_right(
-            box_coordinate: list[list[float]]) -> tuple[tuple[int, int], tuple[int, int]]:
-        top_left_x = int(box_coordinate[0][0])
-        top_left_y = int(box_coordinate[0][1])
-        bottom_right_x = int(box_coordinate[2][0])
-        bottom_right_y = int(box_coordinate[2][1])
-        return ((top_left_x, top_left_y), (bottom_right_x, bottom_right_y))
-
     # (bounding_box, text, confidence)
     def convert_result_row_to_object(result_row):
-        return PaddleOCRResult(convert_box_coordinate_to_top_left_bottom_right(
-            result_row[0]), result_row[1][0], result_row[1][1])
+        return PaddleOCRResult(
+            result_row[0],
+            result_row[1][0],
+            result_row[1][1],
+        )
 
     if result is None:
         raise ApplicationError(ErrorCode.DEPENDENCY_ERROR, ["Error parsing image"])
