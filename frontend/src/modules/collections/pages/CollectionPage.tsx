@@ -54,7 +54,7 @@ const CollectionPage: React.FC<{}> = () => {
                             My Collections
                         </Typography>
                         <Typography align='center' className={classes.subheaderText}>
-                            Each collection contains your handmate notes, pick one and start revising!
+                            Each collection contains your hand-made notes, pick one and start revising!
                         </Typography>
                     </Grid>
 

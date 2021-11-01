@@ -19,6 +19,7 @@ import { useHistory } from 'react-router-dom';
 import defaultCollectionImage from '../../../assets/images/logo512.png';
 import QTButton from '../../../components/QTButton';
 import QTDeleteButton from '../../../components/utiltiies/QTDeleteButton';
+import StartQuizButton from '../../../pages/components/StartQuizButton';
 import { CollectionMiniEntity, CollectionPostData, CollectionPrivate } from '../../../types/collections';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
@@ -217,9 +218,9 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                 <Grid container alignItems='center' style={{ paddingLeft: '0.5vw' }}>
                     <Box display='flex' height='100%' width='100%'>
                         {isAuthenticated && isOwner && <Grid container item xs={3} alignItems='center'>
-                            <QTButton outlined height='95%' width='95%' onClick={startCollection}>
+                            <StartQuizButton buttonComponent={QTButton} outlined height='95%' width='95%' collectionId={collectionId ? collectionId : -1}>
                                 Test Me!
-                            </QTButton>
+                            </StartQuizButton>
                         </Grid>}
                         <Grid container item xs={3} alignItems='center'>
                             <QTButton height='95%' width='95%' onClick={openCollection}>
