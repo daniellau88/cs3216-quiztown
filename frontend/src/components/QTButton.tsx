@@ -34,13 +34,13 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-interface QTButtonProps {
+export interface QTButtonProps {
     alert?: boolean
     outlined?: boolean
-    onClick?: () => void
+    onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
     height?: string
     width?: string
-    variant?: TypographyVariant
+    textVariant?: TypographyVariant
 }
 
 const QTButton: React.FC<QTButtonProps> = ({
@@ -50,7 +50,7 @@ const QTButton: React.FC<QTButtonProps> = ({
     alert = false,
     height = '5vh',
     width = '8vw',
-    variant = 'caption',
+    textVariant = 'caption',
 }) => {
     const classes = useStyles();
 
@@ -68,9 +68,9 @@ const QTButton: React.FC<QTButtonProps> = ({
                 ${outlined ? classes.outlined : null}
             `}
             style={{ minWidth: width, minHeight: height, maxWidth: width, maxHeight: height }}
-            onClick={() => onClick && onClick()}
+            onClick={(e) => onClick && onClick(e)}
         >
-            <Typography variant={variant} className={alert ? classes.alertText : classes.primaryText}>
+            <Typography variant={textVariant} className={alert ? classes.alertText : classes.primaryText}>
                 {children}
             </Typography>
         </Button>

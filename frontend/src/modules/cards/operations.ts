@@ -180,3 +180,9 @@ export function resetCollectionCards(collectionId: number): Operation<void> {
         batched(dispatch, actions.resetCollectionCardList(collectionId));
     };
 }
+
+export function resetUndoneCards(): Operation<void> {
+    return async (dispatch, getState) => {
+        batched(dispatch, actions.resetUndoneCardList());
+    };
+}

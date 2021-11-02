@@ -82,6 +82,10 @@ const cardsReducer = produce((draft: types.CardsState, action: types.CardsAction
             resetCollectionSetCache(draft.collectionCards, action.collectionId);
             return;
         }
+        case types.RESET_UNDONE_CARD_LIST: {
+            resetCollectionCache(draft.undoneCards);
+            return;
+        }
     }
 }, initialState);
 

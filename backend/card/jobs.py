@@ -76,7 +76,7 @@ class PaddleOCRResult():
 
 def trim_ocr_text(text: str):
     # TODO: fix trimming
-    return text.strip("~|'-" + string.whitespace)
+    return text.strip("~|'-." + string.whitespace)
 
 
 def import_card_from_image(image_key: str, collection_id: int, collection_import_id: int, name: str = ""):

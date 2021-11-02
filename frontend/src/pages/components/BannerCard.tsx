@@ -1,6 +1,6 @@
 import {
     Box,
-    Button,
+    ButtonProps,
     Card,
     CardContent,
     Grid,
@@ -9,17 +9,13 @@ import {
 } from '@material-ui/core';
 import * as React from 'react';
 import { isBrowser } from 'react-device-detect';
-import { useDispatch } from 'react-redux';
-import { generatePath, useHistory } from 'react-router-dom';
 
-import { setAutomatedQuiz } from '../../modules/quiz/operations';
 import { CollectionMiniEntity } from '../../types/collections';
-import { QuizData } from '../../types/quiz';
 import colours from '../../utilities/colours';
-import routes from '../../utilities/routes';
 import { UndoneCardsMap } from '../HomePage';
 
 import CollectionToggle from './CollectionToggle';
+import StartQuizButton from './StartQuizButton';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -102,24 +98,13 @@ const BannerCard: React.FC<Props> = (props: Props) => {
     const undoneCardsMaps = props.undoneCardsMaps;
 
     const classes = useStyles();
-    const dispatch = useDispatch();
-    const history = useHistory();
     const [collectionCount, setCollectionCount] = React.useState<number>(0);
 
     const totalUndone: number = undoneCardsMaps.filter(map => !map.inactive).reduce((prev, curr) => prev + curr.cards.length, 0);
+    const cardIds = undoneCardsMaps.filter(map => !map.inactive).flatMap(undoneCardsMap => undoneCardsMap.cards).map(cardMiniEntity => cardMiniEntity.id);
 
     const onUpdate = (didActivate: boolean) => {
         setCollectionCount(collectionCount + (didActivate ? 1 : -1));
-    };
-
-    const startQuiz = () => {
-        const cardIds = undoneCardsMaps.filter(map => !map.inactive).flatMap(undoneCardsMap => undoneCardsMap.cards).map(cardMiniEntity => cardMiniEntity.id);
-        const quizData: QuizData = {
-            cardIds: cardIds,
-        };
-        dispatch(setAutomatedQuiz(quizData)).then(() => {
-            history.push(generatePath(routes.QUIZ));
-        });
     };
 
     React.useEffect(() => {
@@ -129,6 +114,16 @@ const BannerCard: React.FC<Props> = (props: Props) => {
     React.useEffect(() => {
         setCollectionCount([...undoneCardsMaps].filter(map => !map.inactive).filter(map => map.cards.length > 0).length);
     }, [undoneCardsMaps]);
+
+    const ButtonComponent = (props: ButtonProps) => {
+        return (
+            <button className={classes.sideGridButton} {...props} >
+                <Typography className={classes.sideButtonText}>
+                    Start Learning
+                </Typography>
+            </button>
+        );
+    };
 
     return (
         <Box className={classes.root}>
@@ -154,11 +149,7 @@ const BannerCard: React.FC<Props> = (props: Props) => {
                             </Grid>
                         </Grid>
                         <Grid className={classes.sideGrid}>
-                            <Button className={classes.sideGridButton} onClick={startQuiz} disabled={totalUndone <= 0}>
-                                <Typography className={classes.sideButtonText}>
-                                    Start Learning
-                                </Typography>
-                            </Button>
+                            <StartQuizButton buttonComponent={ButtonComponent} cardIds={cardIds} disabled={totalUndone <= 0} />
                         </Grid>
                     </Box>
                 </CardContent>

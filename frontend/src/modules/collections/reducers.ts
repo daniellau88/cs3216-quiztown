@@ -44,6 +44,7 @@ const collectionsReducer = produce((draft: types.CollectionsState, action: types
         case types.ADD_COLLECTION: {
             draft.allPersonalCollections.ids.push(action.id);
             resetCollectionCache(draft.allPersonalCollections);
+            resetCollectionCache(draft.allPublicCollections);
             return;
         }
         case types.EDIT_COLLECTION: {
@@ -58,6 +59,7 @@ const collectionsReducer = produce((draft: types.CollectionsState, action: types
                 collections.ids = collections.ids.filter((id) => id !== action.id);
             }
             resetCollectionCache(draft.allPersonalCollections);
+            resetCollectionCache(draft.allPublicCollections);
             return;
         }
         case types.UPDATE_PUBLIC_COLLECTION_LIST: {
