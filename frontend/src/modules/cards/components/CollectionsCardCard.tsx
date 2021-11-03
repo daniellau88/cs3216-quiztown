@@ -170,12 +170,6 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
         return null;
     }
 
-    const duplicateCard = () => {
-        if (!cardEntity) return;
-        // const cardPostData: CardPostData = { ...cardEntity };
-        // return handleApiRequest(dispatch, dispatch(addCard(cardPostData)));
-    };
-
     const openCard = () => {
         history.push(`/collections/${collectionId}/cards/${cardId}`);
     };
@@ -251,11 +245,6 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
                                 </QTButton>
                             </Grid>
                         }
-                        <Grid container item xs={3} alignItems='center'>
-                            <QTButton height='95%' width='95%' onClick={duplicateCard}>
-                                Duplicate
-                            </QTButton>
-                        </Grid>
                         <Box flexGrow={1} />
                         {data.permissions.can_delete &&
                             <Box display='flex' minHeight='100%' style={{ paddingRight: '0.5vw' }} justifyContent='center' alignItems='center'>
