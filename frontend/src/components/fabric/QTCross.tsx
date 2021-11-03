@@ -23,7 +23,6 @@ const QTCross = fabric.util.createClass(fabric.Object, {
     },
 });
 
-// Declare it so that fabric knows that Quizbox exists
 (fabric as any).QTCross = QTCross;
 (fabric as any).QTCross.fromObject = function (object:any, callback: () => void) {
     return fabric.Object._fromObject('QTCross', object, callback);
