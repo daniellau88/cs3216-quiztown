@@ -109,7 +109,7 @@ def import_card_from_image(image_key: str, collection_id: int, collection_import
         # Apply OCR on the cropped image
         text = pytesseract.image_to_string(cropped, config="--psm 7")
 
-        result.text_options += trim_ocr_text(str(text))
+        result.text_options.append(trim_ocr_text(str(text)))
 
     width, height = image.size
     image_metadata = {
