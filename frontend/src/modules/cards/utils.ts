@@ -115,8 +115,8 @@ const createAnswerTextBox = (
 };
 
 const createAnswerRectangle = (
-    box: AnswerData, 
-    xTranslation:number,
+    box: AnswerData,
+    xTranslation: number,
     scale: number,
 ) => {
     const top = box.bounding_box[0][1];
@@ -212,7 +212,7 @@ export const validateAnswer = (
     if (!answerTop || !answerLeft || !answerHeight || !answerWidth) return false;
 
     return (mouseCoordinate.y >= answerTop && mouseCoordinate.y <= answerTop + answerHeight)
-         && (mouseCoordinate.x >= answerLeft && mouseCoordinate.x <= answerLeft + answerWidth);
+        && (mouseCoordinate.x >= answerLeft && mouseCoordinate.x <= answerLeft + answerWidth);
 };
 
 
@@ -357,15 +357,13 @@ export const mergeTextboxes = (canvas: fabric.Canvas, objects: fabric.Object[]):
         const firstTextContent = firstTextbox.text;
         const secondTextContent = secondTextbox.text;
         const topLeftPoint = [Math.min(mainRect.left, otherRect.left), Math.min(mainRect.top, otherRect.top)];
-        const bottomRightPoint = [Math.max(mainRect.left + mainRect.width, otherRect.left + otherRect.width),
-            Math.max(mainRect.top + mainRect.height, otherRect.top + otherRect.height)];
+        const bottomRightPoint = [Math.max(mainRect.left + mainRect.width, otherRect.left + otherRect.width), Math.max(mainRect.top + mainRect.height, otherRect.top + otherRect.height)];
 
         if (!firstTextContent || !secondTextContent) {
             continue;
         }
         const combinedTextContent = firstTextContent.concat(` ${secondTextContent}`);
         const height = bottomRightPoint[1] - topLeftPoint[1];
-        const scaleY = height / DEFAULT_TEXTBOX_HEIGHT;
         mainTextbox = new QTTextbox(combinedTextContent, {
             top: topLeftPoint[1],
             left: topLeftPoint[0],
@@ -376,7 +374,8 @@ export const mergeTextboxes = (canvas: fabric.Canvas, objects: fabric.Object[]):
             backgroundColor: colours.WHITE,
             stroke: colours.BLACK,
             fontSize: FONT_SIZE,
-            scaleY: scaleY,
+            scaleX: mainTextbox.scaleX,
+            scaleY: mainTextbox.scaleY,
         });
     }
 

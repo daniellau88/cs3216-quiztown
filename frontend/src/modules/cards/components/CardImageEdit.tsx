@@ -151,8 +151,14 @@ const CardImageEdit: React.FC<Props> = ({
             <CssBaseline />
             <Grid container direction='column' className={classes.root}>
                 <CollectionsImageCardEditControls
-                    undo={() => stateManager?.undo()}
-                    redo={() => stateManager?.redo()}
+                    undo={() => {
+                        stateManager?.undo();
+                        saveCanvasEdits();
+                    }}
+                    redo={() => {
+                        stateManager?.redo();
+                        saveCanvasEdits();
+                    }}
                     addOption={addAnswerOption}
                     deleteOption={deleteAnswerOption}
                     mergeOption={mergeAnswerOption}
