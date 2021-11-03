@@ -1,5 +1,6 @@
 import {
     Grid,
+    Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
@@ -24,6 +25,10 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'center',
         height: '30vh',
         width: '30vh',
+    },
+    text: {
+        paddingTop: '6vh',
+        fontSize: '2vh',
     },
 }));
 
@@ -91,22 +96,27 @@ const CollectionMesh: React.FC<Props> = ({
                     </Grid>
                 }
                 {!isLoading &&
-                    collection.ids.length !== 0 &&
-                    collection.ids.map((id) => (
-                        <Grid container item
-                            key={id}
-                            xs={12} md={6} lg={4} xl={3}
-                            justifyContent='center'
-                            alignItems='center'
-                            className={classes.card}
-                        >
-                            <GridComponent
+                    (collection.ids.length === 0 ?
+                        <Typography className={classes.text}>
+                            You have no collections/cards here at the moment. Add one now!
+                        </Typography>
+                        :
+                        collection.ids.map((id) => (
+                            <Grid container item
                                 key={id}
-                                id={id}
-                                {...rowProps}
-                            />
-                        </Grid>
-                    ))
+                                xs={12} md={6} lg={4} xl={3}
+                                justifyContent='center'
+                                alignItems='center'
+                                className={classes.card}
+                            >
+                                <GridComponent
+                                    key={id}
+                                    id={id}
+                                    {...rowProps}
+                                />
+                            </Grid>
+                        ))
+                    )
                 }
             </Grid>
         </>
