@@ -1,5 +1,6 @@
 import { fabric } from 'fabric';
 
+import QTCross from '../../components/fabric/QTCross';
 import QTText from '../../components/fabric/QTText';
 import QTTextbox from '../../components/fabric/QTTextbox';
 import { AnswerData } from '../../types/cards';
@@ -228,6 +229,26 @@ export const revealAnswer = (
     if (!answerData) return;
 
     canvas.remove(answerData);
+};
+
+export const showWrongAnswerIndicator = (
+    canvas: fabric.Canvas,
+    mouseCoordinate: { x: number, y: number },
+): void => {
+    const wrongAnswerIndicator = new QTCross({
+        top: mouseCoordinate.y,
+        left: mouseCoordinate.x,
+    });
+
+    canvas.add(wrongAnswerIndicator);
+    wrongAnswerIndicator.animate('top', mouseCoordinate.y - 50, {
+        duration: 500,
+        onChange: canvas.renderAll.bind(canvas),
+        onComplete: function () {
+            canvas.remove(wrongAnswerIndicator);
+        },
+    });
+
 };
 
 export const shiftAnswerOptionsUp = (

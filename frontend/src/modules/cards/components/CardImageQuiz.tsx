@@ -31,6 +31,7 @@ import {
     resetToOriginalPosition,
     revealAnswer,
     shiftAnswerOptionsUp,
+    showWrongAnswerIndicator,
     updateCorrectAnswersIndicator,
     validateAnswer,
 } from '../utils';
@@ -153,7 +154,8 @@ const CardImageQuiz: React.FC<Props> = ({
             }
 
             const text = e.target as fabric.Text;
-            const isAnswerCorrect = validateAnswer(text, answersCoordsMap, canvas.getPointer(e.e));
+            const currPointer = canvas.getPointer(e.e);
+            const isAnswerCorrect = validateAnswer(text, answersCoordsMap, currPointer);
             if (isAnswerCorrect) {
                 canvas.remove(e.target);
                 revealAnswer(answersCoordsMap, text, canvas);
@@ -162,6 +164,7 @@ const CardImageQuiz: React.FC<Props> = ({
             } else {
                 e.target.opacity = 1;
                 resetToOriginalPosition(optionsCoordsMap, text);
+                showWrongAnswerIndicator(canvas, currPointer);
             }
         });
         return canvas;
