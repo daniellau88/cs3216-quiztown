@@ -46,7 +46,7 @@ const useStyles = makeStyles(() => ({
 interface OwnProps {
     card: CardImageEntity
     canvasRef: MutableRefObject<fabric.Canvas | undefined>
-    saveEdits: (imageXTranslation: number) => void
+    saveEdits: (imageXTranslation: number, imageScale: number) => void
 }
 
 type Props = OwnProps
@@ -72,8 +72,8 @@ const CardImageEdit: React.FC<Props> = ({
     const canvasMaxWidth = Math.floor(windowWidth * 0.9);
     const canvasMaxHeight = Math.floor(windowHeight * 0.8);
     const imageContainerWidth = canvasMaxWidth;
-    const imageScaleX = Math.floor(imageContainerWidth / imageMetadata.width);
-    const imageScaleY = Math.floor(canvasMaxHeight / imageMetadata.height);
+    const imageScaleX = imageContainerWidth / imageMetadata.width;
+    const imageScaleY = canvasMaxHeight / imageMetadata.height;
     const imageScale = Math.min(imageScaleX, imageScaleY); // Maintains aspect ratio, object-fit == 'contain'
     const scaledImageWidth = Math.floor(imageMetadata.width * imageScale);
     const scaledImageHeight = Math.floor(imageMetadata.height * imageScale);
@@ -113,7 +113,7 @@ const CardImageEdit: React.FC<Props> = ({
     }, [windowHeight, windowWidth]);
 
     const saveCanvasEdits = () => {
-        saveEdits(imageXTranslation);
+        saveEdits(imageXTranslation, imageScale);
     };
 
     const addAnswerOption = () => {

@@ -39,7 +39,7 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-export const formatCardData = (answerBoxes: fabric.Object[], imageXTranslation: number): AnswerData[] => {
+export const formatCardData = (answerBoxes: fabric.Object[], imageXTranslation: number, imageScale: number): AnswerData[] => {
     const FULL_CONFIDENCE = 1;
     const answerData: AnswerData[] = [];
 
@@ -58,8 +58,14 @@ export const formatCardData = (answerBoxes: fabric.Object[], imageXTranslation: 
         // Reverses translation to canvas object done in CardImageEdit
         const translatedLeft = left - imageXTranslation;
 
+        const topLeftX = Math.floor(translatedLeft / imageScale);
+        const topLeftY = Math.floor(top / imageScale);
+
+        const bottomRightX = Math.floor((translatedLeft + width) / imageScale);
+        const bottomRightY = Math.floor((top + height) / imageScale);
+
         answerData.push({
-            bounding_box: [[translatedLeft, top], [translatedLeft + width, top + height]],
+            bounding_box: [[topLeftX, topLeftY], [bottomRightX, bottomRightY]],
             text: text,
             confidence: FULL_CONFIDENCE,
         });
@@ -92,11 +98,11 @@ const CollectionsCardEditPage: React.FC<Props> = ({ match: { params } }: RouteCo
         });
     };
 
-    const saveImageEditChanges = (imageXTranslation: number) => {
+    const saveImageEditChanges = (imageXTranslation: number, imageScale: number) => {
         if (!canvasRef) return;
         const answerBoxes = canvasRef.current?.getObjects();
         if (!answerBoxes) return;
-        const cardAnswerDetails = formatCardData(answerBoxes, imageXTranslation);
+        const cardAnswerDetails = formatCardData(answerBoxes, imageXTranslation, imageScale);
         if (cardAnswerDetails) {
             handleApiRequest(dispatch, dispatch(updateCard(cardId, {
                 answer_details: {
