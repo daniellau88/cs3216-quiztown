@@ -35,19 +35,24 @@ const useStyles = makeStyles((theme) => ({
     button: {
         width: '80px',
         [theme.breakpoints.down('xs')]: {
-            width: '40px',
+            // fit 8 characters
+            width: '64px',
         },
         [theme.breakpoints.between('xs', 'sm')]: {
-            width: '60px',
-        },
-        [theme.breakpoints.between('sm', 'md')]: {
+            // fit 9-10 characters
             width: '72px',
         },
-        [theme.breakpoints.between('md', 'lg')]: {
+        [theme.breakpoints.between('sm', 'md')]: {
+            // fit 10 characters
             width: '80px',
         },
+        [theme.breakpoints.between('md', 'lg')]: {
+            // fit 11 characters
+            width: '88px',
+        },
         [theme.breakpoints.up('lg')]: {
-            width: '100px',
+            // fit 12 characters
+            width: '96px',
         },
     },
 }));
