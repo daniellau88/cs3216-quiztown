@@ -118,13 +118,15 @@ const CardImageEdit: React.FC<Props> = ({
 
     const addAnswerOption = () => {
         if (!canvas) return;
-        canvas.add(new QTTextbox('Answer Option', {
+        const textbox = new QTTextbox('Answer Option', {
             hasBorders: false,
             borderColor: colours.BLACK,
             backgroundColor: colours.WHITE,
             stroke: colours.BLACK,
             fontSize: FONT_SIZE,
-        }));
+        });
+        textbox.setControlsVisibility({ mtr: false });
+        canvas.add(textbox);
         stateManager?.saveState();
         saveCanvasEdits();
     };
