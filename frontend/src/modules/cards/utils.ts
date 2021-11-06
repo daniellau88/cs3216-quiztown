@@ -165,6 +165,7 @@ export const initAnswerTextboxes = (
 ): void => {
     data.forEach(box => {
         const textbox = createAnswerTextBox(box, xTranslation, scale);
+        textbox.setControlsVisibility({ mtr: false });
         canvas.add(textbox);
     });
 };
