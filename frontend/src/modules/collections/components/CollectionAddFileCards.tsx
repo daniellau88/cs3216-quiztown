@@ -123,13 +123,15 @@ const CollectionAddFileCards: React.FC<Props> = ({
                     copy.push(upload);
                     setUploadedResponse(copy);
                     setUploadedResponseChild(copy);
-                    setButtonDisabled(false);
                 })
                 .then(() => {
                     return true;
                 })
                 .catch(() => {
                     return false;
+                })
+                .finally(() => {
+                    setButtonDisabled(false);
                 });
         });
     };
