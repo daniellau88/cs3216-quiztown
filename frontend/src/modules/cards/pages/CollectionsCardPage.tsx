@@ -106,7 +106,7 @@ const CollectionsCardPage: React.FC<Props> = ({ match: { params } }: RouteCompon
         const timeout = setTimeout(() => {
             if (!collection) return;
 
-            const collectionPostData: CollectionPostData = { name: collectionName };
+            const collectionPostData: CollectionPostData = { name: event.target.value };
             handleApiRequest(dispatch, dispatch(updateCollection(collection.id, collectionPostData)));
         }, 500);
         setNameChangeTimeout(timeout);
