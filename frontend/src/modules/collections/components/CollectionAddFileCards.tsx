@@ -76,11 +76,15 @@ const useStyles = makeStyles(() => ({
 
 interface OwnProps {
     setUploadedResponse: React.Dispatch<React.SetStateAction<Array<UploadData>>>;
+    setButtonDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 type Props = OwnProps;
 
-const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
+const CollectionAddFileCards: React.FC<Props> = ({
+    setUploadedResponse,
+    setButtonDisabled,
+}) => {
     const classes = useStyles();
     const dispatch = useDispatch();
 
@@ -111,6 +115,7 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
         }
         saveFileImageLink(fileImage);
         [...e.target.files].map(async (file: File) => {
+            setButtonDisabled(true);
             return handleApiRequest(dispatch, dispatch(addUpload(file)))
                 .then((response) => {
                     const upload = response.payload;
@@ -118,6 +123,7 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
                     copy.push(upload);
                     setUploadedResponse(copy);
                     setUploadedResponseChild(copy);
+                    setButtonDisabled(false);
                 })
                 .then(() => {
                     return true;
@@ -226,7 +232,7 @@ const CollectionAddFileCards: React.FC<Props> = ({ setUploadedResponse }) => {
                             </Grid>
                             <Grid item>
                                 <IconButton onClick={() => deleteFile(file, index)}>
-                                    <DeleteIcon style={{ color: colours.DEEPRED }}/>
+                                    <DeleteIcon style={{ color: colours.DEEPRED }} />
                                 </IconButton>
                             </Grid>
                         </Grid>

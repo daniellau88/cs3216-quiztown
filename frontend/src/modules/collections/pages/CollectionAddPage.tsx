@@ -64,6 +64,7 @@ const AddCollectionPage: React.FC<{}> = () => {
 
     const [collectionName, setCollectionName] = useState<string>('Untitled collection');
     const [uploadFiles, setUploadedResponse] = useState<Array<UploadData>>([]);
+    const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
 
     const createCollection = () => {
         if (uploadFiles == undefined) {
@@ -122,9 +123,9 @@ const AddCollectionPage: React.FC<{}> = () => {
                     <Typography variant='body1' component="div" className={classes.description}>
                         Upload files to automatically generate cards! We will notify you when they are ready for your review.
                     </Typography>
-                    <CollectionAddFileCards setUploadedResponse={setUploadedResponse} />
+                    <CollectionAddFileCards setUploadedResponse={setUploadedResponse} setButtonDisabled={setButtonDisabled} />
                     <Grid container direction='column' className={classes.button}>
-                        <QTButton outlined onClick={createCollection}>Done</QTButton>
+                        <QTButton outlined onClick={createCollection} disabled={buttonDisabled}>Done</QTButton>
                     </Grid>
                 </Grid>
             </Box >

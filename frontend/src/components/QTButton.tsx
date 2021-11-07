@@ -41,6 +41,7 @@ export interface QTButtonProps {
     height?: string
     width?: string
     textVariant?: TypographyVariant
+    disabled?: boolean
 }
 
 const QTButton: React.FC<QTButtonProps> = ({
@@ -51,6 +52,7 @@ const QTButton: React.FC<QTButtonProps> = ({
     height = '5vh',
     width = '8vw',
     textVariant = 'caption',
+    disabled = false,
 }) => {
     const classes = useStyles();
 
@@ -69,6 +71,7 @@ const QTButton: React.FC<QTButtonProps> = ({
             `}
             style={{ minWidth: width, minHeight: height, maxWidth: width, maxHeight: height }}
             onClick={(e) => onClick && onClick(e)}
+            disabled={disabled}
         >
             <Typography variant={textVariant} className={alert ? classes.alertText : classes.primaryText}>
                 {children}

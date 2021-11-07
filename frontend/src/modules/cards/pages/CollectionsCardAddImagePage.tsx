@@ -64,6 +64,7 @@ const CollectionsCardAddImagePage: React.FC<Props> = ({ match: { params } }: Rou
     const history = useHistory();
 
     const [uploadFiles, setUploadedResponse] = useState<Array<UploadData>>([]);
+    const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
 
     const collectionId: number = +(params as { collectionId: string }).collectionId;
 
@@ -101,9 +102,9 @@ const CollectionsCardAddImagePage: React.FC<Props> = ({ match: { params } }: Rou
                             Upload files to automatically generate cards! We will notify you when they are ready for your review.
                         </Typography>
                     </Grid>
-                    <CollectionAddFileCards setUploadedResponse={setUploadedResponse} />
+                    <CollectionAddFileCards setUploadedResponse={setUploadedResponse} setButtonDisabled={setButtonDisabled} />
                     <Grid container direction='column' className={classes.button}>
-                        <QTButton outlined onClick={reviewCollection}>Done</QTButton>
+                        <QTButton outlined onClick={reviewCollection} disabled={buttonDisabled}>Done</QTButton>
                     </Grid>
                 </Grid>
             </Box >
