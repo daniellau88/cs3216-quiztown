@@ -7,9 +7,13 @@ const Quizbox = fabric.util.createClass(fabric.Textbox, {
     // This type naming capitalization matters
     type: 'Quizbox',
 
-    initialize: function (text:string, options:any) {
+    initialize: function (text: string, options: any) {
         this.text = text;
         this.callSuper('initialize', text, options);
+        // Upon initialization, the width and height will be reset
+        this.width = options.width;
+        this.height = options.height;
+
         options || (options = {});
         this.set('willShowBorder', options.willShowBorder || true);
         this.set('onClickCallback', options.onClickCallback);
@@ -68,11 +72,14 @@ const Quizbox = fabric.util.createClass(fabric.Textbox, {
     },
 
     // Can add custom button as part of QTTextbox, however might have issues with style consistency when resizing...
-    _mouseDownHandler: function() {
+    _mouseDownHandler: function (options: any) {
         this.onClickCallback && this.onClickCallback();
+        if (!this.onClickCallback) {
+            this.callSuper('_mouseDownHandler', options);
+        }
     },
 
-    _renderTextCommon: function (ctx:CanvasRenderingContext2D, method:any) {
+    _renderTextCommon: function (ctx: CanvasRenderingContext2D, method: any) {
         ctx.save();
         let lineHeights = 0;
         const left = this._getLeftOffset();
@@ -97,7 +104,7 @@ const Quizbox = fabric.util.createClass(fabric.Textbox, {
 
 // Declare it so that fabric knows that Quizbox exists
 (fabric as any).Quizbox = Quizbox;
-(fabric as any).Quizbox.fromObject = function (object:any, callback: () => void) {
+(fabric as any).Quizbox.fromObject = function (object: any, callback: () => void) {
     return fabric.Object._fromObject('Quizbox', object, callback, 'text');
 };
 fabric.Object.NUM_FRACTION_DIGITS = 17;
