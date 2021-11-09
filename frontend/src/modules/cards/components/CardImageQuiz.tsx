@@ -71,8 +71,9 @@ const useStyles = makeStyles(() => ({
     },
     answerOptions: {
         cursor: 'pointer',
-        padding: '10px',
+        padding: '20px',
         margin: '10px',
+        fontSize: 'large',
     },
 }));
 
@@ -269,6 +270,15 @@ const CardImageQuiz: React.FC<Props> = ({
         const canvas = initQuizingCanvas(CANVAS_ID);
         setCanvas(canvas);
     }, []);
+
+    useEffect(() => {
+        // TODO: A bit buggy, but for now it works for resizing
+        if (canvas) {
+            const scale = canvasMaxWidth / canvas.getWidth();
+            canvas.setDimensions({ width: canvasMaxWidth, height: canvasMaxHeight });
+            canvas.setViewportTransform([canvas.getZoom() * scale, 0, 0, canvas.getZoom() * scale, 0, 0]);
+        }
+    }, [windowHeight, windowWidth]);
 
     const stopTime = async () => {
         const endTime = Moment();
