@@ -62,7 +62,7 @@ const useStyles = makeStyles(() => ({
     },
     answersGrid: {
         outline: '1px solid black',
-        width: '20vw',
+        width: '25vw',
         height: '60vh',
         margin: '10px',
         padding: '10px',
@@ -71,8 +71,9 @@ const useStyles = makeStyles(() => ({
     },
     answerOptions: {
         cursor: 'pointer',
-        padding: '10px',
+        padding: '20px',
         margin: '10px',
+        fontSize: 'large',
     },
 }));
 
@@ -107,6 +108,8 @@ const CardImageQuiz: React.FC<Props> = ({
     const id = card.id;
     const imageUrl = card.image_link;
     const result = card.answer_details.results;
+    const sortedResult = [...result];
+    sortedResult.sort((x, y) => x.text.localeCompare(y.text));
     const imageMetadata = card.image_metadata;
     const boxNumber = card.box_number;
     const numOptions = result.length;
@@ -117,11 +120,11 @@ const CardImageQuiz: React.FC<Props> = ({
     const [numGuesses, setNumGuesses] = useState(0); // TODO increment with user guess (both correct + wrong)
     const [numWrongGuesses, setNumWrongGuesses] = useState(0); // TODO increment with user guess (only wrong)
     const [timeTaken, setTimeTaken] = useState<number>(0);
-    const [textOptions, setTextOptions] = useState<Option[]>(result.map(res => { return { text: res.text, hidden: false }; }));
+    const [textOptions, setTextOptions] = useState<Option[]>(sortedResult.map(res => { return { text: res.text, hidden: false }; }));
 
     const { windowHeight, windowWidth } = useWindowDimensions();
 
-    const canvasMaxWidth = windowWidth * 0.8;
+    const canvasMaxWidth = windowWidth * 0.7;
     const canvasMaxHeight = windowHeight * 0.65;
     const imageScaleX = canvasMaxWidth / imageMetadata.width;
     const imageScaleY = canvasMaxHeight / imageMetadata.height;
@@ -136,6 +139,7 @@ const CardImageQuiz: React.FC<Props> = ({
             hoverCursor: 'pointer',
             targetFindTolerance: 2,
             selection: false,
+            fireMiddleClick: true,
         });
         canvas.setDimensions({ width: actualCanvasWidth, height: actualCanvasHeight });
         const imageXTranslation = 0;
@@ -161,11 +165,11 @@ const CardImageQuiz: React.FC<Props> = ({
             const currPointer = canvas.getPointer(e.e);
             const event = (e.e as unknown) as React.DragEvent;
             const id = parseInt(event.dataTransfer.getData(tagKey));
-            const text = result[id].text;
+            const text = sortedResult[id].text;
 
-            const isAnswerCorrect = validateAnswerExternal(text, answersCoordsMap, currPointer);
-            if (isAnswerCorrect) {
-                revealAnswerExternal(answersCoordsMap, text, canvas);
+            const correctAnswerRect = validateAnswerExternal(text, answersCoordsMap, currPointer);
+            if (correctAnswerRect) {
+                revealAnswerExternal(canvas, correctAnswerRect);
                 textOptions[id].hidden = true;
                 setTextOptions([...textOptions]);
                 stopTime().then(() => setHasAnsweredAll(updateCorrectAnswersIndicator(answersIndicator)));
@@ -178,7 +182,6 @@ const CardImageQuiz: React.FC<Props> = ({
         canvas.on('mouse:wheel', function (opt) {
             const delta = opt.e.deltaY;
             let zoom = canvas.getZoom();
-            console.log(zoom);
             zoom *= 0.999 ** delta;
             if (zoom > 20) zoom = 20;
             if (zoom < 0.01) zoom = 0.01;
@@ -269,8 +272,13 @@ const CardImageQuiz: React.FC<Props> = ({
     }, []);
 
     useEffect(() => {
-        setTextOptions(result.map(res => { return { text: res.text, hidden: false }; }));
-    }, [result]);
+        // TODO: A bit buggy, but for now it works for resizing
+        if (canvas) {
+            const scale = canvasMaxWidth / canvas.getWidth();
+            canvas.setDimensions({ width: canvasMaxWidth, height: canvasMaxHeight });
+            canvas.setViewportTransform([canvas.getZoom() * scale, 0, 0, canvas.getZoom() * scale, 0, 0]);
+        }
+    }, [windowHeight, windowWidth]);
 
     const stopTime = async () => {
         const endTime = Moment();
