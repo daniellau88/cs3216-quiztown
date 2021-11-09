@@ -107,6 +107,8 @@ const CardImageQuiz: React.FC<Props> = ({
     const id = card.id;
     const imageUrl = card.image_link;
     const result = card.answer_details.results;
+    const sortedResult = [...result];
+    sortedResult.sort((x, y) => x.text.localeCompare(y.text));
     const imageMetadata = card.image_metadata;
     const boxNumber = card.box_number;
     const numOptions = result.length;
@@ -117,7 +119,7 @@ const CardImageQuiz: React.FC<Props> = ({
     const [numGuesses, setNumGuesses] = useState(0); // TODO increment with user guess (both correct + wrong)
     const [numWrongGuesses, setNumWrongGuesses] = useState(0); // TODO increment with user guess (only wrong)
     const [timeTaken, setTimeTaken] = useState<number>(0);
-    const [textOptions, setTextOptions] = useState<Option[]>(result.map(res => { return { text: res.text, hidden: false }; }));
+    const [textOptions, setTextOptions] = useState<Option[]>(sortedResult.map(res => { return { text: res.text, hidden: false }; }));
 
     const { windowHeight, windowWidth } = useWindowDimensions();
 
@@ -136,6 +138,7 @@ const CardImageQuiz: React.FC<Props> = ({
             hoverCursor: 'pointer',
             targetFindTolerance: 2,
             selection: false,
+            fireMiddleClick: true,
         });
         canvas.setDimensions({ width: actualCanvasWidth, height: actualCanvasHeight });
         const imageXTranslation = 0;
@@ -161,7 +164,7 @@ const CardImageQuiz: React.FC<Props> = ({
             const currPointer = canvas.getPointer(e.e);
             const event = (e.e as unknown) as React.DragEvent;
             const id = parseInt(event.dataTransfer.getData(tagKey));
-            const text = result[id].text;
+            const text = sortedResult[id].text;
 
             const correctAnswerRect = validateAnswerExternal(text, answersCoordsMap, currPointer);
             if (correctAnswerRect) {
@@ -178,7 +181,6 @@ const CardImageQuiz: React.FC<Props> = ({
         canvas.on('mouse:wheel', function (opt) {
             const delta = opt.e.deltaY;
             let zoom = canvas.getZoom();
-            console.log(zoom);
             zoom *= 0.999 ** delta;
             if (zoom > 20) zoom = 20;
             if (zoom < 0.01) zoom = 0.01;
@@ -267,10 +269,6 @@ const CardImageQuiz: React.FC<Props> = ({
         const canvas = initQuizingCanvas(CANVAS_ID);
         setCanvas(canvas);
     }, []);
-
-    useEffect(() => {
-        setTextOptions(result.map(res => { return { text: res.text, hidden: false }; }));
-    }, [result]);
 
     const stopTime = async () => {
         const endTime = Moment();
