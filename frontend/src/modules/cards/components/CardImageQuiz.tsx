@@ -87,6 +87,12 @@ interface Option {
     hidden: boolean;
 }
 
+interface AdditionalCanvasInfo {
+    isDragging: boolean;
+    lastPosX: number;
+    lastPosY: number;
+}
+
 type Props = OwnProps
 
 const CardImageQuiz: React.FC<Props> = ({
@@ -166,6 +172,92 @@ const CardImageQuiz: React.FC<Props> = ({
             } else {
                 showWrongAnswerIndicator(canvas, currPointer);
             }
+        });
+
+        // Manage zoom
+        canvas.on('mouse:wheel', function (opt) {
+            const delta = opt.e.deltaY;
+            let zoom = canvas.getZoom();
+            console.log(zoom);
+            zoom *= 0.999 ** delta;
+            if (zoom > 20) zoom = 20;
+            if (zoom < 0.01) zoom = 0.01;
+            canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+            opt.e.preventDefault();
+            opt.e.stopPropagation();
+            const vpt = canvas.viewportTransform!;
+            if (zoom < 1) {
+                // Center image if zooming out
+                vpt[4] = actualCanvasWidth / 2 - actualCanvasWidth * zoom / 2;
+                vpt[5] = actualCanvasWidth / 2 - actualCanvasHeight * zoom / 2;
+            } else {
+                if (vpt[4] >= 0) {
+                    vpt[4] = 0;
+                } else if (vpt[4] < canvas.getWidth() - actualCanvasWidth * zoom) {
+                    vpt[4] = canvas.getWidth() - actualCanvasWidth * zoom;
+                }
+                if (vpt[5] >= 0) {
+                    vpt[5] = 0;
+                } else if (vpt[5] < canvas.getHeight() - actualCanvasHeight * zoom) {
+                    vpt[5] = canvas.getHeight() - actualCanvasHeight * zoom;
+                }
+            }
+        });
+
+        // Manage panning (store pan details on canvas)
+        (canvas as any).additionalInfo = {
+            isDragging: false,
+            lastPosX: 0,
+            lastPosY: 0,
+        } as AdditionalCanvasInfo;
+        const getAdditionalCanvasInfo = (canvas: fabric.Canvas): AdditionalCanvasInfo => {
+            return (canvas as any).additionalInfo;
+        };
+
+        canvas.on('mouse:down', function (opt) {
+            const evt = opt.e;
+            const additionalInfo = getAdditionalCanvasInfo(canvas);
+            additionalInfo.isDragging = true;
+            additionalInfo.lastPosX = evt.clientX;
+            additionalInfo.lastPosY = evt.clientY;
+        });
+
+        canvas.on('mouse:move', function (opt) {
+            const additionalInfo = getAdditionalCanvasInfo(canvas);
+            if (additionalInfo.isDragging) {
+                const e = opt.e;
+                const zoom = canvas.getZoom();
+                const vpt = canvas.viewportTransform!;
+                if (zoom < 1) {
+                    // Center image if zooming out
+                    vpt[4] = actualCanvasWidth / 2 - actualCanvasWidth * zoom / 2;
+                    vpt[5] = actualCanvasHeight / 2 - actualCanvasHeight * zoom / 2;
+                } else {
+                    vpt[4] += e.clientX - additionalInfo.lastPosX;
+                    vpt[5] += e.clientY - additionalInfo.lastPosY;
+                    if (vpt[4] >= 0) {
+                        vpt[4] = 0;
+                    } else if (vpt[4] < canvas.getWidth() - actualCanvasWidth * zoom) {
+                        vpt[4] = canvas.getWidth() - actualCanvasWidth * zoom;
+                    }
+                    if (vpt[5] >= 0) {
+                        vpt[5] = 0;
+                    } else if (vpt[5] < canvas.getHeight() - actualCanvasHeight * zoom) {
+                        vpt[5] = canvas.getHeight() - actualCanvasHeight * zoom;
+                    }
+                }
+                canvas.requestRenderAll();
+                additionalInfo.lastPosX = e.clientX;
+                additionalInfo.lastPosY = e.clientY;
+            }
+        });
+
+        canvas.on('mouse:up', function (opt) {
+            const additionalInfo = getAdditionalCanvasInfo(canvas);
+            // on mouse up we want to recalculate new interaction
+            // for all objects, so we call setViewportTransform
+            canvas.setViewportTransform(canvas.viewportTransform!);
+            additionalInfo.isDragging = false;
         });
 
         return canvas;
