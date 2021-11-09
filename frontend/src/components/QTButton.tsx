@@ -27,6 +27,13 @@ const useStyles = makeStyles((theme) => ({
     alertText: {
         color: colours.RED,
     },
+    disabledButton: {
+        color: colours.GREY,
+        borderColor: colours.GREY,
+    },
+    disabledText: {
+        color: colours.GREY,
+    },
     outlined: {
         borderWidth: '1px',
         borderStyle: 'solid',
@@ -64,6 +71,7 @@ export interface QTButtonProps {
     height?: string
     width?: string
     textVariant?: TypographyVariant
+    disabled?: boolean
 }
 
 const QTButton: React.FC<QTButtonProps> = ({
@@ -74,6 +82,7 @@ const QTButton: React.FC<QTButtonProps> = ({
     height = '5vh',
     width = '8vw',
     textVariant = 'caption',
+    disabled = false,
 }) => {
     const classes = useStyles();
 
@@ -87,14 +96,15 @@ const QTButton: React.FC<QTButtonProps> = ({
         <Button
             className={`
                 ${classes.padding}
-                ${alert ? classes.alertButton : classes.primaryButton}
+                ${disabled ? classes.disabledButton : (alert ? classes.alertButton : classes.primaryButton)}
                 ${outlined ? classes.outlined : null}
                 ${classes.button}
             `}
             style={{ minHeight: height, maxHeight: height }}
             onClick={(e) => onClick && onClick(e)}
+            disabled={disabled}
         >
-            <Typography variant={textVariant} className={alert ? classes.alertText : classes.primaryText}>
+            <Typography variant={textVariant} className={disabled ? classes.disabledText : alert ? classes.alertText : classes.primaryText}>
                 {children}
             </Typography>
         </Button>
