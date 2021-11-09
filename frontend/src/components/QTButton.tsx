@@ -8,7 +8,7 @@ import React from 'react';
 
 import colours from '../utilities/colours';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
     padding: {
         paddingLeft: 2,
         paddingRight: 2,
@@ -31,6 +31,29 @@ const useStyles = makeStyles(() => ({
         borderWidth: '1px',
         borderStyle: 'solid',
         borderRadius: '10px',
+    },
+    button: {
+        width: '80px',
+        [theme.breakpoints.down('xs')]: {
+            // fit 8 characters
+            width: '64px',
+        },
+        [theme.breakpoints.between('xs', 'sm')]: {
+            // fit 9-10 characters
+            width: '72px',
+        },
+        [theme.breakpoints.between('sm', 'md')]: {
+            // fit 10 characters
+            width: '80px',
+        },
+        [theme.breakpoints.between('md', 'lg')]: {
+            // fit 11 characters
+            width: '88px',
+        },
+        [theme.breakpoints.up('lg')]: {
+            // fit 12 characters
+            width: '96px',
+        },
     },
 }));
 
@@ -66,8 +89,9 @@ const QTButton: React.FC<QTButtonProps> = ({
                 ${classes.padding}
                 ${alert ? classes.alertButton : classes.primaryButton}
                 ${outlined ? classes.outlined : null}
+                ${classes.button}
             `}
-            style={{ minWidth: width, minHeight: height, maxWidth: width, maxHeight: height }}
+            style={{ minHeight: height, maxHeight: height }}
             onClick={(e) => onClick && onClick(e)}
         >
             <Typography variant={textVariant} className={alert ? classes.alertText : classes.primaryText}>
