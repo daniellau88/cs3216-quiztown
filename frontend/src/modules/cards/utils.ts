@@ -144,12 +144,15 @@ export const initAnswerRectangles = (
     data: Array<AnswerData>,
     xTranslation: number,
     scale: number,
-): Map<string, fabric.Rect> => {
-    const answersCoordsMap = new Map();
+): Map<string, fabric.Rect[]> => {
+    const answersCoordsMap = new Map<string, fabric.Rect[]>();
 
     data.forEach(box => {
         const rect = createAnswerRectangle(box, xTranslation, scale);
-        answersCoordsMap.set(box.text, rect);
+        if (!answersCoordsMap.has(box.text)) {
+            answersCoordsMap.set(box.text, []);
+        }
+        answersCoordsMap.get(box.text)!.push(rect);
         canvas.add(rect);
         rect.bringToFront();
     });
@@ -219,20 +222,30 @@ export const validateAnswer = (
 
 export const validateAnswerExternal = (
     text: string,
-    answersCoordsMap: Map<string, fabric.Rect>,
+    answersCoordsMap: Map<string, fabric.Rect[]>,
     mouseCoordinate: { x: number, y: number },
-): boolean => {
-    const answerData = answersCoordsMap.get(text);
-    if (!answerData) return false;
+): fabric.Rect | null => {
+    const answerDatas = answersCoordsMap.get(text);
+    if (!answerDatas) return null;
 
-    const answerTop = answerData.top;
-    const answerLeft = answerData.left;
-    const answerHeight = answerData.height;
-    const answerWidth = answerData.width;
-    if (!answerTop || !answerLeft || !answerHeight || !answerWidth) return false;
+    const correctAnswers = answerDatas.filter((answerData) => {
+        // If removed from canvas, skip
+        if (!answerData.canvas) return false;
 
-    return (mouseCoordinate.y >= answerTop && mouseCoordinate.y <= answerTop + answerHeight)
-        && (mouseCoordinate.x >= answerLeft && mouseCoordinate.x <= answerLeft + answerWidth);
+        const answerTop = answerData.top ? answerData.top : 0;
+        const answerLeft = answerData.left ? answerData.left : 0;
+        const answerHeight = answerData.height ? answerData.height : 0;
+        const answerWidth = answerData.width ? answerData.width : 0;
+
+        return (mouseCoordinate.y >= answerTop && mouseCoordinate.y <= answerTop + answerHeight)
+            && (mouseCoordinate.x >= answerLeft && mouseCoordinate.x <= answerLeft + answerWidth);
+    });
+
+    if (correctAnswers.length == 0) {
+        return null;
+    }
+
+    return correctAnswers[0];
 };
 
 export const revealAnswer = (
@@ -250,14 +263,10 @@ export const revealAnswer = (
 };
 
 export const revealAnswerExternal = (
-    answersCoordsMap: Map<string, fabric.Rect>,
-    text: string,
     canvas: fabric.Canvas,
+    answerRect: fabric.Rect,
 ): void => {
-    const answerData = answersCoordsMap.get(text);
-    if (!answerData) return;
-
-    canvas.remove(answerData);
+    canvas.remove(answerRect);
 };
 
 export const showWrongAnswerIndicator = (

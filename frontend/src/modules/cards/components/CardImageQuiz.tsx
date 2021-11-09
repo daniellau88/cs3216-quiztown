@@ -62,7 +62,7 @@ const useStyles = makeStyles(() => ({
     },
     answersGrid: {
         outline: '1px solid black',
-        width: '20vw',
+        width: '25vw',
         height: '60vh',
         margin: '10px',
         padding: '10px',
@@ -121,7 +121,7 @@ const CardImageQuiz: React.FC<Props> = ({
 
     const { windowHeight, windowWidth } = useWindowDimensions();
 
-    const canvasMaxWidth = windowWidth * 0.8;
+    const canvasMaxWidth = windowWidth * 0.7;
     const canvasMaxHeight = windowHeight * 0.65;
     const imageScaleX = canvasMaxWidth / imageMetadata.width;
     const imageScaleY = canvasMaxHeight / imageMetadata.height;
@@ -163,9 +163,9 @@ const CardImageQuiz: React.FC<Props> = ({
             const id = parseInt(event.dataTransfer.getData(tagKey));
             const text = result[id].text;
 
-            const isAnswerCorrect = validateAnswerExternal(text, answersCoordsMap, currPointer);
-            if (isAnswerCorrect) {
-                revealAnswerExternal(answersCoordsMap, text, canvas);
+            const correctAnswerRect = validateAnswerExternal(text, answersCoordsMap, currPointer);
+            if (correctAnswerRect) {
+                revealAnswerExternal(canvas, correctAnswerRect);
                 textOptions[id].hidden = true;
                 setTextOptions([...textOptions]);
                 stopTime().then(() => setHasAnsweredAll(updateCorrectAnswersIndicator(answersIndicator)));
