@@ -1,6 +1,7 @@
 import {
     Box,
     Button,
+    Chip,
     CssBaseline,
     Grid,
     Typography,
@@ -23,18 +24,16 @@ import { Feedback, getFeedbackSet } from '../../../utilities/leitner';
 import { handleApiRequest } from '../../../utilities/ui';
 import { updateCard } from '../operations';
 import {
-    initAnswerOptions,
-    initAnswerOptionsBoundingBox,
     initAnswerRectangles,
     initCorrectAnswersIndicator,
     initImageBoundingBox,
-    resetToOriginalPosition,
-    revealAnswer,
-    shiftAnswerOptionsUp,
+    revealAnswerExternal,
     showWrongAnswerIndicator,
     updateCorrectAnswersIndicator,
-    validateAnswer,
+    validateAnswerExternal,
 } from '../utils';
+
+const tagKey = 'tagAnswerId';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -61,12 +60,37 @@ const useStyles = makeStyles(() => ({
     red: {
         color: colours.RED,
     },
+    answersGrid: {
+        outline: '1px solid black',
+        width: '20vw',
+        height: '60vh',
+        margin: '10px',
+        padding: '10px',
+        overflowY: 'scroll',
+        borderRadius: '10px',
+    },
+    answerOptions: {
+        cursor: 'pointer',
+        padding: '10px',
+        margin: '10px',
+    },
 }));
 
 interface OwnProps {
     isOwner: boolean;
     card: CardImageEntity;
     onComplete?: () => void;
+}
+
+interface Option {
+    text: string;
+    hidden: boolean;
+}
+
+interface AdditionalCanvasInfo {
+    isDragging: boolean;
+    lastPosX: number;
+    lastPosY: number;
 }
 
 type Props = OwnProps
@@ -93,27 +117,19 @@ const CardImageQuiz: React.FC<Props> = ({
     const [numGuesses, setNumGuesses] = useState(0); // TODO increment with user guess (both correct + wrong)
     const [numWrongGuesses, setNumWrongGuesses] = useState(0); // TODO increment with user guess (only wrong)
     const [timeTaken, setTimeTaken] = useState<number>(0);
+    const [textOptions, setTextOptions] = useState<Option[]>(result.map(res => { return { text: res.text, hidden: false }; }));
 
     const { windowHeight, windowWidth } = useWindowDimensions();
 
-    const canvasMaxWidth = windowWidth * 0.9;
-    const canvasMaxHeight = windowHeight * 0.7;
-    const answerOptionsContainerWidth = canvasMaxWidth * 0.3;
-    const imageContainerWidth = canvasMaxWidth * 0.7;
-    const imageScaleX = imageContainerWidth / imageMetadata.width;
+    const canvasMaxWidth = windowWidth * 0.8;
+    const canvasMaxHeight = windowHeight * 0.65;
+    const imageScaleX = canvasMaxWidth / imageMetadata.width;
     const imageScaleY = canvasMaxHeight / imageMetadata.height;
     const imageScale = Math.min(imageScaleX, imageScaleY); // Maintains aspect ratio, object-fit == 'contain'
+    const actualCanvasWidth = imageScale * imageMetadata.width;
+    const actualCanvasHeight = imageScale * imageMetadata.height;
 
     const startTime = Moment();
-
-    const getCanvasTranslationToCenter = () => {
-        const scaledImageWidth = imageMetadata.width * imageScale;
-        const isImageSmallerThanContainerWidth = scaledImageWidth < imageContainerWidth;
-        if (!isImageSmallerThanContainerWidth) return 0;
-
-        const remainingWidth = imageContainerWidth - scaledImageWidth;
-        return remainingWidth / 2;
-    };
 
     const initQuizingCanvas = (canvasId: string) => {
         const canvas = new fabric.Canvas(canvasId, {
@@ -121,12 +137,10 @@ const CardImageQuiz: React.FC<Props> = ({
             targetFindTolerance: 2,
             selection: false,
         });
-        const canvasTranslationToCenter = getCanvasTranslationToCenter();
-        const imageXTranslation = answerOptionsContainerWidth + canvasTranslationToCenter;
+        canvas.setDimensions({ width: actualCanvasWidth, height: actualCanvasHeight });
+        const imageXTranslation = 0;
 
-        const optionsCoordsMap = initAnswerOptions(canvas, result, canvasTranslationToCenter);
-        initAnswerOptionsBoundingBox(canvas, answerOptionsContainerWidth, canvasTranslationToCenter);
-        initImageBoundingBox(canvas, imageXTranslation, imageContainerWidth);
+        initImageBoundingBox(canvas, imageXTranslation, actualCanvasWidth);
         fabric.Image.fromURL(imageUrl, function (img) {
             canvas.add(img);
             // We need this to have the answer options at a lower z-index, and the covering rectangles at a higher z-index
@@ -143,30 +157,109 @@ const CardImageQuiz: React.FC<Props> = ({
         const answersCoordsMap = initAnswerRectangles(canvas, result, imageXTranslation, imageScale);
         const answersIndicator = initCorrectAnswersIndicator(canvas, result);
 
-        canvas.on('object:moving', (e) => {
-            if (e.target) {
-                e.target.opacity = 0.5;
-            }
-        });
-        canvas.on('object:modified', (e) => {
-            if (e.target?.type != 'QTText') {
-                return;
-            }
-
-            const text = e.target as fabric.Text;
+        canvas.on('drop', (e) => {
             const currPointer = canvas.getPointer(e.e);
-            const isAnswerCorrect = validateAnswer(text, answersCoordsMap, currPointer);
+            const event = (e.e as unknown) as React.DragEvent;
+            const id = parseInt(event.dataTransfer.getData(tagKey));
+            const text = result[id].text;
+
+            const isAnswerCorrect = validateAnswerExternal(text, answersCoordsMap, currPointer);
             if (isAnswerCorrect) {
-                canvas.remove(e.target);
-                revealAnswer(answersCoordsMap, text, canvas);
-                shiftAnswerOptionsUp(canvas, optionsCoordsMap, text);
+                revealAnswerExternal(answersCoordsMap, text, canvas);
+                textOptions[id].hidden = true;
+                setTextOptions([...textOptions]);
                 stopTime().then(() => setHasAnsweredAll(updateCorrectAnswersIndicator(answersIndicator)));
             } else {
-                e.target.opacity = 1;
-                resetToOriginalPosition(optionsCoordsMap, text);
                 showWrongAnswerIndicator(canvas, currPointer);
             }
         });
+
+        // Manage zoom
+        canvas.on('mouse:wheel', function (opt) {
+            const delta = opt.e.deltaY;
+            let zoom = canvas.getZoom();
+            console.log(zoom);
+            zoom *= 0.999 ** delta;
+            if (zoom > 20) zoom = 20;
+            if (zoom < 0.01) zoom = 0.01;
+            canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+            opt.e.preventDefault();
+            opt.e.stopPropagation();
+            const vpt = canvas.viewportTransform!;
+            if (zoom < 1) {
+                // Center image if zooming out
+                vpt[4] = actualCanvasWidth / 2 - actualCanvasWidth * zoom / 2;
+                vpt[5] = actualCanvasWidth / 2 - actualCanvasHeight * zoom / 2;
+            } else {
+                if (vpt[4] >= 0) {
+                    vpt[4] = 0;
+                } else if (vpt[4] < canvas.getWidth() - actualCanvasWidth * zoom) {
+                    vpt[4] = canvas.getWidth() - actualCanvasWidth * zoom;
+                }
+                if (vpt[5] >= 0) {
+                    vpt[5] = 0;
+                } else if (vpt[5] < canvas.getHeight() - actualCanvasHeight * zoom) {
+                    vpt[5] = canvas.getHeight() - actualCanvasHeight * zoom;
+                }
+            }
+        });
+
+        // Manage panning (store pan details on canvas)
+        (canvas as any).additionalInfo = {
+            isDragging: false,
+            lastPosX: 0,
+            lastPosY: 0,
+        } as AdditionalCanvasInfo;
+        const getAdditionalCanvasInfo = (canvas: fabric.Canvas): AdditionalCanvasInfo => {
+            return (canvas as any).additionalInfo;
+        };
+
+        canvas.on('mouse:down', function (opt) {
+            const evt = opt.e;
+            const additionalInfo = getAdditionalCanvasInfo(canvas);
+            additionalInfo.isDragging = true;
+            additionalInfo.lastPosX = evt.clientX;
+            additionalInfo.lastPosY = evt.clientY;
+        });
+
+        canvas.on('mouse:move', function (opt) {
+            const additionalInfo = getAdditionalCanvasInfo(canvas);
+            if (additionalInfo.isDragging) {
+                const e = opt.e;
+                const zoom = canvas.getZoom();
+                const vpt = canvas.viewportTransform!;
+                if (zoom < 1) {
+                    // Center image if zooming out
+                    vpt[4] = actualCanvasWidth / 2 - actualCanvasWidth * zoom / 2;
+                    vpt[5] = actualCanvasHeight / 2 - actualCanvasHeight * zoom / 2;
+                } else {
+                    vpt[4] += e.clientX - additionalInfo.lastPosX;
+                    vpt[5] += e.clientY - additionalInfo.lastPosY;
+                    if (vpt[4] >= 0) {
+                        vpt[4] = 0;
+                    } else if (vpt[4] < canvas.getWidth() - actualCanvasWidth * zoom) {
+                        vpt[4] = canvas.getWidth() - actualCanvasWidth * zoom;
+                    }
+                    if (vpt[5] >= 0) {
+                        vpt[5] = 0;
+                    } else if (vpt[5] < canvas.getHeight() - actualCanvasHeight * zoom) {
+                        vpt[5] = canvas.getHeight() - actualCanvasHeight * zoom;
+                    }
+                }
+                canvas.requestRenderAll();
+                additionalInfo.lastPosX = e.clientX;
+                additionalInfo.lastPosY = e.clientY;
+            }
+        });
+
+        canvas.on('mouse:up', function (opt) {
+            const additionalInfo = getAdditionalCanvasInfo(canvas);
+            // on mouse up we want to recalculate new interaction
+            // for all objects, so we call setViewportTransform
+            canvas.setViewportTransform(canvas.viewportTransform!);
+            additionalInfo.isDragging = false;
+        });
+
         return canvas;
     };
 
@@ -176,12 +269,8 @@ const CardImageQuiz: React.FC<Props> = ({
     }, []);
 
     useEffect(() => {
-        if (canvas) {
-            const scale = canvasMaxWidth / canvas.getWidth();
-            canvas.setDimensions({ width: canvasMaxWidth, height: canvasMaxHeight });
-            canvas.setViewportTransform([canvas.getZoom() * scale, 0, 0, canvas.getZoom() * scale, 0, 0]);
-        }
-    }, [windowHeight, windowWidth]);
+        setTextOptions(result.map(res => { return { text: res.text, hidden: false }; }));
+    }, [result]);
 
     const stopTime = async () => {
         const endTime = Moment();
@@ -216,17 +305,30 @@ const CardImageQuiz: React.FC<Props> = ({
             });
     };
 
+    const handleTagDrag = (e: React.DragEvent<HTMLElement>) => {
+        const target: any = e.target;
+        const id = target.id ? target.id : '';
+        e.dataTransfer.setData(tagKey, id);
+    };
+
     return (
         <>
             <CssBaseline />
             <Grid container direction='column' className={classes.root}>
-                <Box display="flex" justifyContent='center' width='100%'>
+                <Grid item container direction="row" justifyContent="center">
+                    <div className={classes.answersGrid}>
+                        {textOptions.map((text, id) =>
+                            <div key={id}>
+                                {!text.hidden && <Chip size="medium" draggable id={`${id}`} className={classes.answerOptions} onDragStart={handleTagDrag} label={text.text}></Chip>}
+                            </div>,
+                        )}
+                    </div>
                     <canvas
                         id={CANVAS_ID}
-                        width={canvasMaxWidth}
-                        height={canvasMaxHeight}
+                        width={actualCanvasWidth}
+                        height={actualCanvasHeight}
                     />
-                </Box>
+                </Grid>
                 <Grid container className={classes.showAnswerContainer}>
                     {!hasAnsweredAll && (
                         <Box display='flex' flexDirection='column' alignItems='center' justifyContent='center' style={{ width: '95%' }}>
