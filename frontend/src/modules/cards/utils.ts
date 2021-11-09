@@ -217,6 +217,23 @@ export const validateAnswer = (
         && (mouseCoordinate.x >= answerLeft && mouseCoordinate.x <= answerLeft + answerWidth);
 };
 
+export const validateAnswerExternal = (
+    text: string,
+    answersCoordsMap: Map<string, fabric.Rect>,
+    mouseCoordinate: { x: number, y: number },
+): boolean => {
+    const answerData = answersCoordsMap.get(text);
+    if (!answerData) return false;
+
+    const answerTop = answerData.top;
+    const answerLeft = answerData.left;
+    const answerHeight = answerData.height;
+    const answerWidth = answerData.width;
+    if (!answerTop || !answerLeft || !answerHeight || !answerWidth) return false;
+
+    return (mouseCoordinate.y >= answerTop && mouseCoordinate.y <= answerTop + answerHeight)
+        && (mouseCoordinate.x >= answerLeft && mouseCoordinate.x <= answerLeft + answerWidth);
+};
 
 export const revealAnswer = (
     answersCoordsMap: Map<string, fabric.Rect>,
@@ -227,6 +244,17 @@ export const revealAnswer = (
     if (!textContent) return;
 
     const answerData = answersCoordsMap.get(textContent);
+    if (!answerData) return;
+
+    canvas.remove(answerData);
+};
+
+export const revealAnswerExternal = (
+    answersCoordsMap: Map<string, fabric.Rect>,
+    text: string,
+    canvas: fabric.Canvas,
+): void => {
+    const answerData = answersCoordsMap.get(text);
     if (!answerData) return;
 
     canvas.remove(answerData);
