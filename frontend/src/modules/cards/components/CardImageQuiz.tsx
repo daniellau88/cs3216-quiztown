@@ -192,7 +192,7 @@ const CardImageQuiz: React.FC<Props> = ({
             if (zoom < 1) {
                 // Center image if zooming out
                 vpt[4] = actualCanvasWidth / 2 - actualCanvasWidth * zoom / 2;
-                vpt[5] = actualCanvasWidth / 2 - actualCanvasHeight * zoom / 2;
+                vpt[5] = actualCanvasHeight / 2 - actualCanvasHeight * zoom / 2;
             } else {
                 if (vpt[4] >= 0) {
                     vpt[4] = 0;
