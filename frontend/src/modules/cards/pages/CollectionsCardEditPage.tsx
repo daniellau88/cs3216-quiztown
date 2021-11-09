@@ -3,6 +3,7 @@ import {
     CssBaseline,
     Divider,
     Grid,
+    TextField,
     Typography,
     makeStyles,
 } from '@material-ui/core';
@@ -15,7 +16,7 @@ import { Dispatch } from 'redux';
 import LoadingIndicator from '../../../components/content/LoadingIndicator';
 import QTButton from '../../../components/QTButton';
 import Breadcrumbs from '../../../layouts/Breadcrumbs';
-import { AnswerData, CardType } from '../../../types/cards';
+import { AnswerData, CardPostData, CardType } from '../../../types/cards';
 import { AppState } from '../../../types/store';
 import routes from '../../../utilities/routes';
 import { handleApiRequest } from '../../../utilities/ui';
@@ -36,6 +37,9 @@ const useStyles = makeStyles(() => ({
     },
     alignRight: {
         alignSelf: 'flex-end',
+    },
+    editableName: {
+        flexGrow: 1,
     },
 }));
 
@@ -89,7 +93,28 @@ const CollectionsCardEditPage: React.FC<Props> = ({ match: { params } }: RouteCo
     const canvasRef = React.useRef<fabric.Canvas>();
 
     const [isLoading, setIsLoading] = React.useState(true);
+    const [cardName, setCardName] = React.useState(card ? card.name : 'Untitled card');
+    const [nameChangeTimeout, setNameChangeTimeout] = React.useState<NodeJS.Timeout | null>(null);
 
+    const onCardNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (!card) {
+            return;
+        }
+
+        setCardName(event.target.value);
+        if (nameChangeTimeout) clearTimeout(nameChangeTimeout);
+        const timeout = setTimeout(() => {
+            const cardPostData: Partial<CardPostData> = { name: event.target.value };
+            handleApiRequest(dispatch, dispatch(updateCard(card.id, cardPostData)));
+        }, 500);
+        setNameChangeTimeout(timeout);
+    };
+
+    React.useEffect(() => {
+        if (card) {
+            setCardName(card.name);
+        }
+    }, [card]);
 
     const onUpdate = (cardId: number, dispatch: Dispatch<any>) => {
         setIsLoading(true);
@@ -131,9 +156,18 @@ const CollectionsCardEditPage: React.FC<Props> = ({ match: { params } }: RouteCo
                         { path: null, name: card ? card.name : 'Untitled Card' },
                     ]} />
                     <Grid container direction='column' className={classes.container}>
-                        <Typography variant='h3'>
-                            Editing Card - {card && card.name}
-                        </Typography>
+                        <Grid container item direction='row'>
+                            <Typography variant='h3'>
+                                Editing Card -
+                            </Typography>
+                            <TextField
+                                id="name"
+                                className={classes.editableName}
+                                inputProps={{ style: { textAlign: 'center', fontSize: '5vh' } }}
+                                value={cardName}
+                                onChange={onCardNameChange}
+                            />
+                        </Grid>
                         <Divider />
 
                         <Grid item>
