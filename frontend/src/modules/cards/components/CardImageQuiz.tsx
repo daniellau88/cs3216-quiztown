@@ -13,6 +13,7 @@ import SentimentVerySatisfiedIcon from '@material-ui/icons/SentimentVerySatisfie
 import { fabric } from 'fabric';
 import Moment from 'moment';
 import React, { useEffect, useState } from 'react';
+import { isBrowser } from 'react-device-detect';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 
@@ -124,7 +125,7 @@ const CardImageQuiz: React.FC<Props> = ({
 
     const { windowHeight, windowWidth } = useWindowDimensions();
 
-    const canvasMaxWidth = windowWidth * 0.7;
+    const canvasMaxWidth = windowWidth * (isBrowser ? 0.7 : 1);
     const canvasMaxHeight = windowHeight * 0.65;
     const imageScaleX = canvasMaxWidth / imageMetadata.width;
     const imageScaleY = canvasMaxHeight / imageMetadata.height;
@@ -324,13 +325,14 @@ const CardImageQuiz: React.FC<Props> = ({
             <CssBaseline />
             <Grid container direction='column' className={classes.root}>
                 <Grid item container direction="row" justifyContent="center">
-                    <div className={classes.answersGrid}>
-                        {textOptions.map((text, id) =>
-                            <div key={id}>
-                                {!text.hidden && <Chip size="medium" draggable id={`${id}`} className={classes.answerOptions} onDragStart={handleTagDrag} label={text.text}></Chip>}
-                            </div>,
-                        )}
-                    </div>
+                    {isBrowser && (
+                        <div className={classes.answersGrid}>
+                            {textOptions.map((text, id) =>
+                                <div key={id}>
+                                    {!text.hidden && <Chip size="medium" draggable id={`${id}`} className={classes.answerOptions} onDragStart={handleTagDrag} label={text.text}></Chip>}
+                                </div>,
+                            )}
+                        </div>)}
                     <canvas
                         id={CANVAS_ID}
                         width={actualCanvasWidth}
