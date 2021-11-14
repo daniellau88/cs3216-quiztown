@@ -16,23 +16,34 @@ const useStyles = makeStyles((theme) => ({
     primaryButton: {
         color: colours.BLUE,
         borderColor: colours.BLUE,
+        backgroundColor: colours.BLUE,
+        '&:hover': {
+            backgroundColor: colours.BLUE,
+            opacity: '0.8',
+        },
     },
     primaryText: {
-        color: colours.BLUE,
+        color: colours.WHITE,
     },
     alertButton: {
         color: colours.RED,
         borderColor: colours.RED,
+        backgroundColor: colours.RED,
+        '&:hover': {
+            backgroundColor: colours.RED,
+            opacity: '0.8',
+        },
     },
     alertText: {
-        color: colours.RED,
+        color: colours.WHITE,
     },
     disabledButton: {
         color: colours.GREY,
         borderColor: colours.GREY,
+        backgroundColor: colours.GREY,
     },
     disabledText: {
-        color: colours.GREY,
+        color: colours.WHITE,
     },
     outlined: {
         borderWidth: '1px',
