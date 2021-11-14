@@ -11,7 +11,6 @@ import {
     makeStyles,
 } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
-import DeleteIcon from '@material-ui/icons/Delete';
 import Star from '@material-ui/icons/Star';
 import StarOutline from '@material-ui/icons/StarOutline';
 import * as React from 'react';
@@ -27,18 +26,19 @@ import { CardMiniEntity, CardPostData } from '../../../types/cards';
 import { AppState } from '../../../types/store';
 import colours from '../../../utilities/colours';
 import { handleApiRequest } from '../../../utilities/ui';
-import { addCard, deleteCard, updateCard } from '../operations';
+import { deleteCard, updateCard } from '../operations';
 import { getCardEntity } from '../selectors';
 
 const useStyles = makeStyles(() => ({
     root: {
         width: '95%',
-        height: '95%',
+        height: '30vh',
+        position: 'relative',
     },
     addCardRoot: {
         display: 'flex',
         width: '95%',
-        height: '95%',
+        height: '30vh',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -90,6 +90,11 @@ const useStyles = makeStyles(() => ({
         width: '50%',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    cardActions: {
+        position: 'absolute',
+        width: '100%',
+        bottom: 0,
     },
 }));
 
@@ -230,7 +235,7 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
                 </Grid>
             </CardContent>
 
-            <CardActions>
+            <CardActions className={classes.cardActions}>
                 <Grid container alignItems='center' style={{ paddingLeft: '0.5vw' }}>
                     <Box display='flex' height='100%' width='100%'>
                         <Grid container item xs={3} alignItems='center'>
