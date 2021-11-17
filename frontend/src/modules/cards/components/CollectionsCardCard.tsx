@@ -240,7 +240,7 @@ const CollectionsCardCard: React.FC<Props> = ({ data, isAddCard = false, id, bef
                         </Grid>
                         {data.permissions.can_update &&
                             <Grid container item xs={3} alignItems='center'>
-                                <QTButton height='95%' width='95%' onClick={editCard}>
+                                <QTButton outlined height='95%' width='95%' onClick={editCard}>
                                     Edit
                                 </QTButton>
                             </Grid>

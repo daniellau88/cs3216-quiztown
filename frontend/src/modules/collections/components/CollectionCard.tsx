@@ -223,7 +223,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                             </StartQuizButton>
                         </Grid>}
                         <Grid container item xs={3} alignItems='center'>
-                            <QTButton height='95%' width='95%' onClick={openCollection}>
+                            <QTButton outlined height='95%' width='95%' onClick={openCollection}>
                                 View
                             </QTButton>
                         </Grid>
@@ -231,12 +231,12 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                             (
                                 data.duplicate_collection_id ?
                                     (<Grid container item xs={3} alignItems='center'>
-                                        <QTButton height='95%' width='95%' onClick={handleGoDuplicated}>
+                                        <QTButton outlined height='95%' width='95%' onClick={handleGoDuplicated}>
                                             View copy
                                         </QTButton>
                                     </Grid>) :
                                     (<Grid container item xs={3} alignItems='center'>
-                                        <QTButton height='95%' width='95%' onClick={duplicateCollection}>
+                                        <QTButton outlined height='95%' width='95%' onClick={duplicateCollection}>
                                             Save to my collection
                                         </QTButton>
                                     </Grid>)
