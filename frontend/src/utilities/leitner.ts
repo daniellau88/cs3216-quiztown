@@ -1,6 +1,6 @@
 const maxBoxNumber = 10;
 const maxDays = 30;
-const leitnerMultiplier = 1.5;
+const leitnerMultiplier = 1.37;
 
 const expectedTimePerOption = 6.0; // In seconds. This will need tweaking.
 const incorrectAnswerPenaltyMultiplier = 1.25;
