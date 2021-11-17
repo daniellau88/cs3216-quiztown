@@ -1,6 +1,5 @@
 import {
     Box,
-    Button,
     Card,
     CardActions,
     CardContent,
@@ -10,7 +9,6 @@ import {
     makeStyles,
 } from '@material-ui/core';
 import { Add, ReorderOutlined } from '@material-ui/icons';
-import DeleteIcon from '@material-ui/icons/Delete';
 import * as React from 'react';
 import LinesEllipsis from 'react-lines-ellipsis';
 import { useDispatch, useSelector } from 'react-redux';
@@ -32,7 +30,7 @@ import CollectionTagSelector from './CollectionTagSelector';
 const useStyles = makeStyles(() => ({
     root: {
         width: '95%',
-        height: '95%',
+        height: '30vh',
         position: 'relative',
     },
     center: {
@@ -75,6 +73,11 @@ const useStyles = makeStyles(() => ({
         maxWidth: '100%',
         overflow: 'hidden',
     },
+    cardActions: {
+        position: 'absolute',
+        width: '100%',
+        bottom: 0,
+    },
 }));
 
 interface OwnProps {
@@ -109,13 +112,11 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
     };
 
     const duplicateCollection = () => {
-        console.log('saving to my own collection...');
         if (!collectionId) {
             return false;
         }
         return handleApiRequest(dispatch, dispatch(duplicatePublicCollection(collectionId)))
             .then((newCollection) => {
-                console.log('successfully saved to my own collection...');
                 history.push(`/collections/${newCollection.payload.id}`);
                 return true;
             });
@@ -145,12 +146,6 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
 
     const openCollection = () => {
         history.push(`/collections/${collectionId}`);
-    };
-
-    // TODO: Implement collection testing start
-    const startCollection = () => {
-        console.log('Start');
-
     };
 
     const handleSetCollectionPrivate = (privateStatus: CollectionPrivate) => {
@@ -214,7 +209,7 @@ const CollectionCard: React.FC<Props> = ({ data, isAddCollectionCard }: Props) =
                 </Grid>
             </CardContent>
 
-            <CardActions>
+            <CardActions className={classes.cardActions}>
                 <Grid container alignItems='center' style={{ paddingLeft: '0.5vw' }}>
                     <Box display='flex' height='100%' width='100%'>
                         {isAuthenticated && isOwner && <Grid container item xs={3} alignItems='center'>

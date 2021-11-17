@@ -94,6 +94,10 @@ interface AdditionalCanvasInfo {
     lastPosY: number;
 }
 
+type NumWrongGuesses = number;
+type NumGuesses = number;
+type QuizGuessCount = [NumGuesses, NumWrongGuesses];
+
 type Props = OwnProps
 
 const CardImageQuiz: React.FC<Props> = ({
@@ -117,8 +121,6 @@ const CardImageQuiz: React.FC<Props> = ({
 
     const [canvas, setCanvas] = useState<fabric.Canvas>();
     const [hasAnsweredAll, setHasAnsweredAll] = useState(false);
-    const [numGuesses, setNumGuesses] = useState(0); // TODO increment with user guess (both correct + wrong)
-    const [numWrongGuesses, setNumWrongGuesses] = useState(0); // TODO increment with user guess (only wrong)
     const [timeTaken, setTimeTaken] = useState<number>(0);
     const [textOptions, setTextOptions] = useState<Option[]>(sortedResult.map(res => { return { text: res.text, hidden: false }; }));
 
@@ -132,6 +134,8 @@ const CardImageQuiz: React.FC<Props> = ({
     const actualCanvasWidth = imageScale * imageMetadata.width;
     const actualCanvasHeight = imageScale * imageMetadata.height;
 
+    // Using this instead of React state as Fabric handlers don't update React state
+    const guessCounter: QuizGuessCount = [0, 0];
     const startTime = Moment();
 
     const initQuizingCanvas = (canvasId: string) => {
@@ -168,12 +172,15 @@ const CardImageQuiz: React.FC<Props> = ({
             const text = sortedResult[id].text;
 
             const correctAnswerRect = validateAnswerExternal(text, answersCoordsMap, currPointer);
+
+            guessCounter[0] = guessCounter[0] + 1;
             if (correctAnswerRect) {
                 revealAnswerExternal(canvas, correctAnswerRect);
                 textOptions[id].hidden = true;
                 setTextOptions([...textOptions]);
                 stopTime().then(() => setHasAnsweredAll(updateCorrectAnswersIndicator(answersIndicator)));
             } else {
+                guessCounter[1] = guessCounter[1] + 1;
                 showWrongAnswerIndicator(canvas, currPointer);
             }
         });
@@ -356,7 +363,7 @@ const CardImageQuiz: React.FC<Props> = ({
                                         How confident did you feel?
                                     </Typography>
                                     <Box display='flex' alignItems='center' justifyContent='center' style={{ width: '95%' }}>
-                                        {getFeedbackSet(timeTaken, numOptions, numGuesses, numWrongGuesses, boxNumber).map((feedback: Feedback, index: number) => {
+                                        {getFeedbackSet(timeTaken, numOptions, guessCounter[0], guessCounter[1], boxNumber).map((feedback: Feedback, index: number) => {
                                             return <Button key={index} onClick={() => sendUpdate(feedback)} className={index == 0 ? classes.red : index == 1 ? classes.yellow : classes.green}>
                                                 <Grid container alignItems='center' justifyContent='center' direction='column'>
                                                     {index == 0 ? <SentimentVeryDissatisfiedIcon /> : index == 1 ? <SentimentSatisfiedIcon /> : <SentimentVerySatisfiedIcon />}
