@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, makeStyles } from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Typography, makeStyles } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import * as React from 'react';
 
@@ -17,6 +17,9 @@ const useStyles = makeStyles((theme) => ({
         '&:hover': {
             backgroundColor: 'transparent',
         },
+    },
+    deleteText: {
+        color: colours.RED,
     },
 }));
 
@@ -52,7 +55,11 @@ const DeleteButton: React.FC<Props> = ({ onConfirm, message }: Props) => {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={onConfirm}>Delete</Button>
+                    <Button onClick={onConfirm}>
+                        <Typography className={classes.deleteText}>
+                            Delete
+                        </Typography>
+                    </Button>
                 </DialogActions>
             </Dialog>
         </>
