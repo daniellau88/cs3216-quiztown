@@ -13,6 +13,7 @@ import SentimentVerySatisfiedIcon from '@material-ui/icons/SentimentVerySatisfie
 import { fabric } from 'fabric';
 import Moment from 'moment';
 import React, { useEffect, useState } from 'react';
+import { isBrowser } from 'react-device-detect';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 
@@ -126,7 +127,7 @@ const CardImageQuiz: React.FC<Props> = ({
 
     const { windowHeight, windowWidth } = useWindowDimensions();
 
-    const canvasMaxWidth = windowWidth * 0.7;
+    const canvasMaxWidth = windowWidth * (isBrowser ? 0.7 : 1);
     const canvasMaxHeight = windowHeight * 0.65;
     const imageScaleX = canvasMaxWidth / imageMetadata.width;
     const imageScaleY = canvasMaxHeight / imageMetadata.height;
@@ -199,7 +200,7 @@ const CardImageQuiz: React.FC<Props> = ({
             if (zoom < 1) {
                 // Center image if zooming out
                 vpt[4] = actualCanvasWidth / 2 - actualCanvasWidth * zoom / 2;
-                vpt[5] = actualCanvasWidth / 2 - actualCanvasHeight * zoom / 2;
+                vpt[5] = actualCanvasHeight / 2 - actualCanvasHeight * zoom / 2;
             } else {
                 if (vpt[4] >= 0) {
                     vpt[4] = 0;
@@ -224,12 +225,36 @@ const CardImageQuiz: React.FC<Props> = ({
             return (canvas as any).additionalInfo;
         };
 
+        const isTouchEvent = (e: MouseEvent | TouchEvent): e is TouchEvent => {
+            return (e as TouchEvent).targetTouches !== undefined;
+        };
+
+        interface Coordinate {
+            x: number;
+            y: number;
+        }
+
+        const getClientCoordinatesFromEvent = (e: MouseEvent | TouchEvent): Coordinate => {
+            if (isTouchEvent(e)) {
+                return {
+                    x: e.targetTouches[0].clientX,
+                    y: e.targetTouches[0].clientY,
+                };
+            } else {
+                return {
+                    x: e.clientX,
+                    y: e.clientY,
+                };
+            }
+        };
+
         canvas.on('mouse:down', function (opt) {
             const evt = opt.e;
             const additionalInfo = getAdditionalCanvasInfo(canvas);
             additionalInfo.isDragging = true;
-            additionalInfo.lastPosX = evt.clientX;
-            additionalInfo.lastPosY = evt.clientY;
+            const coordinate = getClientCoordinatesFromEvent(evt);
+            additionalInfo.lastPosX = coordinate.x;
+            additionalInfo.lastPosY = coordinate.y;
         });
 
         canvas.on('mouse:move', function (opt) {
@@ -238,13 +263,14 @@ const CardImageQuiz: React.FC<Props> = ({
                 const e = opt.e;
                 const zoom = canvas.getZoom();
                 const vpt = canvas.viewportTransform!;
+                const coordinate = getClientCoordinatesFromEvent(e);
                 if (zoom < 1) {
                     // Center image if zooming out
                     vpt[4] = actualCanvasWidth / 2 - actualCanvasWidth * zoom / 2;
                     vpt[5] = actualCanvasHeight / 2 - actualCanvasHeight * zoom / 2;
                 } else {
-                    vpt[4] += e.clientX - additionalInfo.lastPosX;
-                    vpt[5] += e.clientY - additionalInfo.lastPosY;
+                    vpt[4] += coordinate.x - additionalInfo.lastPosX;
+                    vpt[5] += coordinate.y - additionalInfo.lastPosY;
                     if (vpt[4] >= 0) {
                         vpt[4] = 0;
                     } else if (vpt[4] < canvas.getWidth() - actualCanvasWidth * zoom) {
@@ -257,8 +283,8 @@ const CardImageQuiz: React.FC<Props> = ({
                     }
                 }
                 canvas.requestRenderAll();
-                additionalInfo.lastPosX = e.clientX;
-                additionalInfo.lastPosY = e.clientY;
+                additionalInfo.lastPosX = coordinate.x;
+                additionalInfo.lastPosY = coordinate.y;
             }
         });
 
@@ -331,13 +357,14 @@ const CardImageQuiz: React.FC<Props> = ({
             <CssBaseline />
             <Grid container direction='column' className={classes.root}>
                 <Grid item container direction="row" justifyContent="center">
-                    <div className={classes.answersGrid}>
-                        {textOptions.map((text, id) =>
-                            <div key={id}>
-                                {!text.hidden && <Chip size="medium" draggable id={`${id}`} className={classes.answerOptions} onDragStart={handleTagDrag} label={text.text}></Chip>}
-                            </div>,
-                        )}
-                    </div>
+                    {isBrowser && (
+                        <div className={classes.answersGrid}>
+                            {textOptions.map((text, id) =>
+                                <div key={id}>
+                                    {!text.hidden && <Chip size="medium" draggable id={`${id}`} className={classes.answerOptions} onDragStart={handleTagDrag} label={text.text}></Chip>}
+                                </div>,
+                            )}
+                        </div>)}
                     <canvas
                         id={CANVAS_ID}
                         width={actualCanvasWidth}
