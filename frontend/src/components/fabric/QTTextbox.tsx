@@ -10,13 +10,80 @@ const Quizbox = fabric.util.createClass(fabric.Textbox, {
     initialize: function (text: string, options: any) {
         this.text = text;
         this.callSuper('initialize', text, options);
-        // Upon initialization, the width and height will be reset
-        this.width = options.width;
-        this.height = options.height;
 
         options || (options = {});
         this.set('willShowBorder', options.willShowBorder || true);
         this.set('onClickCallback', options.onClickCallback);
+    },
+
+    _computeWidthAndHeight: function () {
+        this.clearContextTop();
+        this._clearCache();
+        this.dynamicMinWidth = 0;
+
+        // wrap lines
+        this._styleMap = this._generateStyleMap(this._splitText());
+        if (this.textAlign.indexOf('justify') !== -1) {
+            // once text is measured we need to make space fatter to make justified text.
+            this.enlargeSpaces();
+        }
+
+        // clear cache and re-calculate height
+        this.dynamicMinHeight = this.calcTextHeight();
+    },
+
+    _binarySearchFitWidthAndHeight: function (maxWidth: number, maxHeight: number) {
+        let upperFontSize = this.fontSize;
+        let lowerFontSize = 0;
+        let midFontSize = lowerFontSize + Math.floor((upperFontSize - lowerFontSize) / 2);
+
+        const fitWidthAndHeightFunc = (fontSize: number) => {
+            this.fontSize = fontSize;
+            this._computeWidthAndHeight();
+            return this.dynamicMinWidth <= maxWidth && this.dynamicMinHeight <= maxHeight;
+        };
+
+        while (lowerFontSize < upperFontSize - 1) {
+            midFontSize = lowerFontSize + Math.floor((upperFontSize - lowerFontSize) / 2);
+            const isFit = fitWidthAndHeightFunc(midFontSize);
+            if (isFit) {
+                lowerFontSize = midFontSize;
+            } else {
+                upperFontSize = midFontSize;
+            }
+        }
+
+        midFontSize = lowerFontSize + Math.floor((upperFontSize - lowerFontSize) / 2);
+        fitWidthAndHeightFunc(midFontSize);
+
+        return midFontSize;
+    },
+
+    // Overwrites parent's initDimensions method, to fit text into bounding box
+    // ref: https://github.com/fabricjs/fabric.js/blob/2eabc92a3221dd628576b1bb029a5dc1156bdc06/src/shapes/textbox.class.js#L87
+    initDimensions: function () {
+        if (this.__skipDimension) {
+            return;
+        }
+        this.isEditing && this.initDelayedCursor();
+        // Dynamic min width and dynamic min height are the width and height for the text
+        this.dynamicMinWidth = 0;
+        this.dynamicMinHeight = 0;
+
+        if (this.width && this.height) {
+            // Calculation of suitable fontsize to fit width and height done in this method
+            // Method will update dynamicMinWidth and dynamicMinHeight
+            this._binarySearchFitWidthAndHeight(this.width, this.height);
+        } else {
+            this._computeWidthAndHeight();
+
+            // If width and height empty, set initial height and width to computed ones
+            // e.g. for empty textbox
+            this.height = this.dynamicMinHeight;
+            this.width = this.dynamicMinWidth;
+        }
+
+        this.saveState({ propertySet: '_dimensionAffectingProps' });
     },
 
     toObject: function () {
