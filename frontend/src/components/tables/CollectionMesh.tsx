@@ -98,7 +98,7 @@ const CollectionMesh: React.FC<Props> = ({
                 {!isLoading &&
                     (collection.ids.length === 0 ?
                         <Typography className={classes.text}>
-                            You have no collections/cards here at the moment. Add one now!
+                            You have no collections or cards here at the moment. Add one now!
                         </Typography>
                         :
                         collection.ids.map((id) => (
