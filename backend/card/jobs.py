@@ -76,7 +76,7 @@ class PaddleOCRResult():
 
 def trim_ocr_text(text: str):
     # TODO: fix trimming
-    return text.strip("~|'-." + string.whitespace)
+    return text.strip("~|'-.,\"+\'“" + string.whitespace)
 
 
 def import_card_from_image(image_key: str, collection_id: int, collection_import_id: int, name: str = ""):
@@ -108,8 +108,10 @@ def import_card_from_image(image_key: str, collection_id: int, collection_import
 
         # Apply OCR on the cropped image
         text = pytesseract.image_to_string(cropped, config="--psm 7")
+        trimmed_text = trim_ocr_text(str(text))
 
-        result.text_options.append(trim_ocr_text(str(text)))
+        result.text = trimmed_text
+        result.text_options.append(trimmed_text)
 
     width, height = image.size
     image_metadata = {

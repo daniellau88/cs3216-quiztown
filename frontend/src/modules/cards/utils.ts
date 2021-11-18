@@ -103,15 +103,13 @@ const createAnswerTextBox = (
     return new QTTextbox(box.text, {
         top: (top * scale),
         left: (left * scale) + xTranslation,
-        width: width,
-        height: height,
+        width: width * scale,
+        height: height * scale,
         hasBorders: false,
         borderColor: colours.BLACK,
         backgroundColor: colours.WHITE,
         stroke: colours.BLACK,
         fontSize: FONT_SIZE,
-        scaleX: scale,
-        scaleY: scale,
     });
 };
 
