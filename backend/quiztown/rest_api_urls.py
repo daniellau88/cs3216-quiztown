@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.urls import include, path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
@@ -8,8 +9,8 @@ schema_view = get_schema_view(
         default_version="v1",
         description="Quiztown Backend API",
     ),
-    url="https://quiztown.fun/",
-    public=True,
+    url=settings.BASE_URL,
+    public=False,
 )
 
 urlpatterns = [
