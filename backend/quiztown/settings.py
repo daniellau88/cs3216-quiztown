@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "upload",
     "public_activity",
     "rest_framework",
+    "drf_yasg",
     "django_rq",
 ]
 
