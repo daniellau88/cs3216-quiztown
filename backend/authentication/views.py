@@ -1,6 +1,7 @@
 import requests
 
 from django.contrib.auth import authenticate, login, logout
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -36,6 +37,10 @@ def login_view(request, serializer, *args, **kwargs):
                            "Incorrect username or password"])
 
 
+@swagger_auto_schema(
+    method="POST",
+    request_body=serializers.GoogleLoginRequestSerializer,
+)
 @api_view(["POST"])
 @permission_classes([AllowAny])
 @validate_request_data(serializers.GoogleLoginRequestSerializer)
@@ -103,6 +108,10 @@ def user_view(request, *args, **kwargs):
     return Response({"item": serializer.data})
 
 
+@swagger_auto_schema(
+    method="POST",
+    request_body=user_serializers.UserSettingsCreateSerializer,
+)
 @api_view(["POST"])
 @validate_request_data(user_serializers.UserSettingsCreateSerializer, partial=True)
 def update_user_settings_view(request, serializer):

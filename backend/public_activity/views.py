@@ -1,3 +1,4 @@
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -17,6 +18,10 @@ def list_public_activities_view(request):
     )
 
 
+@swagger_auto_schema(
+    method="PATCH",
+    request_body=serializers.PublicActivityUpdateSerializer,
+)
 @api_view(["PATCH"])
 @convert_keys_to_item({
     "pk": helpers.get_default_public_activity_queryset_by_request,
