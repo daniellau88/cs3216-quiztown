@@ -1,5 +1,4 @@
 from django.urls import path
-from rest_framework.urlpatterns import format_suffix_patterns
 
 from collection import views
 
@@ -14,5 +13,3 @@ urlpatterns = [
     path("<int:pk>/duplicate/", views.duplicate_collection_view),
     path("tags/", views.list_tag_view),
 ]
-
-urlpatterns = format_suffix_patterns(urlpatterns)

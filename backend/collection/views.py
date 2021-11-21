@@ -1,9 +1,10 @@
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from card import serializers as card_serializers
 from card.models import Card
-from quiztown.common import utils
+from quiztown.common import serializers as common_serializers, utils
 from quiztown.common.decorators import convert_keys_to_item, validate_request_data
 from quiztown.common.errors import ApplicationError, ErrorCode, add_message_on_context
 
@@ -11,6 +12,14 @@ from . import helpers, jobs, serializers
 from .models import CollectionImport, Tag
 
 
+@swagger_auto_schema(
+    method="GET",
+    query_serializer=common_serializers.ListRequestSerializer,
+)
+@swagger_auto_schema(
+    method="POST",
+    request_body=serializers.CollectionCreateSerializer,
+)
 @api_view(["GET", "POST"])
 def list_or_create_collection_view(request, *args, **kwargs):
     if request.method == "GET":
@@ -43,6 +52,10 @@ def create_collection_view(request, serializer):
     return Response({"item": response_serializer.data})
 
 
+@swagger_auto_schema(
+    method="PATCH",
+    request_body=serializers.CollectionUpdateSerializer,
+)
 @api_view(["GET", "PATCH", "DELETE"])
 def get_or_update_or_delete_collection_view(request, *args, **kwargs):
     if request.method == "GET":
@@ -90,6 +103,10 @@ def delete_collection_view(request, pk_item):
     return Response({})
 
 
+@swagger_auto_schema(
+    method="POST",
+    request_body=serializers.CollectionImportRequestSerializer,
+)
 @api_view(["POST"])
 @convert_keys_to_item({"pk": helpers.get_editable_collection_queryset_by_request})
 @validate_request_data(serializers.CollectionImportRequestSerializer)
@@ -127,6 +144,10 @@ def import_file_collection_view(request, pk_item, serializer):
     return Response({"items": response_serializer.data})
 
 
+@swagger_auto_schema(
+    method="POST",
+    request_body=card_serializers.CollectionImportTextRequestSerializer,
+)
 @api_view(["POST"])
 @convert_keys_to_item({"pk": helpers.get_editable_collection_queryset_by_request})
 @validate_request_data(card_serializers.CollectionImportTextRequestSerializer)

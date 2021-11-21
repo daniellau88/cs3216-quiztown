@@ -1,6 +1,6 @@
 import uuid
 
-from django import forms
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -12,6 +12,10 @@ UPLOAD_DIRECTORY = "uploads/"
 
 
 # TODO: have separate server to handle uploading
+@swagger_auto_schema(
+    method="POST",
+    request_body=serializers.UploadFileSerializer,
+)
 @api_view(["POST"])
 @validate_request_data(serializers.UploadFileSerializer)
 def upload_view(request, serializer):

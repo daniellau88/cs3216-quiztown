@@ -1,15 +1,24 @@
 from django.core.exceptions import ObjectDoesNotExist
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from collection import helpers as collection_helpers
-from quiztown.common import utils
+from quiztown.common import serializers as common_serializers, utils
 from quiztown.common.decorators import convert_keys_to_item, validate_request_data
 from quiztown.common.errors import ApplicationError, ErrorCode, add_message_on_context
 
 from . import helpers, serializers
 
 
+@swagger_auto_schema(
+    method="GET",
+    query_serializer=common_serializers.ListRequestSerializer,
+)
+@swagger_auto_schema(
+    method="POST",
+    request_body=serializers.CardCreateSerializer,
+)
 @api_view(["GET", "POST"])
 def list_or_create_card_view(request, *args, **kwargs):
     if request.method == "GET":
@@ -51,6 +60,10 @@ def create_card_view(request, serializer):
     return Response({"item": response_serializer.data})
 
 
+@swagger_auto_schema(
+    method="PATCH",
+    request_body=serializers.CardUpdateSerializer,
+)
 @api_view(["GET", "PATCH", "DELETE"])
 def get_or_update_or_delete_card_view(request, *args, **kwargs):
     if request.method == "GET":
