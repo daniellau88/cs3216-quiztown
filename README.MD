@@ -8,7 +8,7 @@ Project report: [Report](./docs/group-7-final-report.pdf)
 
 QuizTown is your flashcard assistant. We help you create and manage flashcards with a focus on efficiency. We know that you're busy enough - so we want to make the process as quick and painless as possible. QuizTown also maximises the efficacy of your learning by using spaced repetition, a proven learning approach that helps integrate knowledge into your long-term memory.
 
-<img src="./docs/quiztown-poster.png" />
+<img src="./docs/group-7-poster.png" />
 
 # Team
 
