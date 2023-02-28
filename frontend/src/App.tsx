@@ -1,4 +1,5 @@
 import { ThemeProvider, createTheme } from '@material-ui/core';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { createBrowserHistory } from 'history';
 import { SnackbarProvider } from 'notistack';
 import * as React from 'react';
@@ -15,6 +16,7 @@ import Notifier from './modules/notifications/components/Notifier';
 import configureStore from './modules/store';
 import MainRouter from './routers/MainRouter';
 import palette from './utilities/palette';
+
 import './assets/css/fonts.css';
 
 
@@ -38,6 +40,11 @@ if (GOOGLE_ANALYTICS_ID) {
 const store = configureStore();
 const persistor = persistStore(store);
 
+const clientId = process.env.REACT_APP_GOOGLE_LOGIN_CLIENT_ID ?? '';
+if (!clientId) {
+    throw new Error('Client ID not provided');
+}
+
 const theme = createTheme({
     palette,
     typography: {
@@ -54,10 +61,12 @@ const App: React.FC = () => {
                     <ThemeProvider theme={theme}>
                         <SnackbarProvider>
                             <AuthGateway>
-                                <AppLayout>
-                                    <Notifier />
-                                    <MainRouter />
-                                </AppLayout>
+                                <GoogleOAuthProvider clientId={clientId}>
+                                    <AppLayout>
+                                        <Notifier />
+                                        <MainRouter />
+                                    </AppLayout>
+                                </GoogleOAuthProvider>
                             </AuthGateway>
                         </SnackbarProvider>
                     </ThemeProvider>

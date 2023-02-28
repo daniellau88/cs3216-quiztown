@@ -1,6 +1,6 @@
 import { MenuItem, Typography, makeStyles } from '@material-ui/core';
+import { googleLogout } from '@react-oauth/google';
 import * as React from 'react';
-import { useGoogleLogout } from 'react-google-login';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
@@ -20,36 +20,28 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const GoogleSignOutMenuItem = React.forwardRef<HTMLLIElement, Props>(({ size = 'h4' }: Props, ref) => {
+const GoogleSignOutMenuItemRef: React.ForwardRefRenderFunction<HTMLLIElement, Props> = ({ size = 'h4' }: Props, ref) => {
     const classes = useStyles();
     const dispatch = useDispatch();
     const history = useHistory();
-    const clientId = process.env.REACT_APP_GOOGLE_LOGIN_CLIENT_ID;
 
     const handleLogout = () => {
+        googleLogout();
         handleApiRequests(dispatch, dispatch(logout())).finally(() => {
             history.push('');
             location.reload();
         });
     };
 
-    const { signOut, loaded } = useGoogleLogout({
-        clientId: clientId ? clientId : '',
-        onLogoutSuccess: handleLogout,
-    });
-
-    if (!clientId) {
-        console.error('Client ID not initialized');
-        return null;
-    }
-
     return (
-        <MenuItem ref={ref} onClick={signOut} className={classes.root}>
+        <MenuItem ref={ref} onClick={handleLogout} className={classes.root}>
             <Typography variant={size}>
                 Logout
             </Typography>
         </MenuItem>
     );
-});
+};
+
+const GoogleSignOutMenuItem = React.forwardRef<HTMLLIElement, Props>(GoogleSignOutMenuItemRef);
 
 export default GoogleSignOutMenuItem;

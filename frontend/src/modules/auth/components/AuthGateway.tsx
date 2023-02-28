@@ -78,7 +78,6 @@ const AuthGateway: React.FC<{}> = (props: Props) => {
         return (
             <>
                 <p>Please check your connection status</p>
-                <GoogleLogin clientId={clientId ? clientId : ''} onSuccess={onSuccess} onAutoLoadFinished={onAutoLoadFinished} />
             </>
         );
     }

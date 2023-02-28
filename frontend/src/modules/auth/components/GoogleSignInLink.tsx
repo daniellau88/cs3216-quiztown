@@ -1,6 +1,6 @@
 import { Link } from '@material-ui/core';
+import { TokenResponse, useGoogleLogin } from '@react-oauth/google';
 import * as React from 'react';
-import { GoogleLoginResponse, GoogleLoginResponseOffline, useGoogleLogin } from 'react-google-login';
 import { useDispatch } from 'react-redux';
 
 import { GoogleLoginPostData } from '../../../types/auth';
@@ -18,9 +18,9 @@ const GoogleSignInLink: React.FC<Props> = ({ children, className }: Props) => {
     const dispatch = useDispatch();
     const clientId = process.env.REACT_APP_GOOGLE_LOGIN_CLIENT_ID;
 
-    const onSuccess = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
-        if ('tokenId' in response) {
-            const token = response.tokenId;
+    const onSuccess = (response: Omit<TokenResponse, 'error' | 'error_description' | 'error_uri'>) => {
+        const token = response.access_token;
+        if (token) {
             const loginPostData: GoogleLoginPostData = { token_id: token };
             return handleApiRequest(dispatch, dispatch(googleLogin(loginPostData)))
                 .then(() => {
@@ -30,10 +30,8 @@ const GoogleSignInLink: React.FC<Props> = ({ children, className }: Props) => {
     };
 
     // Attempt login
-    const { signIn, loaded } = useGoogleLogin({
-        onSuccess,
-        clientId: clientId ? clientId : '',
-        isSignedIn: false,
+    const signIn = useGoogleLogin({
+        onSuccess: onSuccess,
     });
 
     if (!clientId) {
@@ -42,7 +40,7 @@ const GoogleSignInLink: React.FC<Props> = ({ children, className }: Props) => {
     }
 
     return (
-        <Link className={className} onClick={signIn}>
+        <Link className={className} onClick={() => signIn()}>
             {children}
         </Link>
     );

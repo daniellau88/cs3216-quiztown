@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core';
+import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 import * as React from 'react';
-import GoogleLogin, { GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
 import { useDispatch } from 'react-redux';
 
 import { GoogleLoginPostData } from '../../../types/auth';
@@ -24,15 +24,10 @@ const useStyles = makeStyles((theme) => ({
 const GoogleSignInButton: React.FC<{}> = () => {
     const dispatch = useDispatch();
     const classes = useStyles();
-    const clientId = process.env.REACT_APP_GOOGLE_LOGIN_CLIENT_ID;
-    if (!clientId) {
-        console.error('Client ID not initialized');
-        return null;
-    }
 
-    const onSuccess = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
-        if ('tokenId' in response) {
-            const token = response.tokenId;
+    const onSuccess = (response: CredentialResponse) => {
+        const token = response.credential;
+        if (token) {
             const loginPostData: GoogleLoginPostData = { token_id: token };
             return handleApiRequest(dispatch, dispatch(googleLogin(loginPostData)))
                 .then(() => {
@@ -44,12 +39,10 @@ const GoogleSignInButton: React.FC<{}> = () => {
     return (
         <div className={classes.root}>
             <GoogleLogin
-                clientId={clientId}
-                buttonText="Login"
-                onSuccess={onSuccess}
-                onFailure={(err) => console.error(err)}
-                cookiePolicy={'single_host_origin'}
-            />
+                text="signin"
+                size="medium"
+                onSuccess={onSuccess} />
+
         </div>
     );
 };
