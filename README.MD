@@ -1,7 +1,5 @@
 # Quiztown
 
-Project site: [Quiztown](https://quiztown.dlau.one/)
-
 Project video: [Video link](https://www.youtube.com/watch?v=i85dN0dSJVg)
 
 Project report: [Report](./docs/group-7-final-report.pdf)
